@@ -1,0 +1,86 @@
+<html>
+
+<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+<script type="text/javascript">
+    systemDictionary = {
+        "WWW Web Server adapter settings": {
+            "de": "WWW Web Server adapter settings",
+            "ru": "WWW Web Server adapter settings"
+        },
+        "IP:":              {"de": "IP:",                     "ru": "IP:"},
+        "Port:":            {"de": "Port:",                   "ru": "Порт:"},
+        "Secure(HTTPS):":   {"de": "Verschlüsselung(HTTPS):", "ru": "Шифрование(HTTPS):"},
+        "Authentication:":  {"de": "Authentifikation:",       "ru": "Аутентификация:"},
+        "Cache:":           {"de": "Puffer:",                 "ru": "Кэш:"},
+        "help_tip":         {
+            "en": "On save the adapter restarts with new configuration immediately",
+            "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
+            "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
+        }
+
+    };
+
+    // the function loadSettings has to exist ...
+    function load(settings) {
+        if (!settings) return;
+
+        getIPs(function(ips) {
+            for (var i = 0; i < ips.length; i++) {
+                $('#bind').append('<option value="' + ips[i].address + '">' + ips[i].name + '</option>');
+            }
+            $('#bind.value').val(settings.bind);
+        });
+
+        for (var key in settings) {
+            // example: select elements with id=key and class=value and insert value
+            if ($('#' + key + '.value').attr('type') == 'checkbox') {
+                $('#' + key + '.value').prop('checked', settings[key]);
+            } else {
+                $('#' + key + '.value').val(settings[key]);
+            }
+        }
+
+    }
+
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        // example: select elements with class=value and build settings object
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') == 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+        callback(obj);
+    }
+</script>
+
+<!-- you have to put your config page in a div with id adapter-container -->
+<div id="adapter-container">
+
+    <table><tr><td><img src="www.png"></td><td><h3 class="translate">WWW Web Server adapter settings</h3></td></tr></table>
+
+    <table>
+        <tr><td class="translate">IP:</td><td>            <select class="value" id="bind"></select></td></tr>
+        <tr><td class="translate">Port:</td><td>          <input  class="value" id="port" size="5"  maxlength="5"/></td></tr>
+        <tr><td class="translate">Secure(HTTPS):</td><td> <input  class="value" id="secure" type="checkbox" /></td></tr>
+        <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td></tr>
+        <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td></tr>
+    </table>
+
+    <p class="translate">help_tip</p>
+
+</div>
+</html>

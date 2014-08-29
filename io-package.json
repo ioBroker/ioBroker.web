@@ -1,0 +1,30 @@
+{
+    "common": {
+        "name":                     "www",
+        "version":                  "0.0.1",
+        "title":                    "ioBroker simple www Adapter",
+        "desc": {
+            "en":                   "opens a webserver for the ioBroker",
+            "de":                   "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
+            "ru":                   "Запускает веб сервер для 'ioBroker драйверов'"
+        },
+        "mode":                     "daemon",
+        "platform":                 "Javascript/Node.js",
+        "loglevel":                 "info",
+        "icon":                     "www.png",
+        "keywords":                 ["web", "server", "www", "express"]
+    },
+    "native": {
+        "port":                     8082,
+        "auth":                     false,
+        "secure":                   false,
+        "bind":                     "0.0.0.0",
+        "cache":                    false
+    },
+    "objects": [
+
+    ],
+    "instanceObjects": [
+
+    ]
+}
