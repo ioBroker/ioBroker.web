@@ -1,13 +1,10 @@
-![Logo](admin/admin.png)
+![Logo](admin/web.png)
 
-# ioBroker.admin
+# ioBroker.web
 
-user interface for configuration and administration
+Web server on the base of Node.js and express to read the files from CouchDB
 
 
 ## Changelog
 
-#### 0.0.5
-
-* (hobbyquaker) show available version, show update button if not up-to-date
-* (hobbyquaker) minor fixes
+#### 0.0.1

@@ -42,11 +42,18 @@
         for (var key in settings) {
             // example: select elements with id=key and class=value and insert value
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
-                $('#' + key + '.value').prop('checked', settings[key]);
+                $('#' + key + '.value').prop('checked', settings[key]).change(function() {
+                    $('#save').button("enable");
+                });
             } else {
-                $('#' + key + '.value').val(settings[key]);
+                $('#' + key + '.value').val(settings[key]).change(function() {
+                    $('#save').button("enable");
+                }).keyup(function() {
+                    $('#save').button("enable");
+                });
             }
         }
+        $('#save').button("disable");
 
     }
 
@@ -64,13 +71,14 @@
             }
         });
         callback(obj);
+        $('#save').button("disable");
     }
 </script>
 
 <!-- you have to put your config page in a div with id adapter-container -->
 <div id="adapter-container">
 
-    <table><tr><td><img src="www.png"></td><td><h3 class="translate">WWW Web Server adapter settings</h3></td></tr></table>
+    <table><tr><td><img src="web.png"></td><td><h3 class="translate">Web Server adapter settings</h3></td></tr></table>
 
     <table>
         <tr><td class="translate">IP:</td><td>            <select class="value" id="bind"></select></td></tr>

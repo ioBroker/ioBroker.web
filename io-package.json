@@ -1,8 +1,8 @@
 {
     "common": {
-        "name":                     "www",
+        "name":                     "web",
         "version":                  "0.0.1",
-        "title":                    "ioBroker simple www Adapter",
+        "title":                    "ioBroker simple web Adapter",
         "desc": {
             "en":                   "opens a webserver for the ioBroker",
             "de":                   "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
@@ -11,7 +11,8 @@
         "mode":                     "daemon",
         "platform":                 "Javascript/Node.js",
         "loglevel":                 "info",
-        "icon":                     "www.png",
+        "icon":                     "web.png",
+        "enabled":                  true,
         "keywords":                 ["web", "server", "www", "express"]
     },
     "native": {
