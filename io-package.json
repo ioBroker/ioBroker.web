@@ -13,7 +13,8 @@
         "loglevel":                 "info",
         "icon":                     "web.png",
         "enabled":                  true,
-        "keywords":                 ["web", "server", "www", "express"]
+        "keywords":                 ["web", "server", "www", "express"],
+        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png"
     },
     "native": {
         "port":                     8082,
