@@ -49,12 +49,12 @@ var adapter = require(__dirname + '/../../lib/adapter.js')({
         }
     },
     ready: function () {
-        adapter.getForeignObject("system.adapter.admin", function (err, obj) {
+        adapter.getForeignObject("system.adapter.web", function (err, obj) {
             if (!err && obj) {
                 if (!obj.native.secret) {
                     require('crypto').randomBytes(24, function (ex, buf) {
                         secret = buf.toString('hex');
-                        adapter.extendForeignObject("system.adapter.admin", {native: {secret: secret}});
+                        adapter.extendForeignObject("system.adapter.web", {native: {secret: secret}});
                         main();
                     });
                 } else {
@@ -62,7 +62,7 @@ var adapter = require(__dirname + '/../../lib/adapter.js')({
                     main();
                 }
             } else {
-                adapter.logger.error("Cannot find object system.adapter.admin");
+                adapter.logger.error("Cannot find object system.adapter.web");
             }
         });
     }
