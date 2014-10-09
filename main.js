@@ -186,7 +186,7 @@ function initWebServer(settings) {
         }
 
         // reverse proxy with url rewrite for couchdb attachments in <adapter-name>.admin
-        server.app.use('/', function(req, res) {
+        server.app.use('/', function (req, res) {
             var url = req.url;
 
             // add index.html
