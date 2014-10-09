@@ -55,6 +55,11 @@
         }
         $('#save').button("disable");
 
+        $('#auth').change(function () {
+            if ($(this).prop('checked')) {
+                $('#secure').prop('checked', true);
+            }
+        });
     }
 
     // ... and the function save has to exist.
