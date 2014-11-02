@@ -180,6 +180,23 @@ function initWebServer(settings) {
             });
         }
 
+        // Init read from states
+        server.app.get('/state/*', function (req, res) {
+            try {
+                var fileName = req.url.split('/', 3)[2].split('?', 2);
+                adapter.getBinaryState(fileName[0], function (err, obj) {
+                    if (!err && obj) {
+                        res.set('Content-Type', 'text/plain');
+                        res.send(obj);
+                    } else {
+                        res.status(404).send('404 Not found. File ' + fileName[0] + ' not found');
+                    }
+                });
+            } catch(e) {
+                res.status(500).send('500. Error' + e);
+            }
+        });
+
         var appOptions = {};
         if (settings.cache) {
             appOptions.maxAge = 30758400000;
