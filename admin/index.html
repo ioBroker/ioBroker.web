@@ -25,8 +25,9 @@
             "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
             "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
         }
-
     };
+
+    var supportedSockets = ['socketio'];
 
     // the function loadSettings has to exist ...
     function load(settings) {
@@ -38,6 +39,21 @@
             }
             $('#bind.value').val(settings.bind);
         });
+        $('#socketio').append('<option value="">' + _('none') + '</option>');
+        var count = 0;
+        for (var i = 0; i < supportedSockets.length; i++) {
+            count++;
+            getAdapterInstances(supportedSockets[i], function (res) {
+                if (!res) return;
+                for (var t = 0; t < res.length; t++) {
+                    $('#socketio').append('<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>');
+                }
+                count--;
+                if (!count) {
+                    $('#socketio').val(settings.socketio);
+                }
+            });
+        }
 
         for (var key in settings) {
             // example: select elements with id=key and class=value and insert value
@@ -91,6 +107,7 @@
         <tr><td class="translate">Secure(HTTPS):</td><td> <input  class="value" id="secure" type="checkbox" /></td></tr>
         <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td></tr>
         <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td></tr>
+        <tr><td class="translate">Socket.IO Instance (Optional):</td><td><select class="value" id="socketio"></select></td></tr>
     </table>
 
     <p class="translate">help_tip</p>
