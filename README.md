@@ -6,6 +6,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 
 ## Changelog
+### 0.1.1 (2014-12-05)
+* (bluefox) use readFile instead of request
+
 ### 0.1.0 (2014-11-24)
 * (bluefox) support of socket.io information
 

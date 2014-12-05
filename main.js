@@ -3,7 +3,6 @@
 "use strict";
 
 var express =           require('express');
-var request =           require('request');
 var fs =                require('fs');
 var Stream =            require('stream');
 var config =            JSON.parse(fs.readFileSync(__dirname + '/../../conf/iobroker.json'));
@@ -229,13 +228,25 @@ function initWebServer(settings) {
                 url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
             }
 
-            // TODO use user and pass!
-            url = 'http://' + config.couch.host + ':' + config.couch.port + '/iobroker' + url;
-            // Example: http://127.0.0.1:5984/iobroker/example.admin/index.html?0
-
-
-            // TODO own 404/500 Page? possible with pipe?
-            req.pipe(request(url)).pipe(res);
+            url = url.split('/');
+            // Skip first /
+            url.shift();
+            // Get ID
+            var id = url.shift();
+            url = url.join('/');
+            var pos = url.indexOf('?');
+            if (pos != -1) {
+                url = url.substring(0, pos);
+            }
+            adapter.readFile(id, url, null, function (err, buffer, mimeType) {
+                if (!buffer || err) {
+                    res.contentType('text/html');
+                    res.send('File ' + url + ' not found', 404);
+                } else {
+                    res.contentType(mimeType);
+                    res.send(buffer);
+                }
+            });
         });
 
         if (settings.secure) {
