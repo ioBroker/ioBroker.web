@@ -1,7 +1,18 @@
 {
-  "name": "ioBroker.admin",
-  "private": true,
-  "repository" : {
+  "name": "iobroker.web",
+  "version": "0.1.2",
+  "description": "ioBroker simple web Adapter",
+  "author": "bluefox <bluefox@ccu.io>",
+  "homepage": "https://github.com/ioBroker/ioBroker.web",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/ioBroker/ioBroker.web/blob/master/LICENSE"
+    }
+  ],
+  "keywords":  ["ioBroker", "web"],
+  "readmeFilename": "README.md",
+    "repository" : {
     "type" : "git",
     "url" : "https://github.com/ioBroker/ioBroker.web"
   },

@@ -2,10 +2,10 @@
 /*jslint node: true */
 "use strict";
 
-var express =           require('express');
-var fs =                require('fs');
-var Stream =            require('stream');
-var config =            JSON.parse(fs.readFileSync(__dirname + '/../../conf/iobroker.json'));
+var express = require('express');
+var fs =      require('fs');
+var Stream =  require('stream');
+var config =  JSON.parse(fs.readFileSync(__dirname + '/../../conf/iobroker.json'));
 
 var session;// =           require('express-session');
 var cookieParser;// =      require('cookie-parser');
@@ -78,7 +78,29 @@ var adapter = require(__dirname + '/../../lib/adapter.js')({
 });
 
 function main() {
-    webServer = initWebServer(adapter.config);
+    if (adapter.config.secure) {
+        // Load certificates
+        adapter.getForeignObject('system.certificates', function (err, obj) {
+            if (err || !obj ||
+                !obj.native.certificates ||
+                !adapter.config.certPublic ||
+                !adapter.config.certPrivate ||
+                !obj.native.certificates[adapter.config.certPublic] ||
+                !obj.native.certificates[adapter.config.certPrivate]
+                ) {
+                adapter.log.error('Cannot enable secure web server, because no certificates found: ' + adapter.config.certPublic + ', ' + adapter.config.certPrivate);
+            } else {
+                adapter.config.certificates = {
+                    key:  obj.native.certificates[adapter.config.certPrivate],
+                    cert: obj.native.certificates[adapter.config.certPublic]
+                };
+
+            }
+            webServer = initWebServer(adapter.config);
+        });
+    } else {
+        webServer = initWebServer(adapter.config);
+    }
 }
 
 //settings: {
@@ -98,32 +120,22 @@ function initWebServer(settings) {
     };
 
     if (settings.port) {
-        var options = null;
-
         if (settings.secure) {
-            var _fs = require('fs');
-            try {
-                options = {
-                    // ToDO read certificates from CouchDB (May be upload in admin configuration page)
-                    key:  _fs.readFileSync(__dirname + '/cert/privatekey.pem'),
-                    cert: _fs.readFileSync(__dirname + '/cert/certificate.pem')
-                };
-            } catch (err) {
-                adapter.log.error(err.message);
+            if (!adapter.config.certificates) {
+                return null;
             }
-            if (!options) return null;
         }
         server.app = express();
         if (settings.auth) {
-            session =           require('express-session');
-            cookieParser =      require('cookie-parser');
-            bodyParser =        require('body-parser');
-            AdapterStore =      require(__dirname + '/../../lib/session.js')(session);
-            passportSocketIo =  require(__dirname + '/lib/passport.socketio.js');
-            password =          require(__dirname + '/../../lib/password.js');
-            passport =          require('passport');
-            LocalStrategy =     require('passport-local').Strategy;
-            flash =             require('connect-flash'); // TODO report error to user
+            session = require('express-session');
+            cookieParser = require('cookie-parser');
+            bodyParser = require('body-parser');
+            AdapterStore = require(__dirname + '/../../lib/session.js')(session);
+            passportSocketIo = require(__dirname + '/lib/passport.socketio.js');
+            password = require(__dirname + '/../../lib/password.js');
+            passport = require('passport');
+            LocalStrategy = require('passport-local').Strategy;
+            flash = require('connect-flash'); // TODO report error to user
 
             store = new AdapterStore({adapter: adapter});
 
@@ -156,7 +168,7 @@ function initWebServer(settings) {
                 secret: secret,
                 saveUninitialized: true,
                 resave: true,
-                store:  store
+                store: store
             }));
             server.app.use(passport.initialize());
             server.app.use(passport.session());
@@ -201,7 +213,7 @@ function initWebServer(settings) {
                         res.status(404).send('404 Not found. File ' + fileName[0] + ' not found');
                     }
                 });
-            } catch(e) {
+            } catch (e) {
                 res.status(500).send('500. Error' + e);
             }
         });
@@ -210,6 +222,22 @@ function initWebServer(settings) {
             res.set('Content-Type', 'application/javascript');
             res.send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '";');
         });
+
+        // Enable CORS
+        if (settings.socketio) {
+            server.app.use(function (req, res, next) {
+                res.header('Access-Control-Allow-Origin', '*');
+                res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+                res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, *');
+
+                // intercept OPTIONS method
+                if ('OPTIONS' == req.method) {
+                    res.send(200);
+                } else {
+                    next();
+                }
+            });
+        }
 
         var appOptions = {};
         if (settings.cache) {
@@ -250,7 +278,7 @@ function initWebServer(settings) {
         });
 
         if (settings.secure) {
-            server.server = require('https').createServer(options, server.app);
+            server.server = require('https').createServer(adapter.config.certificates, server.app);
         } else {
             server.server = require('http').createServer(server.app);
         }
