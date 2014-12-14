@@ -251,9 +251,13 @@ function initWebServer(settings) {
             // add index.html
             url = url.replace(/\/($|\?|#)/, '/index.html$1');
 
-            if (url.substring(0, '/adapter/'.length) == '/adapter/') {
+            if (url.match(/^\/adapter\//)) {
                 // add .admin to adapter name
                 url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
+            }
+
+            if (url.match(/^\/lib\//)) {
+                url = '/web' + url;
             }
 
             url = url.split('/');

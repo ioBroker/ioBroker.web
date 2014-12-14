@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.1.3 (2014-12-14)
+* (bluefox) include "lib" directory with common files like jquery and jqGrid
+
 ### 0.1.2 (2014-12-05)
 * (bluefox) read certificates from DB
 
