@@ -24,6 +24,11 @@
             "en": "On save the adapter restarts with new configuration immediately",
             "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
             "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
+        },
+        "socket_help":         {
+            "en": "Used by adapters like rickshaw or vis",
+            "de": "Wird von Rickshaw oder Vis benutzt",
+            "ru": "Используется для Rickshaw или Vis"
         }
     };
 
@@ -102,12 +107,12 @@
     <table><tr><td><img src="web.png"></td><td><h3 class="translate">Web Server adapter settings</h3></td></tr></table>
 
     <table>
-        <tr><td class="translate">IP:</td><td>            <select class="value" id="bind"></select></td></tr>
-        <tr><td class="translate">Port:</td><td>          <input  class="value" id="port" size="5"  maxlength="5"/></td></tr>
-        <tr><td class="translate">Secure(HTTPS):</td><td> <input  class="value" id="secure" type="checkbox" /></td></tr>
-        <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td></tr>
-        <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td></tr>
-        <tr><td class="translate">Socket.IO Instance (Optional):</td><td><select class="value" id="socketio"></select></td></tr>
+        <tr><td class="translate">IP:</td><td>            <select class="value" id="bind"></select></td><td></td></tr>
+        <tr><td class="translate">Port:</td><td>          <input  class="value" id="port" size="5"  maxlength="5"/></td><td></td></tr>
+        <tr><td class="translate">Secure(HTTPS):</td><td> <input  class="value" id="secure" type="checkbox" /></td><td></td></tr>
+        <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td><td></td></tr>
+        <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td><td></td></tr>
+        <tr><td class="translate">Socket.IO Instance (Optional):</td><td><select class="value" id="socketio"></select><span class="translate" style="padding-left: 20">socket_help</span></td></tr>
     </table>
 
     <p class="translate">help_tip</p>
