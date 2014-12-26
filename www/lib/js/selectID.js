@@ -23,45 +23,46 @@
 
  Interface:
  +  init(options) - init select ID dialog. Following options are supported
- {
- currentId:  '',       // Current ID or empty if nothing preselected
- objects:    null,     // All objects that should be shown. It can be empty if connCfg used.
- states:     null,     // All states of objects. It can be empty if connCfg used. If objects are set and no states, states will no be shown.
- filter:     null,     // filter
- imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
- connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
- onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
- onChange:   null,     // called every time the new object selected
- noDialog:   false,    // do not make dialog
- buttons:    null      // array with buttons, that should be shown in last column
- texts: {
- select:   'Select',
- cancel:   'Cancel',
- all:      'All',
- id:       'ID',
- name:     'Name',
- role:     'Role',
- type:     'Type',
- room:     'Room',
- enum:     'Members',
- value:    'Value',
- selectid: 'Select ID',
- from:     'From',
- lc:       'Last changed',
- ts:       'Time stamp',
- ack:      'Acknowledged',
- expand:   'Expand all nodes',
- collapse: 'Collapse all nodes',
- refresh:  'Rebuild tree',
- edit:     'Edit',
- ok:       'Ok',
- wait:     'Processing...'
- },
- columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
- widths:  null, // array with width for every column
- editEnd: null, // function (id, newValues) for edit lines (only id and name can be edited)
- editStart: null, // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects)
- }
+     {
+         currentId:  '',       // Current ID or empty if nothing preselected
+         objects:    null,     // All objects that should be shown. It can be empty if connCfg used.
+         states:     null,     // All states of objects. It can be empty if connCfg used. If objects are set and no states, states will no be shown.
+         filter:     null,     // filter
+         imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
+         connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
+         onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
+         onChange:   null,     // called every time the new object selected
+         noDialog:   false,    // do not make dialog
+         buttons:    null      // array with buttons, that should be shown in last column
+         texts: {
+             select:   'Select',
+             cancel:   'Cancel',
+             all:      'All',
+             id:       'ID',
+             name:     'Name',
+             role:     'Role',
+             type:     'Type',
+             room:     'Room',
+             enum:     'Members',
+             value:    'Value',
+             selectid: 'Select ID',
+             from:     'From',
+             lc:       'Last changed',
+             ts:       'Time stamp',
+             ack:      'Acknowledged',
+             expand:   'Expand all nodes',
+             collapse: 'Collapse all nodes',
+             refresh:  'Rebuild tree',
+             edit:     'Edit',
+             ok:       'Ok',
+             wait:     'Processing...'
+         },
+         columns:   ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
+         widths:    null,   // array with width for every column
+         editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
+         editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
+         zindex:    null    // z-index of dialog or table
+     }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
  +  clear() - clear object tree to read and buildit anew (used only if objects set by "init")
  +  getInfo(id) - get information about ID
@@ -329,6 +330,9 @@
                 height:   500,
                 buttons:  data.buttonsDlg
             });
+            if (data.zindex !== null) {
+                $('div[aria-describedby="' + $dlg.attr('id') + '"]').css({'z-index': data.zindex})
+            }
         }
 
         // Store current filter
@@ -483,7 +487,7 @@
             titlesTabbable: true,     // Add all node titles to TAB chain
             quicksearch: true,
             source: data.tree.children,
-            extensions: ["table", "gridnav", "filter"],
+            extensions: ["table", "gridnav", "filter", "themeroller"],
             table: {
                 indentation: 20,
                 nodeColumnIdx: 1
@@ -1016,6 +1020,7 @@
                 connCfg:    null,
                 onSuccess:  null,
                 onChange:   null,
+                zindex:     null,
                 columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button']
             }, options);
 

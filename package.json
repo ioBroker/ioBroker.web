@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "ioBroker simple web Adapter",
   "author": "bluefox <bluefox@ccu.io>",
   "homepage": "https://github.com/ioBroker/ioBroker.web",
