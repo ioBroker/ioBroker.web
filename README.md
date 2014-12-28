@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.1.6 (2014-12-28)
+* (bluefox) support empty files
+
 ### 0.1.5 (2014-12-26)
 * (bluefox) extend select ID dialog with jquery Theme-roller
 

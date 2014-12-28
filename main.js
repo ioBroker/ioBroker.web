@@ -206,7 +206,7 @@ function initWebServer(settings) {
             try {
                 var fileName = req.url.split('/', 3)[2].split('?', 2);
                 adapter.getBinaryState(fileName[0], function (err, obj) {
-                    if (!err && obj) {
+                    if (!err && obj !== null && obj !== undefined) {
                         res.set('Content-Type', 'text/plain');
                         res.send(obj);
                     } else {
@@ -271,7 +271,7 @@ function initWebServer(settings) {
                 url = url.substring(0, pos);
             }
             adapter.readFile(id, url, null, function (err, buffer, mimeType) {
-                if (!buffer || err) {
+                if (buffer === null || buffer === undefined || err) {
                     res.contentType('text/html');
                     res.send('File ' + url + ' not found', 404);
                 } else {
