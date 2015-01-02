@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.1.8 (2015-01-02)
+* (bluefox) enable socketio.0 by default
+
 ### 0.1.7 (2015-01-02)
 * (bluefox) enable npm install
 
