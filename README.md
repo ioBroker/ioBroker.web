@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.1.9 (2015-01-03)
+* (bluefox) update selectId dialog
+
 ### 0.1.8 (2015-01-02)
 * (bluefox) enable socketio.0 by default
 
