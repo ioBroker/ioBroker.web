@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.1.7 (2015-01-02)
+* (bluefox) enable npm install
+
 ### 0.1.6 (2014-12-28)
 * (bluefox) support empty files
 
