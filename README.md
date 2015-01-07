@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.1.11 (2015-01-07)
+* (bluefox) monitor state of socket.io to give correct connection data
+
 ### 0.1.10 (2015-01-06)
 * (bluefox) cache web files in memory
 
