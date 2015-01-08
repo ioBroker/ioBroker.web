@@ -61,7 +61,8 @@
              widths:    null,   // array with width for every column
              editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
              editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
-             zindex:    null    // z-index of dialog or table
+             zindex:    null,   // z-index of dialog or table
+             customButtonFilter: null // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
      }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
  +  clear() - clear object tree to read and buildit anew (used only if objects set by "init")
@@ -432,7 +433,17 @@
             } else if (data.columns[c] == 'room') {
                 text += '<td>' + textRooms + '</td>';
             } else if (data.columns[c] == 'button') {
-                text += '<td></td>';
+                text += '<td style="text-align: center">';
+                if (data.customButtonFilter) {
+                    var t = '<select id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_' + data.instance + '">';
+                    t += '<option value="">'      + data.texts.all     + '</option>';
+                    t += '<option value="true">'  + data.texts.with    + '</option>';
+                    t += '<option value="false">' + data.texts.without + '</option>';
+                    t += '</select>';
+
+                    text += '<table cellpadding="0" cellspacing="0" style="border-spacing: collapse"><tr><td>' + t + '</td>' + '<td><button id="filter_' + data.columns[c] + '_'  + data.instance + '_btn"></button></td></tr></table>'
+                }
+                text += '</td>';
             }
         }
 
@@ -924,7 +935,7 @@
                     if (data.filterVals[f] === 'true') {
                         if (!isCommon || !data.objects[node.key].common.history || !data.objects[node.key].common.history.enabled) return false;
                     } else if (data.filterVals[f] === 'false') {
-                        if (!isCommon || (data.objects[node.key].common.history && data.objects[node.key].common.history.enabled)) return false;
+                        if (!isCommon || data.objects[node.key].type != 'state' || (data.objects[node.key].common.history && data.objects[node.key].common.history.enabled)) return false;
                     }
                 } else
                 if (f == 'room') {
@@ -1006,6 +1017,10 @@
                 text += '<td><button id="btn_custom_' + data.instance + '_' + z + '"></button></td>';
             }
         }
+
+        if (data.customButtonFilter) {
+            $('#filter_button_' + data.instance + '_btn').button(data.customButtonFilter).css({width: 18, height: 18}).click(data.customButtonFilter.callback);
+        }
     }
 
     var methods = {
@@ -1049,6 +1064,7 @@
                 wait:     'Processing...'
             }, settings.texts);
 
+            var that = this;
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1095,20 +1111,37 @@
                         data.socketSESSION = data.connCfg.socketSession;
                     }
 
-                    data.socket = io.connect(data.socketURL, {
-                        'query': 'key=' + data.socketSESSION,
-                        'reconnection limit': 10000,
-                        'max reconnection attempts': Infinity
-                    });
+                    if (data.socketURL){
+                        data.socket = io.connect(data.socketURL, {
+                            'query': 'key=' + data.socketSESSION,
+                            'reconnection limit': 10000,
+                            'max reconnection attempts': Infinity
+                        });
 
-                    data.socket.on('connect', function () {
-                        data.socket.emit('getObjects', function (err, res) {
-                            data.objects = res;
-                            data.socket.emit('getStates', function (err, res) {
-                                data.states = res;
+                        data.socket.on('connect', function () {
+                            this.emit('name', data.connCfg.socketName || 'selectId');
+                            this.emit('getObjects', function (err, res) {
+                                data.objects = res;
+                                data.socket.emit('getStates', function (err, res) {
+                                    data.states = res;
+                                });
                             });
                         });
-                    });
+                        data.socket.on('stateChange', function (id, obj) {
+                            that.selectId('state', id, obj);
+                        });
+                        data.socket.on('objectChange', function (id, obj) {
+                            that.selectId('object', id, obj);
+                        });
+                    } else {
+                        console.log('No connection to server');
+                        if ($('#select-id-dialog').length == 0) {
+                            $('body').append('<div id="select-id-dialog"><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span><span>' + (data.texts.noconnection || 'No connection to server') + '</span></div>');
+                        }
+                        $('#select-id-dialog').dialog({
+                            modal: true
+                        });
+                    }
                 }
 
                 $dlg.data('selectId', data);
@@ -1130,7 +1163,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-
+                if (!data) continue;
                 if (data.inited) {
                     // Re-init tree if filter or selectedID changed
                     if ((data.filter && !filter && filter !== undefined) ||
@@ -1176,7 +1209,8 @@
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
-                if (!data.noDialog) {
+                var data = $dlg.data('selectId');
+                if (data && !data.noDialog) {
                     $dlg.dialog('hide');
                 } else {
                     $dlg.hide();
@@ -1205,7 +1239,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                if (data.objects) {
+                if (data && data.objects) {
                     return data.objects[id];
                 }
             }
@@ -1216,6 +1250,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
+                if (!data || !data.$tree) continue;
 
                 var tree = data.$tree.fancytree("getTree");
                 var node = null;
@@ -1270,7 +1305,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                if (!data || !data.states) continue;
+                if (!data || !data.states || !data.$tree) continue;
                 if (data.states[id] && state && data.states[id].val == state.val) return;
                 data.states[id] = state;
                 var tree = data.$tree.fancytree("getTree");
@@ -1291,7 +1326,7 @@
                 var dlg = this[k];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                if (!data || !data.objects) continue;
+                if (!data || !data.$tree || !data.objects) continue;
 
                 if (id.match(/^enum\.rooms/)) data.rooms = {};
 
@@ -1379,6 +1414,22 @@
                 }
             }
             return this;
+        },
+        "getFilteredIds": function () {
+            for (var k = 0; k < this.length; k++) {
+                var dlg = this[k];
+                var $dlg = $(dlg);
+                var data = $dlg.data('selectId');
+                if (!data || !data.$tree || !data.objects) continue;
+
+                var tree = data.$tree.fancytree("getTree");
+                var nodes = [];
+                tree.visit(function (n) {
+                    if (n.match) nodes.push(n.key);
+                });
+                return nodes;
+            }
+            return null;
         }
     };
 
