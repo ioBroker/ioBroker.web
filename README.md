@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.2.0 (2015-01-16)
+* (bluefox) support of integrated socket (from iobroker.socketio)
+
 ### 0.1.12 (2015-01-08)
 * (bluefox) update selectId dialog
 

@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "0.1.12",
+        "version":                  "0.2.0",
         "title":                    "ioBroker simple web Adapter",
         "desc": {
             "en":                   "opens a webserver for the ioBroker",
@@ -22,10 +22,19 @@
         "secure":                   false,
         "bind":                     "0.0.0.0",
         "cache":                    false,
-        "socketio":                 "system.adapter.socketio.0"
+        "socketio":                 ""
     },
     "objects": [
-
+        {
+            "_id": "connected",
+            "type": "info",
+            "common": {
+                "name": "Info about connected socket clients",
+                "type": "string",
+                "read":  true,
+                "write": false
+            }
+        }
     ],
     "instanceObjects": [
 

@@ -20,6 +20,8 @@
         "Secure(HTTPS):":   {"de": "Verschlüsselung(HTTPS):", "ru": "Шифрование(HTTPS):"},
         "Authentication:":  {"de": "Authentifikation:",       "ru": "Аутентификация:"},
         "Cache:":           {"de": "Puffer:",                 "ru": "Кэш:"},
+        "none":             {"de": "keins",                   "ru": ""},
+        "integrated":       {"de": "integriert",              "ru": "встроенный"},
         "help_tip":         {
             "en": "On save the adapter restarts with new configuration immediately",
             "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
@@ -44,7 +46,8 @@
             }
             $('#bind.value').val(settings.bind);
         });
-        $('#socketio').append('<option value="">' + _('none') + '</option>');
+        $('#socketio').append('<option value="none">' + _('none') + '</option>');
+        $('#socketio').append('<option value="">' + _('integrated') + '</option>');
         var count = 0;
         for (var i = 0; i < supportedSockets.length; i++) {
             count++;
