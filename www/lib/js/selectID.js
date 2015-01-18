@@ -441,7 +441,7 @@
                     t += '<option value="false">' + data.texts.without + '</option>';
                     t += '</select>';
 
-                    text += '<table cellpadding="0" cellspacing="0" style="border-spacing: collapse"><tr><td>' + t + '</td>' + '<td><button id="filter_' + data.columns[c] + '_'  + data.instance + '_btn"></button></td></tr></table>'
+                    text += '<table cellpadding="0" cellspacing="0" style="border-spacing: 0px 0px"><tr><td>' + t + '</td>' + '<td><button id="filter_' + data.columns[c] + '_'  + data.instance + '_btn"></button></td></tr></table>'
                 }
                 text += '</td>';
             }
@@ -621,21 +621,41 @@
 
                     } else
                     if (data.columns[c] == 'value') {
-                        if (data.states && data.states[node.key]) {
-                            var val = data.states[node.key].val;
-                            var fullVal;
-                            if (val === undefined) {
-                                val = '';
+                        if (data.states) {
+                            if (data.states[node.key]) {
+                                var val = data.states[node.key].val;
+                                var fullVal;
+                                if (val === undefined) {
+                                    val = '';
+                                } else {
+                                    if (isCommon && data.objects[node.key].common.unit) val += ' ' + data.objects[node.key].common.unit;
+                                    fullVal = data.texts.value + ': ' + val;
+                                    fullVal += '\x0A' + data.texts.ack  + ': ' + data.states[node.key].ack;
+                                    fullVal += '\x0A' + data.texts.ts   + ': ' + formatDate(new Date(data.states[node.key].ts * 1000));
+                                    fullVal += '\x0A' + data.texts.lc   + ': ' + formatDate(new Date(data.states[node.key].lc * 1000));
+                                    fullVal += '\x0A' + data.texts.from + ': ' + (data.states[node.key].from || '');
+                                }
+                                $tdList.eq(base).text(val);
+                                $tdList.eq(base).attr('title', fullVal);
+                            } else if (data.states[node.key + '.val'] !== undefined) {
+                                var val = data.states[node.key + '.val'];
+                                var fullVal;
+                                if (val === undefined) {
+                                    val = '';
+                                } else {
+                                    if (isCommon && data.objects[node.key].common.unit) val += ' ' + data.objects[node.key].common.unit;
+                                    fullVal = data.texts.value + ': ' + val;
+                                    fullVal += '\x0A' + data.texts.ack  + ': ' + data.states[node.key + '.ack'];
+                                    fullVal += '\x0A' + data.texts.ts   + ': ' + formatDate(new Date(data.states[node.key + '.ts'] * 1000));
+                                    fullVal += '\x0A' + data.texts.lc   + ': ' + formatDate(new Date(data.states[node.key + '.lc'] * 1000));
+                                    fullVal += '\x0A' + data.texts.from + ': ' + (data.states[node.key + '.from'] || '');
+                                }
+                                $tdList.eq(base).text(val);
+                                $tdList.eq(base).attr('title', fullVal);
                             } else {
-                                if (isCommon && data.objects[node.key].common.unit) val += ' ' + data.objects[node.key].common.unit;
-                                fullVal = data.texts.value + ': ' + val;
-                                fullVal += '\x0A' + data.texts.ack  + ': ' + data.states[node.key].ack;
-                                fullVal += '\x0A' + data.texts.ts   + ': ' + formatDate(new Date(data.states[node.key].ts * 1000));
-                                fullVal += '\x0A' + data.texts.lc   + ': ' + formatDate(new Date(data.states[node.key].lc * 1000));
-                                fullVal += '\x0A' + data.texts.from + ': ' + (data.states[node.key].from || '');
+                                $tdList.eq(base).text('');
+                                $tdList.eq(base).attr('title', '');
                             }
-                            $tdList.eq(base).text(val);
-                            $tdList.eq(base).attr('title', fullVal);
                         } else {
                             $tdList.eq(base).text('');
                             $tdList.eq(base).attr('title', '');
@@ -1200,6 +1220,17 @@
                     $dlg.dialog('open');
                 } else {
                     $dlg.show();
+                }
+
+                if (data.currentId) {
+                    var node = null;
+                    var tree = data.$tree.fancytree("getTree");
+                    tree.visit(function (node) {
+                        if (node.key == data.currentId) {
+                            node.setActive();
+                            return false;
+                        }
+                    });
                 }
             }
 

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -53,8 +53,8 @@
   },
   "license": "MIT",
   "gitHead": "78cc1ab2e597a6a4297e46fabbf658475fec4b12",
-  "_id": "iobroker.web@0.1.12",
-  "_shasum": "40ce73cb8e7f38deed6a5203adae29d900131105",
+  "_id": "iobroker.web@0.2.0",
+  "_shasum": "73ed56c8679af24d834032bae9154d540678e22c",
   "_from": "iobroker.web@",
   "_npmVersion": "1.4.28",
   "_npmUser": {
