@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.2.2 (2015-01-20)
+* (bluefox) update select ID dialog
+
 ### 0.2.1 (2015-01-18)
 * (bluefox) update select ID dialog
 
