@@ -68,16 +68,20 @@
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
                 $('#' + key + '.value').prop('checked', settings[key]).change(function() {
                     $('#save').button("enable");
+					$('#saveclose').button("enable");
                 });
             } else {
                 $('#' + key + '.value').val(settings[key]).change(function() {
                     $('#save').button("enable");
+					$('#saveclose').button("enable");
                 }).keyup(function() {
                     $('#save').button("enable");
+					$('#saveclose').button("enable");
                 });
             }
         }
         $('#save').button("disable");
+        $('#saveclose').button("disable");
 
         $('#auth').change(function () {
             if ($(this).prop('checked')) {
@@ -101,6 +105,7 @@
         });
         callback(obj);
         $('#save').button("disable");
+        $('#saveclose').button("disable");
     }
 </script>
 
