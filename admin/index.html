@@ -22,10 +22,19 @@
         "Cache:":           {"de": "Puffer:",                 "ru": "Кэш:"},
         "none":             {"de": "keins",                   "ru": ""},
         "integrated":       {"de": "integriert",              "ru": "встроенный"},
+        "Public certificate:":    {"en": "Public certificate:",     "de": "Publikzertifikat:",       "ru": "'Public' сертификат:"},
+        "Private certificate:":   {"en": "Private certificate:",    "de": "Privatzertifikat:",       "ru": "'Private' сертификат:"},
+        "Internal 'Simple API':":   {"en": "Build-in 'Simple-API'",    "de": "Eingebautes 'Simple-API':",       "ru": "Встроенный 'Simple-API':"},
+
         "help_tip":         {
             "en": "On save the adapter restarts with new configuration immediately",
             "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
             "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
+        },
+        "Set certificates or load it first in the system settings (right top).":    {
+            "en": "Set certificates or load it first in the system settings (right top).",
+            "de": "Setze Zertificate oder lade die erst unter System/Einstellungen (oben rechts).",
+            "ru": "Нужно выбрать сертификаты или сначала загрузить их в системных настройках (вверху справа)."
         },
         "socket_help":         {
             "en": "Used by adapters like rickshaw or vis",
@@ -35,6 +44,16 @@
     };
 
     var supportedSockets = ['socketio'];
+
+    function showHideSettings() {
+        if ($('#secure').prop('checked')) {
+            $('#_certPublic').show();
+            $('#_certPrivate').show();
+        } else {
+            $('#_certPublic').hide();
+            $('#_certPrivate').hide();
+        }
+    }
 
     // the function loadSettings has to exist ...
     function load(settings) {
@@ -67,6 +86,7 @@
             // example: select elements with id=key and class=value and insert value
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
                 $('#' + key + '.value').prop('checked', settings[key]).change(function() {
+                    showHideSettings();
                     $('#save').button("enable");
 					$('#saveclose').button("enable");
                 });
@@ -83,9 +103,15 @@
         $('#save').button("disable");
         $('#saveclose').button("disable");
 
+        fillSelectCertificates('#certPublic',  'public',  settings.certPublic);
+        fillSelectCertificates('#certPrivate', 'private', settings.certPrivate);
+
+        showHideSettings();
+
         $('#auth').change(function () {
             if ($(this).prop('checked')) {
                 $('#secure').prop('checked', true);
+                showHideSettings();
             }
         });
     }
@@ -103,6 +129,13 @@
                 obj[$this.attr('id')] = $this.val();
             }
         });
+
+        if ($('#secure').prop('checked') && (!$('#certPrivate').val() || !$('#certPublic').val())) {
+            showMessage(_('Set certificates or load it first in the system settings (right top).'));
+            return;
+        }
+
+
         callback(obj);
         $('#save').button("disable");
         $('#saveclose').button("disable");
@@ -118,9 +151,18 @@
         <tr><td class="translate">IP:</td><td>            <select class="value" id="bind"></select></td><td></td></tr>
         <tr><td class="translate">Port:</td><td>          <input  class="value" id="port" size="5"  maxlength="5"/></td><td></td></tr>
         <tr><td class="translate">Secure(HTTPS):</td><td> <input  class="value" id="secure" type="checkbox" /></td><td></td></tr>
+        <tr id="_certPublic">
+            <td class="translate">Public certificate:</td>
+            <td><select id="certPublic" class="value"></select></td>
+        </tr>
+        <tr id="_certPrivate">
+            <td class="translate">Private certificate:</td>
+            <td><select id="certPrivate" class="value"></select></td>
+        </tr>
         <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td><td></td></tr>
         <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td><td></td></tr>
         <tr><td class="translate">Socket.IO Instance (Optional):</td><td><select class="value" id="socketio"></select><span class="translate" style="padding-left: 20">socket_help</span></td></tr>
+        <tr><td><a href="https://github.com/ioBroker/ioBroker.simple-api/blob/master/README.md" class="translate" target="_blank">Internal 'Simple API':</a></td><td><input type="checkbox" class="value" id="simpleapi"/></td></tr>
     </table>
 
     <p class="translate">help_tip</p>

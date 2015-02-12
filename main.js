@@ -252,6 +252,11 @@ function initWebServer(settings) {
         server.app.use('/', function (req, res) {
             var url = req.url;
 
+            if (server.api && server.api.checkRequest(url)) {
+                server.api.restApi(req, res);
+                return;
+            }
+
             // add index.html
             url = url.replace(/\/($|\?|#)/, '/index.html$1');
 
@@ -314,6 +319,12 @@ function initWebServer(settings) {
             server.server.listen(port);
             adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
         });
+    }
+
+    // Activate integrated simple API
+    if (settings.simpleapi) {
+        var SimpleAPI = require(__dirname + '/node_modules/iobroker.simple-api/lib/simpleapi.js');
+        server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
     }
 
     // Activate integrated socket
