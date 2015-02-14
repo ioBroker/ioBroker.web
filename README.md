@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.2.4 (2015-02-14)
+* (bluefox) fix error with update states if used internal socket.io
+
 ### 0.2.3 (2015-02-12)
 * (bluefox) add simple api
 * (bluefox) update select ID dialog 

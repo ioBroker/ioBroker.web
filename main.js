@@ -38,6 +38,10 @@ var adapter = utils.adapter({
                 socketUrl = '';
             }
         }
+        if (webServer.io) webServer.io.publishAll('objectChange', id, obj);
+    },
+    stateChange: function (id, state) {
+        if (webServer.io) webServer.io.publishAll('stateChange', id, state);
     },
     unload: function (callback) {
         try {
