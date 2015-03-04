@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "0.2.4",
+        "version":                  "0.2.5",
         "title":                    "ioBroker simple web Adapter",
         "desc": {
             "en":                   "opens a webserver for the ioBroker",
@@ -12,6 +12,7 @@
         "platform":                 "Javascript/Node.js",
         "loglevel":                 "info",
         "icon":                     "web.png",
+        "readme":                   "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
         "enabled":                  true,
         "keywords":                 ["web", "server", "www", "express"],
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png"

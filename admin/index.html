@@ -56,7 +56,7 @@
     }
 
     // the function loadSettings has to exist ...
-    function load(settings) {
+    function load(settings, onChange) {
         if (!settings) return;
 
         getIPs(function(ips) {
@@ -87,21 +87,17 @@
             if ($('#' + key + '.value').attr('type') == 'checkbox') {
                 $('#' + key + '.value').prop('checked', settings[key]).change(function() {
                     showHideSettings();
-                    $('#save').button("enable");
-					$('#saveclose').button("enable");
+                    onChange();
                 });
             } else {
                 $('#' + key + '.value').val(settings[key]).change(function() {
-                    $('#save').button("enable");
-					$('#saveclose').button("enable");
+                    onChange();
                 }).keyup(function() {
-                    $('#save').button("enable");
-					$('#saveclose').button("enable");
+                    $(this).trigger('change');
                 });
             }
         }
-        $('#save').button("disable");
-        $('#saveclose').button("disable");
+        onChange(false);
 
         fillSelectCertificates('#certPublic',  'public',  settings.certPublic);
         fillSelectCertificates('#certPrivate', 'private', settings.certPrivate);
@@ -135,10 +131,7 @@
             return;
         }
 
-
         callback(obj);
-        $('#save').button("disable");
-        $('#saveclose').button("disable");
     }
 </script>
 

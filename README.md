@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.2.5 (2015-03-04)
+* (bluefox) add sysLang variable to info.js (e.g. for Rickshaw)
+
 ### 0.2.4 (2015-02-14)
 * (bluefox) fix error with update states if used internal socket.io
 
