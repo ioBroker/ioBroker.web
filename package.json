@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -31,7 +31,7 @@
     "request": "~2.38.0",
     "connect-flash": "~0.1.1",
     "xtend": "~2.0.3",
-    "iobroker.socketio": ">=0.2.0",
+    "iobroker.socketio": ">=0.2.3",
     "iobroker.simple-api": ">=0.0.2"
   },
   "devDependencies": {
