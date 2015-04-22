@@ -293,19 +293,35 @@ function initWebServer(settings) {
                 res.contentType(cache[id + '/' + url].mimeType);
                 res.send(cache[id + '/' + url].buffer);
             } else {
-                adapter.readFile(id, url, null, function (err, buffer, mimeType) {
-                    if (buffer === null || buffer === undefined || err) {
+                if (id == 'login' && url == 'index.html') {
+                    var buffer = fs.readFileSync(__dirname + '/www/login/index.html');
+                    if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');
                         res.send('File ' + url + ' not found', 404);
                     } else {
                         // Store file in cache
                         if (settings.cache) {
-                            cache[id + '/' + url] = {buffer: buffer, mimeType: mimeType || 'text/javascript'};
+                            cache[id + '/' + url] = {buffer: buffer.toString(), mimeType: 'text/html'};
                         }
-                        res.contentType(mimeType || 'text/javascript');
-                        res.send(buffer);
+                        res.contentType('text/html');
+                        res.send(buffer.toString());
                     }
-                });
+
+                } else {
+                    adapter.readFile(id, url, null, function (err, buffer, mimeType) {
+                        if (buffer === null || buffer === undefined || err) {
+                            res.contentType('text/html');
+                            res.send('File ' + url + ' not found', 404);
+                        } else {
+                            // Store file in cache
+                            if (settings.cache) {
+                                cache[id + '/' + url] = {buffer: buffer, mimeType: mimeType || 'text/javascript'};
+                            }
+                            res.contentType(mimeType || 'text/javascript');
+                            res.send(buffer);
+                        }
+                    });
+                }
             }
         });
 
