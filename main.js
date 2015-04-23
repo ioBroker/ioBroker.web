@@ -191,7 +191,6 @@ function initWebServer(settings) {
             server.app.use(flash());
 
             server.app.post('/login', function (req, res) {
-                console.log('Redirect to ' + req.body.origin);
                 var redirect = '/';
                 if (req.body.origin) {
                     var parts = req.body.origin.split('=');
