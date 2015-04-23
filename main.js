@@ -364,7 +364,10 @@ function initWebServer(settings) {
     // Activate integrated socket
     if (ownSocket) {
         var IOBrokerSocket = require(__dirname + '/node_modules/iobroker.socketio/lib/iobrokersocket.js');
-        server.io = new IOBrokerSocket(server.server, settings, adapter)
+        var socketSettings = JSON.parse(JSON.stringify(settings));
+        // Authentication checked by server itself
+        socketSettings.auth = false;
+        server.io = new IOBrokerSocket(server.server, socketSettings, adapter)
     }
 
     if (server.server) {
