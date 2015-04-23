@@ -190,13 +190,19 @@ function initWebServer(settings) {
             server.app.use(passport.session());
             server.app.use(flash());
 
-            server.app.post('/login',
-                passport.authenticate('local', {
-                    successRedirect: '/',
-                    failureRedirect: '/login',
+            server.app.post('/login', function (req, res) {
+                console.log('Redirect to ' + req.body.origin);
+                var redirect = '/';
+                if (req.body.origin) {
+                    var parts = req.body.origin.split('=');
+                    if (parts[1]) redirect = decodeURIComponent(parts[1]);
+                }
+                var authenticate = passport.authenticate('local', {
+                    successRedirect: redirect,
+                    failureRedirect: '/login/index.html' + req.body.origin + (req.body.origin ? '&error' : '?error'),
                     failureFlash: 'Invalid username or password.'
-                })
-            );
+                })(req, res);
+            });
 
             server.app.get('/logout', function (req, res) {
                 req.logout();
@@ -205,8 +211,11 @@ function initWebServer(settings) {
 
             // route middleware to make sure a user is logged in
             server.app.use(function (req, res, next) {
-                if (req.isAuthenticated() || req.originalUrl === '/login/') return next();
-                res.redirect('/login/');
+                if (req.isAuthenticated() ||
+                    /^\/login\//.test(req.originalUrl) ||
+                    /\.ico$/.test(req.originalUrl)
+                ) return next();
+                res.redirect('/login/index.html?href=' + encodeURIComponent(req.originalUrl));
             });
         } else {
             server.app.get('/login', function (req, res) {
