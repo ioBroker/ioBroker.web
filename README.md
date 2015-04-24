@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.3.1 (2015-04-24)
+* (bluefox) make "_socket/info.js" available from every directory
+
 ### 0.3.0 (2015-04-23)
 * (bluefox) enable https connection and improve login dialog
 

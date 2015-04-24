@@ -242,7 +242,7 @@ function initWebServer(settings) {
             }
         });
 
-        server.app.get('/_socket/info.js', function (req, res) {
+        server.app.get('*/_socket/info.js', function (req, res) {
             res.set('Content-Type', 'application/javascript');
             res.send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang="' + lang + '";');
         });
