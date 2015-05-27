@@ -135,6 +135,8 @@ function initWebServer(settings) {
         settings:  settings
     };
 
+    adapter.config.defaultUser = adapter.config.defaultUser || 'system.user.admin';
+
     if (settings.port) {
         if (settings.secure) {
             if (!adapter.config.certificates) {
@@ -146,9 +148,9 @@ function initWebServer(settings) {
             session =          require('express-session');
             cookieParser =     require('cookie-parser');
             bodyParser =       require('body-parser');
-            AdapterStore =     require(__dirname + '/../../lib/session.js')(session);
+            AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session);
             passportSocketIo = require(__dirname + '/lib/passport.socketio.js');
-            password =         require(__dirname + '/../../lib/password.js');
+            password =         require(utils.controllerDir + '/lib/password.js');
             passport =         require('passport');
             LocalStrategy =    require('passport-local').Strategy;
             flash =            require('connect-flash'); // TODO report error to user
@@ -316,7 +318,7 @@ function initWebServer(settings) {
                     }
 
                 } else {
-                    adapter.readFile(id, url, null, function (err, buffer, mimeType) {
+                    adapter.readFile(id, url, {user: 'system.user.' + (req.user || adapter.config.defaultUser)}, function (err, buffer, mimeType) {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
                             res.send('File ' + url + ' not found', 404);
@@ -366,7 +368,9 @@ function initWebServer(settings) {
         var IOBrokerSocket = require(__dirname + '/node_modules/iobroker.socketio/lib/iobrokersocket.js');
         var socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
-        socketSettings.auth = false;
+        socketSettings.auth   = false;
+        socketSettings.secret = secret;
+        socketSettings.store  = AdapterStore;
         server.io = new IOBrokerSocket(server.server, socketSettings, adapter)
     }
 

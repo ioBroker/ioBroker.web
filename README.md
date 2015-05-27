@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.3.2 (2015-05-20)
+* (bluefox) support of subscribeObjects in socketio
+
 ### 0.3.1 (2015-04-24)
 * (bluefox) make "_socket/info.js" available from every directory
 
