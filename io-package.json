@@ -26,7 +26,8 @@
         "cache":                    false,
         "socketio":                 "",
         "simpleapi":                false,
-        "defaultUser":              "admin"
+        "defaultUser":              "admin",
+        "ttl":                      3600
     },
     "objects": [
         {

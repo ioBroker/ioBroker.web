@@ -270,7 +270,7 @@ function initWebServer(settings) {
 
         // deliver web files from objectDB
         server.app.use('/', function (req, res) {
-            var url = req.url;
+            var url = decodeURI(req.url);
 
             if (server.api && server.api.checkRequest(url)) {
                 server.api.restApi(req, res);
@@ -371,7 +371,8 @@ function initWebServer(settings) {
         socketSettings.auth   = false;
         socketSettings.secret = secret;
         socketSettings.store  = AdapterStore;
-        server.io = new IOBrokerSocket(server.server, socketSettings, adapter)
+        socketSettings.ttl    = adapter.config.ttl || 3600;
+        server.io = new IOBrokerSocket(server.server, socketSettings, adapter);
     }
 
     if (server.server) {
