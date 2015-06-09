@@ -32,7 +32,7 @@
     "connect-flash": "~0.1.1",
     "xtend": "~2.0.3",
     "iobroker.socketio": ">=0.3.2",
-    "iobroker.simple-api": ">=0.0.2"
+    "iobroker.simple-api": ">=0.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
