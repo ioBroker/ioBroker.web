@@ -40,6 +40,7 @@ var adapter = utils.adapter({
             }
         }
         if (webServer.io) webServer.io.publishAll('objectChange', id, obj);
+        if (webServer.api && adapter.config.auth) webServer.api.objectChange(id, obj);
     },
     stateChange: function (id, state) {
         if (webServer.io) webServer.io.publishAll('stateChange', id, state);
@@ -135,7 +136,7 @@ function initWebServer(settings) {
         settings:  settings
     };
 
-    adapter.config.defaultUser = adapter.config.defaultUser || 'system.user.admin';
+    adapter.config.defaultUser = adapter.config.defaultUser || 'admin';
 
     if (settings.port) {
         if (settings.secure) {
@@ -159,7 +160,6 @@ function initWebServer(settings) {
 
             passport.use(new LocalStrategy(
                 function (username, password, done) {
-
                     adapter.checkPassword(username, password, function (res) {
                         if (res) {
                             return done(null, username);
@@ -183,10 +183,10 @@ function initWebServer(settings) {
             }));
             server.app.use(bodyParser.json());
             server.app.use(session({
-                secret: secret,
+                secret:            secret,
                 saveUninitialized: true,
-                resave: true,
-                store: store
+                resave:            true,
+                store:             store
             }));
             server.app.use(passport.initialize());
             server.app.use(passport.session());
@@ -360,6 +360,11 @@ function initWebServer(settings) {
     // Activate integrated simple API
     if (settings.simpleapi) {
         var SimpleAPI = require(__dirname + '/node_modules/iobroker.simple-api/lib/simpleapi.js');
+
+        // Subscribe on user changes to manage the permissions cache
+        adapter.subscribeForeignObjects('system.group.*');
+        adapter.subscribeForeignObjects('system.user.*');
+
         server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
     }
 
@@ -368,10 +373,10 @@ function initWebServer(settings) {
         var IOBrokerSocket = require(__dirname + '/node_modules/iobroker.socketio/lib/iobrokersocket.js');
         var socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
-        socketSettings.auth   = false;
-        socketSettings.secret = secret;
-        socketSettings.store  = AdapterStore;
-        socketSettings.ttl    = adapter.config.ttl || 3600;
+        socketSettings.auth        = false;
+        socketSettings.secret      = secret;
+        socketSettings.store       = store;
+        socketSettings.ttl         = adapter.config.ttl || 3600;
         server.io = new IOBrokerSocket(server.server, socketSettings, adapter);
     }
 

@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "0.3.2",
+        "version":                  "0.4.0",
         "title":                    "ioBroker simple web Adapter",
         "desc": {
             "en":                   "opens a webserver for the ioBroker",
@@ -27,7 +27,8 @@
         "socketio":                 "",
         "simpleapi":                false,
         "defaultUser":              "admin",
-        "ttl":                      3600
+        "ttl":                      3600,
+        "defaultUser":              "admin"
     },
     "objects": [
         {
