@@ -30,7 +30,7 @@
     "passport": "~0.2.0",
     "request": "~2.38.0",
     "connect-flash": "~0.1.1",
-    "xtend": "~2.0.3",
+    "xtend": "~4.0.0",
     "iobroker.socketio": ">=0.2.2",
     "iobroker.simple-api": ">=0.0.0"
   },
