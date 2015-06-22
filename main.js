@@ -231,7 +231,7 @@ function initWebServer(settings) {
         server.app.get('/state/*', function (req, res) {
             try {
                 var fileName = req.url.split('/', 3)[2].split('?', 2);
-                adapter.getBinaryState(fileName[0], function (err, obj) {
+                adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser}, function (err, obj) {
                     if (!err && obj !== null && obj !== undefined) {
                         res.set('Content-Type', 'text/plain');
                         res.send(obj);
@@ -318,7 +318,7 @@ function initWebServer(settings) {
                     }
 
                 } else {
-                    adapter.readFile(id, url, {user: 'system.user.' + (req.user || adapter.config.defaultUser)}, function (err, buffer, mimeType) {
+                    adapter.readFile(id, url, {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser}, function (err, buffer, mimeType) {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
                             res.send('File ' + url + ' not found', 404);

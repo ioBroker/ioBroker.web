@@ -53,8 +53,10 @@
         } else {
             $('#_certPublic').hide();
             $('#_certPrivate').hide();
+            $('#auth').prop('checked', false);
         }
         if ($('#auth').prop('checked')) {
+            $('#secure').prop('checked', true);
             $('#defaultUser').val('admin');
             $('.defaultUser').hide();
         } else {
