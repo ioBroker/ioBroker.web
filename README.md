@@ -7,6 +7,13 @@ Web server on the base of Node.js and express to read the files from CouchDB
 
 ## Changelog
 
+### 0.4.1 (2015-06-28)
+* (bluefox) change login form
+* (bluefox) update version of simple-api
+* (bluefox) add default user
+* (bluefox) temporary enable install over npm
+* (bluefox) use xtend 4.0.0
+
 ### 0.4.0 (2015-06-13)
 * (bluefox) add permissions support
 
