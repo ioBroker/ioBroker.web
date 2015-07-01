@@ -9,7 +9,6 @@ var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 
 var session;// =           require('express-session');
 var cookieParser;// =      require('cookie-parser');
-var bodyParser;// =        require('cookie-parser');
 var bodyParser;// =        require('body-parser');
 var AdapterStore;// =      require(__dirname + '/../../lib/session.js')(session);
 var passportSocketIo;// =  require(__dirname + "/lib/passport.socketio.js");
