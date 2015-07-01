@@ -2,10 +2,13 @@
 
 # ioBroker.web
 
-Web server on the base of Node.js and express to read the files from CouchDB
+Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+
+### 0.4.2 (2015-07-01)
+* (bluefox) fix small package.json errors
 
 ### 0.4.1 (2015-06-28)
 * (bluefox) change login form

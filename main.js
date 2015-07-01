@@ -193,9 +193,15 @@ function initWebServer(settings) {
 
             server.app.post('/login', function (req, res) {
                 var redirect = '/';
+                var parts;
                 if (req.body.origin) {
-                    var parts = req.body.origin.split('=');
+                    parts = req.body.origin.split('=');
                     if (parts[1]) redirect = decodeURIComponent(parts[1]);
+                }
+                if (req.body && req.body.username && adapter.config.addUserName && redirect.indexOf('?') == -1) {
+                    parts = redirect.split('#');
+                    parts[0] += '?' + req.body.username;
+                    redirect = parts.join('#');
                 }
                 var authenticate = passport.authenticate('local', {
                     successRedirect: redirect,
