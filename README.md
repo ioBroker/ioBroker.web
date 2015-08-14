@@ -7,6 +7,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 ## Changelog
 
+### 0.4.4 (2015-08-14)
+* (bluefox) update select ID dialog
+
 ### 0.4.3 (2015-08-11)
 * (bluefox) fix filter in selectId dialog
 * (bluefox) update packages

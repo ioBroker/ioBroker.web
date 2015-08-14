@@ -23,57 +23,57 @@
 
  Interface:
  +  init(options) - init select ID dialog. Following options are supported
- {
- currentId:  '',       // Current ID or empty if nothing preselected
- objects:    null,     // All objects that should be shown. It can be empty if connCfg used.
- states:     null,     // All states of objects. It can be empty if connCfg used. If objects are set and no states, states will no be shown.
- filter:     null,     // filter
- imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
- connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
- onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
- onChange:   null,     // called every time the new object selected
- noDialog:   false,    // do not make dialog
- noMultiselect: false, // do not make multiselect
- buttons:    null,     // array with buttons, that should be shown in last column
- list:       false,    // tree view or list view
- name:       null,     // name of the dialog to store filter settings
- texts: {
- select:   'Select',
- cancel:   'Cancel',
- all:      'All',
- id:       'ID',
- name:     'Name',
- role:     'Role',
- type:     'Type',
- room:     'Room',
- enum:     'Members',
- value:    'Value',
- selectid: 'Select ID',
- from:     'From',
- lc:       'Last changed',
- ts:       'Time stamp',
- ack:      'Acknowledged',
- expand:   'Expand all nodes',
- collapse: 'Collapse all nodes',
- refresh:  'Rebuild tree',
- edit:     'Edit',
- ok:       'Ok',
- wait:     'Processing...',
- list:     'Show list view',
- tree:     'Show tree view',
- selectAll: 'Select all',
- unselectAll: 'Unselect all',
- invertSelection: 'Invert selection'
- },
- columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
- widths:    null,   // array with width for every column
- editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
- editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
- zindex:    null,   // z-index of dialog or table
- customButtonFilter: null // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
- }
+         {
+             currentId:  '',       // Current ID or empty if nothing preselected
+             objects:    null,     // All objects that should be shown. It can be empty if connCfg used.
+             states:     null,     // All states of objects. It can be empty if connCfg used. If objects are set and no states, states will no be shown.
+             filter:     null,     // filter
+             imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
+             connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
+             onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
+             onChange:   null,     // called every time the new object selected
+             noDialog:   false,    // do not make dialog
+             noMultiselect: false, // do not make multiselect
+             buttons:    null,     // array with buttons, that should be shown in last column
+             list:       false,    // tree view or list view
+             name:       null,     // name of the dialog to store filter settings
+             texts: {
+                 select:   'Select',
+                 cancel:   'Cancel',
+                 all:      'All',
+                 id:       'ID',
+                 name:     'Name',
+                 role:     'Role',
+                 type:     'Type',
+                 room:     'Room',
+                 enum:     'Members',
+                 value:    'Value',
+                 selectid: 'Select ID',
+                 from:     'From',
+                 lc:       'Last changed',
+                 ts:       'Time stamp',
+                 ack:      'Acknowledged',
+                 expand:   'Expand all nodes',
+                 collapse: 'Collapse all nodes',
+                 refresh:  'Rebuild tree',
+                 edit:     'Edit',
+                 ok:       'Ok',
+                 wait:     'Processing...',
+                 list:     'Show list view',
+                 tree:     'Show tree view',
+                 selectAll: 'Select all',
+                 unselectAll: 'Unselect all',
+                 invertSelection: 'Invert selection'
+             },
+             columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
+             widths:    null,   // array with width for every column
+             editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
+             editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
+             zindex:    null,   // z-index of dialog or table
+             customButtonFilter: null // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
+     }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
- +  clear() - clear object tree to read and build a new (used only if objects set by "init")
+ +  clear() - clear object tree to read and build anew (used only if objects set by "init")
  +  getInfo(id) - get information about ID
  +  getTreeInfo(id) - get {id, parent, children, object}
  +  state(id, val) - update states in tree
@@ -322,12 +322,32 @@
         if (data.selectedID) {
             data.$tree.fancytree('getTree').visit(function (node) {
                 if (node.key == data.selectedID) {
-                    node.setActive();
-                    node.makeVisible({scrollIntoView: scrollIntoView || false});
+                    try {
+                        node.setActive();
+                        node.makeVisible({scrollIntoView: scrollIntoView || false});
+                    } catch (e) {
+                        //console.warn(e);
+                    }
                     return false;
                 }
             });
         }
+    }
+
+    function findRoomsForObject(data, id, rooms) {
+        rooms = rooms || [];
+        for (var i = 0; i < data.enums.length; i++) {
+            if (data.objects[data.enums[i]].common.members.indexOf(id) != -1 &&
+                rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) {
+                rooms.push(data.objects[data.enums[i]].common.name);
+            }
+        }
+        var parts = id.split('.');
+        parts.pop();
+        id = parts.join('.');
+        if (data.objects[id]) findRoomsForObject(data, id, rooms);
+
+        return rooms;
     }
 
     function initTreeDialog($dlg) {
@@ -679,19 +699,10 @@
                     if (data.columns[c] == 'room') {
                         // Try to find room
                         if (data.rooms) {
-                            var rooms = data.rooms[node.key];
-                            if (!rooms) {
-                                rooms = [];
-                                for (var i = 0; i < data.enums.length; i++) {
-                                    if (data.objects[data.enums[i]].common.members.indexOf(node.key) != -1 &&
-                                        rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) rooms.push(data.objects[data.enums[i]].common.name);
-                                }
-                                data.rooms[node.key] = rooms;
-                            }
-                            $tdList.eq(base++).text(rooms.join(', '));
+                            if (!data.rooms[node.key]) data.rooms[node.key] = findRoomsForObject(data, node.key);
+                            $tdList.eq(base++).text(data.rooms[node.key].join(', '));
                         } else {
                             $tdList.eq(base++).text('');
-
                         }
 
                     } else
@@ -761,8 +772,8 @@
                             }
                         } else if (data.editEnd) {
                             text = '<button data-id="' + node.key + '" class="select-button-edit"></button>' +
-                                '<button data-id="' + node.key + '" class="select-button-ok"></button>' +
-                                '<button data-id="' + node.key + '" class="select-button-cancel"></button>';
+                            '<button data-id="' + node.key + '" class="select-button-ok"></button>' +
+                            '<button data-id="' + node.key + '" class="select-button-cancel"></button>';
                         }
 
                         if (data.editEnd) {
@@ -786,7 +797,7 @@
                                 node.editEnd(true);
                             }).attr('title', data.texts.ok).data('node', node).hide().css({width: 26, height: 20});
 
-                            $('.select-button-cancel[data-id="' + node.key + '"]').button({
+                             $('.select-button-cancel[data-id="' + node.key + '"]').button({
                                 text: false,
                                 icons: {
                                     primary:'ui-icon-close'
@@ -1045,20 +1056,8 @@
                     if (!data.objects[node.key]) return false;
 
                     // Try to find room
-                    var rooms = data.rooms[node.key];
-                    if (!data.rooms[node.key]) {
-                        rooms = [];
-
-                        for (var i = 0; i < data.enums.length; i++) {
-                            if (data.objects[data.enums[i]].common.members.indexOf(node.key) != -1 &&
-                                rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) {
-                                rooms.push(data.objects[data.enums[i]].common.name);
-                            }
-                        }
-                        data.rooms[node.key] = rooms;
-                    }
-
-                    if (rooms.indexOf(data.filterVals[f]) == -1) return false;
+                    if (!data.rooms[node.key]) data.rooms[node.key] = findRoomsForObject(data, node.key);
+                    if (data.rooms[node.key].indexOf(data.filterVals[f]) == -1) return false;
                 }
             }
 
@@ -1073,7 +1072,7 @@
         }).keyup(function () {
             var tree = data.$tree[0];
             if (tree._timer) tree._timer = clearTimeout(tree._timer);
-
+            
             var that = this;
             tree._timer = setTimeout(function () {
                 $(that).trigger('change');
@@ -1344,7 +1343,7 @@
                         });
                     }, 5000);
 
-                    data.socket = io.connect(data.socketURL, {
+                   data.socket = io.connect(data.socketURL, {
                         'query': 'key=' + data.socketSESSION,
                         'reconnection limit': 10000,
                         'max reconnection attempts': Infinity
@@ -1662,6 +1661,12 @@
                 }
             }
             return this;
+        },
+        "objectAll": function (id, obj) {
+            $('.select-id-dialog-marker').selectId('object', id, obj);
+        },
+        "stateAll": function (id, state) {
+            $('.select-id-dialog-marker').selectId('state', id, state);
         },
         "getFilteredIds": function () {
             for (var k = 0; k < this.length; k++) {
