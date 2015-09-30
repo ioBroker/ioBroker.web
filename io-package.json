@@ -16,7 +16,8 @@
         "enabled":                  true,
         "keywords":                 ["web", "server", "www", "express"],
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
-        "type":                     "visualisation"
+        "type":                     "visualisation",
+        "stopBeforeUpdate":         true
     },
     "native": {
         "port":                     8082,
