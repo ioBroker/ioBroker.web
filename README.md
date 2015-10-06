@@ -2,10 +2,14 @@
 
 # ioBroker.web
 
-Web server on the base of Node.js and express to read the files from iobroker DB
+Web server on the base of Node.js and express to read the files from ioBroker DB
 
 
 ## Changelog
+
+### 1.0.1 (2015-10-06)
+* (bluefox) update selectID dialog
+* (bluefox) enable resizing of columns in select ID dialog
 
 ### 1.0.0 (2015-09-30)
 * (bluefox) stop adapter before update
