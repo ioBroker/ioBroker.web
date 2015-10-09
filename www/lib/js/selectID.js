@@ -327,8 +327,8 @@
                     try {
                         node.setActive();
                         node.makeVisible({scrollIntoView: scrollIntoView || false});
-                    } catch (e) {
-                        //console.warn(e);
+                    } catch (err) {
+                        console.error(err);
                     }
                     return false;
                 }
@@ -383,6 +383,24 @@
 
     function clippyHide(e) {
         $(this).find('.clippy-button').remove();
+    }
+
+    function installColResize($dlg) {
+        if (!$.fn.colResizable) return;
+
+        var data = $dlg.data('selectId');
+        if (data.$tree.is(':visible')) {
+            data.$tree.colResizable({
+                liveDrag: true,
+                onResize: function (event) {
+                    syncHeader($dlg);
+                }
+            });
+        } else {
+            setTimeout(function () {
+                installColResize($dlg);
+            }, 400)
+        }
     }
 
     function initTreeDialog($dlg) {
@@ -1255,14 +1273,7 @@
 
         showActive($dlg);
         loadSettings(data);
-        if ($.fn.colResizable) {
-            data.$tree.colResizable({
-                liveDrag: true,
-                onResize: function (event) {
-                    syncHeader($dlg);
-                }
-            });
-        }
+        installColResize($dlg);
     }
 
     function storeSettings(data) {
