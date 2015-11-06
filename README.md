@@ -2,11 +2,17 @@
 
 # ioBroker.web
 
-Web server on the base of Node.js and express to read the files from ioBroker DB
+Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
 
+### 1.2.0 (2015-11-06)
+* (bluefox) support of npm 3.x
+
+### 1.1.1 (2015-11-01)
+* (bluefox) some files were missed on npm
+* 
 ### 1.1.0 (2015-11-01)
 * (bluefox) update jquery UI libs
 

@@ -364,7 +364,7 @@ function initWebServer(settings) {
 
     // Activate integrated simple API
     if (settings.simpleapi) {
-        var SimpleAPI = require(__dirname + '/node_modules/iobroker.simple-api/lib/simpleapi.js');
+        var SimpleAPI = require('iobroker.simple-api/lib/simpleapi.js');
 
         // Subscribe on user changes to manage the permissions cache
         adapter.subscribeForeignObjects('system.group.*');
@@ -375,7 +375,7 @@ function initWebServer(settings) {
 
     // Activate integrated socket
     if (ownSocket) {
-        var IOBrokerSocket = require(__dirname + '/node_modules/iobroker.socketio/lib/iobrokersocket.js');
+        var IOBrokerSocket = require('iobroker.socketio/lib/iobrokersocket.js');
         var socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
         socketSettings.auth        = false;
