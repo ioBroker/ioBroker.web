@@ -135,7 +135,8 @@ function initWebServer(settings) {
         settings:  settings
     };
 
-    adapter.config.defaultUser = adapter.config.defaultUser || 'admin';
+    adapter.config.defaultUser = adapter.config.defaultUser || 'system.user.admin';
+    if (!adapter.config.defaultUser.match(/^system\.user\./)) adapter.config.defaultUser = 'system.user.' + adapter.config.defaultUser;
 
     if (settings.port) {
         if (settings.secure) {
