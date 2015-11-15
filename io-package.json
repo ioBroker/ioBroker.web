@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.2.2",
+        "version":                  "1.3.0",
         "title":                    "ioBroker simple web Adapter",
         "desc": {
             "en":                   "opens a webserver for the ioBroker",
@@ -17,7 +17,8 @@
         "keywords":                 ["web", "server", "www", "express"],
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
         "type":                     "visualisation",
-        "stopBeforeUpdate":         true
+        "stopBeforeUpdate":         true,
+		"dependencies":             [{"js-controller": ">=0.8.0"}]
     },
     "native": {
         "port":                     8082,

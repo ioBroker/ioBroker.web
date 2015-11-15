@@ -6,6 +6,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.3.0 (2015-11-15)
+* (bluefox) add version compatibility check
+
 ### 1.2.2 (2015-11-14)
 * (bluefox) support of multi-history
 
