@@ -6,8 +6,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
-### 1.3.1 (2015-12-14)
+### 1.3.2 (2015-12-14)
 * (bluefox) fix selectID.js
+* (bluefox) update socketio
 
 ### 1.3.0 (2015-11-15)
 * (bluefox) add version compatibility check
