@@ -1,2 +1,5 @@
 Gruntfile.js
 tasks
+test
+tmp
+.travis.yml

@@ -240,7 +240,7 @@ function initWebServer(settings) {
                 adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser}, function (err, obj) {
                     if (!err && obj !== null && obj !== undefined) {
                         res.set('Content-Type', 'text/plain');
-                        res.send(obj);
+                        res.status(200).send(obj);
                     } else {
                         res.status(404).send('404 Not found. File ' + fileName[0] + ' not found');
                     }
@@ -252,7 +252,7 @@ function initWebServer(settings) {
 
         server.app.get('*/_socket/info.js', function (req, res) {
             res.set('Content-Type', 'application/javascript');
-            res.send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang="' + lang + '";');
+            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang="' + lang + '";');
         });
 
         // Enable CORS
@@ -264,7 +264,7 @@ function initWebServer(settings) {
 
                 // intercept OPTIONS method
                 if ('OPTIONS' == req.method) {
-                    res.send(200);
+                    res.status(200).send(200);
                 } else {
                     next();
                 }
@@ -302,39 +302,42 @@ function initWebServer(settings) {
             var id = url.shift();
             url = url.join('/');
             var pos = url.indexOf('?');
+            var noFileCache;
             if (pos != -1) {
                 url = url.substring(0, pos);
+                // disable file cache if request like /vis/files/picture.png?noCache
+                noFileCache = true;
             }
-            if (settings.cache && cache[id + '/' + url]) {
+            if (settings.cache && cache[id + '/' + url] && !noFileCache) {
                 res.contentType(cache[id + '/' + url].mimeType);
-                res.send(cache[id + '/' + url].buffer);
+                res.status(200).send(cache[id + '/' + url].buffer);
             } else {
                 if (id == 'login' && url == 'index.html') {
                     var buffer = fs.readFileSync(__dirname + '/www/login/index.html');
                     if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');
-                        res.send('File ' + url + ' not found', 404);
+                        res.status(200).send('File ' + url + ' not found', 404);
                     } else {
                         // Store file in cache
                         if (settings.cache) {
                             cache[id + '/' + url] = {buffer: buffer.toString(), mimeType: 'text/html'};
                         }
                         res.contentType('text/html');
-                        res.send(buffer.toString());
+                        res.status(200).send(buffer.toString());
                     }
 
                 } else {
-                    adapter.readFile(id, url, {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser}, function (err, buffer, mimeType) {
+                    adapter.readFile(id, url, {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser, noFileCache: noFileCache}, function (err, buffer, mimeType) {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
-                            res.send('File ' + url + ' not found', 404);
+                            res.status(404).send('File ' + url + ' not found: ' + err);
                         } else {
                             // Store file in cache
                             if (settings.cache) {
                                 cache[id + '/' + url] = {buffer: buffer, mimeType: mimeType || 'text/javascript'};
                             }
                             res.contentType(mimeType || 'text/javascript');
-                            res.send(buffer);
+                            res.status(200).send(buffer);
                         }
                     });
                 }

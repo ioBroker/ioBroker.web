@@ -1,11 +1,23 @@
 ![Logo](admin/web.png)
-
+===========================
 # ioBroker.web
+
+[![NPM version](http://img.shields.io/npm/v/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
+[![Tests](https://travis-ci.org/ioBroker/ioBroker.web.svg?branch=master)](https://travis-ci.org/ioBroker/ioBroker.web)
+
+[![NPM](https://nodei.co/npm/iobroker.web.png?downloads=true)](https://nodei.co/npm/iobroker.web/)
+
 
 Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.3.5 (2016-03-11)
+* (bluefox) update selectId dialog
+* (bluefox) enable get files from disk and not from cache, just request http://ip:8082/vis/file.png?something
+* (bluefox) update packages
+
 ### 1.3.4 (2015-12-25)
 * (bluefox) update socketio
 
