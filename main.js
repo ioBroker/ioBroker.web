@@ -46,9 +46,9 @@ var adapter = utils.adapter({
     },
     unload: function (callback) {
         try {
-            adapter.log.info("terminating http" + (webServer.settings.secure ? "s" : "") + " server on port " + webServer.settings.port);
+            adapter.log.info('terminating http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
             webServer.server.close();
-            adapter.log.info("terminated http" + (webServer.settings.secure ? "s" : "") + " server on port " + webServer.settings.port);
+            adapter.log.info('terminated http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
 
             callback();
         } catch (e) {
@@ -368,7 +368,7 @@ function initWebServer(settings) {
 
     // Activate integrated simple API
     if (settings.simpleapi) {
-        var SimpleAPI = require('iobroker.simple-api/lib/simpleapi.js');
+        var SimpleAPI = require(utils.appName + '.simple-api/lib/simpleapi.js');
 
         // Subscribe on user changes to manage the permissions cache
         adapter.subscribeForeignObjects('system.group.*');
@@ -379,14 +379,14 @@ function initWebServer(settings) {
 
     // Activate integrated socket
     if (ownSocket) {
-        var IOBrokerSocket = require('iobroker.socketio/lib/iobrokersocket.js');
+        var IOSocket = require(utils.appName + '.socketio/lib/socket.js');
         var socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
         socketSettings.auth        = false;
         socketSettings.secret      = secret;
         socketSettings.store       = store;
         socketSettings.ttl         = adapter.config.ttl || 3600;
-        server.io = new IOBrokerSocket(server.server, socketSettings, adapter);
+        server.io = new IOSocket(server.server, socketSettings, adapter);
     }
 
     if (server.server) {

@@ -1,7 +1,7 @@
 /*
  Copyright 2014-2015 bluefox <bluefox@ccu.io>
 
- To use this dialog as standalone in ioBroker environment include:
+ To use this dialog as standalone include:
  <link type="text/css" rel="stylesheet" href="lib/css/redmond/jquery-ui.min.css">
  <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
 

@@ -13,6 +13,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.4.0 (2016-03-17)
+* (bluefox) rename files
+
 ### 1.3.5 (2016-03-11)
 * (bluefox) update selectId dialog
 * (bluefox) enable get files from disk and not from cache, just request http://ip:8082/vis/file.png?something
