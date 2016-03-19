@@ -120,12 +120,6 @@ module.exports = function (grunt) {
                 },
                 dest: 'tasks/jshint.js'
             },
-            get_gruntfile: {
-                options: {
-                    url: 'https://raw.githubusercontent.com/' + appName + '/' + appName + '.build/master/adapters/Gruntfile.js'
-                },
-                dest: 'Gruntfile.js'
-            },
             get_utilsfile: {
                 options: {
                     url: 'https://raw.githubusercontent.com/' + appName + '/' + appName + '.build/master/adapters/utils.js'
@@ -184,9 +178,9 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('p', [
-        'replace:core',
-        'updateReadme'
+        'replace:core'
     ]);
+
     grunt.registerTask('rename', [
         'replace:name'
     ]);
