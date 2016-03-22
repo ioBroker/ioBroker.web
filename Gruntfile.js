@@ -52,6 +52,22 @@ module.exports = function (grunt) {
                 options: {
                     patterns: [
                         {
+                            match:       /"iobroker\.socketio": ">=\d+\.\d+\.\d+",/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /"iobroker\.simple\-api": ">=\d+\.\d+\.\d+",/,
+                            replacement: ''
+                        },
+                        {
+                            match:       new RegExp(appName + '\\.socketio": ">=\d+\.\d+\.\d+",'),
+                            replacement: ''
+                        },
+                        {
+                            match:       new RegExp(appName + '\\.simple\-api": ">=\d+\.\d+\.\d+",'),
+                            replacement: ''
+                        },
+                        {
                             match:       /iobroker/gi,
                             replacement: appName
                         }
