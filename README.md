@@ -13,6 +13,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.4.0 (2016-04-09)
+* (bluefox) add grey jquery theme
+
 ### 1.4.0 (2016-03-17)
 * (bluefox) rename files
 
