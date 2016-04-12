@@ -1,7 +1,7 @@
 /*
  Copyright 2014-2015 bluefox <bluefox@ccu.io>
 
- To use this dialog as standalone include:
+ To use this dialog as standalone in ioBroker environment include:
  <link type="text/css" rel="stylesheet" href="lib/css/redmond/jquery-ui.min.css">
  <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
 
@@ -30,14 +30,35 @@
              filter:     null,     // filter
              imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
              connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
-             onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
-             onChange:   null,     // called every time the new object selected
+             onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show" - function (newId, oldId, newObj)
+             onChange:   null,     // called every time the new object selected - function (newId, oldId, newObj)
              noDialog:   false,    // do not make dialog
              noMultiselect: false, // do not make multiselect
              buttons:    null,     // array with buttons, that should be shown in last column
+                                   // if array is not empty it can has following fields
+                                   // [{
+                                   //   text: false, // same as jquery button
+                                   //   icons: {     // same as jquery button
+                                   //       primary: 'ui-icon-gear'
+                                   //   },
+                                   //   click: function (id) {
+                                   //                // do on click
+                                   //   },
+                                   //   match: function (id) {
+                                   //                // you have here object "this" pointing to $('button')
+                                   //   },
+                                   //   width: 26,   // same as jquery button
+                                   //   height: 20   // same as jquery button
+                                   // }],
              panelButtons: null,   // array with buttons, that should be shown at the top of dialog (near expand all)
              list:       false,    // tree view or list view
              name:       null,     // name of the dialog to store filter settings
+             noCopyToClipboard: false, // do not show button for copy to clipboard
+             root:       null,     // root node, e.g. "script.js"
+             useNameAsId: false,   // use name of object as ID
+             noColumnResize: false, // do not allow column resize
+             firstMinWidth: null,  // width if ID column, default 400
+             showButtonsForNotExistingObjects: false,
              texts: {
                  select:   'Select',
                  cancel:   'Cancel',
@@ -47,6 +68,7 @@
                  role:     'Role',
                  type:     'Type',
                  room:     'Room',
+                 'function': 'Function',
                  enum:     'Members',
                  value:    'Value',
                  selectid: 'Select ID',
@@ -65,14 +87,20 @@
                  selectAll: 'Select all',
                  unselectAll: 'Unselect all',
                  invertSelection: 'Invert selection',
-                 copyTpClipboard: "Copy to clipboard",
+                 copyToClipboard: 'Copy to clipboard',
+                 expertMode: 'Toggle expert mode'
              },
-             columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
+             columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'function', 'value', 'button'],
+                                // some elements of columns could be an object {name: field, data: function (id, name){}, title: function (id, name) {}}
              widths:    null,   // array with width for every column
              editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
              editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
              zindex:    null,   // z-index of dialog or table
-             customButtonFilter: null // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
+             customButtonFilter: null, // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
+             expertModeRegEx: null // list of regex with objects, that will be shown only in expert mode, like  /^system\.|^iobroker\.|^_|^[\w-]+$|^enum\.|^[\w-]+\.admin/
+             quickEdit:  null,   // list of fields with edit on click. Elements can be just names from standard list or objects like:
+                                 // {name: 'field', options: {a1: 'a111_Text', a2: 'a22_Text'}}, options can be a function (id, name), that give back such an object
+             quickEditCallback: null // function (id, attr, newValue, oldValue)
      }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
  +  clear() - clear object tree to read and build anew (used only if objects set by "init")
@@ -136,6 +164,10 @@
     }
 
     function filterId(data, id) {
+        if (data.rootExp) {
+            if (!data.rootExp.test(id)) return false;
+        }
+
         if (data.filter) {
             if (data.filter.type && data.filter.type != data.objects[id].type) return false;
 
@@ -151,28 +183,39 @@
         var objects = data.objects;
         var isType  = data.columns.indexOf('type') != -1;
         var isRoom  = data.columns.indexOf('room') != -1;
+        var isFunc  = data.columns.indexOf('function') != -1;
         var isRole  = data.columns.indexOf('role') != -1;
         var isHist  = data.columns.indexOf('button') != -1;
         data.tree = {title: '', children: [], count: 0, root: true};
-        data.enums = [];
+        data.roomEnums = [];
+        data.funcEnums = [];
 
         for (var id in objects) {
-            if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
+
+            if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.roomEnums.push(id);
+            if (isFunc && objects[id].type == 'enum' && data.regexEnumFuncs.test(id)) data.funcEnums.push(id);
 
             if (isType && objects[id].type && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
 
             if (isRole && objects[id].common && objects[id].common.role) {
-                var parts = objects[id].common.role.split('.');
-                var role = '';
-                for (var u = 0; u < parts.length; u++) {
-                    role += (role ? '.' : '') + parts[u];
-                    if (data.roles.indexOf(role) == -1) data.roles.push(role);
+                try {
+                    var parts = objects[id].common.role.split('.');
+                    var role = '';
+                    for (var u = 0; u < parts.length; u++) {
+                        role += (role ? '.' : '') + parts[u];
+                        if (data.roles.indexOf(role) == -1) data.roles.push(role);
+                    }
+                } catch (e) {
+                    console.error('Cannot parse role "' + objects[id].common.role + '" by ' + id);
                 }
             }
             if (isHist && objects[id].type === 'instance' && objects[id].common.type === 'storage') {
                 var h = id.substring('system.adapter.'.length);
                 if (data.histories.indexOf(h) == -1) data.histories.push(h);
             }
+
+            // ignore system objects in expert mode
+            if (data.expertModeRegEx && !data.expertMode && data.expertModeRegEx.test(id)) continue;
 
             if (!filterId(data, id)) continue;
 
@@ -192,15 +235,17 @@
         data.inited = true;
         data.roles.sort();
         data.types.sort();
-        data.enums.sort();
+        data.roomEnums.sort();
+        data.funcEnums.sort();
         data.histories.sort();
     }
 
     function treeSplit(data, id) {
-        if (!id) {
-            console.log('AAAA');
-            return null;
+        if (!id) return null;
+        if (data.root) {
+            id = id.substring(data.root.length);
         }
+
         var parts = id.split('.');
         if (data.regexSystemAdapter.test(id)) {
             if (parts.length > 3) {
@@ -213,7 +258,7 @@
         } else if (data.regexSystemHost.test(id)) {
             parts[0] = 'system.host.' + parts[2];
             parts.splice(1, 2);
-        } else if (parts.length > 1) {
+        } else if (parts.length > 1 && !data.root) {
             parts[0] = parts[0] + '.' + parts[1];
             parts.splice(1, 1);
         }
@@ -276,9 +321,9 @@
     }
 
     function treeInsert(data, id, isExpanded, addedNodes) {
-        return _treeInsert(data.tree, data.list ? [id] : treeSplit(data, id, false), id, 0, isExpanded, addedNodes);
+        return _treeInsert(data.tree, data.list ? [id] : treeSplit(data, id, false), id, 0, isExpanded, addedNodes, data);
     }
-    function _treeInsert(tree, parts, id, index, isExpanded, addedNodes) {
+    function _treeInsert(tree, parts, id, index, isExpanded, addedNodes, data) {
         if (!index) index = 0;
 
         var num = -1;
@@ -300,7 +345,7 @@
                 fullName += ((fullName) ? '.' : '') + parts[i];
             }
             var obj = {
-                key:      fullName,
+                key:      (data.root || '') + fullName,
                 children: [],
                 title:    parts[index],
                 folder:   false,
@@ -314,13 +359,15 @@
                 num = j;
                 tree.children.splice(num, 0, obj);
             }
-            if (addedNodes) addedNodes.push(tree.children[num]);
+            if (addedNodes) {
+                addedNodes.push(tree.children[num]);
+            }
         }
         if (parts.length - 1 == index) {
             tree.children[num].id = id;
         } else {
             tree.children[num].expanded = tree.children[num].expanded || isExpanded;
-            _treeInsert(tree.children[num], parts, id, index + 1, isExpanded, addedNodes);
+            _treeInsert(tree.children[num], parts, id, index + 1, isExpanded, addedNodes, data);
         }
     }
 
@@ -353,20 +400,67 @@
         }
     }
 
-    function findRoomsForObject(data, id, rooms) {
+    function findRoomsForObject(data, id, withParentInfo, rooms) {
         rooms = rooms || [];
-        for (var i = 0; i < data.enums.length; i++) {
-            if (data.objects[data.enums[i]].common.members.indexOf(id) != -1 &&
-                rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) {
-                rooms.push(data.objects[data.enums[i]].common.name);
+        for (var i = 0; i < data.roomEnums.length; i++) {
+            if (data.objects[data.roomEnums[i]].common.members.indexOf(id) != -1 &&
+                rooms.indexOf(data.objects[data.roomEnums[i]].common.name) == -1) {
+                if (!withParentInfo) {
+                    rooms.push(data.objects[data.roomEnums[i]].common.name);
+                } else {
+                    rooms.push({name: data.objects[data.roomEnums[i]].common.name, origin: id});
+                }
             }
         }
         var parts = id.split('.');
         parts.pop();
         id = parts.join('.');
-        if (data.objects[id]) findRoomsForObject(data, id, rooms);
+        if (data.objects[id]) findRoomsForObject(data, id, withParentInfo, rooms);
 
         return rooms;
+    }
+
+    function findRoomsForObjectAsIds(data, id, rooms) {
+        rooms = rooms || [];
+        for (var i = 0; i < data.roomEnums.length; i++) {
+            if (data.objects[data.roomEnums[i]].common.members.indexOf(id) != -1 &&
+                rooms.indexOf(data.roomEnums[i]) == -1) {
+                rooms.push(data.roomEnums[i]);
+            }
+        }
+        return rooms;
+    }
+
+    function findFunctionsForObject(data, id, withParentInfo, funcs) {
+        funcs = funcs || [];
+        for (var i = 0; i < data.funcEnums.length; i++) {
+            if (data.objects[data.funcEnums[i]].common.members.indexOf(id) != -1 &&
+                funcs.indexOf(data.objects[data.funcEnums[i]].common.name) == -1) {
+                if (!withParentInfo) {
+                    funcs.push(data.objects[data.funcEnums[i]].common.name);
+                } else {
+                    funcs.push({name: data.objects[data.funcEnums[i]].common.name, origin: id});
+                }
+            }
+        }
+        var parts = id.split('.');
+        parts.pop();
+        id = parts.join('.');
+        if (data.objects[id]) findFunctionsForObject(data, id, withParentInfo, funcs);
+
+        return funcs;
+    }
+
+    function findFunctionsForObjectAsIds(data, id, funcs) {
+        funcs = funcs || [];
+        for (var i = 0; i < data.funcEnums.length; i++) {
+            if (data.objects[data.funcEnums[i]].common.members.indexOf(id) != -1 &&
+                funcs.indexOf(data.funcEnums[i]) == -1) {
+                funcs.push(data.funcEnums[i]);
+            }
+        }
+
+        return funcs;
     }
 
     function clippyCopy(e) {
@@ -376,24 +470,28 @@
         $temp.val($(this).parent().data('clippy')).select();
         document.execCommand('copy');
         $temp.remove();
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     function clippyShow(e) {
-        var text = '<button class="clippy-button ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" ' +
-            'role="button" title="' + $(this).data('copyTpClipboard') + '" ' +
-            'style="position: absolute; right: 0; top: 0; width: 36px; height: 18px;">' +
-            '<span class="ui-button-icon-primary ui-icon ui-icon-clipboard"></span></button>';
+        if ($(this).hasClass('clippy')) {
+            var text = '<button class="clippy-button ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" ' +
+                'role="button" title="' + $(this).data('copyToClipboard') + '" ' +
+                'style="position: absolute; right: 0; top: 0; width: 36px; height: 18px;z-index: 1">' +
+                '<span class="ui-button-icon-primary ui-icon ui-icon-clipboard"></span></button>';
 
-        $(this).append(text);
-        $(this).find('.clippy-button').click(clippyCopy);
+            $(this).append(text);
+            $(this).find('.clippy-button').click(clippyCopy);
+        }
     }
 
     function clippyHide(e) {
         $(this).find('.clippy-button').remove();
     }
 
-    function installColResize($dlg) {
-        if (!$.fn.colResizable) return;
+    function installColResize(data, $dlg) {
+        if (data.noColumnResize || !$.fn.colResizable) return;
 
         var data = $dlg.data('selectId');
         if (data.$tree.is(':visible')) {
@@ -405,9 +503,191 @@
             });
         } else {
             setTimeout(function () {
-                installColResize($dlg);
+                installColResize(data, $dlg);
             }, 400)
         }
+    }
+
+    function getStates(data, id) {
+        var states;
+        if (data.objects[id] &&
+            data.objects[id].common &&
+            data.objects[id].common.states) {
+            states = data.objects[id].common.states;
+        }
+        if (states) {
+            if (typeof states == 'string' && states[0] == '{') {
+                try {
+                    states = JSON.parse(states);
+                } catch (ex) {
+                    console.error('Cannot parse states: ' + states);
+                    states = null;
+                }
+            } else
+            // if odl format val1:text1;val2:text2
+            if (typeof states == 'string') {
+                var parts = states.split(';');
+                states = {};
+                for (var p = 0; p < parts.length; p++) {
+                    var s = parts[p].split(':');
+                    states[s[0]] = s[1];
+                }
+            }
+        }
+        return states;
+    }
+
+    function onQuickEditField(e) {
+        var $this   = $(this);
+        var id      = $this.data('id');
+        var attr    = $this.data('name');
+        var data    = $this.data('selectId');
+        var type    = $this.data('type');
+        var clippy  = $this.hasClass('clippy');
+        var options = $this.data('options');
+        var oldVal  = $this.data('old-value');
+        var states  = null;
+
+        if (clippy)  $this.removeClass('clippy');
+
+        $this.unbind('click').removeClass('select-id-quick-edit').css('position', 'relative');
+
+        var css = 'cursor: pointer; position: absolute;width: 16px; height: 16px; top: 2px; border-radius: 6px; z-index: 3; background-color: lightgray';
+        if (type === 'boolean') {
+            type = 'checkbox';
+        } else {
+            type = 'text';
+        }
+        var text;
+
+        if (attr == 'value') {
+            states = getStates(data, id);
+            if (states) {
+                text = '<select style="width: calc(100% - 50px); z-index: 2">';
+                for (var t in states) {
+                    text += '<option value="' + t + '">' + states[t] + '</option>';
+                }
+                text += '</select>';
+            }
+        } else if (attr == 'room') {
+            states = findRoomsForObjectAsIds(data, id) || [];
+            text = '<select style="width: calc(100% - 50px); z-index: 2" multiple="multiple">';
+            for (var e = 0; e < data.roomEnums.length; e++) {
+                text += '<option value="' + data.roomEnums[e] + '" ' + (states.indexOf(data.roomEnums[e]) !== -1 ? 'selected' : '') + '>' + data.objects[data.roomEnums[e]].common.name + '</option>';
+            }
+            text += '</select>';
+        } else if (attr == 'function') {
+            states = findFunctionsForObjectAsIds(data, id) || [];
+            text = '<select style="width: calc(100% - 50px); z-index: 2" multiple="multiple">';
+            for (var e = 0; e < data.funcEnums.length; e++) {
+                text += '<option value="' + data.funcEnums[e] + '" ' + (states.indexOf(data.funcEnums[e]) !== -1 ? 'selected' : '') + '>' + data.objects[data.funcEnums[e]].common.name + '</option>';
+            }
+            text += '</select>';
+        } else if (options) {
+            if (typeof options === 'function') {
+                states = options(id, attr);
+            } else {
+                states = options;
+            }
+            text = '<select style="width: calc(100% - 50px); z-index: 2">';
+            for (var t in states) {
+                text += '<option value="' + t + '">' + states[t] + '</option>';
+            }
+            text += '</select>';
+        }
+        text = text || '<input style="' + (type !== 'checkbox' ? 'width: 100%;' : '') + ' z-index: 2" type="' + type + '"/>';
+
+        var timeout = null;
+
+        $this.html(text +
+            '<div class="ui-icon ui-icon-check        select-id-quick-edit-ok"     style="' + css + ';right: 22px"></div>' +
+            '<div class="cancel ui-icon ui-icon-close select-id-quick-edit-cancel" title="' + data.texts.cancel + '" style="' + css + ';right: 2px"></div>');
+
+        var $input = (attr == 'function' || attr == 'room' || states) ? $this.find('select') : $this.find('input');
+
+        if (attr === 'room' || attr === 'function') {
+            $input.multiselect({
+                autoOpen: true,
+                close: function () {
+                    $input.trigger('blur');
+                }
+            });
+        } else if (attr == 'role')  {
+            $input.autocomplete({
+                minLength: 0,
+                source: data.roles
+            }).on('focus', function () {
+                $(this).autocomplete('search', '');
+            });
+        }
+
+        $this.find('.select-id-quick-edit-cancel').click(function (e)  {
+            if (timeout) clearTimeout(timeout);
+            timeout = null;
+            e.preventDefault();
+            e.stopPropagation();
+            var old = $this.data('old-value');
+            if (old === undefined) old = '';
+            $this.html(old).click(onQuickEditField).addClass('select-id-quick-edit');
+            if (clippy) $this.addClass('clippy');
+        });
+
+        $this.find('.select-id-quick-edit-ok').click(function ()  {
+            var _$input = (attr == 'function' || attr == 'room' || states) ? $this.find('select') : $this.find('input');
+            _$input.trigger('blur');
+        });
+        if (type == 'checkbox') {
+            $input.prop('checked', oldVal);
+        } else {
+            if (attr !== 'room' && attr !== 'function') $input.val(oldVal);
+        }
+
+        $input.blur(function () {
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                var _oldText = $this.data('old-value');
+                var val = $(this).attr('type') === 'checkbox' ? $(this).prop('checked') : $(this).val();
+                if ((attr == 'room' || attr == 'function') && !val) val = [];
+
+                if (JSON.stringify(val) != JSON.stringify(_oldText)) {
+                    data.quickEditCallback(id, attr, val, _oldText);
+
+                    _oldText = '<span style="color: pink">' + _oldText + '</span>';
+                }
+                if (clippy) $this.addClass('clippy');
+                $this.html(_oldText).click(onQuickEditField).addClass('select-id-quick-edit');
+            }.bind(this), 100);
+        }).keyup(function (e) {
+            if (e.which == 13) $(this).trigger('blur');
+            if (e.which == 27) {
+                if (clippy) $this.addClass('clippy');
+                var old = $this.data('old-value');
+                if (old === undefined) old = '';
+                $this.html(old).click(onQuickEditField).addClass('select-id-quick-edit');
+            }
+        });
+
+        if (typeof e === 'object') {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        setTimeout(function () {
+            $input.focus().select();
+        }, 100);
+    }
+
+    function quality2text(q) {
+        if (!q) return 'ok';
+        var custom = q & 0xFFFF0000;
+        var text = '';
+        if (q & 0x40) text += 'device';
+        if (q & 0x80) text += 'sensor';
+        if (q & 0x01) text += ' bad';
+        if (q & 0x02) text += ' not connected';
+        if (q & 0x04) text += ' error';
+
+        return text + (custom ? '|0x' + (custom >> 16).toString(16).toUpperCase() : '') + ' [0x' + q.toString(16).toUpperCase() + ']';
     }
 
     function initTreeDialog($dlg) {
@@ -415,6 +695,13 @@
         var data = $dlg.data('selectId');
         //var noStates = (data.objects && !data.states);
         var multiselect = (!data.noDialog && !data.noMultiselect);
+
+        // load expert mode flag
+        if (typeof Storage !== 'undefined' && data.name && data.expertModeRegEx) {
+            data.expertMode = window.localStorage.getItem(data.name + '-expert');
+            data.expertMode = (data.expertMode === true || data.expertMode === 'true');
+        }
+
         // Get all states
         getAllStates(data);
 
@@ -425,7 +712,7 @@
                     text: data.texts.select,
                     click: function () {
                         var _data = $dlg.data('selectId');
-                        if (_data && _data.onSuccess) _data.onSuccess(_data.selectedID, _data.currentId);
+                        if (_data && _data.onSuccess) _data.onSuccess(_data.selectedID, _data.currentId, _data.objects[_data.selectedID]);
                         _data.currentId = _data.selectedID;
                         storeSettings(data);
                         $dlg.dialog('close');
@@ -459,18 +746,33 @@
         // Store current filter
         var filter = {ID: $('#filter_ID_' + data.instance).val()};
         for (var u = 0; u < data.columns.length; u++) {
-            filter[data.columns[u]] = $('#filter_' + data.columns[u] + '_' + data.instance).val();
+            var name = data.columns[u];
+            if (typeof name === 'object') name = name.name;
+            filter[data.columns[u]] = $('#filter_' + name + '_' + data.instance).val();
         }
 
         var textRooms;
         if (data.columns.indexOf('room') != -1) {
-            textRooms = '<select id="filter_room_' + data.instance + '" class="filter_' + data.instance + '" style="padding:0;width:150px"><option value="">' + data.texts.all + '</option>';
-            for (var i = 0; i < data.enums.length; i++) {
-                textRooms += '<option value="' + data.objects[data.enums[i]].common.name + '">' + data.objects[data.enums[i]].common.name + '</option>';
+            textRooms = '<select id="filter_room_' + data.instance + '" class="filter_' + data.instance + '" style="padding: 0; width: 150px"><option value="">' + data.texts.all + '</option>';
+            for (var i = 0; i < data.roomEnums.length; i++) {
+                textRooms += '<option value="' + data.objects[data.roomEnums[i]].common.name + '">' + data.objects[data.roomEnums[i]].common.name + '</option>';
             }
             textRooms += '</select>';
         } else {
-            if (data.rooms) delete data.rooms;
+            if (data.rooms)        delete data.rooms;
+            if (data.roomsColored) delete data.roomsColored;
+        }
+
+        var textFuncs;
+        if (data.columns.indexOf('function') != -1) {
+            textFuncs = '<select id="filter_function_' + data.instance + '" class="filter_' + data.instance + '" style="padding: 0; width: 150px"><option value="">' + data.texts.all + '</option>';
+            for (var i = 0; i < data.funcEnums.length; i++) {
+                textFuncs += '<option value="' + data.objects[data.funcEnums[i]].common.name + '">' + data.objects[data.funcEnums[i]].common.name + '</option>';
+            }
+            textFuncs += '</select>';
+        } else {
+            if (data.funcs)        delete data.funcs;
+            if (data.funcsColored) delete data.funcsColored;
         }
 
         var textRoles;
@@ -491,27 +793,33 @@
             textTypes += '</select>';
         }
 
-        var text = '<div id="' + data.instance + '-div" style="width:100%; height:100%"><table id="selectID_header_' + data.instance + '" style="width: 100%;padding:0; height: 50" cellspacing="0" cellpadding="0">';
+        var text = '<div id="' + data.instance + '-div" style="width:100%; height:100%"><table id="selectID_header_' + data.instance + '" style="width: 100%; padding: 0; height: 50px" cellspacing="0" cellpadding="0">';
         text += '<colgroup>';
         text += '            <col width="1px"/>';
         text += '            <col width="400px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
-            if (data.columns[c] == 'image') {
+            var name = data.columns[c];
+            if (typeof name === 'object') name = name.name;
+            if (name == 'image') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '20px') + '"/>';
-            } else if (data.columns[c] == 'name') {
+            } else if (name == 'name') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '*') + '"/>';
-            } else if (data.columns[c] == 'type') {
+            } else if (name == 'type') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'role') {
+            } else if (name == 'role') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'room') {
+            } else if (name == 'room') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'value') {
+            } else if (name == 'function') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'button') {
+            } else if (name == 'value') {
+                text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
+            } else if (name == 'button') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '100px') + '"/>';
-            } else if (data.columns[c] == 'enum') {
+            } else if (name == 'enum') {
+                text += '<col width="' + (data.widths ? data.widths[c] : '*') + '"/>';
+            } else {
                 text += '<col width="' + (data.widths ? data.widths[c] : '*') + '"/>';
             }
         }
@@ -520,14 +828,17 @@
         text += '        </colgroup>';
         text += '        <thead>';
         text += '            <tr><th></th><th><table style="width: 100%; padding:0" cellspacing="0" cellpadding="0"><tr>';
-        text += '<td><button id="btn_refresh_' + data.instance + '"></button></td>';
-        text += '<td><button id="btn_list_' + data.instance + '"></button></td>';
+        text += '<td><button id="btn_refresh_'  + data.instance + '"></button></td>';
+        text += '<td><button id="btn_list_'     + data.instance + '"></button></td>';
         text += '<td><button id="btn_collapse_' + data.instance + '"></button></td>';
-        text += '<td><button id="btn_expand_' + data.instance + '"></button></td><td class="select-id-custom-buttons"></td>';
+        text += '<td><button id="btn_expand_'   + data.instance + '"></button></td><td class="select-id-custom-buttons"></td>';
         if (data.filter && data.filter.type == 'state' && multiselect) {
             text += '<td style="padding-left: 10px"><button id="btn_select_all_' + data.instance + '"></button></td>';
             text += '<td><button id="btn_unselect_all_' + data.instance + '"></button></td>';
             text += '<td><button id="btn_invert_selection_' + data.instance + '"></button></td>';
+        }
+        if (data.expertModeRegEx) {
+            text += '<td style="padding-left: 10px"><button id="btn_expert_' + data.instance + '"></button></td>';
         }
 
         if (data.panelButtons) {
@@ -537,33 +848,37 @@
             }
         }
 
-        text += '<td style="width: 100%; text-align: center; font-weight: bold">' + data.texts.id + '</td></tr></table></th>';
+        text += '<td class="ui-widget" style="width: 100%; text-align: center; font-weight: bold; font-size: medium">' + data.texts.id + '</td></tr></table></th>';
 
         for (c = 0; c < data.columns.length; c++) {
-            text += '<th>' + (data.texts[data.columns[c]] || '') + '</th>';
+            text += '<th class="ui-widget" style="font-size: medium">' + (data.texts[data.columns[c]] || '') + '</th>';
         }
 
         text += '<th></th></tr>';
         text += '        </thead>';
         text += '        <tbody>';
         text += '            <tr><td></td>';
-        text += '               <td><table style="width:100%"><tr><td style="width:100%"><input style="width:100%;padding:0" type="text" id="filter_ID_'    + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_ID_'    + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
+        text += '               <td><table style="width: 100%"><tr><td style="width: 100%"><input style="width: 100%;padding:0" type="text" id="filter_ID_'    + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_ID_'    + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
 
         for (c = 0; c < data.columns.length; c++) {
-            if (data.columns[c] == 'image') {
+            var name = data.columns[c];
+            if (typeof name === 'object') name = name.name;
+            if (name == 'image') {
                 text += '<td></td>';
-            } else if (data.columns[c] == 'name' || data.columns[c] == 'value' || data.columns[c] == 'enum') {
-                text += '<td><table style="width:100%"><tr><td style="width:100%"><input style="width:100%;padding:0" type="text" id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
-            } else if (data.columns[c] == 'type') {
+            } else if (name == 'name' || name == 'value' || name == 'enum') {
+                text += '<td><table style="width: 100%"><tr><td style="width: 100%"><input style="width: 100%; padding: 0" type="text" id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
+            } else if (name == 'type') {
                 text += '<td>' + textTypes + '</td>';
-            } else if (data.columns[c] == 'role') {
+            } else if (name== 'role') {
                 text += '<td>' + textRoles + '</td>';
-            } else if (data.columns[c] == 'room') {
+            } else if (name == 'room') {
                 text += '<td>' + textRooms + '</td>';
-            } else if (data.columns[c] == 'button') {
+            } else if (name == 'function') {
+                text += '<td>' + textFuncs + '</td>';
+            } else if (name == 'button') {
                 text += '<td style="text-align: center">';
                 if (data.customButtonFilter) {
-                    var t = '<select id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_' + data.instance + '">';
+                    var t = '<select id="filter_' + name + '_'  + data.instance + '" class="filter_' + data.instance + '">';
                     t += '<option value="">'      + data.texts.all     + '</option>';
                     t += '<option value="true">'  + data.texts.with    + '</option>';
                     t += '<option value="false">' + data.texts.without + '</option>';
@@ -576,6 +891,8 @@
                     text += '<table cellpadding="0" cellspacing="0" style="border-spacing: 0px 0px"><tr><td>' + t + '</td>' + '<td><button id="filter_' + data.columns[c] + '_'  + data.instance + '_btn"></button></td></tr></table>'
                 }
                 text += '</td>';
+            } else {
+                text += '<td></td>';
             }
         }
 
@@ -583,28 +900,35 @@
         text += '        </tbody>';
         text += '    </table>';
 
-        text += '<div style="width: 100%; height: ' + (data.buttons ? 100 : 85) + '%;padding:0; overflow-y: scroll">';
-        text +=' <table id="selectID_' + data.instance + '" style="width: 100%;padding:0;table-layout:fixed; overflow:hidden;white-space:nowrap" cellspacing="0" cellpadding="0">';
+        //text += '<div style="width: 100%; height: ' + (data.buttons ? 100 : 85) + '%; padding:0; overflow-y: scroll">';
+        text += '<div style="width: 100%; height: ' + (data.buttons ? 'calc(100% - 50px)' : 'calc(100% - 50px)') + '; padding:0; overflow-y: scroll">';
+        text +=' <table id="selectID_' + data.instance + '" style="width: calc(100% - 5px);padding:0;table-layout:fixed; overflow:hidden;white-space:nowrap" cellspacing="0" cellpadding="0">';
         text += '        <colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="400px"/>';
+        text += '            <col ' + (data.firstMinWidth ? ('width="' + data.firstMinWidth + '"') : 'width="400px"') + '/>';
 
         for (c = 0; c < data.columns.length; c++) {
-            if (data.columns[c] == 'image') {
+            var name = data.columns[c];
+            if (typeof name === 'object') name = name.name;
+            if (name == 'image') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '20px') + '"/>';
-            } else if (data.columns[c] == 'name') {
+            } else if (name == 'name') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '*') + '"/>';
-            } else if (data.columns[c] == 'type') {
+            } else if (name == 'type') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'role') {
+            } else if (name == 'role') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'room') {
+            } else if (name == 'room') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'value') {
+            } else if (name == 'function') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
-            } else if (data.columns[c] == 'button') {
+            } else if (name == 'value') {
+                text += '<col width="' + (data.widths ? data.widths[c] : '150px') + '"/>';
+            } else if (name == 'button') {
                 text += '<col width="' + (data.widths ? data.widths[c] : '100px') + '"/>';
-            } else if (data.columns[c] == 'enum') {
+            } else if (name == 'enum') {
+                text += '<col width="' + (data.widths ? data.widths[c] : '*') + '"/>';
+            } else {
                 text += '<col width="' + (data.widths ? data.widths[c] : '*') + '"/>';
             }
         }
@@ -619,7 +943,7 @@
         text += '        </thead>';
         text += '        <tbody>';
         text += '        </tbody>';
-        text += '    </table></div><div id="process_running_' + data.instance + '" style="position:absolute; top:50%; left:50%; width: 150; height: 25; padding: 12; background: rgba(30, 30, 30, 0.5); display: none; text-align:center; font-size: 1.2em; color: white; font-weight: bold; border-radius: 5px">' + data.texts.wait + '</div>';
+        text += '    </table></div><div id="process_running_' + data.instance + '" style="position: absolute; top: 50%; left: 50%; width: 150px; height: 25px; padding: 12px; background: rgba(30, 30, 30, 0.5); display: none; text-align:center; font-size: 1.2em; color: white; font-weight: bold; border-radius: 5px">' + data.texts.wait + '</div>';
 
         $dlg.html(text);
 
@@ -641,7 +965,7 @@
                 handleCursorKeys: true
             },
             filter: {
-                mode: "hide",
+                mode: 'hide',
                 autoApply: true
             },
             activate: function (event, data) {
@@ -652,7 +976,7 @@
                     var _data = $dlg.data('selectId');
                     var newId = data.node.key;
 
-                    if (_data.onChange) _data.onChange(newId, _data.selectedID);
+                    if (_data.onChange) _data.onChange(newId, _data.selectedID, _data.objects[newId]);
 
                     _data.selectedID = newId;
                     if (!_data.noDialog) {
@@ -703,16 +1027,26 @@
                 if (data.filter && data.filter.type == 'state' && (!data.objects[node.key] || data.objects[node.key].type != 'state')) {
                     $tdList.eq(1).find('.fancytree-checkbox').hide();
                 }
-                $tdList.eq(1)
-                    .addClass('clippy')
-                    .data('clippy', node.key)
-                    .css({position: 'relative'})
-                    .data('copyTpClipboard', data.texts.copyTpClipboard)
-                    .mouseenter(clippyShow)
-                    .mouseleave(clippyHide);
 
+                if (!data.noCopyToClipboard) {
+                    $tdList.eq(1)
+                        .addClass('clippy')
+                        .data('clippy', node.key)
+                        .css({position: 'relative'})
+                        .data('copyToClipboard', data.texts.copyToClipboard || data.texts.copyTpClipboard)
+                        .mouseenter(clippyShow)
+                        .mouseleave(clippyHide);
+                }
+
+                if (data.useNameAsId && data.objects[node.key] && data.objects[node.key].common && data.objects[node.key].common.name) {
+                    $tdList.eq(1).find('.fancytree-title').html(data.objects[node.key].common.name);
+                }
+                var $elem;
+                var val;
                 for (var c = 0; c < data.columns.length; c++) {
-                    if (data.columns[c] == 'image') {
+                    var name = data.columns[c];
+                    if (typeof name === 'object') name = name.name;
+                    if (name == 'image') {
                         var icon = '';
                         var alt = '';
                         var _id_ = 'system.adapter.' + node.key;
@@ -759,35 +1093,95 @@
                         }
                         base++;
                     } else
-                    if (data.columns[c] == 'name') {
-                        $tdList.eq(base++).text(isCommon ? data.objects[node.key].common.name : '').css({overflow: 'hidden', 'white-space': 'nowrap', 'text-overflow': 'ellipsis'}).attr('title', isCommon ? data.objects[node.key].common.name : '');
+                    if (name == 'name') {
+                        $elem = $tdList.eq(base);
+                        $elem.text(isCommon ? data.objects[node.key].common.name : '').css({overflow: 'hidden', 'white-space': 'nowrap', 'text-overflow': 'ellipsis'}).attr('title', isCommon ? data.objects[node.key].common.name : '');
+                        if (data.quickEdit && data.objects[node.key] && data.quickEdit.indexOf('name') !== -1) {
+                            $elem.data('old-value', isCommon ? data.objects[node.key].common.name : '');
+                            $elem.click(onQuickEditField).data('id', node.key).data('name', 'name').data('selectId', data).addClass('select-id-quick-edit');
+                        }
+                        base++;
                     } else
-                    if (data.columns[c] == 'type') {
+                    if (name == 'type') {
                         $tdList.eq(base++).text(data.objects[node.key] ? data.objects[node.key].type: '');
                     } else
-                    if (data.columns[c] == 'role') {
-                        $tdList.eq(base++).text(isCommon ? data.objects[node.key].common.role : '');
-                    } else
-                    if (data.columns[c] == 'room') {
-                        // Try to find room
-                        if (data.rooms) {
-                            if (!data.rooms[node.key]) data.rooms[node.key] = findRoomsForObject(data, node.key);
-                            $tdList.eq(base++).text(data.rooms[node.key].join(', '));
-                        } else {
-                            $tdList.eq(base++).text('');
-                        }
+                    if (name == 'role') {
+                        $elem = $tdList.eq(base);
+                        val = isCommon ? data.objects[node.key].common.role : '';
+                        $elem.text(val);
 
+                        if (data.quickEdit && data.objects[node.key] && data.quickEdit.indexOf('name') !== -1) {
+                            $elem.data('old-value', val);
+                            $elem.click(onQuickEditField).data('id', node.key).data('name', 'role').data('selectId', data).addClass('select-id-quick-edit');
+                        }
+                        base++;
                     } else
-                    if (data.columns[c] == 'value') {
+                    if (name == 'room') {
+                        $elem = $tdList.eq(base);
+                        // Try to find room
+                        if (data.roomsColored) {
+                            if (!data.roomsColored[node.key]) data.roomsColored[node.key] = findRoomsForObject(data, node.key, true);
+                            val = data.roomsColored[node.key].map(function (e) {return e.name;}).join(', ');
+                            if (data.roomsColored[node.key].length && data.roomsColored[node.key][0].origin != node.key) {
+                                $elem.css({color: 'gray'}).attr('title', data.roomsColored[node.key][0].origin);
+                            } else {
+                                $elem.css({color: 'inherit'}).attr('title', null);
+                            }
+                        } else {
+                            val = '';
+                        }
+                        $elem.text(val);
+
+                        if (data.quickEdit && data.objects[node.key] && data.quickEdit.indexOf('name') !== -1) {
+                            $elem.data('old-value', val);
+                            $elem.click(onQuickEditField)
+                                .data('id', node.key)
+                                .data('name', 'room')
+                                .data('selectId', data)
+                                .addClass('select-id-quick-edit');
+                        }
+                        base++;
+                    } else
+                    if (name == 'function') {
+                        $elem = $tdList.eq(base);
+                        // Try to find function
+                        if (data.funcsColored) {
+                            if (!data.funcsColored[node.key]) data.funcsColored[node.key] = findFunctionsForObject(data, node.key, true);
+                            val = data.funcsColored[node.key].map(function (e) {return e.name;}).join(', ');
+                            if (data.funcsColored[node.key].length && data.funcsColored[node.key][0].origin != node.key) {
+                                $elem.css({color: 'gray'}).attr('title', data.funcsColored[node.key][0].origin);
+                            } else {
+                                $elem.css({color: 'inherit'}).attr('title', null);
+                            }
+                        } else {
+                            val = '';
+                        }
+                        $elem.text(val);
+
+                        if (data.quickEdit && data.objects[node.key] && data.quickEdit.indexOf('name') !== -1) {
+                            $elem.data('old-value', val);
+                            $elem.click(onQuickEditField)
+                                .data('id', node.key)
+                                .data('name', 'function')
+                                .data('selectId', data)
+                                .addClass('select-id-quick-edit');
+                        }
+                        base++;
+                    } else
+                    if (name == 'value') {
+                        $elem = $tdList.eq(base);
                         if (data.states && (data.states[node.key] || data.states[node.key + '.val'] !== undefined)) {
+                            var $elem = $tdList.eq(base);
                             var state = data.states[node.key];
+                            var states = getStates(data, node.key);
                             if (!state) {
                                 state = {
                                     val:  data.states[node.key + '.val'],
                                     ts:   data.states[node.key + '.ts'],
                                     lc:   data.states[node.key + '.lc'],
                                     from: data.states[node.key + '.from'],
-                                    ack: (data.states[node.key + '.ack'] === undefined) ? '' : data.states[node.key + '.ack']
+                                    ack: (data.states[node.key + '.ack'] === undefined) ? '' : data.states[node.key + '.ack'],
+                                    q:   (data.states[node.key + '.q']   === undefined) ? 0  : data.states[node.key + '.q']
                                 };
                             } else {
                                 state = JSON.parse(JSON.stringify(state));
@@ -796,43 +1190,64 @@
                             if (data.objects[node.key] && data.objects[node.key].common && data.objects[node.key].common.role == 'value.time') {
                                 state.val = state.val ? (new Date(state.val)).toString() : state.val;
                             }
+                            if (states && states[state.val] !== undefined) {
+                                state.val = states[state.val]  + '(' + state.val + ')';
+                            }
 
                             var fullVal;
                             if (state.val === undefined) {
                                 state.val = '';
                             } else {
                                 if (isCommon && data.objects[node.key].common.unit) state.val += ' ' + data.objects[node.key].common.unit;
-                                fullVal  =          data.texts.value + ': ' + state.val;
-                                fullVal += '\x0A' + data.texts.ack   + ': ' + state.ack;
-                                fullVal += '\x0A' + data.texts.ts    + ': ' + (state.ts ? formatDate(new Date(state.ts * 1000)) : '');
-                                fullVal += '\x0A' + data.texts.lc    + ': ' + (state.lc ? formatDate(new Date(state.lc * 1000)) : '');
-                                fullVal += '\x0A' + data.texts.from  + ': ' + (state.from || '');
+                                fullVal  =          data.texts.value   + ': ' + state.val;
+                                fullVal += '\x0A' + data.texts.ack     + ': ' + state.ack;
+                                fullVal += '\x0A' + data.texts.ts      + ': ' + (state.ts ? formatDate(new Date(state.ts * 1000)) : '');
+                                fullVal += '\x0A' + data.texts.lc      + ': ' + (state.lc ? formatDate(new Date(state.lc * 1000)) : '');
+                                fullVal += '\x0A' + data.texts.from    + ': ' + (state.from || '');
+                                fullVal += '\x0A' + data.texts.quality + ': ' + quality2text(state.q || 0);
                             }
-                            $tdList.eq(base)
-                                .text(state.val)
+                            $elem.text(state.val)
                                 .attr('title', fullVal)
                                 .addClass('clippy')
-                                .css({position: 'relative'})
-                                .data('clippy', state.val)
-                                .data('copyTpClipboard', data.texts.copyTpClipboard)
-                                .mouseenter(clippyShow)
-                                .mouseleave(clippyHide).css({color: state.ack ? '' : 'red'});
+                                .css({position: 'relative'});
+
+                            $elem.css({color: state.ack ? (state.q ? 'orange' : '') : 'red'});
+
+                            if (!data.noCopyToClipboard) {
+                                $elem.data('clippy', state.val)
+                                    .data('copyToClipboard', data.texts.copyToClipboard || data.texts.copyTpClipboard)
+                                    .mouseenter(clippyShow)
+                                    .mouseleave(clippyHide);
+                            }
+
                         } else {
-                            $tdList.eq(base)
-                                .text('')
+                            $elem.text('')
                                 .attr('title', '')
                                 .removeClass('clippy');
                         }
-                        $tdList.eq(base).dblclick(function (e) {
+                        $elem.dblclick(function (e) {
                             e.preventDefault();
                         });
+
+                        if (data.quickEdit && data.objects[node.key] && data.quickEdit.indexOf('name') !== -1) {
+                            var val = data.states[node.key];
+                            val = val ? val.val : '';
+                            $elem.data('old-value', val).data('type', data.objects[node.key] && data.objects[node.key].common ? data.objects[node.key].common.type : typeof val);
+
+                            $elem.click(onQuickEditField)
+                                .data('id', node.key)
+                                .data('name', 'value')
+                                .data('selectId', data)
+                                .addClass('select-id-quick-edit');
+                        }
+
                         base++;
                     } else
-                    if (data.columns[c] == 'button') {
+                    if (name == 'button') {
                         // Show buttons
                         var text;
                         if (data.buttons) {
-                            if (data.objects[node.key]) {
+                            if (data.objects[node.key] || data.showButtonsForNotExistingObjects) {
                                 text = '';
                                 if (data.editEnd) {
                                     text += '<button data-id="' + node.key + '" class="select-button-edit"></button>' +
@@ -849,7 +1264,7 @@
                                 for (var p = 0; p < data.buttons.length; p++) {
                                     var btn = $('.select-button-' + p + '[data-id="' + node.key + '"]').button(data.buttons[p]).click(function () {
                                         var cb = $(this).data('callback');
-                                        if (cb) cb($(this).attr('data-id'));
+                                        if (cb) cb.call($(this), $(this).attr('data-id'));
                                     }).data('callback', data.buttons[p].click).attr('title', data.buttons[p].title || '');
                                     if (data.buttons[p].width) btn.css({width: data.buttons[p].width});
                                     if (data.buttons[p].height) btn.css({height: data.buttons[p].height});
@@ -899,7 +1314,7 @@
 
                         base++;
                     } else
-                    if (data.columns[c] == 'enum') {
+                    if (name == 'enum') {
                         if (isCommon && data.objects[node.key].common.members && data.objects[node.key].common.members.length > 0) {
                             if (data.objects[node.key].common.members.length < 4) {
                                 $tdList.eq(base).text('(' + data.objects[node.key].common.members.length + ')' + data.objects[node.key].common.members.join(', '));
@@ -912,11 +1327,35 @@
                             $tdList.eq(base).attr('title', '');
                         }
                         base++;
+                    } else if (typeof data.columns[c].data === 'function') {
+                        $elem = $tdList.eq(base);
+                        var val = data.columns[c].data(node.key, data.columns[c].name);
+                        var title = '';
+                        if (data.columns[c].title) title = data.columns[c].title(node.key, data.columns[c].name);
+                        $elem.html(val).attr('title', title);
+                        if (data.quickEdit && data.objects[node.key]) {
+                            for (var q = 0; q < data.quickEdit.length; q++) {
+                                if (data.quickEdit[q] === data.columns[c].name ||
+                                    data.quickEdit[q].name === data.columns[c].name) {
+                                    $elem.data('old-value', val).data('type', typeof val);
+
+                                    $elem.click(onQuickEditField)
+                                        .data('id', node.key)
+                                        .data('name', data.columns[c].name)
+                                        .data('selectId', data)
+                                        .data('options', data.quickEdit[q].options)
+                                        .addClass('select-id-quick-edit');
+
+                                    break;
+                                }
+                            }
+                        }
+                        base++;
                     }
                 }
             },
             dblclick: function (event, _data) {
-                if (data.buttonsDlg) {
+                if (data.buttonsDlg && !data.quickEditCallback) {
                     if (_data && _data.node && !_data.node.folder) {
                         data.buttonsDlg[0].click();
                     }
@@ -933,8 +1372,8 @@
         if (data.editEnd) {
             foptions.extensions.push('edit');
             foptions.edit = {
-                triggerStart: ["f2", "dblclick", "shift+click", "mac+enter"],
-                triggerStop:  ["esc"],
+                triggerStart: ['f2', 'dblclick', 'shift+click', 'mac+enter'],
+                triggerStop:  ['esc'],
                 beforeEdit: function (event, _data) {
                     // Return false to prevent edit mode
                     if (!data.objects[_data.node.key]) return false;
@@ -951,9 +1390,12 @@
                     var inputs = {id: _data.input};
 
                     for (var c = 0; c < data.columns.length; c++) {
-                        if (data.columns[c] == 'name') {
-                            $tdList.eq(2 + c).html('<input type="text" id="select_edit_' + data.columns[c] + '" value="' + data.objects[_data.node.key].common[data.columns[c]] + '" style="width: 100%"/>');
-                            inputs[data.columns[c]] = $('#select_edit_' + data.columns[c]);
+                        var name = data.columns[c];
+                        if (typeof name === 'object') name = name.name;
+
+                        if (name == 'name') {
+                            $tdList.eq(2 + c).html('<input type="text" id="select_edit_' + name + '" value="' + data.objects[_data.node.key].common[name] + '" style="width: 100%"/>');
+                            inputs[name] = $('#select_edit_' + name);
                         }
                     }
                     for (var i in inputs) {
@@ -981,12 +1423,13 @@
                     return _data.node.editFinished;
                 },
                 save: function (event, _data) {
-                    var node = _data.node;
                     var editValues = {id: _data.input.val()};
 
                     for (var c = 0; c < data.columns.length; c++) {
-                        if (data.columns[c] == 'name') {
-                            editValues[data.columns[c]] = $('#select_edit_' + data.columns[c]).val();
+                        var name = data.columns[c];
+                        if (typeof name === 'object') name = name.name;
+                        if (name == 'name') {
+                            editValues[name] = $('#select_edit_' + name).val();
                         }
                     }
 
@@ -1007,13 +1450,13 @@
                     // Editor was removed
                     if (data.save) {
                         // Since we started an async request, mark the node as preliminary
-                        $(data.node.span).addClass("pending");
+                        $(data.node.span).addClass('pending');
                     }
                 }
             };
         }
 
-        data.$tree.fancytree(foptions).on("nodeCommand", function (event, data) {
+        data.$tree.fancytree(foptions).on('nodeCommand', function (event, data) {
             // Custom event handler that is triggered by keydown-handler and
             // context menu:
             var refNode;
@@ -1022,25 +1465,25 @@
             var node = tree.getActiveNode();
 
             switch (data.cmd) {
-                case "moveUp":
-                    node.moveTo(node.getPrevSibling(), "before");
+                case 'moveUp':
+                    node.moveTo(node.getPrevSibling(), 'before');
                     node.setActive();
                     break;
-                case "moveDown":
-                    node.moveTo(node.getNextSibling(), "after");
+                case 'moveDown':
+                    node.moveTo(node.getNextSibling(), 'after');
                     node.setActive();
                     break;
-                case "indent":
+                case 'indent':
                     refNode = node.getPrevSibling();
-                    node.moveTo(refNode, "child");
+                    node.moveTo(refNode, 'child');
                     refNode.setExpanded();
                     node.setActive();
                     break;
-                case "outdent":
-                    node.moveTo(node.getParent(), "after");
+                case 'outdent':
+                    node.moveTo(node.getParent(), 'after');
                     node.setActive();
                     break;
-                case "copy":
+                case 'copy':
                     CLIPBOARD = {
                         mode: data.cmd,
                         data: node.toDict(function (n) {
@@ -1048,31 +1491,31 @@
                         })
                     };
                     break;
-                case "clear":
+                case 'clear':
                     CLIPBOARD = null;
                     break;
                 default:
-                    alert("Unhandled command: " + data.cmd);
+                    alert('Unhandled command: ' + data.cmd);
                     return;
             }
 
-        }).on("keydown", function (e) {
+        }).on('keydown', function (e) {
             var c   = String.fromCharCode(e.which);
             var cmd = null;
 
             if (e.which === 'c' && e.ctrlKey) {
-                cmd = "copy";
+                cmd = 'copy';
             }else if (e.which === $.ui.keyCode.UP && e.ctrlKey) {
-                cmd = "moveUp";
+                cmd = 'moveUp';
             } else if (e.which === $.ui.keyCode.DOWN && e.ctrlKey) {
-                cmd = "moveDown";
+                cmd = 'moveDown';
             } else if (e.which === $.ui.keyCode.RIGHT && e.ctrlKey) {
-                cmd = "indent";
+                cmd = 'indent';
             } else if (e.which === $.ui.keyCode.LEFT && e.ctrlKey) {
-                cmd = "outdent";
+                cmd = 'outdent';
             }
             if (cmd) {
-                $(this).trigger("nodeCommand", {cmd: cmd});
+                $(this).trigger('nodeCommand', {cmd: cmd});
                 return false;
             }
         });
@@ -1090,19 +1533,21 @@
                 }
 
                 for (var c = 0; c < data.columns.length; c++) {
-                    if (data.columns[c] == 'image') {
+                    var name = data.columns[c];
+                    if (typeof name === 'object') name = name.name;
+                    if (name == 'image') {
                         continue;
-                    } else if (data.columns[c] == 'role' || data.columns[c] == 'type' || data.columns[c] == 'room') {
-                        value = $('#filter_' + data.columns[c] + '_' + data.instance).val();
+                    } else if (name == 'role' || name == 'type' || name == 'room' || name == 'function') {
+                        value = $('#filter_' + name + '_' + data.instance).val();
                         if (value) {
-                            data.filterVals[data.columns[c]] = value;
+                            data.filterVals[name] = value;
                             data.filterVals.length++;
                         }
                     } else {
-                        value = $('#filter_' + data.columns[c] + '_' + data.instance).val();
+                        value = $('#filter_' + name + '_' + data.instance).val();
                         if (value) {
                             value = value.toLowerCase();
-                            data.filterVals[data.columns[c]] = value;
+                            data.filterVals[name] = value;
                             data.filterVals.length++;
                         }
                     }
@@ -1118,22 +1563,22 @@
 
                 if (isCommon === null) isCommon = data.objects[node.key] && data.objects[node.key].common;
 
-                if (f == 'ID') {
-                    if (node.key.toLowerCase().indexOf(data.filterVals[f]) == -1) return false;
+                if (f === 'ID') {
+                    if (node.key.toLowerCase().indexOf(data.filterVals[f]) === -1) return false;
                 } else
-                if (f == 'name' || f == 'enum') {
+                if (f === 'name' || f === 'enum') {
                     if (!isCommon || data.objects[node.key].common[f] === undefined || data.objects[node.key].common[f].toLowerCase().indexOf(data.filterVals[f]) == -1) return false;
                 } else
-                if (f == 'role') {
+                if (f === 'role') {
                     if (!isCommon || data.objects[node.key].common[f] === undefined || data.objects[node.key].common[f].indexOf(data.filterVals[f]) == -1) return false;
                 } else
-                if (f == 'type') {
+                if (f === 'type') {
                     if (!data.objects[node.key] || data.objects[node.key][f] === undefined || data.objects[node.key][f] != data.filterVals[f]) return false;
                 } else
-                if (f == 'value') {
+                if (f === 'value') {
                     if (!data.states[node.key] || data.states[node.key].val === undefined || data.states[node.key].val === null || data.states[node.key].val.toString().toLowerCase().indexOf(data.filterVals[f]) == -1) return false;
                 } else
-                if (f == 'button') {
+                if (f === 'button') {
                     if (data.filterVals[f] === 'true') {
                         if (!isCommon || !data.objects[node.key].common.history || data.objects[node.key].common.history.enabled === false) return false;
                     } else if (data.filterVals[f] === 'false') {
@@ -1142,12 +1587,19 @@
                         if (!isCommon || !data.objects[node.key].common.history || !data.objects[node.key].common.history[data.filterVals[f]]) return false;
                     }
                 } else
-                if (f == 'room') {
+                if (f === 'room') {
                     if (!data.objects[node.key]) return false;
 
                     // Try to find room
                     if (!data.rooms[node.key]) data.rooms[node.key] = findRoomsForObject(data, node.key);
-                    if (data.rooms[node.key].indexOf(data.filterVals[f]) == -1) return false;
+                    if (data.rooms[node.key].indexOf(data.filterVals[f]) === -1) return false;
+                } else
+                if (f === 'function') {
+                    if (!data.objects[node.key]) return false;
+
+                    // Try to find functions
+                    if (!data.funcs[node.key]) data.funcs[node.key] = findFunctionsForObject(data, node.key);
+                    if (data.funcs[node.key].indexOf(data.filterVals[f]) === -1) return false;
                 }
             }
 
@@ -1171,7 +1623,7 @@
 
         $('.filter_btn_' + data.instance).button({icons: {primary: 'ui-icon-close'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#' + $(this).attr('data-id')).val('').trigger('change');
-        }).attr('title', data.texts.collapse);
+        });
 
         $('#btn_collapse_' + data.instance).button({icons: {primary: 'ui-icon-folder-collapsed'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
@@ -1181,7 +1633,7 @@
                 });
                 $('#process_running_' + data.instance).hide();
             }, 100);
-        });
+        }).attr('title', data.texts.collapse);
 
         $('#btn_expand_' + data.instance).button({icons: {primary: 'ui-icon-folder-open'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
@@ -1225,9 +1677,11 @@
 
         $('#btn_refresh_' + data.instance).button({icons: {primary: 'ui-icon-refresh'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
-            data.inited = false;
-            initTreeDialog(data.$dlg);
-            $('#process_running_' + data.instance).hide();
+            setTimeout(function () {
+                data.inited = false;
+                initTreeDialog(data.$dlg);
+                $('#process_running_' + data.instance).hide();
+            }, 100);
         }).attr('title', data.texts.refresh);
 
         $('#btn_select_all_' + data.instance).button({icons: {primary: 'ui-icon-circle-check'}, text: false}).css({width: 18, height: 18}).click(function () {
@@ -1244,6 +1698,28 @@
                 $('#process_running_' + data.instance).hide();
             }, 100);
         }).attr('title', data.texts.selectAll);
+
+        if (data.expertModeRegEx) {
+            $('#btn_expert_' + data.instance).button({icons: {primary: 'ui-icon-person'}, text: false}).css({width: 18, height: 18}).click(function () {
+                $('#process_running_' + data.instance).show();
+
+                data.expertMode = !data.expertMode;
+                if (data.expertMode) {
+                    $('#btn_expert_' + data.instance).addClass('ui-state-error');
+                } else {
+                    $('#btn_expert_' + data.instance).removeClass('ui-state-error');
+                }
+                storeSettings(data, true);
+
+                setTimeout(function () {
+                    data.inited = false;
+                    initTreeDialog(data.$dlg);
+                    $('#process_running_' + data.instance).hide();
+                }, 200);
+            }).attr('title', data.texts.expertMode);
+
+            if (data.expertMode) $('#btn_expert_' + data.instance).addClass('ui-state-error');
+        }
 
         $('#btn_unselect_all_' + data.instance).button({icons: {primary: 'ui-icon-circle-close'}, text: false}).css({width: 18, height: 18}).click(function () {
             $('#process_running_' + data.instance).show();
@@ -1270,7 +1746,11 @@
         }).attr('title', data.texts.invertSelection);
 
         for (var f in filter) {
-            if (f) $('#filter_' + f + '_' + data.instance).val(filter[f]).trigger('change');
+            try {
+                if (f) $('#filter_' + f + '_' + data.instance).val(filter[f]).trigger('change');
+            } catch (err) {
+                console.error('Cannot apply filter: ' + err)
+            }
         }
 
         if (data.panelButtons) {
@@ -1286,7 +1766,7 @@
 
         showActive($dlg);
         loadSettings(data);
-        installColResize($dlg);
+        installColResize(data, $dlg);
 
         // set preset filters
         for (var field in data.filterPresets) {
@@ -1299,19 +1779,25 @@
         }
     }
 
-    function storeSettings(data) {
-        if (data.timer) {
-            clearTimeout(data.timer);
-        }
-        data.timer = setTimeout(function () {
-            if (typeof(Storage) !== "undefined" && data.name) {
+    function storeSettings(data, force) {
+        if (typeof Storage === 'undefined' || !data.name) return;
+
+        if (data.timer) clearTimeout(data.timer);
+
+        if (force) {
+            window.localStorage.setItem(data.name + '-filter', JSON.stringify(data.filterVals));
+            window.localStorage.setItem(data.name + '-expert', JSON.stringify(data.expertMode));
+            data.timer = null;
+        } else {
+            data.timer = setTimeout(function () {
                 window.localStorage.setItem(data.name + '-filter', JSON.stringify(data.filterVals));
-            }
-        }, 500);
+                window.localStorage.setItem(data.name + '-expert', JSON.stringify(data.expertMode));
+            }, 500);
+        }
     }
 
     function loadSettings(data) {
-        if (typeof(Storage) !== "undefined" && data.name) {
+        if (typeof Storage !== 'undefined' && data.name) {
             var f = window.localStorage.getItem(data.name + '-filter');
             if (f) {
                 try{
@@ -1332,7 +1818,7 @@
     }
 
     var methods = {
-        "init": function (options) {
+        init: function (options) {
             // done, just to show possible settings, this is not required
             var settings = $.extend({
                 currentId:  '',
@@ -1346,7 +1832,7 @@
                 zindex:     null,
                 list:       false,
                 name:       null,
-                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button']
+                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'function', 'value', 'button']
             }, options);
 
             settings.texts = settings.texts || {};
@@ -1359,10 +1845,12 @@
                 role:     'Role',
                 type:     'Type',
                 room:     'Room',
+                'function': 'Function',
                 enum:     'Members',
                 value:    'Value',
                 selectid: 'Select ID',
                 from:     'From',
+                quality:  'Quality',
                 lc:       'Last changed',
                 ts:       'Time stamp',
                 ack:      'Acknowledged',
@@ -1377,7 +1865,7 @@
                 selectAll: 'Select all',
                 unselectAll: 'Unselect all',
                 invertSelection: 'Invert selection',
-                copyTpClipboard: "Copy to clipboard"
+                copyToClipboard: 'Copy to clipboard'
             }, settings.texts);
 
             var that = this;
@@ -1389,14 +1877,19 @@
                 if (!data) {
                     data = {
                         tree:               {title: '', children: [], count: 0, root: true},
-                        enums:              [],
+                        roomEnums:          [],
                         rooms:              {},
+                        roomsColored:       {},
+                        funcEnums:          [],
+                        funcs:              {},
+                        funcsColored:       {},
                         roles:              [],
                         histories:          [],
                         types:              [],
-                        regexSystemAdapter: new RegExp('^system.adapter.'),
-                        regexSystemHost:    new RegExp('^system.host.'),
-                        regexEnumRooms:     new RegExp('^enum.rooms.'),
+                        regexSystemAdapter: new RegExp('^system\\.adapter\\.'),
+                        regexSystemHost:    new RegExp('^system\\.host\\.'),
+                        regexEnumRooms:     new RegExp('^enum\\.rooms\\.'),
+                        regexEnumFuncs:     new RegExp('^enum\\.functions\\.'),
                         instance:           instance++,
                         inited:             false,
                         filterPresets:      {}
@@ -1424,7 +1917,9 @@
 
                 data = $.extend(data, settings);
 
-                data.selectedID = data.currentId;
+                data.rootExp = data.root ? new RegExp('^' + data.root.replace('.', '\\.')) : null;
+
+                    data.selectedID = data.currentId;
 
                 // make a copy of filter
                 data.filter = JSON.parse(JSON.stringify(data.filter));
@@ -1479,7 +1974,7 @@
 
             return this;
         },
-        "show": function (currentId, filter, onSuccess) {
+        show: function (currentId, filter, onSuccess) {
             if (typeof filter == 'function') {
                 onSuccess = filter;
                 filter = undefined;
@@ -1559,7 +2054,7 @@
 
             return this;
         },
-        "hide": function () {
+        hide: function () {
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1572,7 +2067,7 @@
             }
             return this;
         },
-        "clear": function () {
+        clear: function () {
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1581,15 +2076,17 @@
                 if (data) {
                     data.tree      = {title: '', children: [], count: 0, root: true};
                     data.rooms     = {};
-                    data.enums     = [];
+                    data.roomEnums = [];
+                    data.funcs     = {};
+                    data.funcEnums = [];
                     data.roles     = [];
-                    data.typse     = [];
+                    data.types     = [];
                     data.histories = [];
                 }
             }
             return this;
         },
-        "getInfo": function (id) {
+        getInfo: function (id) {
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1600,7 +2097,7 @@
             }
             return null;
         },
-        "getTreeInfo": function (id) {
+        getTreeInfo: function (id) {
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1633,7 +2130,7 @@
             }
             return null;
         },
-        "destroy": function () {
+        destroy: function () {
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1642,7 +2139,7 @@
             }
             return this;
         },
-        "reinit": function () {
+        reinit: function () {
             for (var i = 0; i < this.length; i++) {
                 var dlg = this[i];
                 var $dlg = $(dlg);
@@ -1655,7 +2152,7 @@
             return this;
         },
         // update states
-        "state": function (id, state) {
+        state: function (id, state) {
             for (var i = 0; i < this.length; i++) {
                 var dlg  = this[i];
                 var $dlg = $(dlg);
@@ -1676,14 +2173,21 @@
             return this;
         },
         // update objects
-        "object": function (id, obj) {
+        object: function (id, obj) {
             for (var k = 0; k < this.length; k++) {
                 var dlg = this[k];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
                 if (!data || !data.$tree || !data.objects) continue;
 
-                if (id.match(/^enum\.rooms/)) data.rooms = {};
+                if (id.match(/^enum\.rooms/))     {
+                    data.rooms = {};
+                    data.roomsColored = {};
+                }
+                if (id.match(/^enum\.functions/)) {
+                    data.funcs = {};
+                    data.funcsColored = {};
+                }
 
                 var tree = data.$tree.fancytree('getTree');
                 var node = null;
@@ -1770,7 +2274,7 @@
             }
             return this;
         },
-        "option": function (name, value) {
+        option: function (name, value) {
             for (var k = 0; k < this.length; k++) {
                 var dlg = this[k];
                 var $dlg = $(dlg);
@@ -1784,13 +2288,13 @@
                 }
             }
         },
-        "objectAll": function (id, obj) {
+        objectAll: function (id, obj) {
             $('.select-id-dialog-marker').selectId('object', id, obj);
         },
-        "stateAll": function (id, state) {
+        stateAll: function (id, state) {
             $('.select-id-dialog-marker').selectId('state', id, state);
         },
-        "getFilteredIds": function () {
+        getFilteredIds: function () {
             for (var k = 0; k < this.length; k++) {
                 var dlg = this[k];
                 var $dlg = $(dlg);
@@ -1806,7 +2310,7 @@
             }
             return null;
         },
-        "getActual": function () {
+        getActual: function () {
             for (var k = 0; k < this.length; k++) {
                 var dlg = this[k];
                 var $dlg = $(dlg);
