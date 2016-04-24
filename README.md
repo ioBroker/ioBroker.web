@@ -13,8 +13,8 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
-### 1.4.2 (2016-04-13)
-* (bluefox) extend selectID dialog
+### 1.4.2 (2016-04-24)
+* (bluefox) use new socket.io version
 
 ### 1.4.1 (2016-04-09)
 * (bluefox) add grey jquery theme
