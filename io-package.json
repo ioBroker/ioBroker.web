@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.4.2",
+        "version":                  "1.4.3",
         "title":                    "ioBroker simple web Adapter",
         "desc": {
             "en":                   "opens a webserver for the ioBroker",

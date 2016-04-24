@@ -13,7 +13,7 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
-### 1.4.2 (2016-04-24)
+### 1.4.3 (2016-04-24)
 * (bluefox) use new socket.io version
 
 ### 1.4.1 (2016-04-09)
