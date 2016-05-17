@@ -13,6 +13,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.4.5 (2016-05-17)
+* (bluefox) make possible to change language without restart
+
 ### 1.4.4 (2016-05-13)
 * (bluefox) update socket-io version
 

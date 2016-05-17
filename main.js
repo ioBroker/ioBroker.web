@@ -31,7 +31,7 @@ var adapter = utils.adapter({
         if (typeof callback === 'function') callback();
     },
     objectChange: function (id, obj) {
-        if (!ownSocket && id == adapter.config.socketio) {
+        if (!ownSocket && id === adapter.config.socketio) {
             if (obj && obj.common && obj.common.enabled && obj.native) {
                 socketUrl = ':' + obj.native.port;
             } else {
@@ -40,6 +40,9 @@ var adapter = utils.adapter({
         }
         if (webServer.io) webServer.io.publishAll('objectChange', id, obj);
         if (webServer.api && adapter.config.auth) webServer.api.objectChange(id, obj);
+        if (id === 'system.config') {
+            lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
+        }
     },
     stateChange: function (id, state) {
         if (webServer.io) webServer.io.publishAll('stateChange', id, state);
@@ -134,6 +137,7 @@ function initWebServer(settings) {
         io:        null,
         settings:  settings
     };
+    adapter.subscribeForeignObjects('system.config');
 
     adapter.config.defaultUser = adapter.config.defaultUser || 'system.user.admin';
     if (!adapter.config.defaultUser.match(/^system\.user\./)) adapter.config.defaultUser = 'system.user.' + adapter.config.defaultUser;
