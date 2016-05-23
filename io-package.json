@@ -3,6 +3,11 @@
         "name":                     "web",
         "version":                  "1.4.5",
         "title":                    "ioBroker simple web Adapter",
+		"news": {
+            "en":                   "(bluefox) make possible to change language without restart",
+            "de":                   "(bluefox) make possible to change language without restart",
+            "ru":                   "(bluefox) make possible to change language without restart"
+        },
         "desc": {
             "en":                   "opens a webserver for the ioBroker",
             "de":                   "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
