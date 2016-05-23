@@ -1,12 +1,17 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.4.5",
+        "version":                  "1.4.6",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
-            "en":                   "(bluefox) make possible to change language without restart",
-            "de":                   "(bluefox) make possible to change language without restart",
-            "ru":                   "(bluefox) make possible to change language without restart"
+            "en":                   "update selectID dialog",
+            "de":                   "update selectID dialog",
+            "ru":                   "update selectID dialog",
+            "1.4.5": {
+                "en":                   "(bluefox) make possible to change language without restart",
+                "de":                   "(bluefox) make possible to change language without restart",
+                "ru":                   "(bluefox) make possible to change language without restart"
+            }
         },
         "desc": {
             "en":                   "opens a webserver for the ioBroker",

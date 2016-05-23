@@ -112,6 +112,8 @@
  +  reinit() - draw tree anew
  */
 (function ($) {
+    "use strict";
+
     if ($.fn.selectId) return;
 
     var instance = 0;
@@ -161,6 +163,15 @@
             text += ':' + v;
         }
 
+        v = dateObj.getMilliseconds();
+        if (v < 10) {
+            text += '.00' + v;
+        } else if (v < 100) {
+            text += '.0' + v;
+        } else {
+            text += '.' + v;
+        }
+        
         return text;
     }
 
@@ -651,7 +662,7 @@
                 var val = $(this).attr('type') === 'checkbox' ? $(this).prop('checked') : $(this).val();
                 if ((attr == 'room' || attr == 'function') && !val) val = [];
 
-                if (attr === 'value' || JSON.stringify(val) != JSON.stringify(oldText)) {
+                if (attr === 'value' || JSON.stringify(val) != JSON.stringify(_oldText)) {
                     data.quickEditCallback(id, attr, val, _oldText);
 
                     _oldText = '<span style="color: pink">' + _oldText + '</span>';
@@ -750,7 +761,7 @@
         for (var u = 0; u < data.columns.length; u++) {
             var name = data.columns[u];
             if (typeof name === 'object') name = name.name;
-            filter[data.columns[u]] = $('#filter_' + name + '_' + data.instance).val();
+            filter[name] = $('#filter_' + name + '_' + data.instance).val();
         }
 
         var textRooms;
@@ -853,14 +864,16 @@
         text += '<td class="ui-widget" style="width: 100%; text-align: center; font-weight: bold; font-size: medium">' + data.texts.id + '</td></tr></table></th>';
 
         for (c = 0; c < data.columns.length; c++) {
-            text += '<th class="ui-widget" style="font-size: medium">' + (data.texts[data.columns[c]] || '') + '</th>';
+            var name = data.columns[c];
+            if (typeof name === 'object') name = name.name;
+            text += '<th class="ui-widget" style="font-size: medium">' + (data.texts[name] || '') + '</th>';
         }
 
         text += '<th></th></tr>';
         text += '        </thead>';
         text += '        <tbody>';
         text += '            <tr><td></td>';
-        text += '               <td><table style="width: 100%"><tr><td style="width: 100%"><input style="width: 100%;padding:0" type="text" id="filter_ID_'    + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_ID_'    + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
+        text += '               <td><table style="width: 100%"><tr><td style="width: 100%"><input style="width: 100%; padding: 0" type="text" id="filter_ID_'    + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_ID_'    + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
 
         for (c = 0; c < data.columns.length; c++) {
             var name = data.columns[c];
@@ -1201,11 +1214,15 @@
                             if (state.val === undefined) {
                                 state.val = '';
                             } else {
-                                if (isCommon && common.unit) state.val += ' ' + commonn.unit;
+                                // if less 2000.01.01 00:00:00
+                                if (state.ts < 946681200000)  state.ts *= 1000;
+                                if (state.lc < 946681200000)  state.lc *= 1000;
+
+                                if (isCommon && common.unit) state.val += ' ' + common.unit;
                                 fullVal  =          data.texts.value   + ': ' + state.val;
                                 fullVal += '\x0A' + data.texts.ack     + ': ' + state.ack;
-                                fullVal += '\x0A' + data.texts.ts      + ': ' + (state.ts ? formatDate(new Date(state.ts * 1000)) : '');
-                                fullVal += '\x0A' + data.texts.lc      + ': ' + (state.lc ? formatDate(new Date(state.lc * 1000)) : '');
+                                fullVal += '\x0A' + data.texts.ts      + ': ' + (state.ts ? formatDate(new Date(state.ts)) : '');
+                                fullVal += '\x0A' + data.texts.lc      + ': ' + (state.lc ? formatDate(new Date(state.lc)) : '');
                                 fullVal += '\x0A' + data.texts.from    + ': ' + (state.from || '');
                                 fullVal += '\x0A' + data.texts.quality + ': ' + quality2text(state.q || 0);
                             }
@@ -1251,7 +1268,7 @@
                             data.webServer = data.webServer || (window.location.protocol + '//' + window.location.hostname + ':8082');
 
                             // link
-                            $elem.html('<a href="' + data.webServer + '/state/' + node.key + '">' + data.webServer + '/state/' + node.key + '</a>')
+                            $elem.html('<a href="' + data.webServer + '/state/' + node.key + '" target="_blank">' + data.webServer + '/state/' + node.key + '</a>')
                                 .attr('title', data.texts.linkToFile);
                         }
 
@@ -1474,7 +1491,6 @@
             // Custom event handler that is triggered by keydown-handler and
             // context menu:
             var refNode;
-            var moveMode;
             var tree = $(this).fancytree('getTree');
             var node = tree.getActiveNode();
 
@@ -1497,7 +1513,7 @@
                     node.moveTo(node.getParent(), 'after');
                     node.setActive();
                     break;
-                case 'copy':
+                /*case 'copy':
                     CLIPBOARD = {
                         mode: data.cmd,
                         data: node.toDict(function (n) {
@@ -1507,7 +1523,7 @@
                     break;
                 case 'clear':
                     CLIPBOARD = null;
-                    break;
+                    break;*/
                 default:
                     alert('Unhandled command: ' + data.cmd);
                     return;

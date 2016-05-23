@@ -4,7 +4,7 @@
 
 var express = require('express');
 var fs =      require('fs');
-var Stream =  require('stream');
+//var Stream =  require('stream');
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 
 var session;// =           require('express-session');
