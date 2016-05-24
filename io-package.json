@@ -1,12 +1,19 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.4.6",
+        "version":                  "1.4.7",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
-            "en":                   "update selectID dialog",
-            "de":                   "update selectID dialog",
-            "ru":                   "update selectID dialog",
+            "1.4.7": {
+				"en":                   "add version dependency",
+				"de":                   "add version dependency",
+				"ru":                   "add version dependency"
+			},
+            "1.4.6": {
+				"en":                   "update selectID dialog",
+				"de":                   "update selectID dialog",
+				"ru":                   "update selectID dialog"
+			},
             "1.4.5": {
                 "en":                   "(bluefox) make possible to change language without restart",
                 "de":                   "(bluefox) make possible to change language without restart",
@@ -28,7 +35,7 @@
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
         "type":                     "visualisation",
         "stopBeforeUpdate":         true,
-		"dependencies":             [{"js-controller": ">=0.8.0"}]
+		"dependencies":             [{"js-controller": ">=0.9.0"}]
     },
     "native": {
         "port":                     8082,
