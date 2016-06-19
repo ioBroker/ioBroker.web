@@ -186,6 +186,7 @@ function initWebServer(settings) {
                 extended: true
             }));
             server.app.use(bodyParser.json());
+            server.app.use(bodyParser.text());
             server.app.use(session({
                 secret:            secret,
                 saveUninitialized: true,
@@ -365,7 +366,7 @@ function initWebServer(settings) {
                 adapter.log.error('port ' + settings.port + ' already in use');
                 process.exit(1);
             }
-            server.server.listen(port);
+            server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
             adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
         });
     }

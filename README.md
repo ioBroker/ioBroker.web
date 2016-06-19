@@ -13,6 +13,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.4.8 (2016-06-19)
+* (bluefox) bind socket to specifed IP
+
 ### 1.4.7 (2016-05-24)
 * (bluefox) add version dependency
 

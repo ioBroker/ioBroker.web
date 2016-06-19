@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.4.7",
+        "version":                  "1.4.8",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "1.4.8": {
+				"en":                   "bind socket to specified IP",
+				"de":                   "bind socket to specified IP",
+				"ru":                   "bind socket to specified IP"
+			},
             "1.4.7": {
 				"en":                   "add version dependency",
 				"de":                   "add version dependency",
@@ -15,9 +20,9 @@
 				"ru":                   "update selectID dialog"
 			},
             "1.4.5": {
-                "en":                   "(bluefox) make possible to change language without restart",
-                "de":                   "(bluefox) make possible to change language without restart",
-                "ru":                   "(bluefox) make possible to change language without restart"
+                "en":                   "make possible to change language without restart",
+                "de":                   "make possible to change language without restart",
+                "ru":                   "make possible to change language without restart"
             }
         },
         "desc": {
