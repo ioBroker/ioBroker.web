@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "1.4.8",
+  "version": "1.5.0",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -22,7 +22,7 @@
     "url": "https://github.com/ioBroker/ioBroker.web"
   },
   "dependencies": {
-    "iobroker.socketio": ">=1.4.1",
+    "iobroker.socketio": ">=1.5.1",
     "iobroker.simple-api": ">=0.1.1",
     "express": "^4.13.4",
     "cookie-parser": "^1.4.1",

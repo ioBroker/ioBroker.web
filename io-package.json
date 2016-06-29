@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.4.8",
+        "version":                  "1.5.0",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.5.0": {
+				"en":                   "update version of socket.io",
+				"de":                   "update version of socket.io",
+				"ru":                   "update version of socket.io"
+			},
             "1.4.8": {
 				"en":                   "bind socket to specified IP",
 				"de":                   "bind socket to specified IP",
@@ -40,7 +45,7 @@
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
         "type":                     "visualisation",
         "stopBeforeUpdate":         true,
-		"dependencies":             [{"js-controller": ">=0.9.0"}]
+		"dependencies":             [{"js-controller": ">=0.10.0"}]
     },
     "native": {
         "port":                     8082,
