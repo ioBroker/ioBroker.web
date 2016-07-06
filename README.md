@@ -13,6 +13,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.5.1 (2016-07-06)
+* (bluefox) support of chained certificates
+
 ### 1.5.0 (2016-06-29)
 * (bluefox) update version of socket.io
 

@@ -25,6 +25,7 @@
         "integrated":       {"de": "integriert",              "ru": "встроенный"},
         "Public certificate:":    {"en": "Public certificate:",     "de": "Publikzertifikat:",       "ru": "'Public' сертификат:"},
         "Private certificate:":   {"en": "Private certificate:",    "de": "Privatzertifikat:",       "ru": "'Private' сертификат:"},
+        "Chained certificate:":   {"en": "Chained certificate:",    "de": "Kettenzertifikat:",       "ru": "'Chained' сертификат:"},
         "Internal 'Simple API':":   {"en": "Build-in 'Simple-API'",    "de": "Eingebautes 'Simple-API':",       "ru": "Встроенный 'Simple-API':"},
         "Listen on all IPs": {"en": "Listen on all IPs",       "de": "Alle IPs zulassen",            "ru": "Открыть для всех IP адресов"},
 
@@ -61,9 +62,11 @@
         if ($('#secure').prop('checked')) {
             $('#_certPublic').show();
             $('#_certPrivate').show();
+            $('#_certChained').show();
         } else {
             $('#_certPublic').hide();
             $('#_certPrivate').hide();
+            $('#_certChained').hide();
             $('#auth').prop('checked', false);
         }
         if ($('#auth').prop('checked')) {
@@ -122,6 +125,7 @@
 
         fillSelectCertificates('#certPublic',  'public',  settings.certPublic);
         fillSelectCertificates('#certPrivate', 'private', settings.certPrivate);
+        fillSelectCertificates('#certChained', 'chained', settings.certChained);
         fillUsers('#defaultUser', settings.defaultUser);
 
         showHideSettings();
@@ -173,6 +177,10 @@
         <tr id="_certPrivate">
             <td class="translate">Private certificate:</td>
             <td><select id="certPrivate" class="value"></select></td>
+        </tr>
+        <tr id="_certChained">
+            <td class="translate">Chained certificate:</td>
+            <td><select id="certChained" class="value"></select></td>
         </tr>
         <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td><td></td></tr>
         <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td><td></td></tr>
