@@ -60,12 +60,13 @@ var adapter = utils.adapter({
     },
     ready: function () {
         // Generate secret for session manager
-        adapter.getForeignObject('system.adapter.web', function (err, obj) {
+        adapter.getForeignObject('system.config', function (err, obj) {
             if (!err && obj) {
-                if (!obj.native.secret) {
+                if (!obj.native || !obj.native.secret) {
+                    obj.native = obj.native || {};
                     require('crypto').randomBytes(24, function (ex, buf) {
                         secret = buf.toString('hex');
-                        adapter.extendForeignObject('system.adapter.web', {native: {secret: secret}});
+                        adapter.extendForeignObject('system.config', {native: {secret: secret}});
                         main();
                     });
                 } else {
@@ -73,7 +74,7 @@ var adapter = utils.adapter({
                     main();
                 }
             } else {
-                adapter.logger.error('Cannot find object system.adapter.web');
+                adapter.logger.error('Cannot find object system.config');
             }
         });
 
@@ -125,6 +126,8 @@ function initWebServer(settings) {
     };
     adapter.subscribeForeignObjects('system.config');
 
+    adapter.config.ttl = parseInt(adapter.config.ttl, 10) || 3600;
+
     adapter.config.defaultUser = adapter.config.defaultUser || 'system.user.admin';
     if (!adapter.config.defaultUser.match(/^system\.user\./)) adapter.config.defaultUser = 'system.user.' + adapter.config.defaultUser;
 
@@ -139,8 +142,8 @@ function initWebServer(settings) {
             session =          require('express-session');
             cookieParser =     require('cookie-parser');
             bodyParser =       require('body-parser');
-            AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session);
-            passportSocketIo = require(__dirname + '/lib/passport.socketio.js');
+            AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, adapter.config.ttl);
+            passportSocketIo = require('passport.socketio');
             password =         require(utils.controllerDir + '/lib/password.js');
             passport =         require('passport');
             LocalStrategy =    require('passport-local').Strategy;
@@ -303,7 +306,7 @@ function initWebServer(settings) {
                 res.contentType(cache[id + '/' + url].mimeType);
                 res.status(200).send(cache[id + '/' + url].buffer);
             } else {
-                if (id == 'login' && url == 'index.html') {
+                if (id === 'login' && url === 'index.html') {
                     var buffer = fs.readFileSync(__dirname + '/www/login/index.html');
                     if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');

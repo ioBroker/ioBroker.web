@@ -73,8 +73,10 @@
             $('#secure').prop('checked', true);
             $('#defaultUser').val('admin');
             $('.defaultUser').hide();
+            $('#_ttl').show();
         } else {
             $('.defaultUser').show();
+            $('#_ttl').hide();
         }
     }
 
@@ -183,6 +185,7 @@
             <td><select id="certChained" class="value"></select></td>
         </tr>
         <tr><td class="translate">Authentication:</td><td><input  class="value" id="auth"   type="checkbox" /></td><td></td></tr>
+        <tr id="_ttl"><td class="translate">Login timeout(sec):</td><td><input  class="value" id="ttl"/></td><td></td></tr>
         <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td><td></td></tr>
         <tr><td class="translate">Socket.IO Instance (Optional):</td><td><select class="value" id="socketio"></select><span class="translate" style="padding-left: 20">socket_help</span></td></tr>
         <tr><td>Internal 'Simple API':</td><td><input type="checkbox" class="value" id="simpleapi"/></td></tr>

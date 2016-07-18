@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.5.1",
+        "version":                  "1.5.2",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.5.2": {
+                "en": "fix error with early logout\nupdate passport.socketio",
+                "de": "fix error with early logout\nupdate passport.socketio",
+                "ru": "fix error with early logout\nupdate passport.socketio"
+            },
 			"1.5.1": {
                 "en":               "support of chained certificates",
                 "de":               "support of chained certificates",
