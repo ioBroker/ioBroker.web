@@ -13,6 +13,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 
 
 ## Changelog
+### 1.5.3 (2016-07-27)
+* (bluefox) show links if root directory called
+
 ### 1.5.2 (2016-07-18)
 * (bluefox) fix error with early logout
 * (bluefox) update passport.socketio

@@ -1,6 +1,6 @@
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
-"use strict";
+'use strict';
 
 var express = require('express');
 var fs =      require('fs');
@@ -24,6 +24,17 @@ var socketUrl =  '';
 var cache =      {}; // cached web files
 var ownSocket =  false;
 var lang =       'en';
+
+var systemDictionary = {
+    'Directories': {'en': 'Directories', 'de': 'Verzeichnise', 'ru': 'Пути'},
+    'your are lost': {
+        'en': 'It seems to be you are lost. Here are some files, that you can open:',
+        'de': 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann:',
+        'ru': 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:'
+    }
+};
+
+
 
 var adapter = utils.adapter({
     name: 'web',
@@ -107,6 +118,26 @@ function main() {
     } else {
         webServer = initWebServer(adapter.config);
     }
+}
+
+function readDirs(dirs, cb, result) {
+    result = result || [];
+    if (!dirs || !dirs.length) {
+        return cb && cb(result);
+    }
+    var dir = dirs.shift();
+    adapter.readDir(dir, '', function (err, files) {
+        if (!err && files && files.length) {
+            for (var f = 0; f < files.length; f++) {
+                if (files[f].file.match(/\.html$/)) {
+                    result.push(dir + '/' + files[f].file);
+                }
+            }
+        }
+        setTimeout(function () {
+            readDirs(dirs, cb, result);
+        }, 0);
+    });
 }
 
 //settings: {
@@ -257,7 +288,7 @@ function initWebServer(settings) {
                 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, *');
 
                 // intercept OPTIONS method
-                if ('OPTIONS' == req.method) {
+                if ('OPTIONS' === req.method) {
                     res.status(200).send(200);
                 } else {
                     next();
@@ -274,6 +305,42 @@ function initWebServer(settings) {
 
             if (server.api && server.api.checkRequest(url)) {
                 server.api.restApi(req, res);
+                return;
+            }
+
+            if (url === '/') {
+                try {
+                    // read all instances
+                    adapter.objects.getObjectView('system', 'instance', {}, function (err, instances) {
+                        adapter.objects.getObjectView('system', 'adapter', {}, function (err, adapters) {
+                            var check = [];
+                            var a;
+                            for (a = 0; a < adapters.rows.length; a++) {
+                                check.push(adapters.rows[a].id.substring('system.adapter.'.length));
+                                check.push(adapters.rows[a].id.substring('system.adapter.'.length) + '.admin');
+                            }
+                            for (a = 0; a < instances.rows.length; a++) {
+                                check.push(instances.rows[a].id.substring('system.adapter.'.length));
+                            }
+                            readDirs(check, function (dirs) {
+                                var text = '<h2>' + systemDictionary['Directories'][lang] + '</h2><p>' + systemDictionary['your are lost'][lang] + '</p>';
+                                dirs.sort();
+                                for (var d = 0; d < dirs.length; d++) {
+                                    if (dirs[d].indexOf('vis/') !== -1 || dirs[d].indexOf('mobile/') !== -1) {
+                                        text += (text ? '<br>' : '') + '<a href="/' + dirs[d] + '"><b>' + dirs[d] + '</b></a>';
+                                    } else {
+                                        text += (text ? '<br>' : '') + '<a href="/' + dirs[d] + '">' + dirs[d] + '</a>';
+                                    }
+                                }
+                                res.set('Content-Type', 'text/html');
+                                res.status(200).send('<html><head><title>iobroker.web</title></head><body>' + text + '</body>');
+
+                            });
+                        });
+                    });
+                } catch (e) {
+                    res.status(500).send('500. Error' + e);
+                }
                 return;
             }
 
