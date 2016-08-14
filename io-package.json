@@ -1,18 +1,23 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.5.3",
+        "version":                  "1.5.4",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.5.4": {
+                "en": 				"support of web-sockets force",
+                "de": 				"support of web-sockets force",
+                "ru": 				"support of web-sockets force"
+            },
 			"1.5.3": {
-                "en": "show links if root directory called",
-                "de": "show links if root directory called",
-                "ru": "show links if root directory called"
+                "en": 				"show links if root directory called",
+                "de": 				"show links if root directory called",
+                "ru": 				"show links if root directory called"
             },
 			"1.5.2": {
-                "en": "fix error with early logout\nupdate passport.socketio",
-                "de": "fix error with early logout\nupdate passport.socketio",
-                "ru": "fix error with early logout\nupdate passport.socketio"
+                "en": 				"fix error with early logout\nupdate passport.socketio",
+                "de": 				"fix error with early logout\nupdate passport.socketio",
+                "ru": 				"fix error with early logout\nupdate passport.socketio"
             },
 			"1.5.1": {
                 "en":               "support of chained certificates",
@@ -75,7 +80,8 @@
         "certPublic":               "",
         "certPrivate":              "",
         "certChained":              "",
-        "addUserName":              false
+        "addUserName":              false,
+        "forceWebSockets":          false
     },
     "objects": [
         {

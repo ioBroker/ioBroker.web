@@ -11,8 +11,14 @@
 
 Web server on the base of Node.js and express to read the files from iobroker DB
 
+## Tuning Web-Sockets
+On some web-sockets clients there is performance problem with communication. Sometimes this problem is due to fallback of socket.io communication on long polling mechanism.
+You can set option *Force Web-Sockets* to force using only web-sockets transport.
 
 ## Changelog
+### 1.5.4 (2016-08-14)
+* (bluefox) support of web-sockets force
+
 ### 1.5.3 (2016-07-27)
 * (bluefox) show links if root directory called
 

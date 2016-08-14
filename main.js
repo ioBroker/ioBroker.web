@@ -277,7 +277,7 @@ function initWebServer(settings) {
 
         server.app.get('*/_socket/info.js', function (req, res) {
             res.set('Content-Type', 'application/javascript');
-            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang="' + lang + '";');
+            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang = "' + lang + '"; socketForceWebSockets = ' + (adapter.config.forceWebSockets ? 'true' : 'false') + ';');
         });
 
         // Enable CORS
@@ -443,10 +443,11 @@ function initWebServer(settings) {
         var IOSocket = require(utils.appName + '.socketio/lib/socket.js');
         var socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
-        socketSettings.auth        = false;
-        socketSettings.secret      = secret;
-        socketSettings.store       = store;
-        socketSettings.ttl         = adapter.config.ttl || 3600;
+        socketSettings.auth             = false;
+        socketSettings.secret           = secret;
+        socketSettings.store            = store;
+        socketSettings.ttl              = adapter.config.ttl || 3600;
+        socketSettings.forceWebSockets  = adapter.config.forceWebSockets || false;
         server.io = new IOSocket(server.server, socketSettings, adapter);
     }
 

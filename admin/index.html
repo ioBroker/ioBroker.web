@@ -26,6 +26,7 @@
         "Public certificate:":    {"en": "Public certificate:",     "de": "Publikzertifikat:",       "ru": "'Public' сертификат:"},
         "Private certificate:":   {"en": "Private certificate:",    "de": "Privatzertifikat:",       "ru": "'Private' сертификат:"},
         "Chained certificate:":   {"en": "Chained certificate:",    "de": "Kettenzertifikat:",       "ru": "'Chained' сертификат:"},
+        "Force Web-Sockets:":     {"en": "Force Web-Sockets:",      "de": "Nur Web-Sockets:",        "ru": "Только Web-Sockets:"},
         "Internal 'Simple API':":   {"en": "Build-in 'Simple-API'",    "de": "Eingebautes 'Simple-API':",       "ru": "Встроенный 'Simple-API':"},
         "Listen on all IPs": {"en": "Listen on all IPs",       "de": "Alle IPs zulassen",            "ru": "Открыть для всех IP адресов"},
 
@@ -103,9 +104,20 @@
                 count--;
                 if (!count) {
                     $('#socketio').val(settings.socketio);
+                    if (settings.socketio !== '') {
+                        $('.socketio').hide();
+                    }
+                    $('#socketio').change(function () {
+                        if ($(this).val() === '') {
+                            $('.socketio').show();
+                        } else {
+                            $('.socketio').hide();
+                        }
+                    });
                 }
             });
         }
+
 
         $('.value').each(function () {
             var key = $(this).attr('id');
@@ -188,6 +200,7 @@
         <tr id="_ttl"><td class="translate">Login timeout(sec):</td><td><input  class="value" id="ttl"/></td><td></td></tr>
         <tr><td class="translate">Cache:</td><td>         <input  class="value" id="cache"  type="checkbox" /></td><td></td></tr>
         <tr><td class="translate">Socket.IO Instance (Optional):</td><td><select class="value" id="socketio"></select><span class="translate" style="padding-left: 20">socket_help</span></td></tr>
+        <tr class="socketio"><td class="translate">Force Web-Sockets:</td><td><input type="checkbox" class="value" id="forceWebSockets"/></td></tr>
         <tr><td>Internal 'Simple API':</td><td><input type="checkbox" class="value" id="simpleapi"/></td></tr>
         <tr class="defaultUser"><td class="translate">Run as:</td><td><select class="value" id="defaultUser" /></td></tr>
     </table>
