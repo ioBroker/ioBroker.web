@@ -217,6 +217,20 @@ function initWebServer(settings) {
             server.app.use(passport.session());
             server.app.use(flash());
 
+            var autoLogonOrRedirectToLogin = function (req, res, next, redirect) {
+
+                if (!settings.whiteListSettings) return res.redirect(redirect);
+                
+                var remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                var whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+
+                if (!whiteListIp || settings.whiteListSettings[whiteListIp].user == 'auth') return res.redirect(redirect);
+
+                req.logIn(settings.whiteListSettings[whiteListIp].user, function (err) {
+                    return next(err);
+                });
+            };
+
             server.app.post('/login', function (req, res) {
                 var redirect = '/';
                 var parts;
@@ -247,7 +261,9 @@ function initWebServer(settings) {
                     /^\/login\//.test(req.originalUrl) ||
                     /\.ico$/.test(req.originalUrl)
                 ) return next();
-                res.redirect('/login/index.html?href=' + encodeURIComponent(req.originalUrl));
+                // res.redirect('/login/index.html?href=' + encodeURIComponent(req.originalUrl));
+
+                autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
             });
         } else {
             server.app.get('/login', function (req, res) {
