@@ -21,6 +21,9 @@
     "type": "git",
     "url": "https://github.com/ioBroker/ioBroker.web"
   },
+  "optionalDependencies": {
+    "letsencrypt-express": "^1.2.0"
+  },
   "dependencies": {
     "iobroker.socketio": ">=1.5.3",
     "iobroker.simple-api": ">=0.1.1",
