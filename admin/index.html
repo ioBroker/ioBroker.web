@@ -9,27 +9,52 @@
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 
+<style>
+    .number {
+        width: 70px
+    }
+</style>
+
 <script type="text/javascript">
     systemDictionary = {
         "WWW Web Server adapter settings": {
             "de": "WWW Web Server adapter settings",
             "ru": "WWW Web Server adapter settings"
         },
-        "Run as:":          {"de": "Laufen unter Anwender:", "ru": "Запустить от пользователя:"},
-        "IP:":              {"de": "IP:",                     "ru": "IP:"},
-        "Port:":            {"de": "Port:",                   "ru": "Порт:"},
-        "Secure(HTTPS):":   {"de": "Verschlüsselung(HTTPS):", "ru": "Шифрование(HTTPS):"},
-        "Authentication:":  {"de": "Authentifikation:",       "ru": "Аутентификация:"},
-        "Cache:":           {"de": "Puffer:",                 "ru": "Кэш:"},
-        "none":             {"de": "keins",                   "ru": ""},
-        "integrated":       {"de": "integriert",              "ru": "встроенный"},
+        "Run as:":                {"en": "Run as:",                 "de": "Laufen unter Anwender:",  "ru": "Запустить от пользователя:"},
+        "IP:":                    {"en": "IP:",                     "de": "IP:",                     "ru": "IP:"},
+        "Port:":                  {"en": "Port:",                   "de": "Port:",                   "ru": "Порт:"},
+        "Secure(HTTPS):":         {"en": "Secure(HTTPS):",          "de": "Verschlüsselung(HTTPS):", "ru": "Шифрование(HTTPS):"},
+        "Authentication:":        {"en": "Authentication:",         "de": "Authentifikation:",       "ru": "Аутентификация:"},
+        "Cache:":                 {"en": "none",                    "de": "Puffer:",                 "ru": "Кэш:"},
+        "none":                   {"en": "none",                    "de": "keins",                   "ru": ""},
+        "integrated":             {"en": "integrated",              "de": "integriert",              "ru": "встроенный"},
         "Public certificate:":    {"en": "Public certificate:",     "de": "Publikzertifikat:",       "ru": "'Public' сертификат:"},
         "Private certificate:":   {"en": "Private certificate:",    "de": "Privatzertifikat:",       "ru": "'Private' сертификат:"},
         "Chained certificate:":   {"en": "Chained certificate:",    "de": "Kettenzertifikat:",       "ru": "'Chained' сертификат:"},
         "Force Web-Sockets:":     {"en": "Force Web-Sockets:",      "de": "Nur Web-Sockets:",        "ru": "Только Web-Sockets:"},
-        "Internal 'Simple API':":   {"en": "Build-in 'Simple-API'",    "de": "Eingebautes 'Simple-API':",       "ru": "Встроенный 'Simple-API':"},
-        "Listen on all IPs": {"en": "Listen on all IPs",       "de": "Alle IPs zulassen",            "ru": "Открыть для всех IP адресов"},
-
+        "Internal 'Simple API':": {"en": "Build-in 'Simple-API'",   "de": "Eingebautes 'Simple-API':", "ru": "Встроенный 'Simple-API':"},
+        "Listen on all IPs":      {"en": "Listen on all IPs",       "de": "Alle IPs zulassen",       "ru": "Открыть для всех IP адресов"},
+        "Let's Encrypt settings": {
+            "en": "Let's Encrypt settings",
+            "de": "Einstellungen Let's Encrypt",
+            "ru": "Настройкт Let's Encrypt"
+        },
+        "Use Lets Encrypt certificates:": {
+            "en": "Use Let's Encrypt certificates:",
+            "de": "Benutzen Let's Encrypt Zertifikate:",
+            "ru": "Использовать сертификаты Let's Encrypt:"
+        },
+        "Use this instance for automatic update:": {
+            "en": "Use this instance for automatic update:",
+            "de": "Benutze diese Instanz für automatische Updates:",
+            "ru": "Обновлять сертификаты в этом драйвере:"
+        },
+        "Port to check the domain:": {
+            "en": "Port to check the domain:",
+            "de": "Port um die Domain zu prüfen:",
+            "ru": "Порт для проверки доменного имени:"
+        },
         "help_tip":         {
             "en": "On save the adapter restarts with new configuration immediately",
             "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
@@ -124,11 +149,24 @@
             $('#_certPublic').show();
             $('#_certPrivate').show();
             $('#_certChained').show();
+            $('.le-settings').show();
+
+            if ($('#leEnabled').prop('checked')) {
+                $('.le-sub-settings').show();
+                if ($('#leUpdate').prop('checked')) {
+                    $('.le-sub-settings-update').show();
+                } else {
+                    $('.le-sub-settings-update').hide();
+                }
+            } else {
+                $('.le-sub-settings').hide();
+            }
         } else {
             $('#_certPublic').hide();
             $('#_certPrivate').hide();
             $('#_certChained').hide();
             $('#auth').prop('checked', false);
+            $('.le-settings').hide();
         }
         if ($('#auth').prop('checked')) {
             $('#secure').prop('checked', true);
@@ -144,6 +182,9 @@
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         if (!settings) return;
+
+        if (!settings.lePort) settings.lePort = 80;
+
 
         getIPs(function(ips) {
             for (var i = 0; i < ips.length; i++) {
@@ -597,7 +638,7 @@
                 </tr>
                 <tr>
                     <td class="translate">Port:</td>
-                    <td><input class="value" id="port" size="5" maxlength="5"/></td>
+                    <td><input class="value" id="port" size="5" maxlength="5" type="number"/></td>
                     <td></td>
                 </tr>
                 <tr>
@@ -622,8 +663,10 @@
                     <td><input class="value" id="auth" type="checkbox"/></td>
                     <td></td>
                 </tr>
-        <tr id="_ttl"><td class="translate">Login timeout(sec):</td><td><input  class="value" id="ttl"/></td><td></td></tr>
-
+                <tr id="_ttl">
+                    <td class="translate">Login timeout(sec):</td>
+                    <td><input  class="value" id="ttl" type="number"/></td>
+                    <td></td></tr>
                 <tr>
                     <td class="translate">Cache:</td>
                     <td><input class="value" id="cache" type="checkbox"/></td>
@@ -643,6 +686,12 @@
                     <td class="translate">Run as:</td>
                     <td><select class="value" id="defaultUser"/></td>
                 </tr>
+                <tr><td colspan="2">&nbsp;</td></tr>
+                <tr class="le-settings"><td colspan="2"><h3 class="translate">Let's Encrypt settings</h3></tr>
+                <tr class="le-settings"><td><label for="leEnabled" class="translate">Use Lets Encrypt certificates:</label></td><td><input  class="value" id="leEnabled"   type="checkbox" /></td></tr>
+                <tr class="le-settings le-sub-settings"><td><label for="leUpdate" class="translate">Use this instance for automatic update:</label></td><td><input  class="value" id="leUpdate" type="checkbox" /></td></tr>
+                <tr class="le-settings le-sub-settings le-sub-settings-update"><td><label for="lePort" class="translate">Port to check the domain:</label></td><td><input class="value number" id="lePort" type="number" size="5" maxlength="5" /></td></tr>
+
             </table>
         </div>
         <div id="tabs-2">

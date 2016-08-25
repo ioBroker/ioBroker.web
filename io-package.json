@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.5.4",
+        "version":                  "1.6.0",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
-			"1.5.4": {
+            "1.6.0": {
+                "en": 				"support of letsencrypt",
+                "de": 				"Unterstützung von LetsEncrypt Zertifikaten",
+                "ru": 				"Поддержка LetsEncrypt сертификатов"
+            },
+            "1.5.4": {
                 "en": 				"support of web-sockets force",
                 "de": 				"support of web-sockets force",
                 "ru": 				"support of web-sockets force"
@@ -81,7 +86,11 @@
         "certPrivate":              "",
         "certChained":              "",
         "addUserName":              false,
-        "forceWebSockets":          false
+        "forceWebSockets":          false,
+
+        "leEnabled":                false,
+        "leUpdate":                 false,
+        "leCheckPort":              80
     },
     "objects": [
         {

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "1.5.4",
+  "version": "1.6.0",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -22,7 +22,7 @@
     "url": "https://github.com/ioBroker/ioBroker.web"
   },
   "optionalDependencies": {
-    "letsencrypt-express": "^1.2.0"
+    "letsencrypt-express": "^2.0.2"
   },
   "dependencies": {
     "iobroker.socketio": ">=1.5.3",

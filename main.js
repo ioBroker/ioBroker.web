@@ -6,6 +6,7 @@ var express = require('express');
 var fs =      require('fs');
 //var Stream =  require('stream');
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
+var LE =      require(__dirname + '/lib/letsencrypt.js');
 
 var session;// =           require('express-session');
 var cookieParser;// =      require('cookie-parser');
@@ -111,8 +112,9 @@ var adapter = utils.adapter({
 function main() {
     if (adapter.config.secure) {
         // Load certificates
-        adapter.getCertificates(function (err, certificates) {
+        adapter.getCertificates(function (err, certificates, leConfig) {
             adapter.config.certificates = certificates;
+            adapter.config.leConfig     = leConfig;
             webServer = initWebServer(adapter.config);
         });
     } else {
@@ -421,11 +423,7 @@ function initWebServer(settings) {
             }
         });
 
-        if (settings.secure) {
-            server.server = require('https').createServer(adapter.config.certificates, server.app);
-        } else {
-            server.server = require('http').createServer(server.app);
-        }
+        server.server = LE.createServer(server.app, settings, adapter.config.certificates, adapter.config.leConfig, adapter.log);
         server.server.__server = server;
     } else {
         adapter.log.error('port missing');
