@@ -15,6 +15,9 @@ Web server on the base of Node.js and express to read the files from iobroker DB
 On some web-sockets clients there is performance problem with communication. Sometimes this problem is due to fallback of socket.io communication on long polling mechanism.
 You can set option *Force Web-Sockets* to force using only web-sockets transport.
 
+## Let's Encrypt Certificates
+Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
+
 ## Changelog
 ### 1.6.0 (2016-08-25)
 * (bluefox) support of letsencrypt
