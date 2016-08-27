@@ -19,7 +19,7 @@ You can set option *Force Web-Sockets* to force using only web-sockets transport
 Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
 
 ## Changelog
-### 1.6.0 (2016-08-25)
+### 1.6.1 (2016-08-27)
 * (bluefox) support of letsencrypt
 
 ### 1.5.4 (2016-08-14)
