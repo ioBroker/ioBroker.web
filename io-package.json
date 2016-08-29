@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.6.1",
+        "version":                  "1.6.2",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.6.2": {
+                "en": 				"updated SelectID Dialog",
+                "de": 				"Update SelectID-Dialog",
+                "ru": 				"Обновлён диалог выбора ID"
+            },
             "1.6.1": {
                 "en": 				"support of letsencrypt",
                 "de": 				"Unterstützung von LetsEncrypt Zertifikaten",
