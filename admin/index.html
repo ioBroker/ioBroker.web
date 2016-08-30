@@ -177,13 +177,21 @@
             $('.defaultUser').show();
             $('#_ttl').hide();
         }
+        if ($('#whiteListEnabled').prop('checked')) {
+            $('.white-list-settings').show();
+        } else {
+            $('.white-list-settings').hide();
+        }
     }
 
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
+        $('#tabs').tabs();
+
         if (!settings) return;
 
         if (!settings.lePort) settings.lePort = 80;
+        if (settings.whiteListEnabled === undefined) settings.whiteListEnabled = false;
 
         getIPs(function(ips) {
             for (var i = 0; i < ips.length; i++) {
@@ -575,11 +583,6 @@
         wireClickEvents();
         wireChangeEvents();
     }
-
-    $(function () {
-        $('#tabs').tabs();
-    });
-
 </script>
 
 <style>
@@ -677,13 +680,16 @@
             </table>
         </div>
         <div id="tabs-2">
+            <div>
+                <span class="translate">Enabled:</span><input id="whiteListEnabled" class="value" type="checkbox" />
+            </div>
             <button style="display: inline-block; width: 2em; height: 2em;" onclick="addWhiteListTableRow(true)"
-                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button">
+                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only white-list-settings" role="button">
                 <span class="ui-button-icon-primary ui-icon ui-icon-plus"></span>
                 <span class="ui-button-text"></span>
             </button>
 
-            <table id="whiteListTable" cellpadding="3" cellspacing="2" border="0">
+            <table id="whiteListTable" cellpadding="3" cellspacing="2" border="0" class="white-list-settings">
                 <thead>
                 <tr class="whiteListTableHeader">
                     <th rowspan="2" colspan="2" class="translate">IP</th>
@@ -752,7 +758,7 @@
                                                                checked="true"/></td>
                 </tr>
                 </tbody>
-            </table>
+            </table >
 
         </div>
     </div>

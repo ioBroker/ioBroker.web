@@ -99,7 +99,7 @@ var adapter = utils.adapter({
             adapter.subscribeForeignObjects(adapter.config.socketio);
         } else {
             socketUrl = adapter.config.socketio;
-            ownSocket = (socketUrl != 'none');
+            ownSocket = (socketUrl !== 'none');
         }
 
         // Read language
@@ -159,14 +159,15 @@ function initWebServer(settings) {
     };
     adapter.subscribeForeignObjects('system.config');
 
-    adapter.config.ttl = parseInt(adapter.config.ttl, 10) || 3600;
+    settings.ttl = parseInt(settings.ttl, 10) || 3600;
+    if (!settings.whiteListEnabled && settings.whiteListSettings) delete settings.whiteListSettings;
 
-    adapter.config.defaultUser = adapter.config.defaultUser || 'system.user.admin';
-    if (!adapter.config.defaultUser.match(/^system\.user\./)) adapter.config.defaultUser = 'system.user.' + adapter.config.defaultUser;
+    settings.defaultUser = settings.defaultUser || 'system.user.admin';
+    if (!settings.defaultUser.match(/^system\.user\./)) settings.defaultUser = 'system.user.' + settings.defaultUser;
 
     if (settings.port) {
         if (settings.secure) {
-            if (!adapter.config.certificates) {
+            if (!settings.certificates) {
                 return null;
             }
         }
@@ -175,7 +176,7 @@ function initWebServer(settings) {
             session =          require('express-session');
             cookieParser =     require('cookie-parser');
             bodyParser =       require('body-parser');
-            AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, adapter.config.ttl);
+            AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
             passportSocketIo = require('passport.socketio');
             password =         require(utils.controllerDir + '/lib/password.js');
             passport =         require('passport');
@@ -220,13 +221,12 @@ function initWebServer(settings) {
             server.app.use(flash());
 
             var autoLogonOrRedirectToLogin = function (req, res, next, redirect) {
-
                 if (!settings.whiteListSettings) return res.redirect(redirect);
-                
+
                 var remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 var whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
 
-                if (!whiteListIp || settings.whiteListSettings[whiteListIp].user == 'auth') return res.redirect(redirect);
+                if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') return res.redirect(redirect);
 
                 req.logIn(settings.whiteListSettings[whiteListIp].user, function (err) {
                     return next(err);
@@ -240,7 +240,7 @@ function initWebServer(settings) {
                     parts = req.body.origin.split('=');
                     if (parts[1]) redirect = decodeURIComponent(parts[1]);
                 }
-                if (req.body && req.body.username && adapter.config.addUserName && redirect.indexOf('?') == -1) {
+                if (req.body && req.body.username && settings.addUserName && redirect.indexOf('?') === -1) {
                     parts = redirect.split('#');
                     parts[0] += '?' + req.body.username;
                     redirect = parts.join('#');
@@ -280,7 +280,7 @@ function initWebServer(settings) {
         server.app.get('/state/*', function (req, res) {
             try {
                 var fileName = req.url.split('/', 3)[2].split('?', 2);
-                adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser}, function (err, obj) {
+                adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : settings.defaultUser}, function (err, obj) {
                     if (!err && obj !== null && obj !== undefined) {
                         res.set('Content-Type', 'text/plain');
                         res.status(200).send(obj);
@@ -295,7 +295,7 @@ function initWebServer(settings) {
 
         server.app.get('*/_socket/info.js', function (req, res) {
             res.set('Content-Type', 'application/javascript');
-            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang = "' + lang + '"; socketForceWebSockets = ' + (adapter.config.forceWebSockets ? 'true' : 'false') + ';');
+            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; sysLang = "' + lang + '"; socketForceWebSockets = ' + (settings.forceWebSockets ? 'true' : 'false') + ';');
         });
 
         // Enable CORS
@@ -382,7 +382,7 @@ function initWebServer(settings) {
             url = url.join('/');
             var pos = url.indexOf('?');
             var noFileCache;
-            if (pos != -1) {
+            if (pos !== -1) {
                 url = url.substring(0, pos);
                 // disable file cache if request like /vis/files/picture.png?noCache
                 noFileCache = true;
@@ -406,7 +406,7 @@ function initWebServer(settings) {
                     }
 
                 } else {
-                    adapter.readFile(id, url, {user: req.user ? 'system.user.' + req.user : adapter.config.defaultUser, noFileCache: noFileCache}, function (err, buffer, mimeType) {
+                    adapter.readFile(id, url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, function (err, buffer, mimeType) {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
                             res.status(404).send('File ' + url + ' not found: ' + err);
@@ -423,7 +423,7 @@ function initWebServer(settings) {
             }
         });
 
-        server.server = LE.createServer(server.app, settings, adapter.config.certificates, adapter.config.leConfig, adapter.log);
+        server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
         server.server.__server = server;
     } else {
         adapter.log.error('port missing');
@@ -432,7 +432,7 @@ function initWebServer(settings) {
 
     if (server.server) {
         adapter.getPort(settings.port, function (port) {
-            if (port != settings.port && !adapter.config.findNextPort) {
+            if (port != settings.port && !settings.findNextPort) {
                 adapter.log.error('port ' + settings.port + ' already in use');
                 process.exit(1);
             }
@@ -460,8 +460,8 @@ function initWebServer(settings) {
         socketSettings.auth             = false;
         socketSettings.secret           = secret;
         socketSettings.store            = store;
-        socketSettings.ttl              = adapter.config.ttl || 3600;
-        socketSettings.forceWebSockets  = adapter.config.forceWebSockets || false;
+        socketSettings.ttl              = settings.ttl || 3600;
+        socketSettings.forceWebSockets  = settings.forceWebSockets || false;
         server.io = new IOSocket(server.server, socketSettings, adapter);
     }
 

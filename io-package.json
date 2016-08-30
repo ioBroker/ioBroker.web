@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.6.2",
+        "version":                  "1.7.0",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.7.0": {
+                "en": 				"сompatible only with new admin",
+                "de": 				"Nur mit neuem Admin kompatibel",
+                "ru": 				"Совместимо только с новым админ-драйвером"
+            },
 			"1.6.2": {
                 "en": 				"updated SelectID Dialog",
                 "de": 				"Update SelectID-Dialog",
@@ -23,41 +28,6 @@
                 "en": 				"show links if root directory called",
                 "de": 				"show links if root directory called",
                 "ru": 				"show links if root directory called"
-            },
-			"1.5.2": {
-                "en": 				"fix error with early logout\nupdate passport.socketio",
-                "de": 				"fix error with early logout\nupdate passport.socketio",
-                "ru": 				"fix error with early logout\nupdate passport.socketio"
-            },
-			"1.5.1": {
-                "en":               "support of chained certificates",
-                "de":               "support of chained certificates",
-                "ru":               "support of chained certificates"
-			},
-            "1.5.0": {
-                "en":               "update version of socket.io",
-                "de":               "update version of socket.io",
-                "ru":               "update version of socket.io"
-            },
-            "1.4.8": {
-				"en":               "bind socket to specified IP",
-				"de":               "bind socket to specified IP",
-				"ru":               "bind socket to specified IP"
-			},
-            "1.4.7": {
-				"en":               "add version dependency",
-				"de":               "add version dependency",
-				"ru":               "add version dependency"
-			},
-            "1.4.6": {
-				"en":               "update selectID dialog",
-				"de":               "update selectID dialog",
-				"ru":               "update selectID dialog"
-			},
-            "1.4.5": {
-                "en":               "make possible to change language without restart",
-                "de":               "make possible to change language without restart",
-                "ru":               "make possible to change language without restart"
             }
         },
         "desc": {
@@ -75,7 +45,7 @@
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
         "type":                     "visualisation",
         "stopBeforeUpdate":         true,
-		"dependencies":             [{"js-controller": ">=0.10.1"}]
+		"dependencies":             [{"js-controller": ">=0.12.0"}]
     },
     "native": {
         "port":                     8082,
@@ -92,6 +62,7 @@
         "certChained":              "",
         "addUserName":              false,
         "forceWebSockets":          false,
+        "whiteListEnabled":         false,
 
         "leEnabled":                false,
         "leUpdate":                 false,
