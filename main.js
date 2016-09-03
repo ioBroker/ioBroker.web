@@ -6,7 +6,7 @@ var express = require('express');
 var fs =      require('fs');
 //var Stream =  require('stream');
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
-var LE =      require(__dirname + '/lib/letsencrypt.js');
+var LE =      require(utils.controllerDir + '/lib/letsencrypt.js');
 
 var session;// =           require('express-session');
 var cookieParser;// =      require('cookie-parser');
