@@ -1,6 +1,8 @@
 /*
  Copyright 2014-2016 bluefox <dogafox@gmail.com>
 
+ version: 1.0.0 (2016.09.14)
+
  To use this dialog as standalone in ioBroker environment include:
  <link type="text/css" rel="stylesheet" href="lib/css/redmond/jquery-ui.min.css">
  <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
@@ -23,86 +25,86 @@
 
  Interface:
  +  init(options) - init select ID dialog. Following options are supported
-         {
-             currentId:  '',       // Current ID or empty if nothing preselected
-             objects:    null,     // All objects that should be shown. It can be empty if connCfg used.
-             states:     null,     // All states of objects. It can be empty if connCfg used. If objects are set and no states, states will no be shown.
-             filter:     null,     // filter
-             imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
-             connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
-             onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show" - function (newId, oldId, newObj)
-             onChange:   null,     // called every time the new object selected - function (newId, oldId, newObj)
-             noDialog:   false,    // do not make dialog
-             noMultiselect: false, // do not make multiselect
-             buttons:    null,     // array with buttons, that should be shown in last column
-                                   // if array is not empty it can has following fields
-                                   // [{
-                                   //   text: false, // same as jquery button
-                                   //   icons: {     // same as jquery button
-                                   //       primary: 'ui-icon-gear'
-                                   //   },
-                                   //   click: function (id) {
-                                   //                // do on click
-                                   //   },
-                                   //   match: function (id) {
-                                   //                // you have here object "this" pointing to $('button')
-                                   //   },
-                                   //   width: 26,   // same as jquery button
-                                   //   height: 20   // same as jquery button
-                                   // }],
-             panelButtons: null,   // array with buttons, that should be shown at the top of dialog (near expand all)
-             list:       false,    // tree view or list view
-             name:       null,     // name of the dialog to store filter settings
-             noCopyToClipboard: false, // do not show button for copy to clipboard
-             root:       null,     // root node, e.g. "script.js"
-             useNameAsId: false,   // use name of object as ID
-             noColumnResize: false, // do not allow column resize
-             firstMinWidth: null,  // width if ID column, default 400
-             showButtonsForNotExistingObjects: false,
-             webServer:    null,   // link to webserver, by default ":8082"
-             texts: {
-                 select:   'Select',
-                 cancel:   'Cancel',
-                 all:      'All',
-                 id:       'ID',
-                 name:     'Name',
-                 role:     'Role',
-                 type:     'Type',
-                 room:     'Room',
-                 'function': 'Function',
-                 enum:     'Members',
-                 value:    'Value',
-                 selectid: 'Select ID',
-                 from:     'From',
-                 lc:       'Last changed',
-                 ts:       'Time stamp',
-                 ack:      'Acknowledged',
-                 expand:   'Expand all nodes',
-                 collapse: 'Collapse all nodes',
-                 refresh:  'Rebuild tree',
-                 edit:     'Edit',
-                 ok:       'Ok',
-                 wait:     'Processing...',
-                 list:     'Show list view',
-                 tree:     'Show tree view',
-                 selectAll: 'Select all',
-                 unselectAll: 'Unselect all',
-                 invertSelection: 'Invert selection',
-                 copyToClipboard: 'Copy to clipboard',
-                 expertMode: 'Toggle expert mode'
-             },
-             columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'function', 'value', 'button'],
-                                // some elements of columns could be an object {name: field, data: function (id, name){}, title: function (id, name) {}}
-             widths:    null,   // array with width for every column
-             editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
-             editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
-             zindex:    null,   // z-index of dialog or table
-             customButtonFilter: null, // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
-             expertModeRegEx: null // list of regex with objects, that will be shown only in expert mode, like  /^system\.|^iobroker\.|^_|^[\w-]+$|^enum\.|^[\w-]+\.admin/
-             quickEdit:  null,   // list of fields with edit on click. Elements can be just names from standard list or objects like:
-                                 // {name: 'field', options: {a1: 'a111_Text', a2: 'a22_Text'}}, options can be a function (id, name), that give back such an object
-             quickEditCallback: null // function (id, attr, newValue, oldValue)
-     }
+ {
+ currentId:  '',       // Current ID or empty if nothing preselected
+ objects:    null,     // All objects that should be shown. It can be empty if connCfg used.
+ states:     null,     // All states of objects. It can be empty if connCfg used. If objects are set and no states, states will no be shown.
+ filter:     null,     // filter
+ imgPath:    'lib/css/fancytree/', // Path to images device.png, channel.png and state.png
+ connCfg:    null,     // configuration for dialog, ti read objects itself: {socketUrl: socketUrl, socketSession: socketSession}
+ onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show" - function (newId, oldId, newObj)
+ onChange:   null,     // called every time the new object selected - function (newId, oldId, newObj)
+ noDialog:   false,    // do not make dialog
+ noMultiselect: false, // do not make multiselect
+ buttons:    null,     // array with buttons, that should be shown in last column
+ // if array is not empty it can has following fields
+ // [{
+ //   text: false, // same as jquery button
+ //   icons: {     // same as jquery button
+ //       primary: 'ui-icon-gear'
+ //   },
+ //   click: function (id) {
+ //                // do on click
+ //   },
+ //   match: function (id) {
+ //                // you have here object "this" pointing to $('button')
+ //   },
+ //   width: 26,   // same as jquery button
+ //   height: 20   // same as jquery button
+ // }],
+ panelButtons: null,   // array with buttons, that should be shown at the top of dialog (near expand all)
+ list:       false,    // tree view or list view
+ name:       null,     // name of the dialog to store filter settings
+ noCopyToClipboard: false, // do not show button for copy to clipboard
+ root:       null,     // root node, e.g. "script.js"
+ useNameAsId: false,   // use name of object as ID
+ noColumnResize: false, // do not allow column resize
+ firstMinWidth: null,  // width if ID column, default 400
+ showButtonsForNotExistingObjects: false,
+ webServer:    null,   // link to webserver, by default ":8082"
+ texts: {
+ select:   'Select',
+ cancel:   'Cancel',
+ all:      'All',
+ id:       'ID',
+ name:     'Name',
+ role:     'Role',
+ type:     'Type',
+ room:     'Room',
+ 'function': 'Function',
+ enum:     'Members',
+ value:    'Value',
+ selectid: 'Select ID',
+ from:     'From',
+ lc:       'Last changed',
+ ts:       'Time stamp',
+ ack:      'Acknowledged',
+ expand:   'Expand all nodes',
+ collapse: 'Collapse all nodes',
+ refresh:  'Rebuild tree',
+ edit:     'Edit',
+ ok:       'Ok',
+ wait:     'Processing...',
+ list:     'Show list view',
+ tree:     'Show tree view',
+ selectAll: 'Select all',
+ unselectAll: 'Unselect all',
+ invertSelection: 'Invert selection',
+ copyToClipboard: 'Copy to clipboard',
+ expertMode: 'Toggle expert mode'
+ },
+ columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'function', 'value', 'button'],
+ // some elements of columns could be an object {name: field, data: function (id, name){}, title: function (id, name) {}}
+ widths:    null,   // array with width for every column
+ editEnd:   null,   // function (id, newValues) for edit lines (only id and name can be edited)
+ editStart: null,   // function (id, $inputs) called after edit start to correct input fields (inputs are jquery objects),
+ zindex:    null,   // z-index of dialog or table
+ customButtonFilter: null, // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
+ expertModeRegEx: null // list of regex with objects, that will be shown only in expert mode, like  /^system\.|^iobroker\.|^_|^[\w-]+$|^enum\.|^[\w-]+\.admin/
+ quickEdit:  null,   // list of fields with edit on click. Elements can be just names from standard list or objects like:
+ // {name: 'field', options: {a1: 'a111_Text', a2: 'a22_Text'}}, options can be a function (id, name), that give back such an object
+ quickEditCallback: null // function (id, attr, newValue, oldValue)
+ }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
  +  clear() - clear object tree to read and build anew (used only if objects set by "init")
  +  getInfo(id) - get information about ID
@@ -112,7 +114,7 @@
  +  reinit() - draw tree anew
  */
 (function ($) {
-    "use strict";
+    'use strict';
 
     if ($.fn.selectId) return;
 
@@ -171,7 +173,7 @@
         } else {
             text += '.' + v;
         }
-        
+
         return text;
     }
 
@@ -184,8 +186,16 @@
             if (data.filter.type && data.filter.type !== data.objects[id].type) return false;
 
             if (data.filter.common && data.filter.common.custom) {
-                if (!data.objects[id].common ||
-                    !data.objects[id].common.custom) return false;
+                if (!data.objects[id].common) return false;
+                // todo: remove history sometime 09.2016
+                var custom = data.objects[id].common.custom || data.objects[id].common.history;
+
+                if (!custom) return false;
+                if (data.filter.common.custom === true) {
+                    return true;
+                } else {
+                    if (!custom[data.filter.common.custom]) return false;
+                }
             }
         }
         return true;
@@ -1310,8 +1320,8 @@
                             }
                         } else if (data.editEnd) {
                             text = '<button data-id="' + node.key + '" class="select-button-edit"></button>' +
-                            '<button data-id="' + node.key + '" class="select-button-ok"></button>' +
-                            '<button data-id="' + node.key + '" class="select-button-cancel"></button>';
+                                '<button data-id="' + node.key + '" class="select-button-ok"></button>' +
+                                '<button data-id="' + node.key + '" class="select-button-cancel"></button>';
                         }
 
                         if (data.editEnd) {
@@ -1335,7 +1345,7 @@
                                 node.editEnd(true);
                             }).attr('title', data.texts.ok).data('node', node).hide().css({width: 26, height: 20});
 
-                             $('.select-button-cancel[data-id="' + node.key + '"]').button({
+                            $('.select-button-cancel[data-id="' + node.key + '"]').button({
                                 text: false,
                                 icons: {
                                     primary:'ui-icon-close'
@@ -1519,16 +1529,16 @@
                     node.setActive();
                     break;
                 /*case 'copy':
-                    CLIPBOARD = {
-                        mode: data.cmd,
-                        data: node.toDict(function (n) {
-                            delete n.key;
-                        })
-                    };
-                    break;
-                case 'clear':
-                    CLIPBOARD = null;
-                    break;*/
+                 CLIPBOARD = {
+                 mode: data.cmd,
+                 data: node.toDict(function (n) {
+                 delete n.key;
+                 })
+                 };
+                 break;
+                 case 'clear':
+                 CLIPBOARD = null;
+                 break;*/
                 default:
                     alert('Unhandled command: ' + data.cmd);
                     return;
@@ -1615,7 +1625,7 @@
                 } else
                 if (f === 'button') {
                     if (data.filterVals[f] === 'true') {
-                        if (!isCommon || !data.objects[node.key].common.custom || data.objects[node.key].common.custom.enabled === false) return false;
+                        if (!isCommon || !data.objects[node.key].common.custom) return false;
                     } else if (data.filterVals[f] === 'false') {
                         if (!isCommon || data.objects[node.key].type !== 'state' || data.objects[node.key].common.custom) return false;
                     } else if (data.filterVals[f]) {
@@ -1649,7 +1659,7 @@
         }).keyup(function () {
             var tree = data.$tree[0];
             if (tree._timer) tree._timer = clearTimeout(tree._timer);
-            
+
             var that = this;
             tree._timer = setTimeout(function () {
                 $(that).trigger('change');
@@ -1954,7 +1964,7 @@
 
                 data.rootExp = data.root ? new RegExp('^' + data.root.replace('.', '\\.')) : null;
 
-                    data.selectedID = data.currentId;
+                data.selectedID = data.currentId;
 
                 // make a copy of filter
                 data.filter = JSON.parse(JSON.stringify(data.filter));
@@ -1983,7 +1993,7 @@
                         });
                     }, 5000);
 
-                   data.socket = io.connect(data.socketURL, {
+                    data.socket = io.connect(data.socketURL, {
                         query:                          'key=' + data.socketSESSION,
                         'reconnection limit':           10000,
                         'max reconnection attempts':    Infinity,
@@ -2206,7 +2216,7 @@
                     data.states[id].q    === state.q    &&
                     data.states[id].from === state.from &&
                     data.states[id].ts   === state.ts
-                    ) return;
+                ) return;
 
                 data.states[id] = state;
                 var tree = data.$tree.fancytree('getTree');

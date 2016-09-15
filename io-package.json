@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.0",
+        "version":                  "1.7.1",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.7.1": {
+                "en": 				"update selectID dialog",
+                "de": 				"Update selectID dialog",
+                "ru": 				"Обновлён диалог выбора ID"
+            },
 			"1.7.0": {
                 "en": 				"сompatible only with new admin",
                 "de": 				"Nur mit neuem Admin kompatibel",
