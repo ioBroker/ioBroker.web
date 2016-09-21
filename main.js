@@ -221,15 +221,32 @@ function initWebServer(settings) {
             server.app.use(flash());
 
             var autoLogonOrRedirectToLogin = function (req, res, next, redirect) {
-                if (!settings.whiteListSettings) return res.redirect(redirect);
-
+                if (!settings.whiteListSettings) {
+					if (/\.js$/.test(req.originalUrl)) {
+						// return always valid js file for js, because if cache is active it leads to errors
+						var parts = req.originalUrl.split('/');
+						// if request for web/lib, ignore it, because no redirect information
+						if (parts[1] === 'lib') return res.status(200).send('');
+						return res.status(200).send('document.location="/login/index.html?href=/' + parts[1] + '/";');
+					} else {
+						return res.redirect(redirect);
+					}
+				}
                 var remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 var whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
-
-                if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') return res.redirect(redirect);
-
+				adapter.log.info('whiteListIp ' + whiteListIp);
+                if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') {
+					if (/\.js$/.test(req.originalUrl)) {
+						// return always valid js file for js, because if cache is active it leads to errors
+						var parts = req.originalUrl.split('/');
+						if (parts[1] === 'lib') return res.status(200).send('');
+						return res.status(200).send('document.location="/login/index.html?href=/' + parts[1] + '/";');
+					} else {
+						return res.redirect(redirect);
+					}
+				}
                 req.logIn(settings.whiteListSettings[whiteListIp].user, function (err) {
-                    return next(err);
+					return next(err);
                 });
             };
 
@@ -259,13 +276,14 @@ function initWebServer(settings) {
 
             // route middleware to make sure a user is logged in
             server.app.use(function (req, res, next) {
+				// if cache.manifes got back not 200 it makes an error
                 if (req.isAuthenticated() ||
+                    /cache\.manifest$/.test(req.originalUrl) ||
                     /^\/login\//.test(req.originalUrl) ||
                     /\.ico$/.test(req.originalUrl)
                 ) return next();
-                // res.redirect('/login/index.html?href=' + encodeURIComponent(req.originalUrl));
-
-                autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
+				
+				autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
             });
         } else {
             server.app.get('/login', function (req, res) {
