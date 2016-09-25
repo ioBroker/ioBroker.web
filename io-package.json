@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.1",
+        "version":                  "1.7.2",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.7.2": {
+                "en": 				"Fix redirect for login",
+                "de": 				"Korrigiere Loginumleitung",
+                "ru": 				"Исправлено перенаправление при логине"
+            },
 			"1.7.1": {
                 "en": 				"update selectID dialog",
                 "de": 				"Update selectID dialog",
