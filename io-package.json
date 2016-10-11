@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.2",
+        "version":                  "1.7.3",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+			"1.7.3": {
+                "en": 				"use new socketio\nfix config dialog",
+                "de": 				"Benutze neue Socketio Version\nKorrigiere Konfigurationsdialog",
+                "ru": 				"Новая версия socketio\nИсправлен диалог настроек"
+            },
 			"1.7.2": {
                 "en": 				"Fix redirect for login",
                 "de": 				"Korrigiere Loginumleitung",
