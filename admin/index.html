@@ -230,7 +230,7 @@
         $('.value').each(function () {
             var key = $(this).attr('id');
             // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') == 'checkbox') {
+            if ($('#' + key + '.value').attr('type') === 'checkbox') {
                 $('#' + key + '.value').prop('checked', settings[key]).change(function() {
                     showHideSettings();
                     onChange();
@@ -276,7 +276,7 @@
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);
-            if ($this.attr('type') == 'checkbox') {
+            if ($this.attr('type') === 'checkbox') {
                 obj[$this.attr('id')] = $this.prop('checked');
             } else {
                 obj[$this.attr('id')] = $this.val();
