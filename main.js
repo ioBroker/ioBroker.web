@@ -35,9 +35,7 @@ var systemDictionary = {
     }
 };
 
-
-
-var adapter = utils.adapter({
+var adapter = new utils.Adapter({
     name: 'web',
     install: function (callback) {
         if (typeof callback === 'function') callback();

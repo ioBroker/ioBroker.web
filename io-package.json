@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.3",
+        "version":                  "1.7.4",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "1.7.4": {
+                "en": 				"Fix unsubscribe of states",
+                "de": 				"Korrigiere unsubscribe von Zuständen",
+                "ru": 				"Исправлено unsubscribe для состояний"
+            },
 			"1.7.3": {
                 "en": 				"use new socketio\nfix config dialog",
                 "de": 				"Benutze neue Socketio Version\nKorrigiere Konfigurationsdialog",
