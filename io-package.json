@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.4",
+        "version":                  "1.7.5",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "1.7.5": {
+                "en": 				"Fix selectID Dialog",
+                "de": 				"Korrigiere selectID Dialog",
+                "ru": 				"Исправлен диалог выбора ID"
+            },
             "1.7.4": {
                 "en": 				"Fix unsubscribe of states",
                 "de": 				"Korrigiere unsubscribe von Zuständen",

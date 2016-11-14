@@ -62,6 +62,8 @@
              firstMinWidth: null,  // width if ID column, default 400
              showButtonsForNotExistingObjects: false,
              webServer:    null,   // link to webserver, by default ":8082"
+             filterPresets: null,  // Object with predefined filters, eg {role: 'level.dimmer'} or {type: 'state'}
+             roleExactly:   false, // If the role must be equal or just content the filter value
              texts: {
                  select:   'Select',
                  cancel:   'Cancel',
@@ -105,13 +107,21 @@
                                  // {name: 'field', options: {a1: 'a111_Text', a2: 'a22_Text'}}, options can be a function (id, name), that give back such an object
              quickEditCallback: null // function (id, attr, newValue, oldValue)
      }
- +  show(currentId, filter, callback) - all arguments are optional if set by "init"
+ +  show(currentId, filter, callback) - all arguments are optional if set by "init". Callback is like function (newId, oldId) {}. If multiselect, so the arguments are arrays.
  +  clear() - clear object tree to read and build anew (used only if objects set by "init")
  +  getInfo(id) - get information about ID
  +  getTreeInfo(id) - get {id, parent, children, object}
  +  state(id, val) - update states in tree
  +  object(id, obj) - update object info in tree
  +  reinit() - draw tree anew
+
+
+ filter is like:
+     common: {
+         history: true
+     }
+  or
+     type: "state"
  */
 (function ($) {
     'use strict';
@@ -898,7 +908,7 @@
                 text += '<td><table style="width: 100%"><tr><td style="width: 100%"><input style="width: 100%; padding: 0" type="text" id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_' + data.instance + '"/></td><td style="vertical-align: top;"><button data-id="filter_' + data.columns[c] + '_'  + data.instance + '" class="filter_btn_' + data.instance + '"></button></td></tr></table></td>';
             } else if (name === 'type') {
                 text += '<td>' + textTypes + '</td>';
-            } else if (name== 'role') {
+            } else if (name === 'role') {
                 text += '<td>' + textRoles + '</td>';
             } else if (name === 'room') {
                 text += '<td>' + textRooms + '</td>';
@@ -1153,7 +1163,6 @@
                         $elem = $tdList.eq(base);
                         val = isCommon ? data.objects[node.key].common.role : '';
                         $elem.text(val);
-
                         if (data.quickEdit && data.objects[node.key] && data.quickEdit.indexOf('role') !== -1) {
                             $elem.data('old-value', val);
                             $elem.click(onQuickEditField).data('id', node.key).data('name', 'role').data('selectId', data).addClass('select-id-quick-edit');
@@ -1630,7 +1639,11 @@
                     if (!isCommon || data.objects[node.key].common[f] === undefined || data.objects[node.key].common[f].toLowerCase().indexOf(data.filterVals[f]) === -1) return false;
                 } else
                 if (f === 'role') {
-                    if (!isCommon || data.objects[node.key].common[f] === undefined || data.objects[node.key].common[f].indexOf(data.filterVals[f]) === -1) return false;
+                    if (data.roleExactly) {
+                        if (!isCommon || data.objects[node.key].common[f] === undefined || data.objects[node.key].common[f] !== data.filterVals[f]) return false;
+                    } else {
+                        if (!isCommon || data.objects[node.key].common[f] === undefined || data.objects[node.key].common[f].indexOf(data.filterVals[f]) === -1) return false;
+                    }
                 } else
                 if (f === 'type') {
                     if (!data.objects[node.key] || data.objects[node.key][f] === undefined || data.objects[node.key][f] !== data.filterVals[f]) return false;
