@@ -19,6 +19,9 @@ You can set option *Force Web-Sockets* to force using only web-sockets transport
 Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
 
 ## Changelog
+### 1.7.6 (2016-12-07)
+* (bluefox) Downgrade the socket.io to support older devices
+
 ### 1.7.5 (2016-11-14)
 * (bluefox) Fix selectID Dialog
 

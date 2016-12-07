@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.5",
+        "version":                  "1.7.6",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
-            "1.7.5": {
+            "1.7.6": {
+                "en": 				"Downgrade the socket.io to support older devices",
+                "de": 				"Downgrade socket.io um ältere Geräte zu unterstützen",
+                "ru": 				"Понижена версия socket.io для поддержки старых устройств"
+            },
+			"1.7.5": {
                 "en": 				"Fix selectID Dialog",
                 "de": 				"Korrigiere selectID Dialog",
                 "ru": 				"Исправлен диалог выбора ID"
