@@ -64,7 +64,7 @@ describe('Test WEB', function() {
 
     it('Test WEB: Check if adapter started', function (done) {
         this.timeout(5000);
-        checkConnectionOfAdapter(done);
+        checkConnectionOfAdapter(function () {setTimeout(done, 2000);});
     });
 
     initTests();

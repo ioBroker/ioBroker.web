@@ -65,7 +65,7 @@ describe('Test WEB(' + ((process.env.TEST_PROTOCOL == 'https') ? 'SSL' : 'NO SSL
 
     it('Test WEB(' + ((process.env.TEST_PROTOCOL == 'https') ? 'SSL' : 'NO SSL') + '): Check if adapter started', function (done) {
         this.timeout(5000);
-        checkConnectionOfAdapter(done);
+        checkConnectionOfAdapter(function () {setTimeout(done, 2000);});
     });
 
     initTests();
