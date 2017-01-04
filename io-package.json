@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.6",
+        "version":                  "1.7.7",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "1.7.7": {
+                "en": 				"fix error with authentication",
+                "de": 				"Korrigiere Authentifizierung",
+                "ru": 				"Исправлена аутентификация"
+            },
             "1.7.6": {
                 "en": 				"Downgrade the socket.io to support older devices",
                 "de": 				"Downgrade socket.io um ältere Geräte zu unterstützen",
