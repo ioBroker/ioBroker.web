@@ -25,6 +25,7 @@ var socketUrl =  '';
 var cache =      {}; // cached web files
 var ownSocket =  false;
 var lang =       'en';
+var extensions = {};
 
 var systemDictionary = {
     'Directories': {'en': 'Directories', 'de': 'Verzeichnise', 'ru': 'Пути'},
@@ -37,10 +38,17 @@ var systemDictionary = {
 
 var adapter = new utils.Adapter({
     name: 'web',
-    install: function (callback) {
-        if (typeof callback === 'function') callback();
-    },
     objectChange: function (id, obj) {
+        if (obj && obj.common.webExtension &&
+            (extensions[id.substring('system.adapter.'.length)] ||
+             obj.native.webInstance === '*' ||
+             obj.native.webInstance === 'adapter.namespace'
+            )
+        ) {
+            // todo re-init web server
+            process.exit();
+        }
+
         if (!ownSocket && id === adapter.config.socketio) {
             if (obj && obj.common && obj.common.enabled && obj.native) {
                 socketUrl = ':' + obj.native.port;
@@ -52,6 +60,17 @@ var adapter = new utils.Adapter({
         if (webServer.api && adapter.config.auth) webServer.api.objectChange(id, obj);
         if (id === 'system.config') {
             lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
+        }
+
+        // inform extensions
+        for (var e = 0; e < extensions.length; e++) {
+            try {
+                if (extensions[e].obj && extensions[e].obj.objectChange) {
+                    extensions[e].obj.objectChange(id, obj);
+                }
+            } catch (err) {
+                adapter.log.error('Cannot call objectChange for "' + e + '": ' + err);
+            }
         }
     },
     stateChange: function (id, state) {
@@ -107,17 +126,57 @@ var adapter = new utils.Adapter({
     }
 });
 
+function getExtensions(callback) {
+    adapter.objects.getObjectView('system', 'instance', null, function (err, doc) {
+        if (err) {
+            if (callback) callback (err, []);
+        } else {
+            if (doc.rows.length === 0) {
+                if (callback) callback (null, []);
+            } else {
+                var res = [];
+                for (var i = 0; i < doc.rows.length; i++) {
+                    var instance = doc.rows[i].value;
+                    if (instance.common.enabled &&
+                        instance.common.webExtension &&
+                        (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
+                        res.push(doc.rows[i].value);
+                    }
+                }
+                if (callback) callback (null, res);
+            }
+        }
+    });
+}
+
 function main() {
-    if (adapter.config.secure) {
-        // Load certificates
-        adapter.getCertificates(function (err, certificates, leConfig) {
-            adapter.config.certificates = certificates;
-            adapter.config.leConfig     = leConfig;
+    getExtensions(function (err, ext) {
+        if (err) adapter.log.error('Cannot read extensions: ' + err);
+        if (ext) {
+            for (var e = 0; e < ext.length; e++) {
+                var instance = ext[e]._id.substring('system.adapter.'.length);
+                var name = instance.split('.')[0];
+
+                extensions[instance] = {
+                    path: name + '/' + ext[e].common.webExtension,
+                    config: ext[e]
+                };
+            }
+        }
+
+        if (adapter.config.secure) {
+            // Load certificates
+            adapter.getCertificates(function (err, certificates, leConfig) {
+                adapter.config.certificates = certificates;
+                adapter.config.leConfig     = leConfig;
+                webServer = initWebServer(adapter.config);
+            });
+        } else {
             webServer = initWebServer(adapter.config);
-        });
-    } else {
-        webServer = initWebServer(adapter.config);
-    }
+        }
+        // monitor extensions
+        adapter.subscribeForeignObjects('system.adapter.*');
+    });
 }
 
 function readDirs(dirs, cb, result) {
@@ -333,6 +392,57 @@ function initWebServer(settings) {
         var appOptions = {};
         if (settings.cache) appOptions.maxAge = 30758400000;
 
+        server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+        server.server.__server = server;
+    } else {
+        adapter.log.error('port missing');
+        process.exit(1);
+    }
+
+    if (server.server) {
+        adapter.getPort(settings.port, function (port) {
+            if (port != settings.port && !settings.findNextPort) {
+                adapter.log.error('port ' + settings.port + ' already in use');
+                process.exit(1);
+            }
+            server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
+            adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
+        });
+    }
+
+    // activate extensions
+    for (var e in extensions) {
+        if (!extensions.hasOwnProperty(e)) continue;
+        try {
+            var extAPI = require(utils.appName + '.' + extensions[e].path);
+            extensions[e].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[e].config, server.app);
+            adapter.log.info('Connect extension "' + extensions[e].path + '"');
+        } catch (err) {
+            adapter.log.error('Cannot start extension "' + e + '": ' + err);
+        }
+    }
+
+    // Activate integrated simple API
+    if (settings.simpleapi) {
+        var SimpleAPI = require(utils.appName + '.simple-api/lib/simpleapi.js');
+
+        server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
+    }
+
+    // Activate integrated socket
+    if (ownSocket) {
+        var IOSocket = require(utils.appName + '.socketio/lib/socket.js');
+        var socketSettings = JSON.parse(JSON.stringify(settings));
+        // Authentication checked by server itself
+        socketSettings.auth             = false;
+        socketSettings.secret           = secret;
+        socketSettings.store            = store;
+        socketSettings.ttl              = settings.ttl || 3600;
+        socketSettings.forceWebSockets  = settings.forceWebSockets || false;
+        server.io = new IOSocket(server.server, socketSettings, adapter);
+    }
+
+    if (server.app) {
         // deliver web files from objectDB
         server.app.use('/', function (req, res) {
             var url = decodeURI(req.url);
@@ -438,47 +548,6 @@ function initWebServer(settings) {
                 }
             }
         });
-
-        server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
-        server.server.__server = server;
-    } else {
-        adapter.log.error('port missing');
-        process.exit(1);
-    }
-
-    if (server.server) {
-        adapter.getPort(settings.port, function (port) {
-            if (port != settings.port && !settings.findNextPort) {
-                adapter.log.error('port ' + settings.port + ' already in use');
-                process.exit(1);
-            }
-            server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
-            adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
-        });
-    }
-
-    // Activate integrated simple API
-    if (settings.simpleapi) {
-        var SimpleAPI = require(utils.appName + '.simple-api/lib/simpleapi.js');
-
-        // Subscribe on user changes to manage the permissions cache
-        adapter.subscribeForeignObjects('system.group.*');
-        adapter.subscribeForeignObjects('system.user.*');
-
-        server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
-    }
-
-    // Activate integrated socket
-    if (ownSocket) {
-        var IOSocket = require(utils.appName + '.socketio/lib/socket.js');
-        var socketSettings = JSON.parse(JSON.stringify(settings));
-        // Authentication checked by server itself
-        socketSettings.auth             = false;
-        socketSettings.secret           = secret;
-        socketSettings.store            = store;
-        socketSettings.ttl              = settings.ttl || 3600;
-        socketSettings.forceWebSockets  = settings.forceWebSockets || false;
-        server.io = new IOSocket(server.server, socketSettings, adapter);
     }
 
     if (server.server) {

@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "1.7.7",
+        "version":                  "2.0.0",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "2.0.0": {
+                "en": 				"Support of web extensions",
+                "de": 				"Unterstützung von WEB Erweiterungen",
+                "ru": 				"Поддержка плагинов для WEB драйвера"
+            },
             "1.7.7": {
                 "en": 				"fix error with authentication",
                 "de": 				"Korrigiere Authentifizierung",
@@ -98,6 +103,7 @@
         "addUserName":              false,
         "forceWebSockets":          false,
         "whiteListEnabled":         false,
+		"webExtendable":            true,
 
         "leEnabled":                false,
         "leUpdate":                 false,

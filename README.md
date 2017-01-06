@@ -18,7 +18,17 @@ You can set option *Force Web-Sockets* to force using only web-sockets transport
 ## Let's Encrypt Certificates
 Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
 
+## Extensions
+Web driver supports extensions. The extension is URL handler, that will be called if such URL request appears.
+The extensions look like normal adapter, but they have no running process and will be called by web server.
+
+E.g. the user can activate special proxy adapter and reach other devices (like web cams) in the same web server.
+It is required to let all services be available under one web server.
+
 ## Changelog
+### 2.0.0 (2017-01-05)
+* (bluefox) supoprt of web extensions
+
 ### 1.7.7 (2017-01-04)
 * (bluefox) fix error with authentication
 
