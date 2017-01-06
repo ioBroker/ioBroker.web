@@ -45,8 +45,10 @@ var adapter = new utils.Adapter({
              obj.native.webInstance === 'adapter.namespace'
             )
         ) {
-            // todo re-init web server
-            process.exit();
+            adapter.setForeignState('system.adapter.' + adapter.namespace + '.alive', false, true, function () {
+                process.exit(-100);
+            });
+            return;
         }
 
         if (!ownSocket && id === adapter.config.socketio) {
@@ -414,7 +416,16 @@ function initWebServer(settings) {
     for (var e in extensions) {
         if (!extensions.hasOwnProperty(e)) continue;
         try {
-            var extAPI = require(utils.appName + '.' + extensions[e].path);
+            // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
+            var parts = extensions[e].path.split('/');
+            parts.shift();
+            var extAPI;
+            if (fs.existsSync(__dirname + '/' + parts.join('/'))) {
+                extAPI = require(__dirname + '/' + parts.join('/'));
+            } else {
+                extAPI = require(utils.appName + '.' + extensions[e].path);
+            }
+
             extensions[e].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[e].config, server.app);
             adapter.log.info('Connect extension "' + extensions[e].path + '"');
         } catch (err) {
