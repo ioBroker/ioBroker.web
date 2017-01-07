@@ -25,9 +25,14 @@ The extensions look like normal adapter, but they have no running process and wi
 E.g. the user can activate special proxy adapter and reach other devices (like web cams) in the same web server.
 It is required to let all services be available under one web server.
 
+## Brute-force protection
+If authentication is enabled and the user enters 5 times invalid password during one minute, he must wait at least one minute till next attempt.
+After 15th wrong attempt the user mast wait 1 hour.
+
 ## Changelog
 ### 2.0.0 (2017-01-05)
-* (bluefox) supoprt of web extensions
+* (bluefox) support of web extensions
+* (bluefox) protect against brute force attacks
 
 ### 1.7.7 (2017-01-04)
 * (bluefox) fix error with authentication

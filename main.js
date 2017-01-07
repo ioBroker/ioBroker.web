@@ -26,6 +26,7 @@ var cache =      {}; // cached web files
 var ownSocket =  false;
 var lang =       'en';
 var extensions = {};
+var bruteForce = {};
 
 var systemDictionary = {
     'Directories': {'en': 'Directories', 'de': 'Verzeichnise', 'ru': 'Пути'},
@@ -246,7 +247,48 @@ function initWebServer(settings) {
 
             passport.use(new LocalStrategy(
                 function (username, password, done) {
+                    if (bruteForce[username] && bruteForce[username].errors > 5) {
+                        var minutes = (new Date().getTime() - bruteForce[username].time);
+                        if (bruteForce[username].errors < 7) {
+                            if ((new Date().getTime() - bruteForce[username].time) < 60000) {
+                                minutes = 1;
+                            } else {
+                                minutes = 0;
+                            }
+                        } else
+                        if (bruteForce[username].errors < 10) {
+                            if ((new Date().getTime() - bruteForce[username].time) < 180000) {
+                                minutes = Math.ceil((180000 - minutes) / 60000);
+                            } else {
+                                minutes = 0;
+                            }
+                        } else
+                        if (bruteForce[username].errors < 15) {
+                            if ((new Date().getTime() - bruteForce[username].time) < 600000) {
+                                minutes = Math.ceil((600000 - minutes) / 60000);
+                            } else {
+                                minutes = 0;
+                            }
+                        } else
+                        if ((new Date().getTime() - bruteForce[username].time) < 3600000) {
+                            minutes = Math.ceil((3600000 - minutes) / 60000);
+                        } else {
+                            minutes = 0;
+                        }
+
+                        if (minutes) {
+                            return done('Too many errors. Try again in ' + minutes + ' minutes.', false);
+                        }
+                    }
                     adapter.checkPassword(username, password, function (res) {
+                        if (!res) {
+                            bruteForce[username] = bruteForce[username] || {errors: 0};
+                            bruteForce[username].time = new Date().getTime();
+                            bruteForce[username].errors++;
+                        } else if (bruteForce[username]) {
+                            delete bruteForce[username];
+                        }
+
                         if (res) {
                             return done(null, username);
                         } else {
