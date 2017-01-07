@@ -48,26 +48,6 @@
                 "en": 				"сompatible only with new admin",
                 "de": 				"Nur mit neuem Admin kompatibel",
                 "ru": 				"Совместимо только с новым админ-драйвером"
-            },
-			"1.6.2": {
-                "en": 				"updated SelectID Dialog",
-                "de": 				"Update SelectID-Dialog",
-                "ru": 				"Обновлён диалог выбора ID"
-            },
-            "1.6.1": {
-                "en": 				"support of letsencrypt",
-                "de": 				"Unterstützung von LetsEncrypt Zertifikaten",
-                "ru": 				"Поддержка LetsEncrypt сертификатов"
-            },
-            "1.5.4": {
-                "en": 				"support of web-sockets force",
-                "de": 				"support of web-sockets force",
-                "ru": 				"support of web-sockets force"
-            },
-			"1.5.3": {
-                "en": 				"show links if root directory called",
-                "de": 				"show links if root directory called",
-                "ru": 				"show links if root directory called"
             }
         },
         "desc": {
@@ -85,6 +65,7 @@
         "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
         "type":                     "visualisation",
         "stopBeforeUpdate":         true,
+        "webExtendable":            true,
 		"dependencies":             [{"js-controller": ">=0.12.0"}]
     },
     "native": {
@@ -103,7 +84,6 @@
         "addUserName":              false,
         "forceWebSockets":          false,
         "whiteListEnabled":         false,
-		"webExtendable":            true,
 
         "leEnabled":                false,
         "leUpdate":                 false,
