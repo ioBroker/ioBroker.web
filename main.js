@@ -247,7 +247,7 @@ function initWebServer(settings) {
 
             passport.use(new LocalStrategy(
                 function (username, password, done) {
-                    if (bruteForce[username] && bruteForce[username].errors > 5) {
+                    if (bruteForce[username] && bruteForce[username].errors > 4) {
                         var minutes = (new Date().getTime() - bruteForce[username].time);
                         if (bruteForce[username].errors < 7) {
                             if ((new Date().getTime() - bruteForce[username].time) < 60000) {
@@ -277,7 +277,7 @@ function initWebServer(settings) {
                         }
 
                         if (minutes) {
-                            return done('Too many errors. Try again in ' + minutes + ' minutes.', false);
+                            return done('Too many errors. Try again in ' + minutes + ' ' + (minutes === 1 ? 'minute' : 'minutes') + '.', false);
                         }
                     }
                     adapter.checkPassword(username, password, function (res) {
@@ -351,7 +351,7 @@ function initWebServer(settings) {
                 });
             };
 
-            server.app.post('/login', function (req, res) {
+            server.app.post('/login', function (req, res, next) {
                 var redirect = '/';
                 var parts;
                 if (req.body.origin) {
@@ -367,7 +367,7 @@ function initWebServer(settings) {
                     successRedirect: redirect,
                     failureRedirect: '/login/index.html' + req.body.origin + (req.body.origin ? '&error' : '?error'),
                     failureFlash: 'Invalid username or password.'
-                })(req, res);
+                })(req, res, next);
             });
 
             server.app.get('/logout', function (req, res) {
