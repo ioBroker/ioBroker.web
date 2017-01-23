@@ -199,8 +199,10 @@
             }
             $('#bind.value').val(settings.bind);
         });
-        $('#socketio').append('<option value="none">' + _('none') + '</option>');
-        $('#socketio').append('<option value="">' + _('integrated') + '</option>');
+        $('#socketio')
+            .append('<option value="none">' + _('none') + '</option>')
+            .append('<option value="">' + _('integrated') + '</option>');
+
         var count = 0;
         for (var i = 0; i < supportedSockets.length; i++) {
             count++;
