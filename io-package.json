@@ -4,6 +4,11 @@
         "version":                  "2.0.0",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "2.0.1": {
+                "en": 				"implement new welcome screen",
+                "de": 				"Neue Übersichtsseite",
+                "ru": 				"Новая страница для списка ссылок"
+            },
             "2.0.0": {
                 "en": 				"Support of web extensions",
                 "de": 				"Unterstützung von WEB Erweiterungen",
@@ -38,16 +43,6 @@
                 "en": 				"Fix redirect for login",
                 "de": 				"Korrigiere Loginumleitung",
                 "ru": 				"Исправлено перенаправление при логине"
-            },
-			"1.7.1": {
-                "en": 				"update selectID dialog",
-                "de": 				"Update selectID dialog",
-                "ru": 				"Обновлён диалог выбора ID"
-            },
-			"1.7.0": {
-                "en": 				"сompatible only with new admin",
-                "de": 				"Nur mit neuem Admin kompatibel",
-                "ru": 				"Совместимо только с новым админ-драйвером"
             }
         },
         "desc": {

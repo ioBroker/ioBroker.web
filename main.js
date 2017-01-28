@@ -28,15 +28,6 @@ var lang =       'en';
 var extensions = {};
 var bruteForce = {};
 
-var systemDictionary = {
-    'Directories': {'en': 'Directories', 'de': 'Verzeichnise', 'ru': 'Пути'},
-    'your are lost': {
-        'en': 'It seems to be you are lost. Here are some files, that you can open:',
-        'de': 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann:',
-        'ru': 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:'
-    }
-};
-
 var adapter = new utils.Adapter({
     name: 'web',
     objectChange: function (id, obj) {
@@ -200,6 +191,65 @@ function readDirs(dirs, cb, result) {
             readDirs(dirs, cb, result);
         }, 0);
     });
+}
+
+var specialScreen = [
+    {"link": "flot/edit.html",      "name": "flot editor",  "img": "flot.admin/flot.png",       "color": "gray",  "order": 4},
+    {"link": "mobile/index.html",   "name": "mobile",       "img": "mobile.admin/mobile.png",   "color": "black", "order": 3},
+    {"link": "vis/edit.html",       "name": "vis editor",   "img": "vis/img/faviconEdit.png",   "color": "green", "order": 2},
+    {"link": "vis/index.html",      "name": "vis",          "img": "vis/img/favicon.png",       "color": "blue",  "order": 1}
+];
+
+var indexHtml;
+
+function getListOfAllAdapters(callback) {
+    try {
+        // read all instances
+        //adapter.objects.getObjectView('system', 'instance', {}, function (err, instances) {
+            adapter.objects.getObjectView('system', 'adapter', {}, function (err, adapters) {
+                var list = [];
+                var a;
+                for (a = 0; a < adapters.rows.length; a++) {
+                    var obj = adapters.rows[a].value;
+                    if (obj.common.welcomeScreen) {
+                        for (var w = 0; w < obj.common.welcomeScreen.length; w++) {
+                            list.push(obj.common.welcomeScreen[w]);
+                        }
+                    } else {
+                        for (var s = 0; s < specialScreen.length; s++) {
+                            var link = specialScreen[s].link.split('/')[0];
+                            if (link === obj.common.name) {
+                                list.push(specialScreen[s]);
+                            }
+                        }
+                    }
+                }
+                indexHtml = /*indexHtml || */fs.readFileSync(__dirname + '/www/index.html').toString();
+                list.sort(function (a, b) {
+                    if (a.order === undefined && b.order === undefined) {
+                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                        return 0;
+                    } else if (a.order === undefined) {
+                        return -1;
+                    } else if (b.order === undefined) {
+                        return 1;
+                    } else {
+                        if (a.order > b.order) return 1;
+                        if (a.order < b.order) return -1;
+                        return 0;
+                    }
+                });
+
+                var text = 'systemLang = "' + lang + '";\n';
+                text += 'list = ' + JSON.stringify(list, null, 2) + ';\n';
+
+                callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
+            });
+        //});
+    } catch (e) {
+        callback(e);
+    }
 }
 
 //settings: {
@@ -505,39 +555,17 @@ function initWebServer(settings) {
                 return;
             }
 
-            if (url === '/') {
-                try {
-                    // read all instances
-                    adapter.objects.getObjectView('system', 'instance', {}, function (err, instances) {
-                        adapter.objects.getObjectView('system', 'adapter', {}, function (err, adapters) {
-                            var check = [];
-                            var a;
-                            for (a = 0; a < adapters.rows.length; a++) {
-                                check.push(adapters.rows[a].id.substring('system.adapter.'.length));
-                                check.push(adapters.rows[a].id.substring('system.adapter.'.length) + '.admin');
-                            }
-                            for (a = 0; a < instances.rows.length; a++) {
-                                check.push(instances.rows[a].id.substring('system.adapter.'.length));
-                            }
-                            readDirs(check, function (dirs) {
-                                var text = '<h2>' + systemDictionary['Directories'][lang] + '</h2><p>' + systemDictionary['your are lost'][lang] + '</p>';
-                                dirs.sort();
-                                for (var d = 0; d < dirs.length; d++) {
-                                    if (dirs[d].indexOf('vis/') !== -1 || dirs[d].indexOf('mobile/') !== -1) {
-                                        text += (text ? '<br>' : '') + '<a href="/' + dirs[d] + '"><b>' + dirs[d] + '</b></a>';
-                                    } else {
-                                        text += (text ? '<br>' : '') + '<a href="/' + dirs[d] + '">' + dirs[d] + '</a>';
-                                    }
-                                }
-                                res.set('Content-Type', 'text/html');
-                                res.status(200).send('<html><head><title>iobroker.web</title></head><body>' + text + '</body>');
-
-                            });
-                        });
-                    });
-                } catch (e) {
-                    res.status(500).send('500. Error' + e);
-                }
+            if (url === '/' || url === '/index.html') {
+                getListOfAllAdapters(function (err, data) {
+                    if (err) {
+                        res.status(500).send('500. Error' + e);
+                    } else {
+                        res
+                            .set('Content-Type', 'text/html')
+                            .status(200)
+                            .send(data);
+                    }
+                });
                 return;
             }
 
