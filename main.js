@@ -205,21 +205,37 @@ var indexHtml;
 function getListOfAllAdapters(callback) {
     try {
         // read all instances
-        //adapter.objects.getObjectView('system', 'instance', {}, function (err, instances) {
+        adapter.objects.getObjectView('system', 'instance', {}, function (err, instances) {
             adapter.objects.getObjectView('system', 'adapter', {}, function (err, adapters) {
                 var list = [];
                 var a;
                 for (a = 0; a < adapters.rows.length; a++) {
                     var obj = adapters.rows[a].value;
-                    if (obj.common.welcomeScreen) {
-                        for (var w = 0; w < obj.common.welcomeScreen.length; w++) {
-                            list.push(obj.common.welcomeScreen[w]);
+                    var found = true;
+                    if (instances && instances.rows) {
+                        found = false;
+                        for (var i = 0; i < instances.rows.length; i++) {
+                            var id = instances.rows[i].id;
+                            var ids = id.split('.');
+                            ids.pop();
+                            id = ids.join('.');
+                            if (id === obj._id) {
+                                found = true;
+                                break;
+                            }
                         }
-                    } else {
-                        for (var s = 0; s < specialScreen.length; s++) {
-                            var link = specialScreen[s].link.split('/')[0];
-                            if (link === obj.common.name) {
-                                list.push(specialScreen[s]);
+                    }
+                    if (found) {
+                        if (obj.common.welcomeScreen) {
+                            for (var w = 0; w < obj.common.welcomeScreen.length; w++) {
+                                list.push(obj.common.welcomeScreen[w]);
+                            }
+                        } else {
+                            for (var s = 0; s < specialScreen.length; s++) {
+                                var link = specialScreen[s].link.split('/')[0];
+                                if (link === obj.common.name) {
+                                    list.push(specialScreen[s]);
+                                }
                             }
                         }
                     }
@@ -237,6 +253,8 @@ function getListOfAllAdapters(callback) {
                     } else {
                         if (a.order > b.order) return 1;
                         if (a.order < b.order) return -1;
+                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
                         return 0;
                     }
                 });
@@ -246,7 +264,7 @@ function getListOfAllAdapters(callback) {
 
                 callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
             });
-        //});
+        });
     } catch (e) {
         callback(e);
     }
