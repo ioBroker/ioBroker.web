@@ -31,7 +31,7 @@ var bruteForce = {};
 var adapter = new utils.Adapter({
     name: 'web',
     objectChange: function (id, obj) {
-        if (obj && obj.common.webExtension &&
+        if (obj && obj.common && obj.common.webExtension && obj.native &&
             (extensions[id.substring('system.adapter.'.length)] ||
              obj.native.webInstance === '*' ||
              obj.native.webInstance === 'adapter.namespace'
