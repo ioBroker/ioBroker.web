@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user mast wait 1 hour.
 
 ## Changelog
+### 2.0.2 (2017-02-08)
+* (bluefox) fix selectID dialog
+
 ### 2.0.1 (2017-01-28)
 * (bluefox) implement new welcome screen
 

@@ -224,8 +224,28 @@
 
         for (var id in objects) {
 
-            if (isRoom && objects[id].type === 'enum' && data.regexEnumRooms.test(id)) data.roomEnums.push(id);
-            if (isFunc && objects[id].type === 'enum' && data.regexEnumFuncs.test(id)) data.funcEnums.push(id);
+            if (isRoom) {
+                if (objects[id].type === 'enum' && data.regexEnumRooms.test(id) && data.roomEnums.indexOf(id) === -1) data.roomEnums.push(id);
+                if (objects[id].enums) {
+                    for (var e in objects[id].enums) {
+                        if (data.regexEnumRooms.test(e) && data.roomEnums.indexOf(e) === -1) data.roomEnums.push(e);
+                        data.objects[e] = data.objects[e] || {common: {name: objects[id].enums[e]}};
+                        data.objects[e].common.members = data.objects[e].common.members || [];
+                        if (data.objects[e].common.members.indexOf(id) === -1) data.objects[e].common.members.push(id);
+                    }
+                }
+            }
+            if (isFunc) {
+                if (objects[id].type === 'enum' && data.regexEnumFuncs.test(id)  && data.funcEnums.indexOf(id) === -1) data.funcEnums.push(id);
+                if (objects[id].enums) {
+                    for (var e in objects[id].enums) {
+                        if (data.regexEnumFuncs.test(e) && data.funcEnums.indexOf(e) === -1) data.funcEnums.push(e);
+                        data.objects[e] = data.objects[e] || {common: {name: objects[id].enums[e]}};
+                        data.objects[e].common.members = data.objects[e].common.members || [];
+                        if (data.objects[e].common.members.indexOf(id) === -1) data.objects[e].common.members.push(id);
+                    }
+                }
+            }
 
             if (isType && objects[id].type && data.types.indexOf(objects[id].type) === -1) data.types.push(objects[id].type);
 

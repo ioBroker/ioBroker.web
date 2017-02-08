@@ -4,6 +4,11 @@
         "version":                  "2.0.1",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "2.0.2": {
+                "en": 				"fix selectID dialog",
+                "de": 				"Korrigiere selectID Dialog",
+                "ru": 				"Исправлен диалог выбора элементов"
+            },
             "2.0.1": {
                 "en": 				"implement new welcome screen",
                 "de": 				"Neue Übersichtsseite",
