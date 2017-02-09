@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "2.0.1",
+        "version":                  "2.0.2",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
             "2.0.2": {
