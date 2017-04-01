@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "2.0.2",
+        "version":                  "2.0.3",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "2.0.3": {
+                "en": 				"catch errors for invalid objects",
+                "de": 				"Fange Fehler für inkorrekte Objekte",
+                "ru": 				"Ловит ошибки при неправильных объектах"
+            },
             "2.0.2": {
                 "en": 				"fix selectID dialog",
                 "de": 				"Korrigiere selectID Dialog",

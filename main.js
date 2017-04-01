@@ -131,7 +131,7 @@ function getExtensions(callback) {
                 var res = [];
                 for (var i = 0; i < doc.rows.length; i++) {
                     var instance = doc.rows[i].value;
-                    if (instance.common.enabled &&
+                    if (instance && instance.common && instance.common.enabled &&
                         instance.common.webExtension &&
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
                         res.push(doc.rows[i].value);
@@ -148,13 +148,15 @@ function main() {
         if (err) adapter.log.error('Cannot read extensions: ' + err);
         if (ext) {
             for (var e = 0; e < ext.length; e++) {
-                var instance = ext[e]._id.substring('system.adapter.'.length);
-                var name = instance.split('.')[0];
+                if (ext[e] && ext[e].common) {
+                    var instance = ext[e]._id.substring('system.adapter.'.length);
+                    var name = instance.split('.')[0];
 
-                extensions[instance] = {
-                    path: name + '/' + ext[e].common.webExtension,
-                    config: ext[e]
-                };
+                    extensions[instance] = {
+                        path: name + '/' + ext[e].common.webExtension,
+                        config: ext[e]
+                    };
+                }
             }
         }
 
