@@ -30,11 +30,15 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user mast wait 1 hour.
 
 ## Changelog
-### 2.0.3 (2017-04-01)
-* (bluefox) catch errors for invalid objects
+### 2.0.4 (2017-04-25)
+* (bluefox) show logout button if connected over cloud
 
+### 2.0.3 (2017-04-01)
+ * (bluefox) catch errors for invalid objects
+ 
 ### 2.0.2 (2017-02-08)
 * (bluefox) fix selectID dialog
+
 ### 2.0.1 (2017-01-28)
 * (bluefox) implement new welcome screen
 

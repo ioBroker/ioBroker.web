@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "2.0.3",
+        "version":                  "2.0.4",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+            "2.0.4": {
+                "en": 				"show logout button if connected over cloud",
+                "de": 				"Zeige Sign Out Knopf, falls über Cloud verbunden",
+                "ru": 				"Показывает кнопку Выход, если соединение через облако"
+            },
             "2.0.3": {
                 "en": 				"catch errors for invalid objects",
                 "de": 				"Fange Fehler für inkorrekte Objekte",
