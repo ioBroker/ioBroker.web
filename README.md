@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user mast wait 1 hour.
 
 ## Changelog
+### 2.0.5 (2017-05-24)
+* (bluefox) Update socketio lib
+
 ### 2.0.4 (2017-04-25)
 * (bluefox) show logout button if connected over cloud
 

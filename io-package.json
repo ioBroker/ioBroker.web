@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "2.0.4",
+        "version":                  "2.0.5",
         "title":                    "ioBroker simple web Adapter",
 		"news": {
+		    "2.0.5": {
+                "en": 				"Update socketio lib",
+                "de": 				"Updatete socketio Bibliothek",
+                "ru": 				"Обновлена версия socketio библиотеки"
+            },
             "2.0.4": {
                 "en": 				"show logout button if connected over cloud",
                 "de": 				"Zeige Sign Out Knopf, falls über Cloud verbunden",
