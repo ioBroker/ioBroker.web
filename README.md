@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user mast wait 1 hour.
 
 ## Changelog
+### 2.0.6 (2017-08-05)
+* (bluefox) Fix welcome screen
+
 ### 2.0.5 (2017-05-24)
 * (bluefox) Update socketio lib
 

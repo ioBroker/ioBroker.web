@@ -229,8 +229,16 @@ function getListOfAllAdapters(callback) {
                     }
                     if (found) {
                         if (obj.common.welcomeScreen) {
-                            for (var w = 0; w < obj.common.welcomeScreen.length; w++) {
-                                list.push(obj.common.welcomeScreen[w]);
+                            if (obj.common.welcomeScreen instanceof Array) {
+                                for (var w = 0; w < obj.common.welcomeScreen.length; w++) {
+                                    // temporary disabled
+                                    if (obj.common.welcomeScreen[w].name === 'vis editor') {
+                                        continue;
+                                    }
+                                    list.push(obj.common.welcomeScreen[w]);
+                                }
+                            } else {
+                                list.push(obj.common.welcomeScreen);
                             }
                         } else {
                             for (var s = 0; s < specialScreen.length; s++) {
