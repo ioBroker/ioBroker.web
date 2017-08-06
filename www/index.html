@@ -82,7 +82,8 @@
 
         $(document).ready(function () {
             translateAll();
-            if (document.location.href.indexOf('iobroker.net') === -1) {
+            if (document.location.href.indexOf('iobroker.net') === -1 &&
+                document.location.href.indexOf('iobroker.pro') === -1) {
                 $('.account-button').hide();
             }
 

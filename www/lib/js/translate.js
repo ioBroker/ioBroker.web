@@ -8,17 +8,19 @@ function translateWord(text, lang, dictionary) {
     lang       = lang       || systemLang;
     dictionary = dictionary || systemDictionary;
 
+    text = text.toString();
+
     if (dictionary[text]) {
         var newText = dictionary[text][lang];
         if (newText) {
             return newText;
-        } else if (lang != 'en') {
+        } else if (lang !== 'en') {
             newText = dictionary[text].en;
             if (newText) {
                 return newText;
             }
         }
-    } else if (typeof text == 'string' && !text.match(/_tooltip$/)) {
+    } else if (typeof text === 'string' && !text.match(/_tooltip$/)) {
         console.log('"' + text + '": {"en": "' + text + '", "de": "' + text + '", "ru": "' + text + '"},');
     } else if (typeof text !== 'string') {
         console.warn('Trying to translate non-text:' + text);
@@ -97,21 +99,21 @@ var _ = function (text, arg1, arg2, arg3) {
     text = translateWord(text);
 
     var pos = text.indexOf('%s');
-    if (pos != -1) {
+    if (pos !== -1) {
         text = text.replace('%s', arg1);
     } else {
         return text;
     }
 
     pos = text.indexOf('%s');
-    if (pos != -1)  {
+    if (pos !== -1)  {
         text = text.replace('%s', arg2);
     } else {
         return text;
     }
 
     pos = text.indexOf('%s');
-    if (pos != -1)  {
+    if (pos !== -1)  {
         text = text.replace('%s', arg3);
     }
 
