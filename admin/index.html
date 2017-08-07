@@ -1,5 +1,5 @@
 <html>
-
+<head>
 <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
 <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
 <script type="text/javascript" src="../../js/translate.js"></script>
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="words.js"></script>
 
 <style>
     .number {
@@ -16,132 +17,6 @@
 </style>
 
 <script type="text/javascript">
-    systemDictionary = {
-        "WWW Web Server adapter settings": {
-            "de": "WWW Web Server adapter settings",
-            "ru": "WWW Web Server adapter settings"
-        },
-        "Run as:":                {"en": "Run as:",                 "de": "Laufen unter Anwender:",  "ru": "Запустить от пользователя:"},
-        "IP:":                    {"en": "IP:",                     "de": "IP:",                     "ru": "IP:"},
-        "Port:":                  {"en": "Port:",                   "de": "Port:",                   "ru": "Порт:"},
-        "Secure(HTTPS):":         {"en": "Secure(HTTPS):",          "de": "Verschlüsselung(HTTPS):", "ru": "Шифрование(HTTPS):"},
-        "Authentication:":        {"en": "Authentication:",         "de": "Authentifikation:",       "ru": "Аутентификация:"},
-        "Cache:":                 {"en": "Cache",                   "de": "Puffer:",                 "ru": "Кэш:"},
-        "none":                   {"en": "none",                    "de": "keins",                   "ru": ""},
-        "integrated":             {"en": "integrated",              "de": "integriert",              "ru": "встроенный"},
-        "Public certificate:":    {"en": "Public certificate:",     "de": "Publikzertifikat:",       "ru": "'Public' сертификат:"},
-        "Private certificate:":   {"en": "Private certificate:",    "de": "Privatzertifikat:",       "ru": "'Private' сертификат:"},
-        "Chained certificate:":   {"en": "Chained certificate:",    "de": "Kettenzertifikat:",       "ru": "'Chained' сертификат:"},
-        "Force Web-Sockets:":     {"en": "Force Web-Sockets:",      "de": "Nur Web-Sockets:",        "ru": "Только Web-Sockets:"},
-        "Internal 'Simple API':": {"en": "Build-in 'Simple-API'",   "de": "Eingebautes 'Simple-API':", "ru": "Встроенный 'Simple-API':"},
-        "Listen on all IPs":      {"en": "Listen on all IPs",       "de": "Alle IPs zulassen",       "ru": "Открыть для всех IP адресов"},
-        "Let's Encrypt settings": {
-            "en": "Let's Encrypt settings",
-            "de": "Einstellungen Let's Encrypt",
-            "ru": "Настройкт Let's Encrypt"
-        },
-        "Use Lets Encrypt certificates:": {
-            "en": "Use Let's Encrypt certificates:",
-            "de": "Benutzen Let's Encrypt Zertifikate:",
-            "ru": "Использовать сертификаты Let's Encrypt:"
-        },
-        "Use this instance for automatic update:": {
-            "en": "Use this instance for automatic update:",
-            "de": "Benutze diese Instanz für automatische Updates:",
-            "ru": "Обновлять сертификаты в этом драйвере:"
-        },
-        "Port to check the domain:": {
-            "en": "Port to check the domain:",
-            "de": "Port um die Domain zu prüfen:",
-            "ru": "Порт для проверки доменного имени:"
-        },
-        "help_tip":         {
-            "en": "On save the adapter restarts with new configuration immediately",
-            "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
-            "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
-        },
-        "Set certificates or load it first in the system settings (right top).":    {
-            "en": "Set certificates or load it first in the system settings (right top).",
-            "de": "Setze Zertificate oder lade die erst unter System/Einstellungen (oben rechts).",
-            "ru": "Нужно выбрать сертификаты или сначала загрузить их в системных настройках (вверху справа)."
-        },
-        "socket_help":         {
-            "en": "Used by adapters like rickshaw or vis",
-            "de": "Wird von Rickshaw oder Vis benutzt",
-            "ru": "Используется для Rickshaw или Vis"
-        },
-        "Web Server adapter settings": {
-            "en": "Web Server adapter settings",
-            "de": "Web Server Adapter Einstellungen",
-            "ru": "Настройки драйвера Web-Сервер"
-        },
-        "Socket.IO Instance (Optional):": {
-            "en": "Socket.IO Instance (Optional):",
-            "de": "Socket.IO Instanz (Optional):",
-            "ru": "Socket.IO (опционально):"
-        },
-        "The provided IP is not valid" : {
-            "en": "The provided IP is not valid",
-            "de": "Die angegebene IP-Adresse ist ungültig",
-            "ru": "Неверный IP-адрес"
-        },
-        "General": {
-            "en": "General",
-            "de": "Allgemein",
-            "ru": "Общие"
-        },
-        "White List": {
-            "en": "White List",
-            "de": "Weisse Liste",
-            "ru": "Белый список"
-        },
-        "User": {
-            "en": "User",
-            "de": "Benutzer",
-            "ru": "Пользователь"
-        },
-        "object": {
-            "en": "object",
-            "de": "Objekt",
-            "ru": "объект"
-        },
-        "state":{
-            "en": "state",
-            "de": "Status",
-            "ru": "статус"
-        },
-        "file": {
-            "en": "file",
-            "de": "Datei",
-            "ru": "файл"
-        },
-        "read": {
-            "en": "read",
-            "de": "lesen",
-            "ru": "читать"
-        },
-        "list": {
-            "en": "list",
-            "de": "auflisten",
-            "ru": "список"
-        },
-        "write": {
-            "en": "wrire",
-            "de": "schreiben",
-            "ru": "писать"
-        },
-        "create": {
-            "en": "create",
-            "de": "anlegen",
-            "ru": "создать"
-        },
-        "remove": {
-            "en": "delete",
-            "de": "löschen",
-            "ru": "удалить"
-        }
-    };
-
     var supportedSockets = ['socketio'];
 
     function showHideSettings() {
@@ -211,13 +86,13 @@
                 for (var t = 0; t < res.length; t++) {
                     $('#socketio').append('<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>');
                 }
-                count--;
-                if (!count) {
-                    $('#socketio').val(settings.socketio);
+                if (!--count) {
+                    var $socketio = $('#socketio');
+                    $socketio.val(settings.socketio);
                     if (settings.socketio !== '') {
                         $('.socketio').hide();
                     }
-                    $('#socketio').change(function () {
+                    $socketio.change(function () {
                         if ($(this).val() === '') {
                             $('.socketio').show();
                         } else {
@@ -231,14 +106,14 @@
 
         $('.value').each(function () {
             var key = $(this).attr('id');
-            // example: select elements with id=key and class=value and insert value
-            if ($('#' + key + '.value').attr('type') === 'checkbox') {
-                $('#' + key + '.value').prop('checked', settings[key]).change(function() {
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).change(function() {
                     showHideSettings();
                     onChange();
                 });
             } else {
-                $('#' + key + '.value').val(settings[key]).change(function() {
+                $value.val(settings[key]).change(function() {
                     onChange();
                 }).keyup(function() {
                     $(this).trigger('change');
@@ -271,10 +146,7 @@
         applyWhiteListSettings(settings, onChange);
     }
 
-    // ... and the function save has to exist.
-    // you have to make sure the callback is called with the settings object as first param!
     function save(callback) {
-        // example: select elements with class=value and build settings object
         var obj = {};
         $('.value').each(function () {
             var $this = $(this);
@@ -366,8 +238,8 @@
             for (var i = 2; i < rowCount; i++) {
                 var row = table.rows[i];
 
-                var ip = i == rowCount - 1 ? 'default' : row.cells[1].childNodes[0].value;
-                var userSelected = i == rowCount - 1 ? $(row.cells[2]).html().toLowerCase() : $(row.cells[2].childNodes[0]).val();
+                var ip = (i === (rowCount - 1)) ? 'default' : row.cells[1].childNodes[0].value;
+                var userSelected = (i === (rowCount - 1)) ? $(row.cells[2]).html().toLowerCase() : $(row.cells[2].childNodes[0]).val();
 
                 settings[ip] = {
                     user:   userSelected,
@@ -395,7 +267,7 @@
     }
 
     function validateIp(ip) {
-        if (ip.indexOf('*') != -1 && ip.lastIndexOf('.') > ip.indexOf('*')) {
+        if (ip.indexOf('*') !== -1 && ip.lastIndexOf('.') > ip.indexOf('*')) {
             return false;
         }
         var expression = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
@@ -415,7 +287,7 @@
         if (whiteListSettings) {
             Object.keys(whiteListSettings).forEach(function (key) {
                 rowCount = table.rows.length;
-                if (key != 'default') {
+                if (key !== 'default') {
                     addWhiteListTableRow(false);
                 }
             });
@@ -452,11 +324,12 @@
     }
 
     function wireClickEvents() {
-        $('.delete-btn-clmn').off('click');
-        $('.delete-btn-clmn').click(function () {
-            var rowIndex = $(this).parent().parent().children().index($(this).parent());
-            deleteWhiteListTableRow(rowIndex + 2);
-        });
+        $('.delete-btn-clmn')
+            .off('click')
+            .click(function () {
+                var rowIndex = $(this).parent().parent().children().index($(this).parent());
+                deleteWhiteListTableRow(rowIndex + 2);
+            });
     }
 
     function wireChangeEvents() {
@@ -466,7 +339,7 @@
         for (var i = 2; i < rowCount; i++) {
             var row = table.rows[i];
 
-            if (i != rowCount - 1) {
+            if (i !== rowCount - 1) {
                 var $input = $(row.cells[1].childNodes[0]);
                 $input.off('change');
                 $input.change(handleIpChange);
@@ -481,10 +354,11 @@
             }
         }
 
-        $('.select-username').off('change');
-        $('.select-username').change(function () {
-            changedCallback && changedCallback();
-        });
+        $('.select-username')
+            .off('change')
+            .change(function () {
+                changedCallback && changedCallback();
+            });
     }
 
     function hideDefaultDeleteBtn() {
@@ -498,8 +372,8 @@
     }
 
     function addOptionIfAbsent($e, value, valueText, defaultUser) {
-        if ($e.find('option[value="' + value + '"]').length == 0) {
-            $e.append('<option value="' + value + '" ' + ((defaultUser == value) ? 'selected' : '') + '>' + valueText + '</option>');
+        if (!$e.find('option[value="' + value + '"]').length) {
+            $e.append('<option value="' + value + '" ' + ((defaultUser === value) ? 'selected' : '') + '>' + valueText + '</option>');
         }
     }
 
@@ -518,10 +392,11 @@
 
         getUsers(function (err, response) {
             users = response;
-            $('.select-username').off('change');
-            $('.select-username').each(function () {
-                fillNameSelect($(this));
-            });
+            $('.select-username')
+                .off('change')
+                .each(function () {
+                    fillNameSelect($(this));
+                });
 
             applyRowSettings(whiteListSettings);
 
@@ -546,7 +421,7 @@
         var $ip = $(row.cells[1].childNodes[0]);
         $ip.val(ip);
         for (var c = 2; c < row.cells.length; c++) {
-            var $cell = $(row.cells[c].childNodes[c == 2 ? 1 : 0]);
+            var $cell = $(row.cells[c].childNodes[c === 2 ? 1 : 0]);
 
             if (c > 2) {
                 var permobject = $cell.attr('permobject');
@@ -563,7 +438,7 @@
 
     function setDefaultIpUserToDefaultUser() {
         var auth = $('#auth').prop('checked');
-        var defaultUser = auth ? 'Auth' : $('#defaultUser option:selected').text();
+        var defaultUser = auth ? 'Auth' : $('#defaultUser').find('option:selected').text();
         $('.defaultUserName').html(defaultUser);
     }
 
@@ -601,7 +476,8 @@
         background-color: lavender;
     }
 </style>
-
+</head>
+<body>
 <div id="adapter-container">
     <table>
         <tr>
@@ -618,60 +494,62 @@
         <div id="tabs-1">
             <table>
                 <tr>
-                    <td class="translate">IP:</td>
+                    <td><label class="translate" for="bind">IP:</label></td>
                     <td><select class="value" id="bind"></select></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td class="translate">Port:</td>
+                    <td><label class="translate" for="port">Port:</label></td>
                     <td><input class="value" id="port" size="5" maxlength="5" type="number"/></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td class="translate">Secure(HTTPS):</td>
+                    <td><label class="translate" for="secure">Secure(HTTPS):</label></td>
                     <td><input class="value" id="secure" type="checkbox"/></td>
                     <td></td>
                 </tr>
                 <tr id="_certPublic">
-                    <td class="translate">Public certificate:</td>
+                    <td><label class="translate" for="certPublic">Public certificate:</label></td>
                     <td><select id="certPublic" class="value"></select></td>
                 </tr>
                 <tr id="_certPrivate">
-                    <td class="translate">Private certificate:</td>
+                    <td><label class="translate" for="certPrivate">Private certificate:</label></td>
                     <td><select id="certPrivate" class="value"></select></td>
                 </tr>
                 <tr id="_certChained">
-                    <td class="translate">Chained certificate:</td>
+                    <td><label class="translate" for="certChained">Chained certificate:</label></td>
                     <td><select id="certChained" class="value"></select></td>
                 </tr>
                 <tr>
-                    <td class="translate">Authentication:</td>
+                    <td><label class="translate" for="auth">Authentication:</label></td>
                     <td><input class="value" id="auth" type="checkbox"/></td>
                     <td></td>
                 </tr>
                 <tr id="_ttl">
-                    <td class="translate">Login timeout(sec):</td>
+                    <td><label class="translate" for="ttl">Login timeout(sec):</label></td>
                     <td><input  class="value" id="ttl" type="number"/></td>
                     <td></td></tr>
                 <tr>
-                    <td class="translate">Cache:</td>
+                    <td><label class="translate" for="cache">Cache:</label></td>
                     <td><input class="value" id="cache" type="checkbox"/></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td class="translate">Socket.IO Instance (Optional):</td>
+                    <td><label class="translate" for="socketio">Socket.IO Instance (Optional):</label></td>
                     <td><select class="value" id="socketio"></select><span class="translate"
-                                                                           style="padding-left: 20">socket_help</span>
+                                                                           style="padding-left: 20px">socket_help</span>
                     </td>
                 </tr>
-                <tr class="socketio"><td class="translate">Force Web-Sockets:</td><td><input type="checkbox" class="value" id="forceWebSockets"/></td></tr>
+                <tr class="socketio">
+                    <td><label class="translate" for="forceWebSockets">Force Web-Sockets:</label></td>
+                    <td><input type="checkbox" class="value" id="forceWebSockets"/></td></tr>
                 <tr>
-                    <td>Internal 'Simple API':</td>
+                    <td><label class="translate" for="simpleapi">Internal 'Simple API':</label></td>
                     <td><input type="checkbox" class="value" id="simpleapi"/></td>
                 </tr>
                 <tr class="defaultUser">
-                    <td class="translate">Run as:</td>
-                    <td><select class="value" id="defaultUser"/></td>
+                    <td><label class="translate" for="defaultUser">Run as:</label></td>
+                    <td><select class="value" id="defaultUser"></select></td>
                 </tr>
                 <tr><td colspan="2">&nbsp;</td></tr>
                 <tr class="le-settings"><td colspan="2"><h3 class="translate">Let's Encrypt settings</h3></tr>
@@ -683,7 +561,7 @@
         </div>
         <div id="tabs-2">
             <div>
-                <span class="translate">Enabled:</span><input id="whiteListEnabled" class="value" type="checkbox" />
+                <span><label class="translate" for="whiteListEnabled">Enabled:</label></span><input id="whiteListEnabled" class="value" type="checkbox" />
             </div>
             <button style="display: inline-block; width: 2em; height: 2em;" onclick="addWhiteListTableRow(true)"
                     class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only white-list-settings" role="button">
@@ -764,8 +642,6 @@
 
         </div>
     </div>
-
-    <p class="translate">help_tip</p>
-
 </div>
+</body>
 </html>

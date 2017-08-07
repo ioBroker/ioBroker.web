@@ -253,6 +253,7 @@ function getListOfAllAdapters(callback) {
                             }
                         }
                     }
+
                     if (found) {
                         if (obj.common.welcomeScreen || (obj.common.welcomeScreenPro && proFound)) {
                             if (obj.common.welcomeScreen) {
