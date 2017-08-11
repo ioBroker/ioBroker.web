@@ -30,7 +30,7 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user mast wait 1 hour.
 
 ## Changelog
-### 2.1.1 (2017-08-07)
+### 2.1.2 (2017-08-11)
 * (bluefox) Support of iobroker.pro
 
 ### 2.0.6 (2017-08-05)
