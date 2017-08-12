@@ -19,6 +19,7 @@ body {
     .layoutMain {
         width:  100%;
         height: 100%;
+        overflow: auto;
     }
 
     .layoutHeader {
@@ -41,6 +42,7 @@ body {
     .layoutMain {
         width: 100%;
         height: 100%;
+        overflow: auto;
     }
     .layoutHeader {
         padding-top: 15px;
