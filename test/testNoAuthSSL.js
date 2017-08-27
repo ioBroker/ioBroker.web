@@ -40,6 +40,7 @@ function checkConnectionOfAdapter(cb, counter) {
 describe('Test WEB(' + ((process.env.TEST_PROTOCOL == 'https') ? 'SSL' : 'NO SSL') + ')', function() {
     before('Test WEB(' + ((process.env.TEST_PROTOCOL == 'https') ? 'SSL' : 'NO SSL') + '): Start js-controller', function (_done) {
         this.timeout(600000); // because of first install from npm
+        setup.adapterStarted = false;
 
         setup.setupController(function () {
             var config = setup.getAdapterConfig();
