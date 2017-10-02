@@ -93,6 +93,10 @@
             var text = '';
             for (var i = 0; i < list.length; i++) {
                 if (typeof list[i] === 'object') {
+                    // pro tiles are not available on iobroker.net
+                    if (list[i].pro && document.location.href.match(/iobroker\.net/)) {
+                        continue;
+                    }
                     text +=
                         '<div class="adapter-tile" onclick="location.href = \'' + list[i].link + '\'">' +
                             '<div class="adapter-link" >' +

@@ -27,7 +27,6 @@ var ownSocket   = false;
 var lang        = 'en';
 var extensions  = {};
 var bruteForce  = {};
-var proFound    = false;
 
 var adapter = new utils.Adapter({
     name: 'web',
@@ -42,12 +41,6 @@ var adapter = new utils.Adapter({
                 process.exit(-100);
             });
             return;
-        }
-
-        // if cloud adapter
-        if (obj && obj.native && id.match(/^system\.adapter\.cloud\.\d+/)) {
-            // check if pro license
-            isPro();
         }
 
         if (!ownSocket && id === adapter.config.socketio) {
@@ -150,27 +143,8 @@ function getExtensions(callback) {
     });
 }
 
-function isPro() {
-    proFound = false;
-    adapter.objects.getObjectView('system', 'instance', {startkey: 'system.adapter.cloud.', endkey: 'system.adapter.cloud.\u9999'}, function (err, doc) {
-        if (!err) {
-            if (doc && doc.rows && doc.rows.length) {
-                for (var i = 0; i < doc.rows.length; i++) {
-                    var instance = doc.rows[i].value;
-                    if (instance && instance.native && instance.native.apikey && instance.native.apikey.match(/^@pro_/)) {
-                        proFound = true;
-                        break;
-                    }
-                }
-            }
-        }
-    });
-}
-
 function main() {
     getExtensions(function (err, ext) {
-        isPro(); // is pro apikey
-
         if (err) adapter.log.error('Cannot read extensions: ' + err);
         if (ext) {
             for (var e = 0; e < ext.length; e++) {
@@ -255,7 +229,7 @@ function getListOfAllAdapters(callback) {
                     }
 
                     if (found) {
-                        if (obj.common.welcomeScreen || (obj.common.welcomeScreenPro && proFound)) {
+                        if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
                             if (obj.common.welcomeScreen) {
                                 if (obj.common.welcomeScreen instanceof Array) {
                                     for (var w = 0; w < obj.common.welcomeScreen.length; w++) {
@@ -269,13 +243,17 @@ function getListOfAllAdapters(callback) {
                                     list.push(obj.common.welcomeScreen);
                                 }
                             }
-                            if (obj.common.welcomeScreenPro && proFound) {
+                            if (obj.common.welcomeScreenPro) {
                                 if (obj.common.welcomeScreenPro instanceof Array) {
                                     for (var ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
-                                        list.push(obj.common.welcomeScreenPro[ww]);
+                                        var tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
+                                        tile.pro = true;
+                                        list.push(tile);
                                     }
                                 } else {
-                                    list.push(obj.common.welcomeScreenPro);
+                                    var tile_ = Object.assign({}, obj.common.welcomeScreenPro);
+                                    tile_.pro = true;
+                                    list.push(tile_);
                                 }
                             }
                         } else{
@@ -560,8 +538,10 @@ function initWebServer(settings) {
     }
 
     if (server.server) {
+        settings.port = parseInt(settings.port, 10);
         adapter.getPort(settings.port, function (port) {
-            if (port != settings.port && !settings.findNextPort) {
+            port = parseInt(port, 10);
+            if (port !== settings.port && !settings.findNextPort) {
                 adapter.log.error('port ' + settings.port + ' already in use');
                 process.exit(1);
             }
