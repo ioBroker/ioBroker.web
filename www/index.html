@@ -78,6 +78,7 @@
             "Sign out": {"en": "Sign out", "de": "Ausloggen", "ru": "Выйти"}
         };
 
+        // Do not delete it. It will used for dynamic generation:
         // -- PLACE THE LIST HERE --
 
         $(document).ready(function () {
@@ -96,6 +97,9 @@
                     // pro tiles are not available on iobroker.net
                     if (list[i].pro && document.location.href.match(/iobroker\.net/)) {
                         continue;
+                    }
+                    if (!document.location.href.match(/iobroker\.(pro|net)/) && list[i].localLink) {
+                        list[i].link = list[i].localLink.replace('$host$', location.hostname);
                     }
                     text +=
                         '<div class="adapter-tile" onclick="location.href = \'' + list[i].link + '\'">' +

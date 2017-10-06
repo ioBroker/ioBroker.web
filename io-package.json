@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "web",
-        "version":                  "2.1.4",
+        "version":                  "2.1.5",
         "title":                    "ioBroker simple web Adapter",
 	    "news": {
+            "2.1.5": {
+                "en": 				"Fix link to local admin on welcome screen",
+                "de": 				"Korrigiere das Link auf Lokaladmin auf Welcome Screen",
+                "ru": 				"Поправлена ccылка на локальный админ на welcome странице"
+            },
             "2.1.4": {
                 "en": 				"Support of iobroker.pro",
                 "de": 				"Unterstüzung von iobroker.pro",
