@@ -789,10 +789,10 @@ function initWebServer(settings) {
             }
 
             if (url.match(/^\/lib\//)) {
-                url = '/web' + url;
+                url = '/' + adapter.name + url;
             }
             if (url.match(/^\/admin\//)) {
-                url = '/web' + url;
+                url = '/' + adapter.name + url;
             }
             url = url.split('/');
             // Skip first /
