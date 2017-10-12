@@ -30,7 +30,7 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user mast wait 1 hour.
 
 ## Changelog
-### 2.1.5 (2017-10-06)
+### 2.1.7 (2017-10-06)
 * (bluefox) Fix link to local admin on welcome screen
 
 ### 2.1.4 (2017-10-02)
