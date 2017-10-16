@@ -1,124 +1,138 @@
 {
     "common": {
-        "name":                     "web",
-        "version":                  "2.1.7",
-        "title":                    "ioBroker simple web Adapter",
-	    "news": {
+        "name": "web",
+        "version": "2.1.7",
+        "title": "ioBroker simple web Adapter",
+        "news": {
             "2.1.7": {
-                "en": 				"Fix link to local admin on welcome screen",
-                "de": 				"Korrigiere das Link auf Lokaladmin auf Welcome Screen",
-                "ru": 				"Поправлена ccылка на локальный админ на welcome странице"
+                "en": "Fix link to local admin on welcome screen",
+                "de": "Korrigiere das Link auf Lokaladmin auf Welcome Screen",
+                "ru": "Поправлена ccылка на локальный админ на welcome странице"
             },
             "2.1.4": {
-                "en": 				"Support of iobroker.pro",
-                "de": 				"Unterstüzung von iobroker.pro",
-                "ru": 				"Поддержка iobroker.pro"
+                "en": "Support of iobroker.pro",
+                "de": "Unterstüzung von iobroker.pro",
+                "ru": "Поддержка iobroker.pro"
             },
             "2.0.6": {
-                "en": 				"Fix welcome screen",
-                "de": 				"Korrigiere welcome screen",
-                "ru": 				"Поправлена первая страница"
+                "en": "Fix welcome screen",
+                "de": "Korrigiere welcome screen",
+                "ru": "Поправлена первая страница"
             },
- 	        "2.0.5": {
-                "en": 				"Update socketio lib",
-                "de": 				"Updatete socketio Bibliothek",
-                "ru": 				"Обновлена версия socketio библиотеки"
+            "2.0.5": {
+                "en": "Update socketio lib",
+                "de": "Updatete socketio Bibliothek",
+                "ru": "Обновлена версия socketio библиотеки"
             },
-           "2.0.4": {
-                "en": 				"show logout button if connected over cloud",
-                "de": 				"Zeige Sign Out Knopf, falls über Cloud verbunden",
-                "ru": 				"Показывает кнопку Выход, если соединение через облако"
+            "2.0.4": {
+                "en": "show logout button if connected over cloud",
+                "de": "Zeige Sign Out Knopf, falls über Cloud verbunden",
+                "ru": "Показывает кнопку Выход, если соединение через облако"
             },
             "2.0.3": {
-                "en": 				"catch errors for invalid objects",
-                "de": 				"Fange Fehler für inkorrekte Objekte",
-                "ru": 				"Ловит ошибки при неправильных объектах"
+                "en": "catch errors for invalid objects",
+                "de": "Fange Fehler für inkorrekte Objekte",
+                "ru": "Ловит ошибки при неправильных объектах"
             },
             "2.0.2": {
-                "en": 				"fix selectID dialog",
-                "de": 				"Korrigiere selectID Dialog",
-                "ru": 				"Исправлен диалог выбора элементов"
+                "en": "fix selectID dialog",
+                "de": "Korrigiere selectID Dialog",
+                "ru": "Исправлен диалог выбора элементов"
             },
             "2.0.1": {
-                "en": 				"implement new welcome screen",
-                "de": 				"Neue Übersichtsseite",
-                "ru": 				"Новая страница для списка ссылок"
+                "en": "implement new welcome screen",
+                "de": "Neue Übersichtsseite",
+                "ru": "Новая страница для списка ссылок"
             },
             "2.0.0": {
-                "en": 				"Support of web extensions",
-                "de": 				"Unterstützung von WEB Erweiterungen",
-                "ru": 				"Поддержка плагинов для WEB драйвера"
+                "en": "Support of web extensions",
+                "de": "Unterstützung von WEB Erweiterungen",
+                "ru": "Поддержка плагинов для WEB драйвера"
             },
             "1.7.7": {
-                "en": 				"fix error with authentication",
-                "de": 				"Korrigiere Authentifizierung",
-                "ru": 				"Исправлена аутентификация"
+                "en": "fix error with authentication",
+                "de": "Korrigiere Authentifizierung",
+                "ru": "Исправлена аутентификация"
             },
             "1.7.6": {
-                "en": 				"Downgrade the socket.io to support older devices",
-                "de": 				"Downgrade socket.io um ältere Geräte zu unterstützen",
-                "ru": 				"Понижена версия socket.io для поддержки старых устройств"
+                "en": "Downgrade the socket.io to support older devices",
+                "de": "Downgrade socket.io um ältere Geräte zu unterstützen",
+                "ru": "Понижена версия socket.io для поддержки старых устройств"
             },
-			"1.7.5": {
-                "en": 				"Fix selectID Dialog",
-                "de": 				"Korrigiere selectID Dialog",
-                "ru": 				"Исправлен диалог выбора ID"
+            "1.7.5": {
+                "en": "Fix selectID Dialog",
+                "de": "Korrigiere selectID Dialog",
+                "ru": "Исправлен диалог выбора ID"
             },
             "1.7.4": {
-                "en": 				"Fix unsubscribe of states",
-                "de": 				"Korrigiere unsubscribe von Zuständen",
-                "ru": 				"Исправлено unsubscribe для состояний"
+                "en": "Fix unsubscribe of states",
+                "de": "Korrigiere unsubscribe von Zuständen",
+                "ru": "Исправлено unsubscribe для состояний"
             },
-			"1.7.3": {
-                "en": 				"use new socketio\nfix config dialog",
-                "de": 				"Benutze neue Socketio Version\nKorrigiere Konfigurationsdialog",
-                "ru": 				"Новая версия socketio\nИсправлен диалог настроек"
+            "1.7.3": {
+                "en": "use new socketio\nfix config dialog",
+                "de": "Benutze neue Socketio Version\nKorrigiere Konfigurationsdialog",
+                "ru": "Новая версия socketio\nИсправлен диалог настроек"
             },
-			"1.7.2": {
-                "en": 				"Fix redirect for login",
-                "de": 				"Korrigiere Loginumleitung",
-                "ru": 				"Исправлено перенаправление при логине"
+            "1.7.2": {
+                "en": "Fix redirect for login",
+                "de": "Korrigiere Loginumleitung",
+                "ru": "Исправлено перенаправление при логине"
             }
         },
         "desc": {
-            "en":                   "opens a webserver for the ioBroker",
-            "de":                   "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
-            "ru":                   "Запускает веб сервер для 'ioBroker драйверов'"
+            "en": "opens a webserver for the ioBroker",
+            "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
+            "ru": "Запускает веб сервер для 'ioBroker драйверов'"
         },
-        "mode":                     "daemon",
-        "platform":                 "Javascript/Node.js",
-        "loglevel":                 "info",
-        "icon":                     "web.png",
-        "readme":                   "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
-        "enabled":                  true,
-        "keywords":                 ["web", "server", "www", "express"],
-        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
-        "type":                     "visualisation",
-        "stopBeforeUpdate":         true,
-        "webExtendable":            true,
-        "localLink":                "%web_protocol%://%ip%:%web_port%/",
-		"dependencies":             [{"js-controller": ">=0.12.0"}]
+        "mode": "daemon",
+        "platform": "Javascript/Node.js",
+        "loglevel": "info",
+        "icon": "web.png",
+        "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
+        "enabled": true,
+        "keywords": [
+            "web",
+            "server",
+            "www",
+            "express"
+        ],
+        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
+        "type": "general",
+        "stopBeforeUpdate": true,
+        "webExtendable": true,
+        "localLink": "%web_protocol%://%ip%:%web_port%/",
+        "dependencies": [
+            {
+                "js-controller": ">=0.12.0"
+            }
+        ],
+        "authors": [
+            {
+                "name": "bluefox",
+                "email": "dogafox@gmail.com"
+            }
+        ]
     },
     "native": {
-        "port":                     8082,
-        "auth":                     false,
-        "secure":                   false,
-        "bind":                     "0.0.0.0",
-        "cache":                    false,
-        "socketio":                 "",
-        "simpleapi":                false,
-        "defaultUser":              "admin",
-        "ttl":                      3600,
-        "certPublic":               "",
-        "certPrivate":              "",
-        "certChained":              "",
-        "addUserName":              false,
-        "forceWebSockets":          false,
-        "whiteListEnabled":         false,
-
-        "leEnabled":                false,
-        "leUpdate":                 false,
-        "leCheckPort":              80
+        "port": 8082,
+        "auth": false,
+        "secure": false,
+        "bind": "0.0.0.0",
+        "cache": false,
+        "socketio": "",
+        "simpleapi": false,
+        "defaultUser": "admin",
+        "ttl": 3600,
+        "certPublic": "",
+        "certPrivate": "",
+        "certChained": "",
+        "addUserName": false,
+        "forceWebSockets": false,
+        "whiteListEnabled": false,
+        "leEnabled": false,
+        "leUpdate": false,
+        "leCheckPort": 80
     },
     "objects": [
         {
@@ -127,12 +141,10 @@
             "common": {
                 "name": "Info about connected socket clients",
                 "type": "string",
-                "read":  true,
+                "read": true,
                 "write": false
             }
         }
     ],
-    "instanceObjects": [
-
-    ]
+    "instanceObjects": []
 }
