@@ -331,7 +331,6 @@ function replaceInLink(link, instanceObj, instances) {
     }
 }
 
-
 function getListOfAllAdapters(callback) {
     try {
         // read all instances
@@ -452,6 +451,9 @@ function getListOfAllAdapters(callback) {
 
                 var text = 'systemLang = "' + lang + '";\n';
                 text += 'list = ' + JSON.stringify(list, null, 2) + ';\n';
+
+                // if login
+                text += 'var authEnabled = ' + adapter.config.auth + ';\n';
 
                 callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
             });
