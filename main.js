@@ -131,7 +131,7 @@ function getExtensions(callback) {
                 var res = [];
                 for (var i = 0; i < doc.rows.length; i++) {
                     var instance = doc.rows[i].value;
-                    if (instance && instance.common && instance.common.enabled &&
+                    if (instance && instance.common && (instance.common.enabled || instance.common.onlyWWW) &&
                         instance.common.webExtension &&
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
                         res.push(doc.rows[i].value);

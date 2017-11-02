@@ -1,9 +1,14 @@
 {
     "common": {
         "name": "web",
-        "version": "2.1.7",
+        "version": "2.1.8",
         "title": "ioBroker simple web Adapter",
         "news": {
+            "2.1.8": {
+                "en": "Fix tiles on welcome screen",
+                "de": "Korrigiere Kacheln auf dem Welcome Screen",
+                "ru": "Поправлены иконки на welcome странице"
+            },
             "2.1.7": {
                 "en": "Fix link to local admin on welcome screen",
                 "de": "Korrigiere das Link auf Lokaladmin auf Welcome Screen",
