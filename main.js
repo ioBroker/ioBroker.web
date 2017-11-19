@@ -353,7 +353,7 @@ function getListOfAllAdapters(callback) {
                             var ids = id.split('.');
                             ids.pop();
                             id = ids.join('.');
-                            if (id === obj._id && instances.rows[i].value.common && (instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW) {
+                            if (id === obj._id && instances.rows[i].value.common && (instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)) {
                                 found = instances.rows[i].id;
                                 break;
                             }
