@@ -131,7 +131,7 @@ function getExtensions(callback) {
                 var res = [];
                 for (var i = 0; i < doc.rows.length; i++) {
                     var instance = doc.rows[i].value;
-                    if (instance && instance.common && (instance.common.enabled || instance.common.onlyWWW) &&
+                    if (instance && instance.common && instance.common.enabled &&
                         instance.common.webExtension &&
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
                         res.push(doc.rows[i].value);
@@ -353,7 +353,7 @@ function getListOfAllAdapters(callback) {
                             var ids = id.split('.');
                             ids.pop();
                             id = ids.join('.');
-                            if (id === obj._id && instances.rows[i].value.common && instances.rows[i].value.common.enabled) {
+                            if (id === obj._id && instances.rows[i].value.common && (instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW) {
                                 found = instances.rows[i].id;
                                 break;
                             }
