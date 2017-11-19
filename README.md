@@ -27,7 +27,7 @@ It is required to let all services be available under one web server.
 
 ## Brute-force protection
 If authentication is enabled and the user enters 5 times invalid password during one minute, he must wait at least one minute till next attempt.
-After 15th wrong attempt the user mast wait 1 hour.
+After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
 ### 2.1.8 (2017-11-02)
