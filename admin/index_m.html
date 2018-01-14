@@ -1,0 +1,885 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+<script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../lib/js/materialize.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+<script type="text/javascript" src="words.js"></script>
+
+
+<script type="text/javascript">
+    var supportedSockets = ['socketio'];
+
+    function showHideSettings() {
+        var $secure = $('#secure');
+        var $auth   = $('#auth');
+        if ($secure.prop('checked')) {
+            $('.col-certPublic').show();
+            $('.col-certPrivate').show();
+            $('.col-certChained').show();
+            $('.le-settings').removeClass('disabled');
+            $auth.removeClass('disabled');
+
+            if ($('#leEnabled').prop('checked')) {
+                $('.le-sub-settings').show();
+                if ($('#leUpdate').prop('checked')) {
+                    $('.le-sub-settings-update').show();
+                } else {
+                    $('.le-sub-settings-update').hide();
+                }
+            } else {
+                $('.le-sub-settings').hide();
+            }
+
+        } else {
+            $('.col-certPublic').hide();
+            $('.col-certPrivate').hide();
+            $('.col-certChained').hide();
+            if ($auth.prop('checked')) {
+                showToast(_('Please activate secure communication'));
+                $auth.prop('checked', false);
+            }
+            $auth.addClass('disabled');
+            $('.le-settings').addClass('disabled');
+        }
+        if ($auth.prop('checked')) {
+            $secure.prop('checked', true);
+            $('#defaultUser').val('admin');
+            $('.col-defaultUser').hide();
+            $('.col-ttl').show();
+        } else {
+            $('.col-defaultUser').show();
+            $('.col-ttl').hide();
+        }
+
+        if ($('#whiteListEnabled').prop('checked')) {
+            $('.white-list-settings').show();
+        } else {
+            $('.white-list-settings').hide();
+        }
+    }
+
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
+        if (!settings) return;
+
+        if (!settings.lePort) settings.lePort = 80;
+        if (settings.whiteListEnabled === undefined) settings.whiteListEnabled = false;
+
+        getIPs(function(ips) {
+            for (var i = 0; i < ips.length; i++) {
+                $('#bind').append('<option value="' + ips[i].address + '">' + ips[i].name + '</option>');
+            }
+            $('#bind.value').val(settings.bind);
+        });
+        $('#socketio')
+            .append('<option value="none">' + _('none') + '</option>')
+            .append('<option value="">' + _('integrated') + '</option>');
+
+        var count = 0;
+        for (var i = 0; i < supportedSockets.length; i++) {
+            count++;
+            getAdapterInstances(supportedSockets[i], function (res) {
+                if (!res) return;
+                for (var t = 0; t < res.length; t++) {
+                    $('#socketio').append('<option value="' + res[t]._id + '">' + res[t].common.name + ' [' + res[t]._id.replace('system.adapter.', '') + ']</option>');
+                }
+                if (!--count) {
+                    var $socketio = $('#socketio');
+                    $socketio.val(settings.socketio);
+                    if (settings.socketio !== '') {
+                        $('.socketio').hide();
+                    }
+                    $socketio.on('change', function () {
+                        if ($(this).val() === '') {
+                            $('.socketio').show();
+                        } else {
+                            $('.socketio').hide();
+                        }
+                    });
+                    $socketio.select();
+                }
+            });
+        }
+
+        $('.value').each(function () {
+            var key = $(this).attr('id');
+            var $value = $('#' + key + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', settings[key]).on('change', function() {
+                    showHideSettings();
+                    onChange();
+                });
+            } else {
+                $value.val(settings[key]).on('change', function() {
+                    onChange();
+                }).keyup(function() {
+                    $(this).trigger('change');
+                });
+            }
+        });
+        onChange(false);
+
+        fillSelectCertificates('#certPublic',  'public',  settings.certPublic);
+        fillSelectCertificates('#certPrivate', 'private', settings.certPrivate);
+        fillSelectCertificates('#certChained', 'chained', settings.certChained);
+        fillUsers('#defaultUser', settings.defaultUser);
+
+        showHideSettings();
+
+        $('#auth').on('change', function () {
+            updateNameSelects();
+            setDefaultIpUserToDefaultUser();
+        });
+
+        $('#defaultUser').on('change', function () {
+            setDefaultIpUserToDefaultUser();
+        });
+
+        $('.btn-floating.white-list-settings').on('click', function () {
+            addWhiteListTableRow(true);
+        });
+
+        applyWhiteListSettings(settings, onChange);
+    }
+
+    function save(callback) {
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+
+        if ($('#secure').prop('checked') && (!$('#certPrivate').val() || !$('#certPublic').val())) {
+            showToast(null, _('Set certificates or load it first in the system settings (right top).'));
+            return;
+        }
+
+        obj['whiteListSettings'] = getWhiteListSettings();
+
+        callback(obj);
+    }
+
+    var ips = {};
+    var inputIndex = 0;
+    function addWhiteListTableRow(change) {
+        var table = document.getElementById('whiteListTable');
+
+        var row = table.insertRow(2);
+
+        var rowCount = table.rows.length;
+
+        var defaultRowIndex = rowCount - 1;
+
+        var colCount = table.rows[defaultRowIndex].cells.length;
+
+        for (var i = 0; i < colCount; i++) {
+            var newCell = row.insertCell(i);
+            var cellClass = $(table.rows[defaultRowIndex].cells[i]).attr('class');
+
+            if (cellClass.indexOf('defaultUserName') !== -1) {
+                newCell.innerHTML = '<select class="select-username" />';
+            } else {
+                $(newCell).addClass(cellClass);
+                newCell.innerHTML = table.rows[defaultRowIndex].cells[i].innerHTML;
+            }
+
+            if (newCell.innerHTML === 'default') {
+                var id = 'input_' + inputIndex++;
+                var ip = '192.168.0.1';
+                ips[id] = ip;
+                newCell.innerHTML = '<input name="ip" size="15" maxlength="255" id="' + id + '" value="' + ip + '"/>';
+            }
+
+            if (newCell.childNodes[0].type === 'checkbox') {
+                newCell.childNodes[0].checked = false;
+            }
+        }
+
+        $('.select-username:not(:has(option))').each(function () {
+            fillNameSelect($(this));
+        });
+
+
+        if (change && changedCallback) changedCallback();
+
+        defaultHandling();
+        return row;
+    }
+
+    function deleteWhiteListTableRow(index) {
+        try {
+            changedCallback && changedCallback();
+            var table = document.getElementById('whiteListTable');
+            var rowCount = table.rows.length;
+            if (index === rowCount - 1) return;
+            table.deleteRow(index);
+        } catch (e) {
+            showError(e);
+        }
+    }
+
+    function getWhiteListSettings() {
+
+        var settings = {};
+
+        try {
+            var table = document.getElementById('whiteListTable');
+
+            var rowCount = table.rows.length;
+
+            for (var i = 2; i < rowCount; i++) {
+                var row = table.rows[i];
+
+                var ip = (i === (rowCount - 1)) ? 'default' : row.cells[1].childNodes[0].value;
+                var userSelected = (i === (rowCount - 1)) ? $(row.cells[2]).html().toLowerCase() : $(row.cells[2].childNodes[0]).val();
+
+                settings[ip] = {
+                    user:   userSelected,
+                    object: {},
+                    state:  {},
+                    file:   {}
+                };
+
+                for (var c = 2; c < row.cells.length; c++) {
+                    var $cell = $(row.cells[c].childNodes[0]);
+                    var permobject = $cell.attr('permobject');
+
+                    var perm = $cell.attr('perm');
+
+                    if (permobject && perm && settings[ip].hasOwnProperty(permobject)) {
+                        settings[ip][permobject][perm] = $cell.prop('checked');
+                    }
+                }
+            }
+        } catch (e) {
+            alert(e);
+        }
+
+        return settings;
+    }
+
+    function validateIp(ip) {
+        if (ip.indexOf('*') !== -1 && ip.lastIndexOf('.') > ip.indexOf('*')) {
+            return false;
+        }
+        var expression = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+
+        return expression.test(ip.replace('*', '111'));
+    }
+
+    function createWhiteListTable(whiteListSettings) {
+        var table = document.getElementById("whiteListTable");
+
+        var rowCount = table.rows.length;
+
+        for (var i = rowCount - 2; i > 1; i--) {
+            table.deleteRow(i);
+        }
+
+        if (whiteListSettings) {
+            Object.keys(whiteListSettings).forEach(function (key) {
+                rowCount = table.rows.length;
+                if (key !== 'default') {
+                    addWhiteListTableRow(false);
+                }
+            });
+        }
+    }
+
+    var changedCallback = null;
+    var whiteListSettings = null;
+    function applyWhiteListSettings(settings, onChange) {
+        try {
+            whiteListSettings = settings['whiteListSettings'];
+            createWhiteListTable(whiteListSettings);
+            fillNameSelects(whiteListSettings);
+            changedCallback = onChange;
+        } catch (e) {
+            alert(e);
+        }
+    }
+
+    function handleIpChange() {
+        var ip = $(this).val();
+        var id = $(this).attr('id');
+        if (ip && !validateIp(ip)) {
+            showToast(null, _('The provided IP is not valid'));
+            if (ips.hasOwnProperty(id)) {
+                $(this).val(ips[id]);
+            }
+        } else {
+            ips[id] = ip;
+        }
+
+        changedCallback && changedCallback();
+    }
+
+    function wireClickEvents() {
+        $('.delete-btn-clmn')
+            .off('click')
+            .on('click', function () {
+                var rowIndex = $(this).parent().parent().children().index($(this).parent());
+                deleteWhiteListTableRow(rowIndex + 2);
+            });
+    }
+
+    function wireChangeEvents() {
+        var table = document.getElementById('whiteListTable');
+        var rowCount = table.rows.length;
+
+        for (var i = 2; i < rowCount; i++) {
+            var row = table.rows[i];
+
+            if (i !== rowCount - 1) {
+                var $input = $(row.cells[1].childNodes[0]);
+                $input.off('change');
+                $input.on('change', handleIpChange);
+            }
+
+            for (var c = 2; c < row.cells.length; c++) {
+                var $cell = $(row.cells[c].childNodes[0]);
+                $cell.off('change');
+                $cell.on('change', function () {
+                    changedCallback && changedCallback();
+                });
+            }
+        }
+
+        $('.select-username')
+            .off('change')
+            .on('change', function () {
+                changedCallback && changedCallback();
+            });
+    }
+
+    function hideDefaultDeleteBtn() {
+        $('.delete-btn').show();
+
+        $('.delete-btn:last').hide();
+    }
+
+    function addOptionIfAbsent($e, value, valueText, defaultUser) {
+        if (!$e.find('option[value="' + value + '"]').length) {
+            $e.append('<option value="' + value + '" ' + ((defaultUser === value) ? 'selected' : '') + '>' + valueText + '</option>');
+        }
+    }
+
+    function fillNameSelect($this, defaultUser) {
+        for (var u in users) {
+            var value = users[u].common.name;
+            var valueText = users[u].common.name[0].toUpperCase() + users[u].common.name.substring(1);
+            addOptionIfAbsent($this, value, valueText, defaultUser);
+        }
+    }
+
+    var users = {};
+    function fillNameSelects(whiteListSettings) {
+
+        if (!whiteListSettings) return;
+
+        getUsers(function (err, response) {
+            users = response;
+            $('.select-username')
+                .off('change')
+                .each(function () {
+                    fillNameSelect($(this));
+                });
+
+            applyRowSettings(whiteListSettings);
+
+            defaultHandling();
+        });
+    }
+
+    function applyRowSettings(whiteListSettings) {
+
+        if (!whiteListSettings) return;
+
+        var table = document.getElementById('whiteListTable');
+        var rowCount = table.rows.length;
+        var i = 2;
+        Object.keys(whiteListSettings).forEach(function (key) {
+            var row = key === 'default' ? table.rows[rowCount - 1] : table.rows[i++];
+            setRowSettings(row, key, whiteListSettings[key]);
+        });
+    }
+
+    function setRowSettings(row, ip, ipSettings) {
+        var $ip = $(row.cells[1].childNodes[0]);
+        $ip.val(ip);
+        for (var c = 2; c < row.cells.length; c++) {
+            var $cell = $(row.cells[c].childNodes[c === 2 ? 1 : 0]);
+
+            if (c > 2) {
+                var permobject = $cell.attr('permobject');
+                var perm = $cell.attr('perm');
+
+                if (ipSettings.hasOwnProperty(permobject) && ipSettings[permobject].hasOwnProperty(perm)) {
+                    $cell.prop('checked', ipSettings[permobject][perm]);
+                }
+            } else {
+                $(row.cells[2].childNodes[0]).val(ipSettings.user).trigger('change');
+            }
+        }
+    }
+
+    function setDefaultIpUserToDefaultUser() {
+        var auth = $('#auth').prop('checked');
+        var defaultUser = auth ? 'Auth' : $('#defaultUser').find('option:selected').text();
+        $('.defaultUserName').html(defaultUser);
+    }
+
+    function updateNameSelects() {
+        var auth = $('#auth').prop('checked');
+        var $selects = $('.select-username');
+        if (auth) {
+            $selects.each(function () {
+                addOptionIfAbsent($(this), 'auth', 'Auth');
+            });
+        } else {
+            $selects.find('option[value="auth"]').remove();
+        }
+        $selects.select();
+    }
+
+    function defaultHandling() {
+        hideDefaultDeleteBtn();
+        updateNameSelects();
+        setDefaultIpUserToDefaultUser();
+        wireClickEvents();
+        wireChangeEvents();
+
+        // workaround for materialize checkbox problem
+        $('#whiteListTable').find('input[type="checkbox"]+span').off('click').on('click', function () {
+            var $input = $(this).prev();
+            if (!$input.prop('disabled')) {
+                $input.prop('checked', !$input.prop('checked')).trigger('change');
+            }
+        });
+
+    }
+</script>
+
+<style>
+    #whiteListTable {
+        font-size: smaller;
+        border-radius: 0;
+    }
+    #whiteListTable th,
+    #whiteListTable td {
+        border-radius: 0;
+    }
+
+    .whiteListTableHeader {
+        background-color: lightgrey;
+        color: darkslateblue;
+    }
+    .whiteListTableHeader th {
+        text-align: center;
+    }
+    .whiteListTableHeader td {
+        text-align: center;
+        padding: 5px;
+    }
+    .whiteListTableUnevenBlock {
+        background-color: gainsboro;
+    }
+
+    .whiteListTableEvenBlock {
+        background-color: lavender;
+    }
+</style>
+</head>
+<body>
+<div class="m adapter-container">
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s2"><a href="#tab-main"           class="translate active">Main settings</a></li>
+                <li class="tab col s2 le-settings"><a href="#tab-le" class="translate">Let's Encrypt SSL</a></li>
+                <li class="tab col s2"><a href="#tab-white-list"     class="translate">White List</a></li>
+            </ul>
+        </div>
+        <div id="tab-main" class="col s12 page">
+            <div class="row">
+                <div class="col s12 m4 l2">
+                    <img src="web.png" class="logo">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m8 l5">
+                    <select class="value" id="bind"></select>
+                    <label class="translate" for="bind">IP:</label>
+                </div>
+                <div class="col s12 m4 l1">
+                    <input class="value number" id="port" size="5" maxlength="5" type="number"/>
+                    <label class="translate" for="port">Port:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m3">
+                    <input class="value" id="secure" type="checkbox" />
+                    <label class="translate" for="secure">Secure(HTTPS):</label>
+                </div>
+                <div class="col s12 m3 col-certPublic">
+                    <select id="certPublic" class="value"></select>
+                    <label class="translate" for="certPublic">Public certificate:</label>
+                </div>
+                <div class="col s12 m3 col-certPrivate">
+                    <select id="certPrivate" class="value"></select>
+                    <label class="translate" for="certPrivate">Private certificate:</label>
+                </div>
+                <div class="col s12 m3 col-certChained">
+                    <select id="certChained" class="value"></select>
+                    <label class="translate" for="certChained">Chained certificate:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m3">
+                    <input class="value" id="auth" type="checkbox" />
+                    <label class="translate" for="auth">Authentication:</label>
+                </div>
+                <div class="col s12 m3 col-defaultUser">
+                    <select class="value" id="defaultUser"></select>
+                    <label class="translate" for="defaultUser">Run as:</label>
+                </div>
+                <div class="col s12 m3 col-ttl">
+                    <input class="value" id="ttl" />
+                    <label class="translate" for="ttl">Login timeout(sec):</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m3">
+                    <input class="value" id="cache" type="checkbox"/>
+                    <span class="translate" for="cache">Cache:</span>
+                </div>
+                <div class="col s12 m3">
+                    <input type="checkbox" class="value" id="simpleapi"/>
+                    <label class="translate" for="simpleapi">Internal 'Simple API':</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m3">
+                    <select class="value" id="socketio"></select>
+                    <label for="socketio"><span>Socket.IO Instance (Optional):</span> (<span class="translate" style="padding-left: 20px">socket_help</span>)</label>
+                </div>
+                <div class="col s12 m3 socketio">
+                    <input type="checkbox" class="value" id="forceWebSockets"/>
+                    <span class="translate" for="forceWebSockets">Force Web-Sockets:</span>
+                </div>
+            </div>
+
+        </div>
+        <div id="tab-le" class="col s12 page">
+            <div class="row">
+                <div class="col s12">
+                    <img src="../../img/le.png" class="logo-le">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s11">
+                    <input class="value" id="leEnabled" type="checkbox" data-link="lets-encrypt-certificates"/>
+                    <label for="leEnabled" class="translate">Use Lets Encrypt certificates:</label>
+                </div>
+            </div>
+            <div class="row le-sub-settings">
+                <div class="col s11">
+                    <input class="value" id="leUpdate" type="checkbox" data-link="lets-encrypt-certificates"/>
+                    <label for="leUpdate" class="translate">Use this instance for automatic update:</label>
+                </div>
+            </div>
+            <div class="row le-sub-settings le-sub-settings-update">
+                <div class="col s11 m4 l2">
+                    <input class="value number" id="lePort" type="number" size="5" maxlength="5" data-link="lets-encrypt-certificates"/>
+                    <label for="lePort" class="translate">Port to check the domain:</label>
+                </div>
+            </div>
+        </div>
+        <div id="tab-white-list" class="col s12 page">
+            <div>
+                <input id="whiteListEnabled" class="value" type="checkbox" />
+                <span class="translate" for="whiteListEnabled">Enabled:</span>
+            </div>
+            <a class="btn-floating waves-effect waves-light white-list-settings">
+                <i class="material-icons">add</i>
+            </a>
+
+            <table id="whiteListTable" cellpadding="3" cellspacing="2" border="0" class="white-list-settings">
+                <thead>
+                    <tr class="whiteListTableHeader">
+                        <th rowspan="2" colspan="2" class="translate">IP</th>
+                        <th rowspan="2" class="translate">User</th>
+                        <th colspan="4" class="translate">object</th>
+                        <th colspan="5" class="translate">state</th>
+                        <th colspan="5" class="translate">file</th>
+                    </tr>
+                    <tr class="whiteListTableHeader">
+                    <th class="translate">read</th>
+                    <th class="translate">list</th>
+                    <th class="translate">write</th>
+                    <th class="translate">remove</th>
+
+                    <th class="translate">read</th>
+                    <th class="translate">list</th>
+                    <th class="translate">write</th>
+                    <th class="translate">create</th>
+                    <th class="translate">remove</th>
+
+                    <th class="translate">read</th>
+                    <th class="translate">list</th>
+                    <th class="translate">write</th>
+                    <th class="translate">create</th>
+                    <th class="translate">remove</th>
+                </tr>
+                </thead>
+                <tbody id="whiteListTableBody">
+                    <tr>
+                    <td class="whiteListTableUnevenBlock delete-btn-clmn">
+                        <a class="btn-floating waves-effect waves-light red delete-btn" href="#"><i class="material-icons">delete</i></a>
+                    </td>
+
+                    <td class="whiteListTableUnevenBlock">default</td>
+
+                    <td class="whiteListTableUnevenBlock defaultUserName">defaultName</td>
+
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="object" perm="read" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="object" perm="list" type="checkbox" checked="true" class="filled-in" />
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="object" perm="write" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="object" perm="delete" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+
+                    <td class="whiteListTableUnevenBlock">
+                        <input permobject="state" perm="read" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableUnevenBlock">
+                        <input permobject="state" perm="list" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableUnevenBlock">
+                        <input permobject="state" perm="write" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableUnevenBlock">
+                        <input permobject="state" perm="create" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableUnevenBlock">
+                        <input permobject="state" perm="delete" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="file" perm="read" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="file" perm="list" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="file" perm="write" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="file" perm="create" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                    <td class="whiteListTableEvenBlock">
+                        <input permobject="file" perm="delete" type="checkbox" checked="true" class="filled-in"/>
+                        <span></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table >
+        </div>
+    </div>
+</div>
+<!--div class="m adapter-container">
+    <table>
+        <tr>
+            <td><img src="web.png"></td>
+            <td><h3 class="translate">Web Server adapter settings</h3></td>
+        </tr>
+    </table>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1" class="translate">General</a></li>
+            <li><a href="#tabs-2" class="translate">White List</a></li>
+        </ul>
+        <div id="tabs-1">
+            <table>
+                <tr>
+                    <td><label class="translate" for="bind">IP:</label></td>
+                    <td><select class="value" id="bind"></select></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label class="translate" for="port">Port:</label></td>
+                    <td><input class="value" id="port" size="5" maxlength="5" type="number"/></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label class="translate" for="secure">Secure(HTTPS):</label></td>
+                    <td><input class="value" id="secure" type="checkbox"/></td>
+                    <td></td>
+                </tr>
+                <tr id="_certPublic">
+                    <td><label class="translate" for="certPublic">Public certificate:</label></td>
+                    <td><select id="certPublic" class="value"></select></td>
+                </tr>
+                <tr id="_certPrivate">
+                    <td><label class="translate" for="certPrivate">Private certificate:</label></td>
+                    <td><select id="certPrivate" class="value"></select></td>
+                </tr>
+                <tr id="_certChained">
+                    <td><label class="translate" for="certChained">Chained certificate:</label></td>
+                    <td><select id="certChained" class="value"></select></td>
+                </tr>
+                <tr>
+                    <td><label class="translate" for="auth">Authentication:</label></td>
+                    <td><input class="value" id="auth" type="checkbox"/></td>
+                    <td></td>
+                </tr>
+                <tr id="_ttl">
+                    <td><label class="translate" for="ttl">Login timeout(sec):</label></td>
+                    <td><input  class="value" id="ttl" type="number"/></td>
+                    <td></td></tr>
+                <tr>
+                    <td><label class="translate" for="cache">Cache:</label></td>
+                    <td><input class="value" id="cache" type="checkbox"/></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><label class="translate" for="socketio">Socket.IO Instance (Optional):</label></td>
+                    <td><select class="value" id="socketio"></select><span class="translate"
+                                                                           style="padding-left: 20px">socket_help</span>
+                    </td>
+                </tr>
+                <tr class="socketio">
+                    <td><label class="translate" for="forceWebSockets">Force Web-Sockets:</label></td>
+                    <td><input type="checkbox" class="value" id="forceWebSockets"/></td></tr>
+                <tr>
+                    <td><label class="translate" for="simpleapi">Internal 'Simple API':</label></td>
+                    <td><input type="checkbox" class="value" id="simpleapi"/></td>
+                </tr>
+                <tr class="defaultUser">
+                    <td><label class="translate" for="defaultUser">Run as:</label></td>
+                    <td><select class="value" id="defaultUser"></select></td>
+                </tr>
+                <tr><td colspan="2">&nbsp;</td></tr>
+                <tr class="le-settings"><td colspan="2"><h3 class="translate">Let's Encrypt settings</h3></tr>
+                <tr class="le-settings"><td><label for="leEnabled" class="translate">Use Lets Encrypt certificates:</label></td><td><input  class="value" id="leEnabled"   type="checkbox" /></td></tr>
+                <tr class="le-settings le-sub-settings"><td><label for="leUpdate" class="translate">Use this instance for automatic update:</label></td><td><input  class="value" id="leUpdate" type="checkbox" /></td></tr>
+                <tr class="le-settings le-sub-settings le-sub-settings-update"><td><label for="lePort" class="translate">Port to check the domain:</label></td><td><input class="value number" id="lePort" type="number" size="5" maxlength="5" /></td></tr>
+
+            </table>
+        </div>
+        <div id="tabs-2">
+            <div>
+                <span><label class="translate" for="whiteListEnabled">Enabled:</label></span><input id="whiteListEnabled" class="value" type="checkbox" />
+            </div>
+            <button style="display: inline-block; width: 2em; height: 2em;" onclick="addWhiteListTableRow(true)"
+                    class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only white-list-settings" role="button">
+                <span class="ui-button-icon-primary ui-icon ui-icon-plus"></span>
+                <span class="ui-button-text"></span>
+            </button>
+
+            <table id="whiteListTable" cellpadding="3" cellspacing="2" border="0" class="white-list-settings">
+                <thead>
+                <tr class="whiteListTableHeader">
+                    <th rowspan="2" colspan="2" class="translate">IP</th>
+                    <th rowspan="2" class="translate">User</th>
+                    <th colspan="4" class="translate">object</th>
+                    <th colspan="5" class="translate">state</th>
+                    <th colspan="5" class="translate">file</th>
+                </tr>
+                <tr class="whiteListTableHeader">
+                    <th class="translate">read</th>
+                    <th class="translate">list</th>
+                    <th class="translate">write</th>
+                    <th class="translate">remove</th>
+
+                    <th class="translate">read</th>
+                    <th class="translate">list</th>
+                    <th class="translate">write</th>
+                    <th class="translate">create</th>
+                    <th class="translate">remove</th>
+
+                    <th class="translate">read</th>
+                    <th class="translate">list</th>
+                    <th class="translate">write</th>
+                    <th class="translate">create</th>
+                    <th class="translate">remove</th>
+                </tr>
+                </thead>
+                <tbody id="whiteListTableBody">
+                <tr>
+                    <td class="whiteListTableUnevenBlock delete-btn-clmn"><a class="delete-btn" href="#"><span
+                            class="ui-icon ui-icon-trash"></span></a></td>
+
+                    <td class="whiteListTableUnevenBlock">default</td>
+
+                    <td class="whiteListTableUnevenBlock defaultUserName">defaultName</td>
+
+                    <td class="whiteListTableEvenBlock"><input permobject="object" perm="read" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="object" perm="list" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="object" perm="write" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="object" perm="delete" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+
+                    <td class="whiteListTableUnevenBlock"><input permobject="state" perm="read" type="checkbox"
+                                                                 checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableUnevenBlock"><input permobject="state" perm="list" type="checkbox"
+                                                                 checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableUnevenBlock"><input permobject="state" perm="write" type="checkbox"
+                                                                 checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableUnevenBlock"><input permobject="state" perm="create" type="checkbox"
+                                                                 checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableUnevenBlock"><input permobject="state" perm="delete" type="checkbox"
+                                                                 checked="true" class="filled-in"/></td>
+
+                    <td class="whiteListTableEvenBlock"><input permobject="file" perm="read" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="file" perm="list" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="file" perm="write" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="file" perm="create" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                    <td class="whiteListTableEvenBlock"><input permobject="file" perm="delete" type="checkbox"
+                                                               checked="true" class="filled-in"/></td>
+                </tr>
+                </tbody>
+            </table >
+
+        </div>
+    </div>
+</div-->
+</body>
+</html>

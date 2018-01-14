@@ -1,6 +1,6 @@
 ![Logo](admin/web.png)
-===========================
 # ioBroker.web
+===========================
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.2.0 (2018-01-14)
+* (bluefox) Ready for Admin3
+
 ### 2.1.9 (2017-11-19)
 * (bluefox) Fix link to local admin on welcome screen
 

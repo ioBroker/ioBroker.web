@@ -1,9 +1,31 @@
 {
     "common": {
         "name": "web",
-        "version": "2.1.9",
-        "title": "ioBroker simple web Adapter",
+        "version": "2.2.0",
+        "title": "WEB server",
+        "titleLang": {
+            "en": "WEB server",
+            "de": "WEB-Server",
+            "ru": "Веб сервер",
+            "pt": "Servidor web",
+            "nl": "Web Server",
+            "fr": "Serveur Web",
+            "it": "Server web",
+            "es": "Servidor web",
+            "pl": "Serwer internetowy"
+        },
         "news": {
+            "2.2.0": {
+                "en": "Ready for Admin3",
+                "de": "Bereit für Admin3",
+                "ru": "Готово для Admin3",
+                "pt": "Pronto para Admin3",
+                "nl": "Klaar voor Admin3",
+                "fr": "Prêt pour Admin3",
+                "it": "Pronto per Admin3",
+                "es": "Listo para Admin3",
+                "pl": "Gotowy na Admin3"
+            },
             "2.1.9": {
                 "en": "Fix tiles on welcome screen",
                 "de": "Korrigiere Kacheln auf dem Welcome Screen",
@@ -86,9 +108,15 @@
             }
         },
         "desc": {
-            "en": "opens a webserver for the ioBroker",
+            "en": "opens a webserver for other adapters",
             "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
-            "ru": "Запускает веб сервер для 'ioBroker драйверов'"
+            "ru": "Запускает веб сервер для 'ioBroker драйверов'",
+            "pt": "abre um servidor web para outros adaptadores",
+            "nl": "opent een webserver voor andere adapters",
+            "fr": "ouvre un serveur web pour d'autres adaptateurs",
+            "it": "apre un server web per altri adattatori",
+            "es": "abre un servidor web para otros adaptadores",
+            "pl": "otwiera serwer internetowy dla innych kart"
         },
         "mode": "daemon",
         "platform": "Javascript/Node.js",
@@ -96,6 +124,7 @@
         "icon": "web.png",
         "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
         "enabled": true,
+        "materialize": true,
         "keywords": [
             "web",
             "server",
