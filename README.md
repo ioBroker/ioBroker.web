@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.3.0 (2018-01-24)
+* (bluefox) The required for Admin3 libraries are added
+
 ### 2.2.0 (2018-01-14)
 * (bluefox) Ready for Admin3
 

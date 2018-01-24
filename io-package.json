@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.2.0",
+        "version": "2.3.0",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+			"2.3.0": {
+                "en": "The required for Admin3 libraries are added",
+				"de": "Die für Admin3 erforderlichen Bibliotheken werden hinzugefügt",
+				"ru": "Добавлены необходимые для Admin3 библиотеки",
+				"pt": "O necessário para as bibliotecas Admin3 são adicionados",
+				"nl": "De vereiste voor Admin3-bibliotheken worden toegevoegd",
+				"fr": "Les requis pour les bibliothèques Admin3 sont ajoutés",
+				"it": "Il richiesto per le librerie Admin3 è stato aggiunto",
+				"es": "Se requiere lo necesario para las bibliotecas de Admin3",
+				"pl": "Wymagane dla bibliotek Admin3 zostały dodane"
+            },
             "2.2.0": {
                 "en": "Ready for Admin3",
                 "de": "Bereit für Admin3",
