@@ -195,13 +195,6 @@ function readDirs(dirs, cb, result) {
     });
 }
 
-var specialScreen = [
-    {"link": "flot/edit.html",      "name": "flot editor",  "img": "flot.admin/flot.png",       "color": "gray",  "order": 4},
-    {"link": "mobile/index.html",   "name": "mobile",       "img": "mobile.admin/mobile.png",   "color": "black", "order": 3},
-    {"link": "vis/edit.html",       "name": "vis editor",   "img": "vis/img/faviconEdit.png",   "color": "green", "order": 2},
-    {"link": "vis/index.html",      "name": "vis",          "img": "vis/img/favicon.png",       "color": "blue",  "order": 1}
-];
-
 var indexHtml;
 
 function getLinkVar(_var, obj, attr, link) {
@@ -410,13 +403,6 @@ function getListOfAllAdapters(callback) {
                                         tile_.id = found;
                                     }
                                     list.push(tile_);
-                                }
-                            }
-                        } else{
-                            for (var s = 0; s < specialScreen.length; s++) {
-                                var link = specialScreen[s].link.split('/')[0];
-                                if (link === obj.common.name) {
-                                    list.push(specialScreen[s]);
                                 }
                             }
                         }
