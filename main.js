@@ -748,6 +748,8 @@ function initWebServer(settings) {
         // deliver web files from objectDB
         server.app.use('/', function (req, res) {
             var url = decodeURI(req.url);
+            // remove all ../
+            url = url.replace(/\/../g, '').replace(/..\//g, '').replace(/..\\/g, '').replace(/\\../g, '');
 
             if (server.api && server.api.checkRequest(url)) {
                 server.api.restApi(req, res);
