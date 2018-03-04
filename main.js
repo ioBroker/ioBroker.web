@@ -4,6 +4,7 @@
 
 var express = require('express');
 var fs =      require('fs');
+var path =    require('path');
 //var Stream =  require('stream');
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 var LE =      require(utils.controllerDir + '/lib/letsencrypt.js');
@@ -749,7 +750,11 @@ function initWebServer(settings) {
         server.app.use('/', function (req, res) {
             var url = decodeURI(req.url);
             // remove all ../
-            url = url.replace(/\/../g, '').replace(/..\//g, '').replace(/..\\/g, '').replace(/\\../g, '');
+            url = path.normalize(url).replace(/\\/g, '/');
+            if (url[0] === '.' && url[1] === '.') {
+                res.status(404).send('Not found');
+                return;
+            }
 
             if (server.api && server.api.checkRequest(url)) {
                 server.api.restApi(req, res);
