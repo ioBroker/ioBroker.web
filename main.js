@@ -277,8 +277,11 @@ function resolveLink(link, instanceObj, instancesMap) {
             parts = _var.split('_');
             if (!instances) {
                 instances = [];
+                // TODO !
                 for (var inst = 0; inst < 10; inst++) {
-                    if (that.main.objects['system.adapter.' + adptr + '.' + inst]) instances.push(inst);
+                    if (that.main.objects['system.adapter.' + adptr + '.' + inst]) {
+                        instances.push(inst);
+                    }
                 }
             }
 
