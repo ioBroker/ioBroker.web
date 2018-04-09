@@ -660,7 +660,11 @@ function initWebServer(settings) {
                     }
                     adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : settings.defaultUser}, (err, obj) => {
                         if (!err && obj !== null && obj !== undefined) {
-                            res.set('Content-Type', contentType || 'text/plain');
+                            if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
+                                res.set('Content-Type', 'application/json');
+                            } else {
+                                res.set('Content-Type', contentType || 'text/plain');
+                            }
                             res.status(200).send(obj);
                         } else {
                             res.status(404).send('404 Not found. File ' + fileName[0] + ' not found');
