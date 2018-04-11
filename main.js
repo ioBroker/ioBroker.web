@@ -6,7 +6,6 @@
 const express = require('express');
 const fs =      require('fs');
 const path =    require('path');
-//let Stream =  require('stream');
 const utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 const LE =      require(utils.controllerDir + '/lib/letsencrypt.js');
 const mime =    require('mime-types');
@@ -243,7 +242,8 @@ function resolveLink(link, instanceObj, instancesMap) {
     let _var;
     let v;
     let parts;
-    
+    let result;
+
     if (vars) {
         // first replace simple patterns
         for (v = vars.length - 1; v >= 0; v--) {
@@ -293,7 +293,6 @@ function resolveLink(link, instanceObj, instancesMap) {
                 };
             }
         }
-        let result;
         if (instances) {
             result = [];
             let count = 0;
