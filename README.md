@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.3.1 (2018-04-14)
+* (bluefox) Updated socket.io version to 2.1.0
+
 ### 2.3.0 (2018-01-24)
 * (bluefox) The required for Admin3 libraries are added
 

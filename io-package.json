@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.0",
+        "version": "2.3.1",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.3.1":  {
+                "en": "Updated socket.io version to 2.1.0",
+                "de": "Die Version von socket.io wurde auf 2.1.0 aktualisiert",
+                "ru": "Обновлена ​​версия socket.io до версии 2.1.0",
+                "pt": "Versão atualizada do socket.io para 2.1.0",
+                "nl": "Nieuwe socket.io-versie bijgewerkt naar 2.1.0",
+                "fr": "Mise à jour de la version socket.io vers la version 2.1.0",
+                "it": "Versione aggiornata di socket.io alla versione 2.1.0",
+                "es": "Versión actualizada de socket.io a 2.1.0",
+                "pl": "Zaktualizowana wersja pliku socket.io do wersji 2.1.0"
+            },
 			"2.3.0": {
                 "en": "The required for Admin3 libraries are added",
 				"de": "Die für Admin3 erforderlichen Bibliotheken werden hinzugefügt",
