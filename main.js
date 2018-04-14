@@ -843,13 +843,18 @@ function initWebServer(settings) {
                     // Todo: update lib/js/socket.io.js to 2.1.0, actual it is 1.5.0
                     if (socketIoFile !== false && id === 'web' && url === 'lib/js/socket.io.js') {
                         if (socketIoFile) {
-                            res.contentType( 'text/javascript');
+                            res.contentType('text/javascript');
                             res.status(200).send(socketIoFile);
                             return
                         } else {
                             try {
                                 const dir = require.resolve('socket.io-client');
-                                socketIoFile = fs.readFileSync(path.join(path.dirname(dir), '../dist/socket.io.min.js'));
+                                const fileDir = path.join(path.dirname(dir), '../dist/');
+                                if (fs.existsSync(fileDir + 'socket.io.min.js')) {
+                                    socketIoFile = fs.readFileSync(fileDir + 'socket.io.min.js');
+                                } else {
+                                    socketIoFile = fs.readFileSync(fileDir + 'socket.io.js');
+                                }
                             } catch (e) {
                                 socketIoFile = false;
                             }
