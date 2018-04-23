@@ -837,7 +837,6 @@ function initWebServer(settings) {
                         res.contentType('text/html');
                         res.status(200).send(buffer.toString());
                     }
-
                 } else {
                     // special solution for socket.io
                     // Todo: update lib/js/socket.io.js to 2.1.0, actual it is 1.5.0

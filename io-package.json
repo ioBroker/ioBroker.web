@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.1",
+        "version": "2.3.2",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.3.2": {
+                "en": "fixed select ID dialog for old style",
+                "de": "Auswahldialog für alten Stil korrigiert",
+                "ru": "поправлен диалог выбора ID для старого стиля",
+                "pt": "Diálogo de ID de seleção fixa para estilo antigo",
+                "nl": "vast select-ID-dialoogvenster voor oude stijl",
+                "fr": "boîte de dialogue fixe de sélection d'identifiant pour le style ancien",
+                "it": "corretto selezionare la finestra di dialogo ID per vecchio stile",
+                "es": "dialogo de selección de ID fijo para el viejo estilo",
+                "pl": "poprawiono okno dialogowe wyboru ID dla starego stylu"
+            },
             "2.3.1":  {
                 "en": "Updated socket.io version to 2.1.0",
                 "de": "Die Version von socket.io wurde auf 2.1.0 aktualisiert",
