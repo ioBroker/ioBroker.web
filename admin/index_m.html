@@ -75,7 +75,7 @@
             for (var i = 0; i < ips.length; i++) {
                 $('#bind').append('<option value="' + ips[i].address + '">' + ips[i].name + '</option>');
             }
-            $('#bind.value').val(settings.bind);
+            $('#bind.value').val(settings.bind).select();
         });
         $('#socketio')
             .append('<option value="none">' + _('none') + '</option>')
