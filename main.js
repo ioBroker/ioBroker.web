@@ -680,7 +680,7 @@ function initWebServer(settings) {
 
         server.app.get('*/_socket/info.js', (req, res) => {
             res.set('Content-Type', 'application/javascript');
-            res.status(200).send('let socketUrl = "' + socketUrl + '"; let socketSession = "' + '' + '"; sysLang = "' + lang + '"; socketForceWebSockets = ' + (settings.forceWebSockets ? 'true' : 'false') + ';');
+            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; window.sysLang = "' + lang + '"; window.socketForceWebSockets = ' + (settings.forceWebSockets ? 'true' : 'false') + ';');
         });
 
         // Enable CORS
