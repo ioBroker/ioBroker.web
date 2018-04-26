@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.2",
+        "version": "2.3.3",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.3.3": {
+                "en": "Fixing the new version of socket.io",
+                "de": "Fixieren der neuen Version von socket.io",
+                "ru": "Фиксация новой версии socket.io",
+                "pt": "Corrigindo a nova versão do socket.io",
+                "nl": "De nieuwe versie van socket.io herstellen",
+                "fr": "Correction de la nouvelle version de socket.io",
+                "it": "Correggere la nuova versione di socket.io",
+                "es": "Se corrigió la nueva versión de socket.io",
+                "pl": "Naprawianie nowej wersji pliku socket.io"
+            },
             "2.3.2": {
                 "en": "fixed select ID dialog for old style",
                 "de": "Auswahldialog für alten Stil korrigiert",
