@@ -282,7 +282,7 @@
 .dialog-select-object-ids .old-style .ui-widget-content .ui-state-active {
   background: inherit !important;
 }
-.dialog-select-object-ids .material .dialog-select-object-ids .objects-list-running {
+.dialog-select-object-ids .material .objects-list-running {
   height: 5rem;
 }
 .dialog-select-object-ids .material .filter-btn i {
