@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.3",
+        "version": "2.3.4",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.3.4": {
+                "en": "Used socket.io version 1.7.4",
+                "de": "Gebrauchte socket.io Version 1.7.4",
+                "ru": "Используется версия socket.io 1.7.4",
+                "pt": "Usado socket.io versão 1.7.4",
+                "nl": "Gebruikte socket.io-versie 1.7.4",
+                "fr": "Version socket.io utilisée 1.7.4",
+                "it": "Usato socket.io versione 1.7.4",
+                "es": "Utiliza socket.io versión 1.7.4",
+                "pl": "Używana wersja socket.io 1.7.4"
+            },
             "2.3.3": {
                 "en": "Fixing the new version of socket.io",
                 "de": "Fixieren der neuen Version von socket.io",
