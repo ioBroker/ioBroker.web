@@ -30,8 +30,12 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.3.5 (2018-06-09)
+* (bluefox) Used iobroker.socket.io version 2.1.1
+* (bluefox) Authentication problem was fixed
+
 ### 2.3.4 (2018-04-27)
-* (bluefox) Used socket.io version 1.7.4
+* (bluefox) Used socket.io version 2.1.0
 
 ### 2.3.3 (2018-04-27)
 * (bluefox) Fixing the new version of socket.io

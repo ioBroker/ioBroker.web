@@ -106,7 +106,9 @@ let adapter = new utils.Adapter({
         // information about connected socket.io adapter
         if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
             adapter.getForeignObject(adapter.config.socketio, (err, obj) => {
-                if (obj && obj.common && obj.common.enabled && obj.native) socketUrl = ':' + obj.native.port;
+                if ( obj && obj.common && obj.common.enabled && obj.native) {
+                    socketUrl = ':' + obj.native.port;
+                }
             });
             // Listen for changes
             adapter.subscribeForeignObjects(adapter.config.socketio);
@@ -579,12 +581,17 @@ function initWebServer(settings) {
 
             let autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
                 if (!settings.whiteListSettings) {
-					if (/\.js$/.test(req.originalUrl)) {
+                    if (/\.css(\?.*)?$/.test(req.originalUrl)) {
+                        return res.status(200).send('');
+                    } else
+					if (/\.js(\?.*)?$/.test(req.originalUrl)) {
 						// return always valid js file for js, because if cache is active it leads to errors
-                        let parts = req.originalUrl.split('/');
+                        const parts = req.originalUrl.split('/');
+                        parts.shift();
+                        const ref = parts.join('/');
 						// if request for web/lib, ignore it, because no redirect information
-						if (parts[1] === 'lib') return res.status(200).send('');
-						return res.status(200).send('document.location="/login/index.html?href=/' + parts[1] + '/";');
+						if (parts[0] === 'lib') return res.status(200).send('');
+						return res.status(200).send('debugger;document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
 					} else {
 						return res.redirect(redirect);
 					}
@@ -593,11 +600,15 @@ function initWebServer(settings) {
                 let whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
 				adapter.log.info('whiteListIp ' + whiteListIp);
                 if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') {
-					if (/\.js$/.test(req.originalUrl)) {
+                    if (/\.css(\?.*)?$/.test(req.originalUrl)) {
+                        return res.status(200).send('');
+                    } else if (/\.js(\?.*)?$/.test(req.originalUrl)) {
 						// return always valid js file for js, because if cache is active it leads to errors
 						let parts = req.originalUrl.split('/');
-						if (parts[1] === 'lib') return res.status(200).send('');
-						return res.status(200).send('document.location="/login/index.html?href=/' + parts[1] + '/";');
+                        parts.shift();
+                        const ref = parts.join('/');
+						if (parts[0] === 'lib') return res.status(200).send('');
+                        return res.status(200).send('debugger;document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
 					} else {
 						return res.redirect(redirect);
 					}
@@ -633,13 +644,16 @@ function initWebServer(settings) {
 
             // route middleware to make sure a user is logged in
             server.app.use((req, res, next) => {
-				// if cache.manifes got back not 200 it makes an error
+				// if cache.manifest got back not 200 it makes an error
                 if (req.isAuthenticated() ||
-                    /cache\.manifest$/.test(req.originalUrl) ||
+                    /cache\.manifest(\?.*)?$/.test(req.originalUrl) ||
                     /^\/login\//.test(req.originalUrl) ||
-                    /\.ico$/.test(req.originalUrl)
-                ) return next();
-				
+                    /\.ico(\?.*)?$/.test(req.originalUrl)
+                ) {
+                    !req.isAuthenticated() && console.log('Not checked: ' + req.originalUrl);
+                    return next();
+                }
+                console.log('Redirected: ' + req.originalUrl);
 				autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
             });
         } else {
@@ -755,7 +769,7 @@ function initWebServer(settings) {
         let IOSocket = require(utils.appName + '.socketio/lib/socket.js');
         let socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
-        socketSettings.auth             = false;
+        socketSettings.auth             = true;
         socketSettings.secret           = secret;
         socketSettings.store            = store;
         socketSettings.ttl              = settings.ttl || 3600;

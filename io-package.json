@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.4",
+        "version": "2.3.5",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.3.5": {
+                "en": "Socket.io version 2.1.1 was used\nAuthentication problem was fixed",
+                "de": "Socket.io Version 2.1.1 wurde verwendet\nAuthentifizierungsproblem wurde behoben",
+                "ru": "Использовалась версия 2.1.1 Socket.io\nИсправлена ​​проблема аутентификации",
+                "pt": "Socket.io versão 2.1.1 foi usado\nProblema de autenticação foi corrigido",
+                "nl": "Socket.io versie 2.1.1 werd gebruikt\nVerificatieprobleem is opgelost",
+                "fr": "Socket.io version 2.1.1 a été utilisé\nLe problème d'authentification a été corrigé",
+                "it": "È stato utilizzato Socket.io versione 2.1.1\nIl problema di autenticazione è stato risolto",
+                "es": "Se utilizó la versión 2.1.1 de Socket.io\nSe corrigió el problema de autenticación",
+                "pl": "Użyto wersji Socket.io 2.1.1\nNaprawiono problem z uwierzytelnianiem"
+            },
             "2.3.4": {
                 "en": "Used socket.io version 1.7.4",
                 "de": "Gebrauchte socket.io Version 1.7.4",
