@@ -769,7 +769,7 @@ function initWebServer(settings) {
         let IOSocket = require(utils.appName + '.socketio/lib/socket.js');
         let socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
-        socketSettings.auth             = true;
+        socketSettings.auth             = settings.auth;
         socketSettings.secret           = secret;
         socketSettings.store            = store;
         socketSettings.ttl              = settings.ttl || 3600;
