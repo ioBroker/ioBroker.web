@@ -573,6 +573,7 @@ function initWebServer(settings) {
                 secret:            secret,
                 saveUninitialized: true,
                 resave:            true,
+                cookie:            {maxAge: settings.ttl * 1000},
                 store:             store
             }));
             server.app.use(passport.initialize());
@@ -650,10 +651,8 @@ function initWebServer(settings) {
                     /^\/login\//.test(req.originalUrl) ||
                     /\.ico(\?.*)?$/.test(req.originalUrl)
                 ) {
-                    !req.isAuthenticated() && console.log('Not checked: ' + req.originalUrl);
                     return next();
                 }
-                console.log('Redirected: ' + req.originalUrl);
 				autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
             });
         } else {
