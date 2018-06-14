@@ -592,7 +592,7 @@ function initWebServer(settings) {
                         const ref = parts.join('/');
 						// if request for web/lib, ignore it, because no redirect information
 						if (parts[0] === 'lib') return res.status(200).send('');
-						return res.status(200).send('debugger;document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+						return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
 					} else {
 						return res.redirect(redirect);
 					}
@@ -609,7 +609,7 @@ function initWebServer(settings) {
                         parts.shift();
                         const ref = parts.join('/');
 						if (parts[0] === 'lib') return res.status(200).send('');
-                        return res.status(200).send('debugger;document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                        return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
 					} else {
 						return res.redirect(redirect);
 					}
