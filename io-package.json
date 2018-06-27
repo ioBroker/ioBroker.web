@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.5",
+        "version": "2.3.6",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.3.6": {
+                "en": "URLs were sanitized",
+                "de": "URLs wurden bereinigt",
+                "ru": "URL-адреса были дезинфицированы",
+                "pt": "URLs foram higienizados",
+                "nl": "URL's zijn ontsmet",
+                "fr": "Les URL ont été nettoyées",
+                "it": "Gli URL sono stati disinfettati",
+                "es": "Las URL se desinfectaron",
+                "pl": "Adresy URL zostały odkażone"
+            },
             "2.3.5": {
                 "en": "Socket.io version 2.1.1 was used\nAuthentication problem was fixed",
                 "de": "Socket.io Version 2.1.1 wurde verwendet\nAuthentifizierungsproblem wurde behoben",
@@ -96,81 +107,6 @@
                 "en": "Fix tiles on welcome screen",
                 "de": "Korrigiere Kacheln auf dem Welcome Screen",
                 "ru": "Поправлены иконки на welcome странице"
-            },
-            "2.1.7": {
-                "en": "Fix link to local admin on welcome screen",
-                "de": "Korrigiere das Link auf Lokaladmin auf Welcome Screen",
-                "ru": "Поправлена ccылка на локальный админ на welcome странице"
-            },
-            "2.1.4": {
-                "en": "Support of iobroker.pro",
-                "de": "Unterstüzung von iobroker.pro",
-                "ru": "Поддержка iobroker.pro"
-            },
-            "2.0.6": {
-                "en": "Fix welcome screen",
-                "de": "Korrigiere welcome screen",
-                "ru": "Поправлена первая страница"
-            },
-            "2.0.5": {
-                "en": "Update socketio lib",
-                "de": "Updatete socketio Bibliothek",
-                "ru": "Обновлена версия socketio библиотеки"
-            },
-            "2.0.4": {
-                "en": "show logout button if connected over cloud",
-                "de": "Zeige Sign Out Knopf, falls über Cloud verbunden",
-                "ru": "Показывает кнопку Выход, если соединение через облако"
-            },
-            "2.0.3": {
-                "en": "catch errors for invalid objects",
-                "de": "Fange Fehler für inkorrekte Objekte",
-                "ru": "Ловит ошибки при неправильных объектах"
-            },
-            "2.0.2": {
-                "en": "fix selectID dialog",
-                "de": "Korrigiere selectID Dialog",
-                "ru": "Исправлен диалог выбора элементов"
-            },
-            "2.0.1": {
-                "en": "implement new welcome screen",
-                "de": "Neue Übersichtsseite",
-                "ru": "Новая страница для списка ссылок"
-            },
-            "2.0.0": {
-                "en": "Support of web extensions",
-                "de": "Unterstützung von WEB Erweiterungen",
-                "ru": "Поддержка плагинов для WEB драйвера"
-            },
-            "1.7.7": {
-                "en": "fix error with authentication",
-                "de": "Korrigiere Authentifizierung",
-                "ru": "Исправлена аутентификация"
-            },
-            "1.7.6": {
-                "en": "Downgrade the socket.io to support older devices",
-                "de": "Downgrade socket.io um ältere Geräte zu unterstützen",
-                "ru": "Понижена версия socket.io для поддержки старых устройств"
-            },
-            "1.7.5": {
-                "en": "Fix selectID Dialog",
-                "de": "Korrigiere selectID Dialog",
-                "ru": "Исправлен диалог выбора ID"
-            },
-            "1.7.4": {
-                "en": "Fix unsubscribe of states",
-                "de": "Korrigiere unsubscribe von Zuständen",
-                "ru": "Исправлено unsubscribe для состояний"
-            },
-            "1.7.3": {
-                "en": "use new socketio\nfix config dialog",
-                "de": "Benutze neue Socketio Version\nKorrigiere Konfigurationsdialog",
-                "ru": "Новая версия socketio\nИсправлен диалог настроек"
-            },
-            "1.7.2": {
-                "en": "Fix redirect for login",
-                "de": "Korrigiere Loginumleitung",
-                "ru": "Исправлено перенаправление при логине"
             }
         },
         "desc": {

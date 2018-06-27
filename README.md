@@ -9,7 +9,7 @@
 [![NPM](https://nodei.co/npm/iobroker.web.png?downloads=true)](https://nodei.co/npm/iobroker.web/)
 
 
-Web server on the base of Node.js and express to read the files from iobroker DB
+Web server on the base of Node.js and express to read the files from ioBroker DB
 
 ## Tuning Web-Sockets
 On some web-sockets clients there is performance problem with communication. Sometimes this problem is due to fallback of socket.io communication on long polling mechanism.
@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.3.6 (2018-06-27)
+* (bluefox) URLs were sanitized
+
 ### 2.3.5 (2018-06-09)
 * (bluefox) Used iobroker.socket.io version 2.1.1
 * (bluefox) Authentication problem was fixed

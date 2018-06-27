@@ -555,13 +555,9 @@ function initWebServer(settings) {
                     });
                 }
             ));
-            passport.serializeUser((user, done) => {
-                done(null, user);
-            });
+            passport.serializeUser((user, done) => done(null, user));
 
-            passport.deserializeUser((user, done) => {
-                done(null, user);
-            });
+            passport.deserializeUser((user, done) => done(null, user));
 
             server.app.use(cookieParser());
             server.app.use(bodyParser.urlencoded({
@@ -781,8 +777,15 @@ function initWebServer(settings) {
         server.app.use('/', (req, res) => {
             let url = decodeURI(req.url);
             // remove all ../
-            url = path.normalize(url).replace(/\\/g, '/');
-            if (url[0] === '.' && url[1] === '.') {
+            // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
+            url = path.normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
+            // remove '////' at start and let only one
+            if (url[0] === '/' && url[1] === '/') {
+                let i = 2;
+                while (url[i] === '/') i++;
+                url = url.substring(i - 1);
+            }
+            if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
                 res.status(404).send('Not found');
                 return;
             }
