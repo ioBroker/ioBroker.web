@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.4.0 (2018-07-15)
+* (bluefox) Pre-settings for instances now supported
+
 ### 2.3.6 (2018-06-27)
 * (bluefox) URLs were sanitized
 

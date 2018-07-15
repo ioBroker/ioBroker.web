@@ -29,6 +29,7 @@ let lang         = 'en';
 let extensions   = {};
 let bruteForce   = {};
 let socketIoFile = null;
+let webPreSettings = {};
 
 let adapter = new utils.Adapter({
     name: 'web',
@@ -43,6 +44,10 @@ let adapter = new utils.Adapter({
                 process.exit(-100);
             });
             return;
+        }
+
+        if (obj && obj.common && obj.common.webPreSettings) {
+            updatePreSettings(obj);
         }
 
         if (!ownSocket && id === adapter.config.socketio) {
@@ -123,8 +128,43 @@ let adapter = new utils.Adapter({
         });
     }
 });
+function extractPreSetting(obj, attr) {
+    const parts = attr.split('.');
+    if (parts.length === 1) {
+        if ((obj && typeof obj === 'object') || (obj !== null && obj !== undefined)) {
+            return obj[attr];
+        } else {
+            return null;
+        }
+    } else {
+        attr = parts.shift();
+        if (obj[attr] && typeof obj[attr] === 'object') {
+            return extractPreSetting(obj[attr], parts.join('.'));
+        } else {
+            return null;
+        }
+    }
+}
+function updatePreSettings(obj) {
+    if (!obj || !obj.common) return;
+    if (obj.common.webPreSettings) {
+        for (let attr in obj.common.webPreSettings) {
+            if (!obj.common.webPreSettings.hasOwnProperty(attr)) continue;
+            webPreSettings[obj._id] = webPreSettings[obj._id] || {};
+            const _attr = attr.replace(/[^\w0-9]/g, '_');
+            webPreSettings[obj._id][_attr] = extractPreSetting(obj, obj.common.webPreSettings[attr]);
+            if (typeof webPreSettings[obj._id][_attr] === 'object') {
+                webPreSettings[obj._id][_attr] = JSON.stringify(webPreSettings[obj._id][_attr]);
+            } else {
+                webPreSettings[obj._id][_attr] = webPreSettings[obj._id][_attr].replace(/"/g, '\\"');
+            }
+        }
+    } else if (webPreSettings[obj._id]) {
+        delete webPreSettings[obj._id];
+    }
+}
 
-function getExtensions(callback) {
+function getExtensionsAndPreSettings(callback) {
     adapter.objects.getObjectView('system', 'instance', null, (err, doc) => {
         if (err) {
             if (callback) callback (err, []);
@@ -135,10 +175,15 @@ function getExtensions(callback) {
                 let res = [];
                 for (let i = 0; i < doc.rows.length; i++) {
                     const instance = doc.rows[i].value;
-                    if (instance && instance.common && instance.common.enabled &&
-                        instance.common.webExtension &&
+                    if (instance && instance.common) {
+                        if (instance.common.enabled &&
+                            instance.common.webExtension &&
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
-                        res.push(doc.rows[i].value);
+                            res.push(doc.rows[i].value);
+                        }
+                        if (instance.common.webPreSettings) {
+                            updatePreSettings(instance);
+                        }
                     }
                 }
                 if (callback) callback (null, res);
@@ -148,7 +193,7 @@ function getExtensions(callback) {
 }
 
 function main() {
-    getExtensions((err, ext) => {
+    getExtensionsAndPreSettings((err, ext) => {
         if (err) adapter.log.error('Cannot read extensions: ' + err);
         if (ext) {
             for (let e = 0; e < ext.length; e++) {
@@ -457,6 +502,25 @@ function getListOfAllAdapters(callback) {
     }
 }
 
+function getInfoJs(settings) {
+    let result = [
+        'var socketUrl = "' + socketUrl + '";',
+        'var socketSession = "' + '' + '";',
+        'window.sysLang = "' + lang + '";',
+        'window.socketForceWebSockets = ' + (settings.forceWebSockets ? 'true' : 'false') + ';'
+    ];
+    for (const id in webPreSettings) {
+        if (webPreSettings.hasOwnProperty(id) && webPreSettings[id]) {
+            for (const attr in webPreSettings[id]) {
+                if (webPreSettings[id].hasOwnProperty(attr)) {
+                    result.push(`window.${attr} = "${webPreSettings[id][attr]}";`);
+                }
+            }
+        }
+    }
+    return result.join(' ');
+}
+
 //settings: {
 //    "port":   8080,
 //    "auth":   false,
@@ -689,7 +753,7 @@ function initWebServer(settings) {
 
         server.app.get('*/_socket/info.js', (req, res) => {
             res.set('Content-Type', 'application/javascript');
-            res.status(200).send('var socketUrl = "' + socketUrl + '"; var socketSession = "' + '' + '"; window.sysLang = "' + lang + '"; window.socketForceWebSockets = ' + (settings.forceWebSockets ? 'true' : 'false') + ';');
+            res.status(200).send(getInfoJs(settings));
         });
 
         // Enable CORS

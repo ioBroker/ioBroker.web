@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.3.6",
+        "version": "2.4.0",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.4.0": {
+                "en": "Pre-settings for instances now supported",
+                "de": "Voreinstellungen für Instanzen werden jetzt unterstützt",
+                "ru": "Предварительные настройки для поддерживаемых экземпляров",
+                "pt": "Pré-configurações para instâncias agora suportadas",
+                "nl": "Pre-instellingen voor exemplaren die nu worden ondersteund",
+                "fr": "Pré-réglages pour les instances maintenant supportées",
+                "it": "Le preimpostazioni per le istanze ora supportate",
+                "es": "Pre-configuraciones para instancias ahora compatibles",
+                "pl": "Wstępne ustawienia instancji są teraz obsługiwane"
+            },
             "2.3.6": {
                 "en": "URLs were sanitized",
                 "de": "URLs wurden bereinigt",
