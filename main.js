@@ -30,6 +30,7 @@ let extensions   = {};
 let bruteForce   = {};
 let socketIoFile = null;
 let webPreSettings = {};
+let webByVersion = {};
 
 let adapter = new utils.Adapter({
     name: 'web',
@@ -50,6 +51,14 @@ let adapter = new utils.Adapter({
             updatePreSettings(obj);
         }
 
+        // 'system.adapter.'length = 15
+        const _id = id.substring(15).replace(/\.\d+$/, '');
+        if (obj && obj.common && obj.common.webByVersion) {
+            webByVersion[_id] = obj.common.version;
+        } else if (webByVersion[_id]) {
+            delete webByVersion[_id];
+        }
+
         if (!ownSocket && id === adapter.config.socketio) {
             if (obj && obj.common && obj.common.enabled && obj.native) {
                 socketUrl = ':' + obj.native.port;
@@ -57,8 +66,15 @@ let adapter = new utils.Adapter({
                 socketUrl = '';
             }
         }
-        if (webServer.io) webServer.io.publishAll('objectChange', id, obj);
-        if (webServer.api && adapter.config.auth) webServer.api.objectChange(id, obj);
+
+        if (webServer.io) {
+            webServer.io.publishAll('objectChange', id, obj);
+        }
+
+        if (webServer.api && adapter.config.auth) {
+            webServer.api.objectChange(id, obj);
+        }
+
         if (id === 'system.config') {
             lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
         }
@@ -164,7 +180,7 @@ function updatePreSettings(obj) {
     }
 }
 
-function getExtensionsAndPreSettings(callback) {
+function getExtensionsAndSettings(callback) {
     adapter.objects.getObjectView('system', 'instance', null, (err, doc) => {
         if (err) {
             if (callback) callback (err, []);
@@ -184,6 +200,11 @@ function getExtensionsAndPreSettings(callback) {
                         if (instance.common.webPreSettings) {
                             updatePreSettings(instance);
                         }
+                        if (instance.common.webByVersion) {
+                            // 'system.adapter.'length = 15
+                            const _id = doc.rows[i].value._id.substring(15).replace(/\.\d+$/, '');
+                            webByVersion[_id] = instance.common.version;
+                        }
                     }
                 }
                 if (callback) callback (null, res);
@@ -193,7 +214,7 @@ function getExtensionsAndPreSettings(callback) {
 }
 
 function main() {
-    getExtensionsAndPreSettings((err, ext) => {
+    getExtensionsAndSettings((err, ext) => {
         if (err) adapter.log.error('Cannot read extensions: ' + err);
         if (ext) {
             for (let e = 0; e < ext.length; e++) {
@@ -892,6 +913,7 @@ function initWebServer(settings) {
             url.shift();
             // Get ID
             let id = url.shift();
+            let versionPrefix = url[0];
             url = url.join('/');
             let pos = url.indexOf('?');
             let noFileCache;
@@ -900,6 +922,17 @@ function initWebServer(settings) {
                 // disable file cache if request like /vis/files/picture.png?noCache
                 noFileCache = true;
             }
+
+            // get adapter name
+            if (webByVersion[id]) {
+                if (!versionPrefix.match(/^\d+\.\d+.\d+$/)) {
+                    // redirect to version
+                    res.set('location', '/' + id + '/' + webByVersion[id] + '/' + url);
+                    res.status(301).send();
+                    return;
+                }
+            }
+
             if (settings.cache && cache[id + '/' + url] && !noFileCache) {
                 res.contentType(cache[id + '/' + url].mimeType);
                 res.status(200).send(cache[id + '/' + url].buffer);
@@ -919,8 +952,7 @@ function initWebServer(settings) {
                     }
                 } else {
                     // special solution for socket.io
-                    // Todo: update lib/js/socket.io.js to 2.1.0, actual it is 1.5.0
-                    if (socketIoFile !== false && id === 'web' && url === 'lib/js/socket.io.js') {
+                    if (socketIoFile !== false && url.match(/\/socket\.io\.js(\?.*)?$/)) {
                         if (socketIoFile) {
                             res.contentType('text/javascript');
                             res.status(200).send(socketIoFile);
@@ -944,8 +976,8 @@ function initWebServer(settings) {
                             }
                         }
                     }
-
-                    adapter.readFile(id, url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
+                    
+                    adapter.readFile(id, webByVersion[id] ? url.substring(versionPrefix.length + 1) : url , {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
                             res.status(404).send('File ' + url + ' not found: ' + err);
@@ -959,6 +991,7 @@ function initWebServer(settings) {
                                     mimeType: mimeType
                                 };
                             }
+                            
                             res.contentType(mimeType);
                             res.status(200).send(buffer);
                         }

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.0",
+        "version": "2.4.1",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.4.1": {
+                "en": "The support of the versioned links to adapter was added",
+                "de": "Die Unterstützung der versionierten Links zum Adapter wurde hinzugefügt",
+                "ru": "Добавлена ​​поддержка версий, связанных с адаптером.",
+                "pt": "O suporte dos links com versão para o adaptador foi adicionado",
+                "nl": "De ondersteuning van de versie-links naar adapter is toegevoegd",
+                "fr": "Le support des liens versionnés vers l'adaptateur a été ajouté",
+                "it": "È stato aggiunto il supporto dei collegamenti con versione all'adattatore",
+                "es": "Se agregó el soporte de los enlaces versionados al adaptador",
+                "pl": "Dodano wsparcie dla wersjonowanych łączy do adaptera"
+            },
             "2.4.0": {
                 "en": "Pre-settings for instances now supported",
                 "de": "Voreinstellungen für Instanzen werden jetzt unterstützt",
