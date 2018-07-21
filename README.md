@@ -32,6 +32,8 @@ After 15th wrong attempt the user must wait 1 hour.
 ## Changelog
 ### 2.4.1 (2018-07-21)
 * (bluefox) The support of the versioned links to adapter was added
+* (bluefox) WhiteList was corrected
+* (bluefox) Custom login background is supported
 
 ### 2.4.0 (2018-07-15)
 * (bluefox) Pre-settings for instances now supported

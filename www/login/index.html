@@ -8,17 +8,16 @@
      * Licensed under the MIT License:
      * http://www.opensource.org/licenses/mit-license.php
      */
+
         body {
-            font: 13px/20px 'Lucida Grande', Tahoma, Verdana, sans-serif;
-            color: #404040;
-            background-color: #0ae;
-            background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));
-            background-image: -webkit-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);
-            background-image: -moz-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);
-            background-image: -ms-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);
-            background-image: -o-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);
-            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);
-            background-size: 50px 50px;
+            background: black;
+            background-size: 100% auto;
+        }
+
+        @media only screen and (orientation: portrait) {
+            body {
+                background-size: auto 100%;
+            }
         }
 
         .container {

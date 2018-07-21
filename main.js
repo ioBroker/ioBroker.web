@@ -31,6 +31,7 @@ let bruteForce   = {};
 let socketIoFile = null;
 let webPreSettings = {};
 let webByVersion = {};
+let loginPage    = null;
 
 let adapter = new utils.Adapter({
     name: 'web',
@@ -542,6 +543,116 @@ function getInfoJs(settings) {
     return result.join(' ');
 }
 
+function prepareLoginTemplate() {
+    let def =
+        '            font: 13px/20px \'Lucida Grande\', Tahoma, Verdana, sans-serif;\n' +
+        '            color: #404040;\n' +
+        '            background-color: #0ae;\n' +
+        '            background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));\n' +
+        '            background-image: -webkit-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
+        '            background-image: -moz-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
+        '            background-image: -ms-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
+        '            background-image: -o-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
+        '            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
+        '            background-size: 50px 50px;\n'
+    ;
+    let template = fs.readFileSync(__dirname + '/www/login/index.html').toString('utf8');
+    if (adapter.config.loginBackgroundColor) {
+        def = 'background-color: ' + adapter.config.loginBackgroundColor + ';\n'
+    }
+    if (adapter.config.loginBackgroundImage) {
+        def += '            background-image: url(../' + adapter.namespace + '/login-bg.png);\n';
+    }
+    return template.replace('background: black;', def);
+}
+
+
+function initAuth(server, settings) {
+    session =          require('express-session');
+    cookieParser =     require('cookie-parser');
+    bodyParser =       require('body-parser');
+    AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
+    passportSocketIo = require('passport.socketio');
+    password =         require(utils.controllerDir + '/lib/password.js');
+    passport =         require('passport');
+    LocalStrategy =    require('passport-local').Strategy;
+    flash =            require('connect-flash'); // TODO report error to user
+
+    store = new AdapterStore({adapter: adapter});
+
+    passport.use(new LocalStrategy(
+        function (username, password, done) {
+            if (bruteForce[username] && bruteForce[username].errors > 4) {
+                let minutes = (new Date().getTime() - bruteForce[username].time);
+                if (bruteForce[username].errors < 7) {
+                    if ((new Date().getTime() - bruteForce[username].time) < 60000) {
+                        minutes = 1;
+                    } else {
+                        minutes = 0;
+                    }
+                } else
+                if (bruteForce[username].errors < 10) {
+                    if ((new Date().getTime() - bruteForce[username].time) < 180000) {
+                        minutes = Math.ceil((180000 - minutes) / 60000);
+                    } else {
+                        minutes = 0;
+                    }
+                } else
+                if (bruteForce[username].errors < 15) {
+                    if ((new Date().getTime() - bruteForce[username].time) < 600000) {
+                        minutes = Math.ceil((600000 - minutes) / 60000);
+                    } else {
+                        minutes = 0;
+                    }
+                } else
+                if ((new Date().getTime() - bruteForce[username].time) < 3600000) {
+                    minutes = Math.ceil((3600000 - minutes) / 60000);
+                } else {
+                    minutes = 0;
+                }
+
+                if (minutes) {
+                    return done('Too many errors. Try again in ' + minutes + ' ' + (minutes === 1 ? 'minute' : 'minutes') + '.', false);
+                }
+            }
+            adapter.checkPassword(username, password, (res) => {
+                if (!res) {
+                    bruteForce[username] = bruteForce[username] || {errors: 0};
+                    bruteForce[username].time = new Date().getTime();
+                    bruteForce[username].errors++;
+                } else if (bruteForce[username]) {
+                    delete bruteForce[username];
+                }
+
+                if (res) {
+                    return done(null, username);
+                } else {
+                    return done(null, false);
+                }
+            });
+        }
+    ));
+    passport.serializeUser((user, done) => done(null, user));
+
+    passport.deserializeUser((user, done) => done(null, user));
+
+    server.app.use(cookieParser());
+    server.app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    server.app.use(bodyParser.json());
+    server.app.use(bodyParser.text());
+    server.app.use(session({
+        secret:            secret,
+        saveUninitialized: true,
+        resave:            true,
+        cookie:            {maxAge: settings.ttl * 1000},
+        store:             store
+    }));
+    server.app.use(passport.initialize());
+    server.app.use(passport.session());
+    server.app.use(flash());
+}
 //settings: {
 //    "port":   8080,
 //    "auth":   false,
@@ -576,90 +687,8 @@ function initWebServer(settings) {
         server.app.disable('x-powered-by');
 
         if (settings.auth) {
-            session =          require('express-session');
-            cookieParser =     require('cookie-parser');
-            bodyParser =       require('body-parser');
-            AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
-            passportSocketIo = require('passport.socketio');
-            password =         require(utils.controllerDir + '/lib/password.js');
-            passport =         require('passport');
-            LocalStrategy =    require('passport-local').Strategy;
-            flash =            require('connect-flash'); // TODO report error to user
 
-            store = new AdapterStore({adapter: adapter});
-
-            passport.use(new LocalStrategy(
-                function (username, password, done) {
-                    if (bruteForce[username] && bruteForce[username].errors > 4) {
-                        let minutes = (new Date().getTime() - bruteForce[username].time);
-                        if (bruteForce[username].errors < 7) {
-                            if ((new Date().getTime() - bruteForce[username].time) < 60000) {
-                                minutes = 1;
-                            } else {
-                                minutes = 0;
-                            }
-                        } else
-                        if (bruteForce[username].errors < 10) {
-                            if ((new Date().getTime() - bruteForce[username].time) < 180000) {
-                                minutes = Math.ceil((180000 - minutes) / 60000);
-                            } else {
-                                minutes = 0;
-                            }
-                        } else
-                        if (bruteForce[username].errors < 15) {
-                            if ((new Date().getTime() - bruteForce[username].time) < 600000) {
-                                minutes = Math.ceil((600000 - minutes) / 60000);
-                            } else {
-                                minutes = 0;
-                            }
-                        } else
-                        if ((new Date().getTime() - bruteForce[username].time) < 3600000) {
-                            minutes = Math.ceil((3600000 - minutes) / 60000);
-                        } else {
-                            minutes = 0;
-                        }
-
-                        if (minutes) {
-                            return done('Too many errors. Try again in ' + minutes + ' ' + (minutes === 1 ? 'minute' : 'minutes') + '.', false);
-                        }
-                    }
-                    adapter.checkPassword(username, password, (res) => {
-                        if (!res) {
-                            bruteForce[username] = bruteForce[username] || {errors: 0};
-                            bruteForce[username].time = new Date().getTime();
-                            bruteForce[username].errors++;
-                        } else if (bruteForce[username]) {
-                            delete bruteForce[username];
-                        }
-
-                        if (res) {
-                            return done(null, username);
-                        } else {
-                            return done(null, false);
-                        }
-                    });
-                }
-            ));
-            passport.serializeUser((user, done) => done(null, user));
-
-            passport.deserializeUser((user, done) => done(null, user));
-
-            server.app.use(cookieParser());
-            server.app.use(bodyParser.urlencoded({
-                extended: true
-            }));
-            server.app.use(bodyParser.json());
-            server.app.use(bodyParser.text());
-            server.app.use(session({
-                secret:            secret,
-                saveUninitialized: true,
-                resave:            true,
-                cookie:            {maxAge: settings.ttl * 1000},
-                store:             store
-            }));
-            server.app.use(passport.initialize());
-            server.app.use(passport.session());
-            server.app.use(flash());
+            initAuth(server, settings);
 
             let autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
                 if (!settings.whiteListSettings) {
@@ -680,7 +709,7 @@ function initWebServer(settings) {
 				}
                 let remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 let whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
-				adapter.log.info('whiteListIp ' + whiteListIp);
+				adapter.log.silly('whiteListIp ' + whiteListIp);
                 if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') {
                     if (/\.css(\?.*)?$/.test(req.originalUrl)) {
                         return res.status(200).send('');
@@ -728,6 +757,7 @@ function initWebServer(settings) {
             server.app.use((req, res, next) => {
 				// if cache.manifest got back not 200 it makes an error
                 if (req.isAuthenticated() ||
+                    /web\.\d+\/login-bg\.png(\?.*)?$/.test(req.originalUrl) ||
                     /cache\.manifest(\?.*)?$/.test(req.originalUrl) ||
                     /^\/login\//.test(req.originalUrl) ||
                     /\.ico(\?.*)?$/.test(req.originalUrl)
@@ -743,6 +773,24 @@ function initWebServer(settings) {
             server.app.get('/logout', (req, res) => {
                 res.redirect('/');
             });
+
+            if (settings.whiteListEnabled) {
+                initAuth(server, settings);
+                server.app.use((req, res, next) => {
+                    let remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                    let whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                    adapter.log.silly('whiteListIp ' + whiteListIp);
+                    if (whiteListIp) {
+                       req.logIn(settings.whiteListSettings[whiteListIp].user, err => {
+                            return next(err);
+                        });
+                    } else {
+                        req.logIn(settings.defaultUser, err => {
+                            return next(err);
+                        });
+                    }
+                });
+            }
         }
 
         // Init read from states
@@ -860,6 +908,7 @@ function initWebServer(settings) {
     if (server.app) {
         // deliver web files from objectDB
         server.app.use('/', (req, res) => {
+
             let url = decodeURI(req.url);
             // remove all ../
             // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
@@ -938,7 +987,9 @@ function initWebServer(settings) {
                 res.status(200).send(cache[id + '/' + url].buffer);
             } else {
                 if (id === 'login' && url === 'index.html') {
-                    let buffer = fs.readFileSync(__dirname + '/www/login/index.html');
+                    loginPage = loginPage || prepareLoginTemplate();
+                    let buffer = loginPage;
+
                     if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');
                         res.status(200).send('File ' + url + ' not found', 404);

@@ -16,15 +16,15 @@
         },
         "news": {
             "2.4.1": {
-                "en": "The support of the versioned links to adapter was added",
-                "de": "Die Unterstützung der versionierten Links zum Adapter wurde hinzugefügt",
-                "ru": "Добавлена ​​поддержка версий, связанных с адаптером.",
-                "pt": "O suporte dos links com versão para o adaptador foi adicionado",
-                "nl": "De ondersteuning van de versie-links naar adapter is toegevoegd",
-                "fr": "Le support des liens versionnés vers l'adaptateur a été ajouté",
-                "it": "È stato aggiunto il supporto dei collegamenti con versione all'adattatore",
-                "es": "Se agregó el soporte de los enlaces versionados al adaptador",
-                "pl": "Dodano wsparcie dla wersjonowanych łączy do adaptera"
+                "en": "The support of the versioned links to adapter was added\nWhiteList was corrected\nCustom login background is supported",
+                "de": "Die Unterstützung der versionierten Links zum Adapter wurde hinzugefügt\nWhiteList wurde korrigiert\nBenutzerdefinierter Login-Hintergrund wird unterstützt",
+                "ru": "Добавлена ​​поддержка версий, связанных с адаптером.\nWhiteList был исправлен\nПользовательский фоновый вход поддерживается",
+                "pt": "O suporte dos links com versão para o adaptador foi adicionado\nWhiteList foi corrigido\nFundo de login personalizado é suportado",
+                "nl": "De ondersteuning van de versie-links naar adapter is toegevoegd\nWhiteList is gecorrigeerd\nAangepaste inlogachtergrond wordt ondersteund",
+                "fr": "Le support des liens versionnés vers l'adaptateur a été ajouté\nWhiteList a été corrigé\nLe fond de connexion personnalisé est pris en charge",
+                "it": "È stato aggiunto il supporto dei collegamenti con versione all'adattatore\nWhiteList è stato corretto\nLo sfondo di login personalizzato è supportato",
+                "es": "Se agregó el soporte de los enlaces versionados al adaptador\nWhiteList fue corregido\nSe admite el fondo de inicio de sesión personalizado",
+                "pl": "Dodano wsparcie dla wersjonowanych łączy do adaptera\nWhiteList został poprawiony\nNiestandardowe tło logowania jest obsługiwane"
             },
             "2.4.0": {
                 "en": "Pre-settings for instances now supported",
@@ -182,15 +182,21 @@
         "simpleapi": false,
         "defaultUser": "admin",
         "ttl": 3600,
+
         "certPublic": "",
         "certPrivate": "",
         "certChained": "",
+
         "addUserName": false,
         "forceWebSockets": false,
         "whiteListEnabled": false,
+
         "leEnabled": false,
         "leUpdate": false,
-        "leCheckPort": 80
+        "leCheckPort": 80,
+
+        "loginBackgroundColor": "",
+        "loginBackgroundImage": false
     },
     "objects": [
         {
@@ -204,5 +210,15 @@
             }
         }
     ],
-    "instanceObjects": []
+    "instanceObjects": [
+        {
+            "_id": "",
+            "type": "meta",
+            "common": {
+                "name": "user files and images for background image",
+                "type": "meta.user"
+            },
+            "native": {}
+        }
+    ]
 }

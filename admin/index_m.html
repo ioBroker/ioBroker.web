@@ -14,16 +14,116 @@
 
 <script type="text/javascript">
     var supportedSockets = ['socketio'];
+    var BACK_FILE_NAME = 'login-bg.png';
 
-    function showHideSettings() {
+    function initDropZone() {
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+        var dropZone = document.getElementById('drop_zone');
+        if (dropZone) {
+            dropZone.addEventListener('dragover', handleDragOver,   false);
+            dropZone.addEventListener('drop',     handleFileSelect, false);
+            dropZone.addEventListener('dragend', function () {
+                $(this).css({background: 'white'});
+                console.log('dragend');
+                return false;
+            }, false);
+            dropZone.addEventListener('dragstart', function () {
+                console.log('dragstart');
+            }, false);
+            dropZone.addEventListener('dragleave', function () {
+                $(this).css({background: 'white'});
+            }, false);
+            dropZone.addEventListener('dragenter', function () {
+                $(this).css({background: 'gray'});
+            }, false);
+        }
+    }
+
+    function showBackImage() {
+        // Read names of files for gong
+        socket.emit('readFile', 'web.' + instance, BACK_FILE_NAME, function (err, file) {
+            if (!err && file) {
+                var arrayBufferView = new Uint8Array(file);
+                var blob = new Blob([arrayBufferView], {type: 'image/png'});
+                var urlCreator = window.URL || window.webkitURL;
+                var imageUrl = urlCreator.createObjectURL( blob );
+                $('#login_image').attr('src', imageUrl).show();
+            } else {
+                $('#login_image').hide();
+            }
+        });
+    }
+
+    function uploadFile(file, callback) {
+        var reader = new FileReader();
+
+        // Closure to capture the file information.
+        reader.onload = function(e) {
+            socket.emit('writeFile', 'web.' + instance, BACK_FILE_NAME, e.target.result, function () {
+                if (callback) callback(BACK_FILE_NAME);
+            });
+        };
+
+        // Read in the image file as a data URL.
+        reader.readAsArrayBuffer(file);
+    }
+
+    function handleFileSelect(evt) {
+        evt.preventDefault();
+        var files = evt.target.files || evt.dataTransfer.files; // FileList object
+        $('#drop_indcator').hide();
+
+        // files is a FileList of File objects. List some properties.
+        if (!files.length) return;
+
+        var f = files[0];
+        if (f.size > 5 * 1024 * 1024) {
+            showMessage(_('File %s is too big. Maximum 5MB', escape(f.name)));
+            $('#files').val('');
+            return;
+        }
+
+        uploadFile(f, function (name) {
+            $('#files').val('');
+            showBackImage();
+        });
+    }
+
+    function handleFileSelectDrop(evt) {
+        $('#drop_indcator').hide();
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        var files = evt.dataTransfer.files; // FileList object.
+
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+        for (var i = 0, f; f = files[i]; i++) {
+            if (f.size > 1024 * 1024) {
+                showMessage(_('File %s is too big. Maximum 1MB', escape(f.name)));
+                return;
+            }
+            console.log(escape(f.name));
+        }
+    }
+
+    function handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+        $('#drop_indcator').show();
+    }
+
+    function showHideSettings(id) {
         var $secure = $('#secure');
         var $auth   = $('#auth');
+
         if ($secure.prop('checked')) {
             $('.col-certPublic').show();
             $('.col-certPrivate').show();
             $('.col-certChained').show();
             $('.le-settings').removeClass('disabled');
-            $auth.removeClass('disabled');
 
             if ($('#leEnabled').prop('checked')) {
                 $('.le-sub-settings').show();
@@ -35,24 +135,28 @@
             } else {
                 $('.le-sub-settings').hide();
             }
-
         } else {
             $('.col-certPublic').hide();
             $('.col-certPrivate').hide();
             $('.col-certChained').hide();
-            if ($auth.prop('checked')) {
-                showToast(_('Please activate secure communication'));
-                $auth.prop('checked', false);
-            }
-            $auth.addClass('disabled');
             $('.le-settings').addClass('disabled');
         }
+
         if ($auth.prop('checked')) {
-            $secure.prop('checked', true);
+            $('.tab-login').removeClass('disabled');
             $('#defaultUser').val('admin');
             $('.col-defaultUser').hide();
             $('.col-ttl').show();
+            if ((id === 'auth' || id === 'secure') && !$secure.prop('checked')) {
+                confirmMessage(_('Unsecure_Auth'), _('Warning!'), 'security', [_('Ignore warning'), _('Disable authentication')], function (result) {
+                    if (result === 1) {
+                        $('#auth').prop('checked', false).trigger('change');
+                        showToast(null, _('Authentication was deactivated'));
+                    }
+                });
+            }
         } else {
+            $('.tab-login').addClass('disabled');
             $('.col-defaultUser').show();
             $('.col-ttl').hide();
         }
@@ -61,6 +165,12 @@
             $('.white-list-settings').show();
         } else {
             $('.white-list-settings').hide();
+        }
+
+        if ($('#loginBackgroundImage').prop('checked')) {
+            $('.background').show();
+        } else {
+            $('.background').hide();
         }
     }
 
@@ -112,7 +222,7 @@
             var $value = $('#' + key + '.value');
             if ($value.attr('type') === 'checkbox') {
                 $value.prop('checked', settings[key]).on('change', function() {
-                    showHideSettings();
+                    showHideSettings($(this).attr('id'));
                     onChange();
                 });
             } else {
@@ -131,6 +241,8 @@
         fillUsers('#defaultUser', settings.defaultUser);
 
         showHideSettings();
+        initDropZone();
+        showBackImage();
 
         $('#auth').on('change', function () {
             updateNameSelects();
@@ -142,7 +254,19 @@
         });
 
         $('.btn-floating.white-list-settings').on('click', function () {
-            addWhiteListTableRow(true);
+            addWhiteListTableRow(true, true);
+        });
+
+        $('#loginBackgroundColorHelper').on('change', function () {
+            $('#loginBackgroundColor').val($(this).val());
+        });
+
+        if (settings.loginBackgroundColor) {
+            $('#loginBackgroundColorHelper').val(settings.loginBackgroundColor);
+        }
+
+        $('#loginBackgroundColor').on('change', function () {
+            $('#loginBackgroundColorHelper').val($(this).val() || 'black');
         });
 
         applyWhiteListSettings(settings, onChange);
@@ -171,7 +295,7 @@
 
     var ips = {};
     var inputIndex = 0;
-    function addWhiteListTableRow(change) {
+    function addWhiteListTableRow(change, later) {
         var table = document.getElementById('whiteListTable');
 
         var row = table.insertRow(2);
@@ -213,6 +337,11 @@
         if (change && changedCallback) changedCallback();
 
         defaultHandling();
+
+        if (later) {
+            $('#tab-white-list').find('select').select();
+        }
+
         return row;
     }
 
@@ -240,8 +369,8 @@
             for (var i = 2; i < rowCount; i++) {
                 var row = table.rows[i];
 
-                var ip = (i === (rowCount - 1)) ? 'default' : row.cells[1].childNodes[0].value;
-                var userSelected = (i === (rowCount - 1)) ? $(row.cells[2]).html().toLowerCase() : $(row.cells[2].childNodes[0]).val();
+                var ip = (i === (rowCount - 1)) ? 'default' : $(row.cells[1]).find('input').val();
+                var userSelected = (i === (rowCount - 1)) ? $(row.cells[2]).html().toLowerCase() : $(row.cells[2]).find('select').val();
 
                 settings[ip] = {
                     user:   userSelected,
@@ -251,7 +380,7 @@
                 };
 
                 for (var c = 2; c < row.cells.length; c++) {
-                    var $cell = $(row.cells[c].childNodes[0]);
+                    var $cell = $(row.cells[c]).find('input');
                     var permobject = $cell.attr('permobject');
 
                     var perm = $cell.attr('perm');
@@ -278,7 +407,7 @@
     }
 
     function createWhiteListTable(whiteListSettings) {
-        var table = document.getElementById("whiteListTable");
+        var table = document.getElementById('whiteListTable');
 
         var rowCount = table.rows.length;
 
@@ -304,6 +433,7 @@
             createWhiteListTable(whiteListSettings);
             fillNameSelects(whiteListSettings);
             changedCallback = onChange;
+            $('#tab-white-list').find('select').select();
         } catch (e) {
             alert(e);
         }
@@ -341,17 +471,28 @@
             var row = table.rows[i];
 
             if (i !== rowCount - 1) {
-                var $input = $(row.cells[1].childNodes[0]);
-                $input.off('change');
-                $input.on('change', handleIpChange);
+                $(row.cells[1])
+                    .find('input')
+                    .off('change')
+                    .off('keyup')
+                    .on('change', handleIpChange)
+                    .on('keyup', handleIpChange);
             }
 
-            for (var c = 2; c < row.cells.length; c++) {
-                var $cell = $(row.cells[c].childNodes[0]);
-                $cell.off('change');
-                $cell.on('change', function () {
+            $(row.cells[2])
+                .find('select')
+                .off('change')
+                .on('change', function () {
                     changedCallback && changedCallback();
                 });
+
+            for (var c = 3; c < row.cells.length; c++) {
+                $(row.cells[c])
+                    .find('input')
+                    .off('change')
+                    .on('change', function () {
+                        changedCallback && changedCallback();
+                    });
             }
         }
 
@@ -376,6 +517,7 @@
 
     function fillNameSelect($this, defaultUser) {
         for (var u in users) {
+            if (!users.hasOwnProperty(u)) continue;
             var value = users[u].common.name;
             var valueText = users[u].common.name[0].toUpperCase() + users[u].common.name.substring(1);
             addOptionIfAbsent($this, value, valueText, defaultUser);
@@ -415,10 +557,10 @@
     }
 
     function setRowSettings(row, ip, ipSettings) {
-        var $ip = $(row.cells[1].childNodes[0]);
+        var $ip = $(row.cells[1]).find('input');
         $ip.val(ip);
         for (var c = 2; c < row.cells.length; c++) {
-            var $cell = $(row.cells[c].childNodes[c === 2 ? 1 : 0]);
+            var $cell = $(row.cells[c]).find('input');
 
             if (c > 2) {
                 var permobject = $cell.attr('permobject');
@@ -428,7 +570,7 @@
                     $cell.prop('checked', ipSettings[permobject][perm]);
                 }
             } else {
-                $(row.cells[2].childNodes[0]).val(ipSettings.user).trigger('change');
+                $(row.cells[2]).find('select').val(ipSettings.user).trigger('change');
             }
         }
     }
@@ -466,7 +608,6 @@
                 $input.prop('checked', !$input.prop('checked')).trigger('change');
             }
         });
-
     }
 </script>
 
@@ -501,6 +642,29 @@
     .m .select-wrapper+label {
         top: 100% !important;
     }
+    #drop_zone {
+        border: 2px dashed #bbb;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        padding: 25px;
+        text-align: center;
+        font-size: 20pt;
+        font-weight: bold;
+        font-family:  'Arial';
+        color: #bbb;;
+        min-width: 320px;
+        min-height: 200px
+    }
+
+    .error {
+        border: 2px solid red;
+    }
+    #login_image {
+        width: 320px;
+        height: auto;
+    }
+
 </style>
 </head>
 <body>
@@ -508,9 +672,10 @@
     <div class="row">
         <div class="col s12">
             <ul class="tabs">
-                <li class="tab col s2"><a href="#tab-main"           class="translate active">Main settings</a></li>
-                <li class="tab col s2 le-settings"><a href="#tab-le" class="translate">Let's Encrypt SSL</a></li>
-                <li class="tab col s2"><a href="#tab-white-list"     class="translate">White List</a></li>
+                <li class="tab col s2"><a href="#tab-main"            class="translate active">Main settings</a></li>
+                <li class="tab col s2 le-settings"><a href="#tab-le"  class="translate">Let's Encrypt SSL</a></li>
+                <li class="tab col s2"><a href="#tab-white-list"      class="translate">White List</a></li>
+                <li class="tab col s2 tab-login"><a href="#tab-login" class="translate">Background</a></li>
             </ul>
         </div>
         <div id="tab-main" class="col s12 page">
@@ -525,7 +690,7 @@
                     <label class="translate" for="bind">IP:</label>
                 </div>
                 <div class="col s12 m4 l1">
-                    <input class="value number" id="port" size="5" maxlength="5" type="number"/>
+                    <input class="value" id="port" size="5" maxlength="5" type="number"/>
                     <label class="translate" for="port">Port:</label>
                 </div>
             </div>
@@ -603,7 +768,7 @@
             </div>
             <div class="row le-sub-settings le-sub-settings-update">
                 <div class="col s11 m4 l2">
-                    <input class="value number" id="lePort" type="number" size="5" maxlength="5" data-link="lets-encrypt-certificates"/>
+                    <input class="value" id="lePort" type="number" size="5" maxlength="5" data-link="lets-encrypt-certificates"/>
                     <label for="lePort" class="translate">Port to check the domain:</label>
                 </div>
             </div>
@@ -717,6 +882,40 @@
                 </tbody>
             </table >
         </div>
+        <div id="tab-login" class="col s12 page">
+            <div class="row">
+                <div class="col s12 m8 l4">
+                    <input class="value" id="loginBackgroundColor" type="text"/>
+                    <label class="translate" for="loginBackgroundColor">Background color of the login screen</label>
+                    <input id="loginBackgroundColorHelper" type="color"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m4 l4">
+                    <input class="value" id="loginBackgroundImage" type="checkbox"/>
+                    <span class="translate" for="loginBackgroundImage">Background image</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m4 l4 file-field input-field background">
+                    <div class="btn">
+                        <span class="translate">Upload image</span>
+                        <input type="file" accept=".png,image/png" id="files" name="files" />
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m4 l4 background">
+                    <div id="drop_zone">
+                        <span class="translate">place here</span>
+                        <img id="login_image" src="" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <!--div class="m adapter-container">
@@ -796,7 +995,7 @@
                 <tr class="le-settings"><td colspan="2"><h3 class="translate">Let's Encrypt settings</h3></tr>
                 <tr class="le-settings"><td><label for="leEnabled" class="translate">Use Lets Encrypt certificates:</label></td><td><input  class="value" id="leEnabled"   type="checkbox" /></td></tr>
                 <tr class="le-settings le-sub-settings"><td><label for="leUpdate" class="translate">Use this instance for automatic update:</label></td><td><input  class="value" id="leUpdate" type="checkbox" /></td></tr>
-                <tr class="le-settings le-sub-settings le-sub-settings-update"><td><label for="lePort" class="translate">Port to check the domain:</label></td><td><input class="value number" id="lePort" type="number" size="5" maxlength="5" /></td></tr>
+                <tr class="le-settings le-sub-settings le-sub-settings-update"><td><label for="lePort" class="translate">Port to check the domain:</label></td><td><input class="value" id="lePort" type="number" size="5" maxlength="5" /></td></tr>
 
             </table>
         </div>
