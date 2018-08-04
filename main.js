@@ -974,7 +974,7 @@ function initWebServer(settings) {
 
             // get adapter name
             if (webByVersion[id]) {
-                if (!versionPrefix.match(/^\d+\.\d+.\d+$/)) {
+                if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
                     // redirect to version
                     res.set('location', '/' + id + '/' + webByVersion[id] + '/' + url);
                     res.status(301).send();

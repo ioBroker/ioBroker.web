@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.1",
+        "version": "2.4.2",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -15,6 +15,17 @@
             "pl": "Serwer internetowy"
         },
         "news": {
+            "2.4.2":  {
+                "en": "Fixed error with the access by the version",
+                "de": "Fehler beim Zugriff der Version behoben",
+                "ru": "Исправлена ​​ошибка с доступом к версии",
+                "pt": "Corrigido erro com o acesso pela versão",
+                "nl": "Vaste fout met de toegang door de versie",
+                "fr": "Erreur corrigée avec l'accès par la version",
+                "it": "Risolto errore con l'accesso dalla versione",
+                "es": "Se arregló el error con el acceso de la versión",
+                "pl": "Naprawiono błąd związany z dostępem przez wersję"
+            },
             "2.4.1": {
                 "en": "The support of the versioned links to adapter was added\nWhiteList was corrected\nCustom login background is supported",
                 "de": "Die Unterstützung der versionierten Links zum Adapter wurde hinzugefügt\nWhiteList wurde korrigiert\nBenutzerdefinierter Login-Hintergrund wird unterstützt",

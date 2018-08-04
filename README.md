@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.4.2 (2018-08-04)
+* (bluefox) Fixed error with the access by the version
+
 ### 2.4.1 (2018-07-21)
 * (bluefox) The support of the versioned links to adapter was added
 * (bluefox) WhiteList was corrected
