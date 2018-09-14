@@ -566,7 +566,6 @@ function prepareLoginTemplate() {
     return template.replace('background: black;', def);
 }
 
-
 function initAuth(server, settings) {
     session =          require('express-session');
     cookieParser =     require('cookie-parser');
@@ -741,7 +740,7 @@ function initWebServer(settings) {
                     parts[0] += '?' + req.body.username;
                     redirect = parts.join('#');
                 }
-                let authenticate = passport.authenticate('local', {
+                passport.authenticate('local', {
                     successRedirect: redirect,
                     failureRedirect: '/login/index.html' + req.body.origin + (req.body.origin ? '&error' : '?error'),
                     failureFlash: 'Invalid username or password.'
@@ -763,8 +762,9 @@ function initWebServer(settings) {
                     /\.ico(\?.*)?$/.test(req.originalUrl)
                 ) {
                     return next();
+                } else {
+                    autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
                 }
-				autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
             });
         } else {
             server.app.get('/login', (req, res) => {
@@ -1042,7 +1042,7 @@ function initWebServer(settings) {
                                     mimeType: mimeType
                                 };
                             }
-                            
+
                             res.contentType(mimeType);
                             res.status(200).send(buffer);
                         }
