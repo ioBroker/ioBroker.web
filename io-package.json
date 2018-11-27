@@ -160,6 +160,7 @@
         "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
         "enabled": true,
         "materialize": true,
+        "compact": true,
         "keywords": [
             "web",
             "server",

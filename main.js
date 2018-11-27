@@ -33,118 +33,127 @@ let webPreSettings = {};
 let webByVersion = {};
 let loginPage    = null;
 
-let adapter = new utils.Adapter({
-    name: 'web',
-    objectChange: (id, obj) => {
-        if (obj && obj.common && obj.common.webExtension && obj.native &&
-            (extensions[id.substring('system.adapter.'.length)] ||
-             obj.native.webInstance === '*' ||
-             obj.native.webInstance === 'adapter.namespace'
-            )
-        ) {
-            adapter.setForeignState('system.adapter.' + adapter.namespace + '.alive', false, true, () => {
-                process.exit(-100);
-            });
-            return;
-        }
+let adapter;
+function startAdapter(options) {
+    options = options || {};
 
-        if (obj && obj.common && obj.common.webPreSettings) {
-            updatePreSettings(obj);
-        }
-
-        // 'system.adapter.'length = 15
-        const _id = id.substring(15).replace(/\.\d+$/, '');
-        if (obj && obj.common && obj.common.webByVersion) {
-            webByVersion[_id] = obj.common.version;
-        } else if (webByVersion[_id]) {
-            delete webByVersion[_id];
-        }
-
-        if (!ownSocket && id === adapter.config.socketio) {
-            if (obj && obj.common && obj.common.enabled && obj.native) {
-                socketUrl = ':' + obj.native.port;
-            } else {
-                socketUrl = '';
+    Object.assign(options,{
+        name: 'web',
+        objectChange: (id, obj) => {
+            if (obj && obj.common && obj.common.webExtension && obj.native &&
+                (extensions[id.substring('system.adapter.'.length)] ||
+                    obj.native.webInstance === '*' ||
+                    obj.native.webInstance === 'adapter.namespace'
+                )
+            ) {
+                adapter.setForeignState('system.adapter.' + adapter.namespace + '.alive', false, true, () => {
+                    adapter.terminate ? adapter.terminate(-100): process.exit(-100);
+                });
+                return;
             }
-        }
 
-        if (webServer.io) {
-            webServer.io.publishAll('objectChange', id, obj);
-        }
-
-        if (webServer.api && adapter.config.auth) {
-            webServer.api.objectChange(id, obj);
-        }
-
-        if (id === 'system.config') {
-            lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
-        }
-
-        // inform extensions
-        for (let e = 0; e < extensions.length; e++) {
-            try {
-                if (extensions[e].obj && extensions[e].obj.objectChange) {
-                    extensions[e].obj.objectChange(id, obj);
-                }
-            } catch (err) {
-                adapter.log.error('Cannot call objectChange for "' + e + '": ' + err);
+            if (obj && obj.common && obj.common.webPreSettings) {
+                updatePreSettings(obj);
             }
-        }
-    },
-    stateChange: (id, state) => {
-        if (webServer.io) webServer.io.publishAll('stateChange', id, state);
-    },
-    unload: callback => {
-        try {
-            adapter.log.info('terminating http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
-            webServer.server.close();
-            adapter.log.info('terminated http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
 
-            callback();
-        } catch (e) {
-            callback();
-        }
-    },
-    ready: () => {
-        // Generate secret for session manager
-        adapter.getForeignObject('system.config', (err, obj) => {
-            if (!err && obj) {
-                if (!obj.native || !obj.native.secret) {
-                    obj.native = obj.native || {};
-                    require('crypto').randomBytes(24, (ex, buf) => {
-                        secret = buf.toString('hex');
-                        adapter.extendForeignObject('system.config', {native: {secret: secret}});
-                        main();
-                    });
-                } else {
-                    secret = obj.native.secret;
-                    main();
-                }
-            } else {
-                adapter.logger.error('Cannot find object system.config');
+            // 'system.adapter.'length = 15
+            const _id = id.substring(15).replace(/\.\d+$/, '');
+            if (obj && obj.common && obj.common.webByVersion) {
+                webByVersion[_id] = obj.common.version;
+            } else if (webByVersion[_id]) {
+                delete webByVersion[_id];
             }
-        });
 
-        // information about connected socket.io adapter
-        if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
-            adapter.getForeignObject(adapter.config.socketio, (err, obj) => {
-                if ( obj && obj.common && obj.common.enabled && obj.native) {
+            if (!ownSocket && id === adapter.config.socketio) {
+                if (obj && obj.common && obj.common.enabled && obj.native) {
                     socketUrl = ':' + obj.native.port;
+                } else {
+                    socketUrl = '';
+                }
+            }
+
+            if (webServer.io) {
+                webServer.io.publishAll('objectChange', id, obj);
+            }
+
+            if (webServer.api && adapter.config.auth) {
+                webServer.api.objectChange(id, obj);
+            }
+
+            if (id === 'system.config') {
+                lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
+            }
+
+            // inform extensions
+            for (let e = 0; e < extensions.length; e++) {
+                try {
+                    if (extensions[e].obj && extensions[e].obj.objectChange) {
+                        extensions[e].obj.objectChange(id, obj);
+                    }
+                } catch (err) {
+                    adapter.log.error('Cannot call objectChange for "' + e + '": ' + err);
+                }
+            }
+        },
+        stateChange: (id, state) => {
+            if (webServer.io) webServer.io.publishAll('stateChange', id, state);
+        },
+        unload: callback => {
+            try {
+                adapter.log.info('terminating http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
+                webServer.server.close();
+                adapter.log.info('terminated http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
+
+                callback();
+            } catch (e) {
+                callback();
+            }
+        },
+        ready: () => {
+            // Generate secret for session manager
+            adapter.getForeignObject('system.config', (err, obj) => {
+                if (!err && obj) {
+                    if (!obj.native || !obj.native.secret) {
+                        obj.native = obj.native || {};
+                        require('crypto').randomBytes(24, (ex, buf) => {
+                            secret = buf.toString('hex');
+                            adapter.extendForeignObject('system.config', {native: {secret: secret}});
+                            main();
+                        });
+                    } else {
+                        secret = obj.native.secret;
+                        main();
+                    }
+                } else {
+                    adapter.logger.error('Cannot find object system.config');
                 }
             });
-            // Listen for changes
-            adapter.subscribeForeignObjects(adapter.config.socketio);
-        } else {
-            socketUrl = adapter.config.socketio;
-            ownSocket = (socketUrl !== 'none');
-        }
 
-        // Read language
-        adapter.getForeignObject('system.config', (err, data) => {
-            if (data && data.common) lang = data.common.language || 'en';
-        });
-    }
-});
+            // information about connected socket.io adapter
+            if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
+                adapter.getForeignObject(adapter.config.socketio, (err, obj) => {
+                    if ( obj && obj.common && obj.common.enabled && obj.native) {
+                        socketUrl = ':' + obj.native.port;
+                    }
+                });
+                // Listen for changes
+                adapter.subscribeForeignObjects(adapter.config.socketio);
+            } else {
+                socketUrl = adapter.config.socketio;
+                ownSocket = (socketUrl !== 'none');
+            }
+
+            // Read language
+            adapter.getForeignObject('system.config', (err, data) => {
+                if (data && data.common) lang = data.common.language || 'en';
+            });
+        }
+    });
+
+    adapter = new utils.Adapter(options);
+
+    return adapter;
+}
 function extractPreSetting(obj, attr) {
     const parts = attr.split('.');
     if (parts.length === 1) {
@@ -848,7 +857,7 @@ function initWebServer(settings) {
         server.server.__server = server;
     } else {
         adapter.log.error('port missing');
-        process.exit(1);
+        adapter.terminate ? adapter.terminate(1): process.exit(1);
     }
 
     if (server.server) {
@@ -857,7 +866,7 @@ function initWebServer(settings) {
             port = parseInt(port, 10);
             if (port !== settings.port && !settings.findNextPort) {
                 adapter.log.error('port ' + settings.port + ' already in use');
-                process.exit(1);
+                adapter.terminate ? adapter.terminate(1): process.exit(1);
             }
             server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
             adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
@@ -1057,4 +1066,12 @@ function initWebServer(settings) {
     } else {
         return null;
     }
+}
+
+// If started as allInOne mode => return function to create instance
+if (typeof module !== undefined && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
