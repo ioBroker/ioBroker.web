@@ -6,9 +6,11 @@
 const express = require('express');
 const fs =      require('fs');
 const path =    require('path');
-const utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
+const utils =   require('./lib/utils'); // Get common adapter utils
 const LE =      require(utils.controllerDir + '/lib/letsencrypt.js');
 const mime =    require('mime-types');
+const adapterName = require('./package.json').name.split('.').pop();
+
 let session;// =           require('express-session');
 let cookieParser;// =      require('cookie-parser');
 let bodyParser;// =        require('body-parser');
@@ -38,7 +40,7 @@ function startAdapter(options) {
     options = options || {};
 
     Object.assign(options,{
-        name: 'web',
+        name: adapterName,
         objectChange: (id, obj) => {
             if (obj && obj.common && obj.common.webExtension && obj.native &&
                 (extensions[id.substring('system.adapter.'.length)] ||
