@@ -12,7 +12,8 @@
             "fr": "Serveur Web",
             "it": "Server web",
             "es": "Servidor web",
-            "pl": "Serwer internetowy"
+            "pl": "Serwer internetowy",
+            "zh-cn": "Web服务器"
         },
         "news": {
             "2.4.2":  {
@@ -151,7 +152,8 @@
             "fr": "ouvre un serveur web pour d'autres adaptateurs",
             "it": "apre un server web per altri adattatori",
             "es": "abre un servidor web para otros adaptadores",
-            "pl": "otwiera serwer internetowy dla innych kart"
+            "pl": "otwiera serwer internetowy dla innych kart",
+            "zh-cn": "为其他适配器服务的web服务器"
         },
         "mode": "daemon",
         "platform": "Javascript/Node.js",
