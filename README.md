@@ -30,6 +30,9 @@ If authentication is enabled and the user enters 5 times invalid password during
 After 15th wrong attempt the user must wait 1 hour.
 
 ## Changelog
+### 2.4.3 (2019-01-14)
+* (SchumyHao) Add Chinese support
+
 ### 2.4.2 (2018-08-04)
 * (bluefox) Fixed error with the access by the version
 
