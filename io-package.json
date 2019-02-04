@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.2",
+        "version": "2.4.3",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -12,9 +12,22 @@
             "fr": "Serveur Web",
             "it": "Server web",
             "es": "Servidor web",
-            "pl": "Serwer internetowy"
+            "pl": "Serwer internetowy",
+            "zh-cn": "Web服务器"
         },
         "news": {
+            "2.4.3": {
+                "en": "Add Chinese support",
+                "de": "Chinesische Unterstützung hinzufügen",
+                "ru": "Добавить поддержку китайцев",
+                "pt": "Adicionar suporte chinês",
+                "nl": "Voeg Chinese ondersteuning toe",
+                "fr": "Ajouter un support chinois",
+                "it": "Aggiungi supporto cinese",
+                "es": "Añadir soporte chino",
+                "pl": "Dodaj chińskie wsparcie",
+                "zh-cn": "添加中文支持"
+            },
             "2.4.2":  {
                 "en": "Fixed error with the access by the version",
                 "de": "Fehler beim Zugriff der Version behoben",
@@ -151,7 +164,8 @@
             "fr": "ouvre un serveur web pour d'autres adaptateurs",
             "it": "apre un server web per altri adattatori",
             "es": "abre un servidor web para otros adaptadores",
-            "pl": "otwiera serwer internetowy dla innych kart"
+            "pl": "otwiera serwer internetowy dla innych kart",
+            "zh-cn": "为其他适配器服务的web服务器"
         },
         "mode": "daemon",
         "platform": "Javascript/Node.js",
@@ -160,6 +174,7 @@
         "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
         "enabled": true,
         "materialize": true,
+        "compact": true,
         "keywords": [
             "web",
             "server",
