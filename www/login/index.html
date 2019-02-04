@@ -57,10 +57,10 @@
             background: #f3f3f3;
             border-bottom: 1px solid #cfcfcf;
             border-radius: 3px 3px 0 0;
-            background-image: -webkit-linear-gradient(top, whiteffd, #eef2f5);
-            background-image: -moz-linear-gradient(top, whiteffd, #eef2f5);
-            background-image: -o-linear-gradient(top, whiteffd, #eef2f5);
-            background-image: linear-gradient(to bottom, whiteffd, #eef2f5);
+            background-image: -webkit-linear-gradient(top, white, #eef2f5);
+            background-image: -moz-linear-gradient(top, white, #eef2f5);
+            background-image: -o-linear-gradient(top, white, #eef2f5);
+            background-image: linear-gradient(to bottom, white, #eef2f5);
             -webkit-box-shadow: 0 1px whitesmoke;
             box-shadow: 0 1px whitesmoke;
         }
@@ -185,42 +185,42 @@
 <section class="container">
     <div class="login">
         <h1 id="login_header">Login to Interface</h1>
-        <form action="/login" method="post" style="text-align:center;vertical-align: middle">
+        <form action="/login" method="post" style="text-align: center; vertical-align: middle">
             <p><input type="text" id="username" name="username" placeholder="Enter login"/></p>
             <p><input type="password" id="password"  name="password" placeholder="Enter password"/></p>
             <input type="hidden" id="origin" name="origin" value=""/>
             <p class="submit"><input type="submit" id="submit" value="Submit"/></p>
         </form>
-        <div id="error" class="error" style="display:none"></div>
+        <div id="error" class="error" style="display: none"></div>
     </div>
 </section>
 <script>
     document.getElementById("origin").value = window.location.search.replace('&error', '');
     var userLang = navigator.language || navigator.userLanguage;
-    if (window.location.search.indexOf('error') != -1) {
-        if (userLang == 'ru') {
+    if (window.location.search.indexOf('error') !== -1) {
+        if (userLang === 'ru') {
             document.getElementById('error').innerHTML = 'Неверные имя пользователя или пароль';
-        } else if (userLang == 'de') {
+        } else if (userLang === 'de') {
             document.getElementById('error').innerHTML = 'Name oder Kennwort sind falsch';
         } else {
             document.getElementById('error').innerHTML = 'Invalid username or password';
         }
         document.getElementById('error').style.display = '';
     }
-	if (userLang == 'ru') {
+	if (userLang === 'ru') {
 		document.getElementById('login_header').innerHTML = 'Введите имя пользователя и пароль';
-	} else if (userLang == 'de') {
+	} else if (userLang === 'de') {
 		document.getElementById('login_header').innerHTML = 'Bitte Anwendername und Kennwort';
 	} else {
 		document.getElementById('login_header').innerHTML = 'Please enter user name and password';
 	}
-    if (userLang == 'ru') {
+    if (userLang === 'ru') {
         if (document.getElementById('username').placeholder) {
             document.getElementById('username').placeholder = 'Введите логин';
             document.getElementById('password').placeholder = 'Введите пароль';
         }
         document.getElementById('submit').value = 'Ok';
-    } else if (userLang == 'de') {
+    } else if (userLang === 'de') {
         if (document.getElementById('username').placeholder) {
             document.getElementById('username').placeholder = 'Login eingeben';
             document.getElementById('password').placeholder = 'Kennwort eingeben';
