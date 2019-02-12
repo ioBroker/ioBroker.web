@@ -156,6 +156,7 @@ function startAdapter(options) {
 
     return adapter;
 }
+
 function extractPreSetting(obj, attr) {
     const parts = attr.split('.');
     if (parts.length === 1) {
@@ -1070,7 +1071,7 @@ function initWebServer(settings) {
     }
 }
 
-// If started as allInOne mode => return function to create instance
+// If started as allInOne/compact mode => return function to create instance
 if (module && module.parent) {
     module.exports = startAdapter;
 } else {
