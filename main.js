@@ -6,7 +6,7 @@
 const express = require('express');
 const fs =      require('fs');
 const path =    require('path');
-const utils =   require('./lib/utils'); // Get common adapter utils
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const LE =      require(utils.controllerDir + '/lib/letsencrypt.js');
 const mime =    require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
