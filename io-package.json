@@ -167,6 +167,7 @@
             "pl": "otwiera serwer internetowy dla innych kart",
             "zh-cn": "为其他适配器服务的web服务器"
         },
+        "license": "MIT",
         "mode": "daemon",
         "platform": "Javascript/Node.js",
         "loglevel": "info",
