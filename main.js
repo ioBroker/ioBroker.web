@@ -35,6 +35,12 @@ let webPreSettings = {};
 let webByVersion = {};
 let loginPage    = null;
 
+function getAppName() {
+    const parts = __dirname.replace(/\\/g, '/').split('/');
+    return parts[parts.length - 1].split('.')[0];
+}
+utils.appName = getAppName();
+
 let adapter;
 function startAdapter(options) {
     options = options || {};
