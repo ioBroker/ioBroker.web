@@ -702,6 +702,11 @@ function initWebServer(settings) {
         server.app = express();
 
         server.app.disable('x-powered-by');
+        // enable use of i-frames together with HTTPS
+        server.app.get('/*', (req, res, next) => {
+            res.header('X-Frame-Options' , 'SAMEORIGIN');
+            next(); // http://expressjs.com/guide.html#passing-route control
+        });
 
         if (settings.auth) {
 
