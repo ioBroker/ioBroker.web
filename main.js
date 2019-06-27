@@ -887,6 +887,19 @@ function initWebServer(settings) {
         });
     }
 
+    // Activate integrated socket
+    if (ownSocket) {
+        let IOSocket = require(utils.appName + '.socketio/lib/socket.js');
+        let socketSettings = JSON.parse(JSON.stringify(settings));
+        // Authentication checked by server itself
+        socketSettings.auth             = settings.auth;
+        socketSettings.secret           = secret;
+        socketSettings.store            = store;
+        socketSettings.ttl              = settings.ttl || 3600;
+        socketSettings.forceWebSockets  = settings.forceWebSockets || false;
+        server.io = new IOSocket(server.server, socketSettings, adapter);
+    }
+
     // activate extensions
     for (let e in extensions) {
         if (!extensions.hasOwnProperty(e)) continue;
@@ -910,22 +923,14 @@ function initWebServer(settings) {
 
     // Activate integrated simple API
     if (settings.simpleapi) {
-        let SimpleAPI = require(utils.appName + '.simple-api/lib/simpleapi.js');
+        try {
+            let SimpleAPI = require(utils.appName + '.simple-api/lib/simpleapi.js');
 
-        server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
-    }
+            server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
+        } catch (e) {
+            adapter.log.error('Cannot find simple api module! ' + e);
+        }
 
-    // Activate integrated socket
-    if (ownSocket) {
-        let IOSocket = require(utils.appName + '.socketio/lib/socket.js');
-        let socketSettings = JSON.parse(JSON.stringify(settings));
-        // Authentication checked by server itself
-        socketSettings.auth             = settings.auth;
-        socketSettings.secret           = secret;
-        socketSettings.store            = store;
-        socketSettings.ttl              = settings.ttl || 3600;
-        socketSettings.forceWebSockets  = settings.forceWebSockets || false;
-        server.io = new IOSocket(server.server, socketSettings, adapter);
     }
 
     if (server.app) {
@@ -1041,7 +1046,13 @@ function initWebServer(settings) {
                                     socketIoFile = fs.readFileSync(fileDir + 'socket.io.js');
                                 }
                             } catch (e) {
-                                socketIoFile = false;
+                                try {
+                                    socketIoFile = fs.readFileSync(__dirname + '/www/lib/js/socket.io.js');
+                                } catch (e) {
+                                    adapter.log.error('Cannot read socket.io.js: ' + e);
+                                    socketIoFile = false;
+                                }
+
                             }
                             if (socketIoFile) {
                                 res.contentType('text/javascript');

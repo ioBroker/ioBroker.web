@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.3",
+        "version": "2.4.4",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "2.4.4": {
+                "en": "Fixed issue with socket.io.js not found",
+                "de": "Problem behoben, bei dem socket.io.js nicht gefunden wurde",
+                "ru": "Исправлена проблема с не найденным socket.io.js",
+                "pt": "Corrigido o problema com o socket.io.js não encontrado",
+                "nl": "Er is een probleem met socket.io.js niet gevonden",
+                "fr": "Correction du problème avec socket.io.js introuvable",
+                "it": "Risolto il problema con socket.io.js non trovato",
+                "es": "Solucionado el problema con socket.io.js no encontrado",
+                "pl": "Naprawiono problem z nie znaleziono pliku socket.io.js",
+                "zh-cn": "修复了找不到socket.io.js的问题"
+            },
             "2.4.3": {
                 "en": "Add Chinese support",
                 "de": "Chinesische Unterstützung hinzufügen",
@@ -71,72 +83,6 @@
                 "it": "Gli URL sono stati disinfettati",
                 "es": "Las URL se desinfectaron",
                 "pl": "Adresy URL zostały odkażone"
-            },
-            "2.3.5": {
-                "en": "Socket.io version 2.1.1 was used\nAuthentication problem was fixed",
-                "de": "Socket.io Version 2.1.1 wurde verwendet\nAuthentifizierungsproblem wurde behoben",
-                "ru": "Использовалась версия 2.1.1 Socket.io\nИсправлена ​​проблема аутентификации",
-                "pt": "Socket.io versão 2.1.1 foi usado\nProblema de autenticação foi corrigido",
-                "nl": "Socket.io versie 2.1.1 werd gebruikt\nVerificatieprobleem is opgelost",
-                "fr": "Socket.io version 2.1.1 a été utilisé\nLe problème d'authentification a été corrigé",
-                "it": "È stato utilizzato Socket.io versione 2.1.1\nIl problema di autenticazione è stato risolto",
-                "es": "Se utilizó la versión 2.1.1 de Socket.io\nSe corrigió el problema de autenticación",
-                "pl": "Użyto wersji Socket.io 2.1.1\nNaprawiono problem z uwierzytelnianiem"
-            },
-            "2.3.4": {
-                "en": "Used socket.io version 1.7.4",
-                "de": "Gebrauchte socket.io Version 1.7.4",
-                "ru": "Используется версия socket.io 1.7.4",
-                "pt": "Usado socket.io versão 1.7.4",
-                "nl": "Gebruikte socket.io-versie 1.7.4",
-                "fr": "Version socket.io utilisée 1.7.4",
-                "it": "Usato socket.io versione 1.7.4",
-                "es": "Utiliza socket.io versión 1.7.4",
-                "pl": "Używana wersja socket.io 1.7.4"
-            },
-            "2.3.3": {
-                "en": "Fixing the new version of socket.io",
-                "de": "Fixieren der neuen Version von socket.io",
-                "ru": "Фиксация новой версии socket.io",
-                "pt": "Corrigindo a nova versão do socket.io",
-                "nl": "De nieuwe versie van socket.io herstellen",
-                "fr": "Correction de la nouvelle version de socket.io",
-                "it": "Correggere la nuova versione di socket.io",
-                "es": "Se corrigió la nueva versión de socket.io",
-                "pl": "Naprawianie nowej wersji pliku socket.io"
-            },
-            "2.3.2": {
-                "en": "fixed select ID dialog for old style",
-                "de": "Auswahldialog für alten Stil korrigiert",
-                "ru": "поправлен диалог выбора ID для старого стиля",
-                "pt": "Diálogo de ID de seleção fixa para estilo antigo",
-                "nl": "vast select-ID-dialoogvenster voor oude stijl",
-                "fr": "boîte de dialogue fixe de sélection d'identifiant pour le style ancien",
-                "it": "corretto selezionare la finestra di dialogo ID per vecchio stile",
-                "es": "dialogo de selección de ID fijo para el viejo estilo",
-                "pl": "poprawiono okno dialogowe wyboru ID dla starego stylu"
-            },
-            "2.3.1":  {
-                "en": "Updated socket.io version to 2.1.0",
-                "de": "Die Version von socket.io wurde auf 2.1.0 aktualisiert",
-                "ru": "Обновлена ​​версия socket.io до версии 2.1.0",
-                "pt": "Versão atualizada do socket.io para 2.1.0",
-                "nl": "Nieuwe socket.io-versie bijgewerkt naar 2.1.0",
-                "fr": "Mise à jour de la version socket.io vers la version 2.1.0",
-                "it": "Versione aggiornata di socket.io alla versione 2.1.0",
-                "es": "Versión actualizada de socket.io a 2.1.0",
-                "pl": "Zaktualizowana wersja pliku socket.io do wersji 2.1.0"
-            },
-			"2.3.0": {
-                "en": "The required for Admin3 libraries are added",
-				"de": "Die für Admin3 erforderlichen Bibliotheken werden hinzugefügt",
-				"ru": "Добавлены необходимые для Admin3 библиотеки",
-				"pt": "O necessário para as bibliotecas Admin3 são adicionados",
-				"nl": "De vereiste voor Admin3-bibliotheken worden toegevoegd",
-				"fr": "Les requis pour les bibliothèques Admin3 sont ajoutés",
-				"it": "Il richiesto per le librerie Admin3 è stato aggiunto",
-				"es": "Se requiere lo necesario para las bibliotecas de Admin3",
-				"pl": "Wymagane dla bibliotek Admin3 zostały dodane"
             },
             "2.2.0": {
                 "en": "Ready for Admin3",
