@@ -746,9 +746,7 @@ function initWebServer(settings) {
 						return res.redirect(redirect);
 					}
 				}
-                req.logIn(settings.whiteListSettings[whiteListIp].user, err => {
-					return next(err);
-                });
+                req.logIn(settings.whiteListSettings[whiteListIp].user, err => next(err));
             };
 
             server.app.post('/login', (req, res, next) => {
@@ -790,12 +788,8 @@ function initWebServer(settings) {
                 }
             });
         } else {
-            server.app.get('/login', (req, res) => {
-                res.redirect('/');
-            });
-            server.app.get('/logout', (req, res) => {
-                res.redirect('/');
-            });
+            server.app.get('/login', (req, res) => res.redirect('/'));
+            server.app.get('/logout', (req, res) => res.redirect('/'));
 
             if (settings.whiteListEnabled) {
                 initAuth(server, settings);
@@ -1031,7 +1025,7 @@ function initWebServer(settings) {
                     }
                 } else {
                     // special solution for socket.io
-                    if (socketIoFile !== false && url.match(/\/socket\.io\.js(\?.*)?$/)) {
+                    if (socketIoFile !== false && (url.startsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/))) {
                         if (socketIoFile) {
                             res.contentType('text/javascript');
                             res.status(200).send(socketIoFile);
@@ -1052,7 +1046,6 @@ function initWebServer(settings) {
                                     adapter.log.error('Cannot read socket.io.js: ' + e);
                                     socketIoFile = false;
                                 }
-
                             }
                             if (socketIoFile) {
                                 res.contentType('text/javascript');
