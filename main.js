@@ -80,11 +80,11 @@ function startAdapter(options) {
                 }
             }
 
-            if (webServer.io) {
+            if (webServer && webServer.io) {
                 webServer.io.publishAll('objectChange', id, obj);
             }
 
-            if (webServer.api && adapter.config.auth) {
+            if (webServer && webServer.api && adapter.config.auth) {
                 webServer.api.objectChange(id, obj);
             }
 
@@ -104,7 +104,7 @@ function startAdapter(options) {
             }
         },
         stateChange: (id, state) => {
-            if (webServer.io) webServer.io.publishAll('stateChange', id, state);
+            if (webServer && webServer.io) webServer.io.publishAll('stateChange', id, state);
         },
         unload: callback => {
             try {
