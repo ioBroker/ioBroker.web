@@ -41,6 +41,55 @@ function getAppName() {
 }
 utils.appName = getAppName();
 
+// copied from here: https://github.com/component/escape-html/blob/master/index.js
+const matchHtmlRegExp = /["'&<>]/;
+function escapeHtml (string) {
+    const str = '' + string;
+    const match = matchHtmlRegExp.exec(str);
+
+    if (!match) {
+        return str;
+    }
+
+    let escape;
+    let html = '';
+    let index;
+    let lastIndex = 0;
+
+    for (index = match.index; index < str.length; index++) {
+        switch (str.charCodeAt(index)) {
+            case 34: // "
+                escape = '&quot;';
+                break;
+            case 38: // &
+                escape = '&amp;';
+                break;
+            case 39: // '
+                escape = '&#39;';
+                break;
+            case 60: // <
+                escape = '&lt;';
+                break;
+            case 62: // >
+                escape = '&gt;';
+                break;
+            default:
+                continue;
+        }
+
+        if (lastIndex !== index) {
+            html += str.substring(lastIndex, index);
+        }
+
+        lastIndex = index + 1;
+        html += escape;
+    }
+
+    return lastIndex !== index
+        ? html + str.substring(lastIndex, index)
+        : html;
+}
+
 let adapter;
 function startAdapter(options) {
     options = options || {};
@@ -723,8 +772,11 @@ function initWebServer(settings) {
                         parts.shift();
                         const ref = parts.join('/');
 						// if request for web/lib, ignore it, because no redirect information
-						if (parts[0] === 'lib') return res.status(200).send('');
-						return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+						if (parts[0] === 'lib') {
+						    return res.status(200).send('');
+                        } else {
+                            return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                        }
 					} else {
 						return res.redirect(redirect);
 					}
@@ -740,8 +792,11 @@ function initWebServer(settings) {
 						let parts = req.originalUrl.split('/');
                         parts.shift();
                         const ref = parts.join('/');
-						if (parts[0] === 'lib') return res.status(200).send('');
-                        return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+						if (parts[0] === 'lib') {
+						    return res.status(200).send('');
+                        } else {
+                            return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                        }
 					} else {
 						return res.redirect(redirect);
 					}
@@ -752,18 +807,31 @@ function initWebServer(settings) {
             server.app.post('/login', (req, res, next) => {
                 let redirect = '/';
                 let parts;
-                if (req.body.origin) {
-                    parts = req.body.origin.split('=');
-                    if (parts[1]) redirect = decodeURIComponent(parts[1]);
+                req.body = req.body || {};
+                const origin = req.body.origin || '?href=%2F';
+                if (origin) {
+                    parts = origin.split('=');
+                    if (parts.length > 1 && parts[1]) {
+                        redirect = decodeURIComponent(parts[1]);
+                        // if some invalid characters in redirect
+                        if (redirect.match(/[^-_a-zA-Z0-9&%?.]/)) {
+                            redirect = '/';
+                        }
+                    }
                 }
-                if (req.body && req.body.username && settings.addUserName && redirect.indexOf('?') === -1) {
+
+                req.body.password = (req.body.password || '').toString();
+                req.body.username = (req.body.username || '').toString();
+
+                if (req.body.username && settings.addUserName && redirect.indexOf('?') === -1) {
                     parts = redirect.split('#');
                     parts[0] += '?' + req.body.username;
                     redirect = parts.join('#');
                 }
+
                 passport.authenticate('local', {
                     successRedirect: redirect,
-                    failureRedirect: '/login/index.html' + req.body.origin + (req.body.origin ? '&error' : '?error'),
+                    failureRedirect: '/login/index.html' + origin + (origin ? '&error' : '?error'),
                     failureFlash: 'Invalid username or password.'
                 })(req, res, next);
             });
@@ -775,6 +843,11 @@ function initWebServer(settings) {
 
             // route middleware to make sure a user is logged in
             server.app.use((req, res, next) => {
+                // return favicon always
+                if (req.originalUrl.startsWith('/login/favicon.ico')) {
+                    res.set('Content-Type', 'image/x-icon');
+                    return res.send(fs.readFileSync(__dirname + '/www/login/favicon.ico'));
+                }
 				// if cache.manifest got back not 200 it makes an error
                 if (req.isAuthenticated() ||
                     /web\.\d+\/login-bg\.png(\?.*)?$/.test(req.originalUrl) ||
@@ -798,13 +871,11 @@ function initWebServer(settings) {
                     let whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
                     adapter.log.silly('whiteListIp ' + whiteListIp);
                     if (whiteListIp) {
-                       req.logIn(settings.whiteListSettings[whiteListIp].user, err => {
-                            return next(err);
-                        });
+                       req.logIn(settings.whiteListSettings[whiteListIp].user, err =>
+                           next(err));
                     } else {
-                        req.logIn(settings.defaultUser, err => {
-                            return next(err);
-                        });
+                        req.logIn(settings.defaultUser, err =>
+                            next(err));
                     }
                 });
             }
@@ -828,7 +899,7 @@ function initWebServer(settings) {
                             }
                             res.status(200).send(obj);
                         } else {
-                            res.status(404).send('404 Not found. File ' + fileName[0] + ' not found');
+                            res.status(404).send('404 Not found. File ' + escapeHtml(fileName[0]) + ' not found');
                         }
                     });
                 });
@@ -924,7 +995,6 @@ function initWebServer(settings) {
         } catch (e) {
             adapter.log.error('Cannot find simple api module! ' + e);
         }
-
     }
 
     if (server.app) {
@@ -954,7 +1024,7 @@ function initWebServer(settings) {
             if (url === '/' || url === '/index.html') {
                 getListOfAllAdapters((err, data) => {
                     if (err) {
-                        res.status(500).send('500. Error' + e);
+                        res.status(500).send('500. Error' + escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err));
                     } else {
                         res
                             .set('Content-Type', 'text/html')
@@ -1014,7 +1084,7 @@ function initWebServer(settings) {
 
                     if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');
-                        res.status(200).send('File ' + url + ' not found', 404);
+                        res.status(200).send('File ' + escapeHtml(url) + ' not found', 404);
                     } else {
                         // Store file in cache
                         if (settings.cache) {
@@ -1054,11 +1124,11 @@ function initWebServer(settings) {
                             }
                         }
                     }
-                    
+
                     adapter.readFile(id, webByVersion[id] ? url.substring(versionPrefix.length + 1) : url , {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
-                            res.status(404).send('File ' + url + ' not found: ' + err);
+                            res.status(404).send('File ' + escapeHtml(url) + ' not found: ' + escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err));
                         } else {
                             mimeType = mimeType || mime.lookup(url) || 'text/javascript';
 

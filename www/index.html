@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head><title>ioBroker.web</title>
+<head>
+    <title>ioBroker.web</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon"       href="lib/img/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="lib/css/bootstrap.min.css" media="screen">
@@ -65,17 +66,42 @@
         var list = [];
         systemDictionary = {
             'welcome': {
-                'en': 'welcome to ioBroker.web',
-                'de': 'Wilkommen zu ioBroker.web',
-                'ru': 'Добро пожаловать в ioBroker.web'
+                "en": "Welcome to ioBroker.web",
+                "de": "Willkommen bei ioBroker.web",
+                "ru": "Добро пожаловать в ioBroker.web",
+                "pt": "Bem-vindo ao ioBroker.web",
+                "nl": "Welkom bij ioBroker.web",
+                "fr": "Bienvenue sur ioBroker.web",
+                "it": "Benvenuto in ioBroker.web",
+                "es": "Bienvenido a ioBroker.web",
+                "pl": "Witamy w ioBroker.web",
+                "zh-cn": "欢迎来到ioBroker.web"
             },
             'Directories': {'en': 'Directories', 'de': 'Verzeichnise', 'ru': 'Пути'},
             'your are lost': {
-                'en': 'It seems to be you are lost. Here are some files, that you can open:',
-                'de': 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann:',
-                'ru': 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:'
+                'en': 'It seems to be you are lost. Here are some files, that you can open: ',
+                'de': 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann: ',
+                'ru': 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:',
+                "pt": "Parece que você está perdido. Aqui estão alguns arquivos que você pode abrir:",
+                "nl": "Het lijkt erop dat je verdwaald bent. Hier zijn enkele bestanden die u kunt openen:",
+                "fr": "Il semble que tu sois perdu. Voici quelques fichiers que vous pouvez ouvrir:",
+                "it": "Sembra che tu sia perso. Ecco alcuni file che puoi aprire:",
+                "es": "Parece ser que estás perdido. Aquí hay algunos archivos que puede abrir:",
+                "pl": "Wygląda na to, że jesteś zagubiony. Oto kilka plików, które możesz otworzyć:",
+                "zh-cn": "看来你迷路了。以下是一些您可以打开的文件："
             },
-            "Sign out": {"en": "Sign out", "de": "Ausloggen", "ru": "Выйти"}
+            "Sign out": {
+                "en": "Sign out",
+                "de": "Ausloggen",
+                "ru": "Выйти",
+                "pt": "Sair",
+                "nl": "Afmelden",
+                "fr": "Déconnexion",
+                "it": "disconnessione",
+                "es": "desconectar",
+                "pl": "Wyloguj się",
+                "zh-cn": "登出"
+            }
         };
 
         // Do not delete it. It will used for dynamic generation:
