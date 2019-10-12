@@ -17,6 +17,18 @@
         },
         "news": {
             "2.4.5": {
+                "en": "Fixed issue with simple-api",
+                "de": "Problem mit Simple-API behoben",
+                "ru": "Исправлена проблема с Simple API",
+                "pt": "Corrigido o problema com a API simples",
+                "nl": "Probleem opgelost met simple-api",
+                "fr": "Correction d'un problème avec simple-api",
+                "it": "Risolto il problema con simple-api",
+                "es": "Problema solucionado con simple-api",
+                "pl": "Naprawiono problem z interfejsem Simple-API",
+                "zh-cn": "解决了简单API的问题"
+            },
+            "2.4.4": {
                 "en": "Fixed issue with socket.io.js not found",
                 "de": "Problem behoben, bei dem socket.io.js nicht gefunden wurde",
                 "ru": "Исправлена проблема с не найденным socket.io.js",
