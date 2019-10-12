@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.4",
+        "version": "2.4.5",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,7 +16,7 @@
             "zh-cn": "Web服务器"
         },
         "news": {
-            "2.4.4": {
+            "2.4.5": {
                 "en": "Fixed issue with socket.io.js not found",
                 "de": "Problem behoben, bei dem socket.io.js nicht gefunden wurde",
                 "ru": "Исправлена проблема с не найденным socket.io.js",
