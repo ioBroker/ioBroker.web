@@ -814,7 +814,7 @@ function initWebServer(settings) {
                     if (parts.length > 1 && parts[1]) {
                         redirect = decodeURIComponent(parts[1]);
                         // if some invalid characters in redirect
-                        if (redirect.match(/[^-_a-zA-Z0-9&%?.]/)) {
+                        if (redirect.match(/[^-_a-zA-Z0-9&%?./]/)) {
                             redirect = '/';
                         }
                     }

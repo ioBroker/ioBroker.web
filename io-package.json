@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.5",
+        "version": "2.4.6",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,7 +16,7 @@
             "zh-cn": "Web服务器"
         },
         "news": {
-            "2.4.5": {
+            "2.4.6": {
                 "en": "Fixed issue with simple-api",
                 "de": "Problem mit Simple-API behoben",
                 "ru": "Исправлена проблема с Simple API",
