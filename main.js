@@ -34,6 +34,7 @@ let socketIoFile = null;
 let webPreSettings = {};
 let webByVersion = {};
 let loginPage    = null;
+const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\\s?]/g; // with space
 
 function getAppName() {
     const parts = __dirname.replace(/\\/g, '/').split('/');
@@ -648,6 +649,8 @@ function initAuth(server, settings) {
 
     passport.use(new LocalStrategy(
         function (username, password, done) {
+            username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
+
             if (bruteForce[username] && bruteForce[username].errors > 4) {
                 let minutes = (new Date().getTime() - bruteForce[username].time);
                 if (bruteForce[username].errors < 7) {

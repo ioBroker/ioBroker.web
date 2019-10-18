@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.6",
+        "version": "2.4.7",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "2.4.7": {
+                "en": "Fixed login of non-admin user ",
+                "de": "Fehler beim Anmelden eines Benutzers ohne Administratorrechte behoben",
+                "ru": "Исправлена ошибка входа пользователя без прав администратора",
+                "pt": "Corrigido login do usuário não administrador",
+                "nl": "Vaste aanmelding van niet-admin-gebruiker",
+                "fr": "Connexion fixe de l'utilisateur non-administrateur",
+                "it": "Risolto il login dell'utente non amministratore",
+                "es": "Inicio de sesión fijo de usuario no administrador",
+                "pl": "Naprawiono logowanie użytkownika niebędącego administratorem",
+                "zh-cn": "固定非管理员用户登录"
+            },
             "2.4.6": {
                 "en": "Fixed issue with simple-api",
                 "de": "Problem mit Simple-API behoben",
