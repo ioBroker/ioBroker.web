@@ -755,13 +755,16 @@ function initWebServer(settings) {
 
         server.app.disable('x-powered-by');
         // enable use of i-frames together with HTTPS
+        // todo find the admin port and bind and use it here "ALLOW-FROM ipbind:port"
+        // try to add "Content-Security-Policy: frame-ancestors 'self' example.com *.example.net ;"
+        /*
         server.app.get('/*', (req, res, next) => {
             res.header('X-Frame-Options' , 'SAMEORIGIN');
             next(); // http://expressjs.com/guide.html#passing-route control
         });
+        */
 
         if (settings.auth) {
-
             initAuth(server, settings);
 
             let autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
