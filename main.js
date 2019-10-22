@@ -131,11 +131,19 @@ function startAdapter(options) {
             }
 
             if (webServer && webServer.io) {
-                webServer.io.publishAll('objectChange', id, obj);
+                try {
+                    webServer.io.publishAll('objectChange', id, obj);
+                } catch (e) {
+                    adapter.log.error('Cannot objectChange to io: ' + e);
+                }
             }
 
             if (webServer && webServer.api && adapter.config.auth) {
-                webServer.api.objectChange(id, obj);
+                try {
+                    webServer.api.objectChange && webServer.api.objectChange(id, obj);
+                } catch (e) {
+                    adapter.log.error('Cannot call simple api: ' + e);
+                }
             }
 
             if (id === 'system.config') {

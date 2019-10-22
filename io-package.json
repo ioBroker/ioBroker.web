@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.7",
+        "version": "2.4.8",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,7 +16,7 @@
             "zh-cn": "Web服务器"
         },
         "news": {
-            "2.4.7": {
+            "2.4.8": {
                 "en": "Fixed login of non-admin user ",
                 "de": "Fehler beim Anmelden eines Benutzers ohne Administratorrechte behoben",
                 "ru": "Исправлена ошибка входа пользователя без прав администратора",
