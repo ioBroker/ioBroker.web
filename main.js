@@ -11,6 +11,8 @@ const LE          = require(utils.controllerDir + '/lib/letsencrypt.js');
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 
+const ONE_MONTH_SEC = 30 * 24 * 3600;
+
 let session;// =           require('express-session');
 let cookieParser;// =      require('cookie-parser');
 let bodyParser;// =        require('body-parser');
@@ -819,7 +821,7 @@ function initWebServer(settings) {
             };
 
             server.app.post('/login', (req, res, next) => {
-                let redirect = '/';
+                let redirect = '../';
                 let parts;
                 req.body = req.body || {};
                 const origin = req.body.origin || '?href=%2F';
@@ -829,13 +831,14 @@ function initWebServer(settings) {
                         redirect = decodeURIComponent(parts[1]);
                         // if some invalid characters in redirect
                         if (redirect.match(/[^-_a-zA-Z0-9&%?./]/)) {
-                            redirect = '/';
+                            redirect = '../';
                         }
                     }
                 }
 
                 req.body.password = (req.body.password || '').toString();
                 req.body.username = (req.body.username || '').toString();
+                req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
 
                 if (req.body.username && settings.addUserName && redirect.indexOf('?') === -1) {
                     parts = redirect.split('#');
@@ -843,10 +846,26 @@ function initWebServer(settings) {
                     redirect = parts.join('#');
                 }
 
-                passport.authenticate('local', {
-                    successRedirect: redirect,
-                    failureRedirect: '/login/index.html' + origin + (origin ? '&error' : '?error'),
-                    failureFlash: 'Invalid username or password.'
+                passport.authenticate('local', (err, user, info) => {
+                    if (err) {
+                        adapter.log.warn('Cannot login user: ' + err);
+                        return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
+                    }
+                    if (!user) {
+                        return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
+                    }
+                    req.logIn(user, err => {
+                        if (err) {
+                            adapter.log.warn('Cannot login user: ' + err);
+                            return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
+                        }
+                        if (req.body.stayLoggedIn) {
+                            req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
+                        } else {
+                            req.session.cookie.maxAge = settings.ttl * 1000;
+                        }
+                        return res.redirect(redirect);
+                    });
                 })(req, res, next);
             });
 
