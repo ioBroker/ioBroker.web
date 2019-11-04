@@ -753,7 +753,7 @@ function initWebServer(settings) {
     if (!settings.whiteListEnabled && settings.whiteListSettings) delete settings.whiteListSettings;
 
     settings.defaultUser = settings.defaultUser || 'system.user.admin';
-    if (!settings.defaultUser.match(/^system\.user\./)) settings.defaultUser = 'system.user.' + settings.defaultUser;
+    if (!settings.defaultUser.startsWith('system.user.')) settings.defaultUser = 'system.user.' + settings.defaultUser;
 
     if (settings.port) {
         if (settings.secure) {
@@ -907,7 +907,7 @@ function initWebServer(settings) {
                        req.logIn(settings.whiteListSettings[whiteListIp].user, err =>
                            next(err));
                     } else {
-                        req.logIn(settings.defaultUser, err =>
+                        req.logIn(settings.defaultUser.substr(12), err => // cut "system.user."
                             next(err));
                     }
                 });

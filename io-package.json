@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.8",
+        "version": "2.4.9",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "2.4.9": {
+                "en": "permission errors fixed when whitelist had at least one entry",
+                "de": "Berechtigungsfehler behoben, wenn die Whitelist mindestens einen Eintrag hatte",
+                "ru": "исправлены ошибки разрешения, когда в белом списке была хотя бы одна запись",
+                "pt": "erros de permissão corrigidos quando a lista de permissões tinha pelo menos uma entrada",
+                "nl": "toestemmingsfouten opgelost wanneer de witte lijst ten minste één vermelding had",
+                "fr": "erreurs d'autorisation résolues lorsque la liste blanche contenait au moins une entrée",
+                "it": "errori di autorizzazione corretti quando la whitelist aveva almeno una voce",
+                "es": "errores de permiso corregidos cuando la lista blanca tenía al menos una entrada",
+                "pl": "błędy uprawnień zostały naprawione, gdy biała lista miała co najmniej jeden wpis",
+                "zh-cn": "修复了白名单中至少有一项的权限错误"
+            },
             "2.4.8": {
                 "en": "Fixed login of non-admin user ",
                 "de": "Fehler beim Anmelden eines Benutzers ohne Administratorrechte behoben",
