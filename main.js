@@ -753,13 +753,13 @@ function initWebServer(settings) {
     if (!settings.whiteListEnabled && settings.whiteListSettings) delete settings.whiteListSettings;
 
     settings.defaultUser = settings.defaultUser || 'system.user.admin';
-    if (!settings.defaultUser.startsWith('system.user.')) settings.defaultUser = 'system.user.' + settings.defaultUser;
+    if (!settings.defaultUser.startsWith('system.user.')) {
+        settings.defaultUser = 'system.user.' + settings.defaultUser;
+    }
 
     if (settings.port) {
-        if (settings.secure) {
-            if (!settings.certificates) {
-                return null;
-            }
+        if (settings.secure && !settings.certificates) {
+            return null;
         }
         server.app = express();
 
