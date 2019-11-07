@@ -116,7 +116,7 @@ function startAdapter(options) {
                 updatePreSettings(obj);
             }
 
-            // 'system.adapter.'length = 15
+            // 'system.adapter.'.length = 15
             const _id = id.substring(15).replace(/\.\d+$/, '');
             if (obj && obj.common && obj.common.webByVersion) {
                 webByVersion[_id] = obj.common.version;
@@ -168,10 +168,9 @@ function startAdapter(options) {
         },
         unload: callback => {
             try {
-                adapter.log.info('terminating http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
+                adapter.log.debug('terminating http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
                 webServer.server.close();
                 adapter.log.info('terminated http' + (webServer.settings.secure ? 's' : '') + ' server on port ' + webServer.settings.port);
-
                 callback();
             } catch (e) {
                 callback();
@@ -200,7 +199,7 @@ function startAdapter(options) {
             // information about connected socket.io adapter
             if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
                 adapter.getForeignObject(adapter.config.socketio, (err, obj) => {
-                    if ( obj && obj.common && obj.common.enabled && obj.native) {
+                    if (obj && obj.common && obj.common.enabled && obj.native) {
                         socketUrl = ':' + obj.native.port;
                     }
                 });
@@ -208,12 +207,14 @@ function startAdapter(options) {
                 adapter.subscribeForeignObjects(adapter.config.socketio);
             } else {
                 socketUrl = adapter.config.socketio;
-                ownSocket = (socketUrl !== 'none');
+                ownSocket = socketUrl !== 'none';
             }
 
             // Read language
             adapter.getForeignObject('system.config', (err, data) => {
-                if (data && data.common) lang = data.common.language || 'en';
+                if (data && data.common) {
+                    lang = data.common.language || 'en';
+                }
             });
         }
     });
@@ -280,7 +281,7 @@ function getExtensionsAndSettings(callback) {
                             updatePreSettings(instance);
                         }
                         if (instance.common.webByVersion) {
-                            // 'system.adapter.'length = 15
+                            // 'system.adapter.'.length = 15
                             const _id = doc.rows[i].value._id.substring(15).replace(/\.\d+$/, '');
                             webByVersion[_id] = instance.common.version;
                         }
@@ -324,7 +325,7 @@ function main() {
     });
 }
 
-function readDirs(dirs, cb, result) {
+/* function readDirs(dirs, cb, result) {
     result = result || [];
     if (!dirs || !dirs.length) {
         return cb && cb(result);
@@ -341,7 +342,7 @@ function readDirs(dirs, cb, result) {
         setImmediate(readDirs, dirs, cb, result);
     });
 }
-
+*/
 let indexHtml;
 
 function getLinkVar(_var, obj, attr, link) {
@@ -447,7 +448,9 @@ function resolveLink(link, instanceObj, instancesMap) {
             for (let d in links) {
                 if (links.hasOwnProperty(d)) {
                     result[links[d].instance] = links[d].link;
-                    if (!firtsLink) firtsLink = links[d].link;
+                    if (!firtsLink) {
+                        firtsLink = links[d].link;
+                    }
                     count++;
                 }
             }
@@ -467,7 +470,9 @@ function replaceInLink(link, instanceObj, instances) {
         for (let v in links) {
             if (links.hasOwnProperty(v)) {
                 links[v] = resolveLink(links[v], instanceObj, instances);
-                if (!first) first = links[v];
+                if (!first) {
+                    first = links[v];
+                }
             }
         }
         links.__first = first;
@@ -1045,17 +1050,15 @@ function initWebServer(settings) {
                 url = url.substring(i - 1);
             }
             if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                res.status(404).send('Not found');
-                return;
+                return res.status(404).send('Not found');
             }
 
             if (server.api && server.api.checkRequest(url)) {
-                server.api.restApi(req, res);
-                return;
+                return server.api.restApi(req, res);
             }
 
             if (url === '/' || url === '/index.html') {
-                getListOfAllAdapters((err, data) => {
+                return getListOfAllAdapters((err, data) => {
                     if (err) {
                         res.status(500).send('500. Error' + escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err));
                     } else {
@@ -1065,7 +1068,6 @@ function initWebServer(settings) {
                             .send(data);
                     }
                 });
-                return;
             }
 
             // add index.html
@@ -1097,13 +1099,17 @@ function initWebServer(settings) {
                 noFileCache = true;
             }
 
+            // exception. Remove it in couple of months. BF 2019_11_07
+            if (!webByVersion[id] && id === 'material') {
+                webByVersion.material = '0.12.1';
+            }
+
             // get adapter name
             if (webByVersion[id]) {
                 if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
                     // redirect to version
                     res.set('location', '/' + id + '/' + webByVersion[id] + '/' + url);
-                    res.status(301).send();
-                    return;
+                    return res.status(301).send();
                 }
             }
 
@@ -1131,8 +1137,7 @@ function initWebServer(settings) {
                     if (socketIoFile !== false && (url.startsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/))) {
                         if (socketIoFile) {
                             res.contentType('text/javascript');
-                            res.status(200).send(socketIoFile);
-                            return
+                            return res.status(200).send(socketIoFile);
                         } else {
                             try {
                                 const dir = require.resolve('socket.io-client');
@@ -1152,13 +1157,12 @@ function initWebServer(settings) {
                             }
                             if (socketIoFile) {
                                 res.contentType('text/javascript');
-                                res.status(200).send(socketIoFile);
-                                return
+                                return res.status(200).send(socketIoFile);
                             }
                         }
                     }
 
-                    adapter.readFile(id, webByVersion[id] ? url.substring(versionPrefix.length + 1) : url , {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
+                    adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
                         if (buffer === null || buffer === undefined || err) {
                             res.contentType('text/html');
                             res.status(404).send('File ' + escapeHtml(url) + ' not found: ' + escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err));
@@ -1167,10 +1171,7 @@ function initWebServer(settings) {
 
                             // Store file in cache
                             if (settings.cache) {
-                                cache[id + '/' + url] = {
-                                    buffer: buffer,
-                                    mimeType: mimeType
-                                };
+                                cache[id + '/' + url] = {buffer, mimeType};
                             }
 
                             res.contentType(mimeType);

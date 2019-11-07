@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "2.4.9",
+        "version": "2.4.10",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "2.4.10": {
+                "en": "Workaround for material was added ",
+                "de": "Problemumgehung für Material wurde hinzugefügt",
+                "ru": "Обходной материал для материала был добавлен",
+                "pt": "Solução alternativa para o material foi adicionada",
+                "nl": "Er is een tijdelijke oplossing voor materiaal toegevoegd",
+                "fr": "Contournement du matériel ajouté",
+                "it": "È stata aggiunta una soluzione alternativa per il materiale",
+                "es": "Se agregó una solución alternativa para el material",
+                "pl": "Dodano obejście dla materiału",
+                "zh-cn": "添加了物料的解决方法"
+            },
             "2.4.9": {
                 "en": "permission errors fixed when whitelist had at least one entry",
                 "de": "Berechtigungsfehler behoben, wenn die Whitelist mindestens einen Eintrag hatte",
