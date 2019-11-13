@@ -448,9 +448,7 @@ function resolveLink(link, instanceObj, instancesMap) {
             for (let d in links) {
                 if (links.hasOwnProperty(d)) {
                     result[links[d].instance] = links[d].link;
-                    if (!firtsLink) {
-                        firtsLink = links[d].link;
-                    }
+                    firtsLink = firtsLink || links[d].link;
                     count++;
                 }
             }
@@ -470,9 +468,7 @@ function replaceInLink(link, instanceObj, instances) {
         for (let v in links) {
             if (links.hasOwnProperty(v)) {
                 links[v] = resolveLink(links[v], instanceObj, instances);
-                if (!first) {
-                    first = links[v];
-                }
+                first = first || links[v];
             }
         }
         links.__first = first;
