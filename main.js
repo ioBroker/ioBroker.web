@@ -1099,11 +1099,6 @@ function initWebServer(settings) {
                 noFileCache = true;
             }
 
-            // exception. Remove it in couple of months. BF 2019_11_07
-            if (!webByVersion[id] && id === 'material') {
-                webByVersion.material = '0.12.1';
-            }
-
             // get adapter name
             if (webByVersion[id]) {
                 if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
