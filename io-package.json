@@ -88,7 +88,7 @@
                 "pl": "Dodaj chińskie wsparcie",
                 "zh-cn": "添加中文支持"
             },
-            "2.4.2":  {
+            "2.4.2": {
                 "en": "Fixed error with the access by the version",
                 "de": "Fehler beim Zugriff der Version behoben",
                 "ru": "Исправлена ​​ошибка с доступом к версии",
@@ -203,19 +203,15 @@
         "simpleapi": false,
         "defaultUser": "admin",
         "ttl": 3600,
-
         "certPublic": "",
         "certPrivate": "",
         "certChained": "",
-
         "addUserName": false,
         "forceWebSockets": false,
         "whiteListEnabled": false,
-
         "leEnabled": false,
         "leUpdate": false,
         "leCheckPort": 80,
-
         "loginBackgroundColor": "",
         "loginBackgroundImage": false
     },

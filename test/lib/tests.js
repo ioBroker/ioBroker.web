@@ -1,7 +1,7 @@
-var request = require('request');
-var expect  = require('chai').expect;
+const request = require('request');
+const expect  = require('chai').expect;
 
-var tests = {
+const tests = {
     'read lib/js file': function (done) {
         this.timeout(2000);
         request(process.env.TEST_PROTOCOL + '://localhost:' + process.env.TEST_PORT + '/lib/js/selectID.js', function (error, response, body) {
