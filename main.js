@@ -261,7 +261,7 @@ function updatePreSettings(obj) {
 }
 
 function getExtensionsAndSettings(callback) {
-    adapter.objects.getObjectView('system', 'instance', null, (err, doc) => {
+    adapter.getObjectView('system', 'instance', null, (err, doc) => {
         if (err) {
             if (callback) callback (err, []);
         } else {
@@ -481,8 +481,8 @@ function replaceInLink(link, instanceObj, instances) {
 function getListOfAllAdapters(callback) {
     try {
         // read all instances
-        adapter.objects.getObjectView('system', 'instance', {}, (err, instances) => {
-            adapter.objects.getObjectView('system', 'adapter', {}, (err, adapters) => {
+        adapter.getObjectView('system', 'instance', {}, (err, instances) => {
+            adapter.getObjectView('system', 'adapter', {}, (err, adapters) => {
                 let list = [];
                 let a;
                 let mapInstance = {};
