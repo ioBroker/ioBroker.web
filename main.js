@@ -97,7 +97,7 @@ let adapter;
 function startAdapter(options) {
     options = options || {};
 
-    Object.assign(options,{
+    Object.assign(options, {
         name: adapterName,
         objectChange: (id, obj) => {
             if (obj && obj.common && obj.common.webExtension && obj.native &&
@@ -268,7 +268,7 @@ function getExtensionsAndSettings(callback) {
             if (doc.rows.length === 0) {
                 if (callback) callback (null, []);
             } else {
-                let res = [];
+                const res = [];
                 for (let i = 0; i < doc.rows.length; i++) {
                     const instance = doc.rows[i].value;
                     if (instance && instance.common) {
@@ -359,7 +359,9 @@ function getLinkVar(_var, obj, attr, link) {
             if (attr.match(/^native_/)) attr = attr.substring(7);
 
             let val = obj.native[attr];
-            if (_var === 'bind' && (!val || val === '0.0.0.0')) val = '$host$';
+            if (_var === 'bind' && (!val || val === '0.0.0.0')) {
+                val = '$host$';
+            }
 
             if (attr === 'secure') {
                 link = link.replace('%' + _var + '%', val ? 'https' : 'http');
@@ -414,7 +416,7 @@ function resolveLink(link, instanceObj, instancesMap) {
                 vars.splice(v, 1);
             }
         }
-        let links = {};
+        const links = {};
         let instances;
         const adptr = parts[0];
         // process web_port
@@ -465,7 +467,7 @@ function replaceInLink(link, instanceObj, instances) {
     if (typeof link === 'object') {
         const links = JSON.parse(JSON.stringify(link));
         let first;
-        for (let v in links) {
+        for (const v in links) {
             if (links.hasOwnProperty(v)) {
                 links[v] = resolveLink(links[v], instanceObj, instances);
                 first = first || links[v];
@@ -483,13 +485,12 @@ function getListOfAllAdapters(callback) {
         // read all instances
         adapter.objects.getObjectView('system', 'instance', {}, (err, instances) => {
             adapter.objects.getObjectView('system', 'adapter', {}, (err, adapters) => {
-                let list = [];
-                let a;
-                let mapInstance = {};
+                const list = [];
+                const mapInstance = {};
                 for (let r = 0; r < instances.rows.length; r++) {
                     mapInstance[instances.rows[r].id] = instances.rows[r].value;
                 }
-                for (a = 0; a < adapters.rows.length; a++) {
+                for (let a = 0; a < adapters.rows.length; a++) {
                     const obj = adapters.rows[a].value;
                     let found = '';
                     if (instances && instances.rows) {
@@ -497,7 +498,7 @@ function getListOfAllAdapters(callback) {
                         // find if any instance of this adapter is exists and started
                         for (let i = 0; i < instances.rows.length; i++) {
                             let id = instances.rows[i].id;
-                            let ids = id.split('.');
+                            const ids = id.split('.');
                             ids.pop();
                             id = ids.join('.');
                             if (id === obj._id && instances.rows[i].value.common && (instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)) {
@@ -537,7 +538,7 @@ function getListOfAllAdapters(callback) {
                             if (obj.common.welcomeScreenPro) {
                                 if (obj.common.welcomeScreenPro instanceof Array) {
                                     for (let ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
-                                        let tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
+                                        const tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
                                         tile.pro = true;
                                         if (tile.localLink && typeof tile.localLink === 'boolean') {
                                             tile.localLink = obj.common.localLink;
@@ -548,7 +549,7 @@ function getListOfAllAdapters(callback) {
                                         list.push(tile);
                                     }
                                 } else {
-                                    let tile_ = Object.assign({}, obj.common.welcomeScreenPro);
+                                    const tile_ = Object.assign({}, obj.common.welcomeScreenPro);
                                     tile_.pro = true;
                                     if (tile_.localLink && typeof tile_.localLink === 'boolean') {
                                         tile_.localLink = obj.common.localLink;
@@ -742,7 +743,7 @@ function initAuth(server, settings) {
 //}
 function initWebServer(settings) {
 
-    let server = {
+    const server = {
         app:       null,
         server:    null,
         io:        null,
@@ -778,7 +779,7 @@ function initWebServer(settings) {
         if (settings.auth) {
             initAuth(server, settings);
 
-            let autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
+            const autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
                 if (!settings.whiteListSettings) {
                     if (/\.css(\?.*)?$/.test(req.originalUrl)) {
                         return res.status(200).send('');
@@ -963,7 +964,7 @@ function initWebServer(settings) {
             });
         }
 
-        let appOptions = {};
+        const appOptions = {};
         if (settings.cache) appOptions.maxAge = 30758400000;
 
         server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
@@ -1000,11 +1001,11 @@ function initWebServer(settings) {
     }
 
     // activate extensions
-    for (let e in extensions) {
+    for (const e in extensions) {
         if (!extensions.hasOwnProperty(e)) continue;
         try {
             // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
-            let parts = extensions[e].path.split('/');
+            const parts = extensions[e].path.split('/');
             parts.shift();
             let extAPI;
             if (fs.existsSync(__dirname + '/' + parts.join('/'))) {
@@ -1084,10 +1085,10 @@ function initWebServer(settings) {
             // Skip first /
             url.shift();
             // Get ID
-            let id = url.shift();
+            const id = url.shift();
             let versionPrefix = url[0];
             url = url.join('/');
-            let pos = url.indexOf('?');
+            const pos = url.indexOf('?');
             let noFileCache;
             if (pos !== -1) {
                 url = url.substring(0, pos);
