@@ -3,6 +3,9 @@ tasks
 test
 tmp
 .idea
+.git
+.github
+node_modules
 .travis.yml
 appveyor.yml
 package-lock.json
