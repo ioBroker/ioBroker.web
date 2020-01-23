@@ -97,7 +97,7 @@ let adapter;
 function startAdapter(options) {
     options = options || {};
 
-    Object.assign(options,{
+    Object.assign(options, {
         name: adapterName,
         objectChange: (id, obj) => {
             if (obj && obj.common && obj.common.webExtension && obj.native &&
@@ -359,7 +359,9 @@ function getLinkVar(_var, obj, attr, link) {
             if (attr.match(/^native_/)) attr = attr.substring(7);
 
             let val = obj.native[attr];
-            if (_var === 'bind' && (!val || val === '0.0.0.0')) val = '$host$';
+            if (_var === 'bind' && (!val || val === '0.0.0.0')) {
+                val = '$host$';
+            }
 
             if (attr === 'secure') {
                 link = link.replace('%' + _var + '%', val ? 'https' : 'http');
@@ -484,12 +486,11 @@ function getListOfAllAdapters(callback) {
         adapter.getObjectView('system', 'instance', {}, (err, instances) => {
             adapter.getObjectView('system', 'adapter', {}, (err, adapters) => {
                 const list = [];
-                let a;
                 const mapInstance = {};
                 for (let r = 0; r < instances.rows.length; r++) {
                     mapInstance[instances.rows[r].id] = instances.rows[r].value;
                 }
-                for (a = 0; a < adapters.rows.length; a++) {
+                for (let a = 0; a < adapters.rows.length; a++) {
                     const obj = adapters.rows[a].value;
                     let found = '';
                     if (instances && instances.rows) {
