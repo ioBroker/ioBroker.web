@@ -11,4 +11,5 @@ appveyor.yml
 package-lock.json
 admin/i18n
 iob_npm.done
+.eslintrc.json
 www/lib/css/fancytree/*.pdn
