@@ -1,6 +1,6 @@
 {
     "name": "iobroker.web",
-    "version": "2.4.10",
+    "version": "3.0.0",
     "description": "ioBroker simple web Adapter",
     "author": {
         "name": "bluefox",
@@ -22,19 +22,19 @@
         "express": "^4.17.1",
         "express-session": "^1.17.0",
         "iobroker.simple-api": ">=2.3.1",
-        "iobroker.socketio": ">=2.1.1",
-        "mime-types": "^2.1.24",
-        "passport": "^0.4.0",
+        "iobroker.socketio": ">=3.0.0",
+        "mime-types": "^2.1.26",
+        "passport": "^0.4.1",
         "passport-local": "^1.0.0",
         "passport.socketio": "^3.7.0",
         "request": "^2.88.0",
-        "socket.io-client": "1.7.2",
+        "socket.io-client": "^2.3.0",
         "xtend": "^4.0.2",
-        "@iobroker/adapter-core": "^1.0.3"
+        "@iobroker/adapter-core": "^2.2.1"
     },
     "devDependencies": {
         "gulp": "^4.0.2",
-        "mocha": "^6.2.2",
+        "mocha": "^7.0.1",
         "chai": "^4.2.0",
         "eslint": "^6.7.2"
     },
