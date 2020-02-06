@@ -18,7 +18,7 @@
         "news": {
             "3.0.0": {
                 "en": "socket.io upgraded to latest version. Attention: This might break older devices like iPad 1/2!!",
-                "de": "socket.io wurde auf die neueste Version aktualisiert. Achtung: Dies könnte ältere Geräte wie das iPad 1/2 beschädigen !!",
+                "de": "socket.io wurde auf die neueste Version aktualisiert. Achtung: Dies unterstützt ältere Geräte wie das iPad 1/2 nicht mehr !!",
                 "ru": "socket.io обновлен до последней версии. Внимание: это может сломать старые устройства, такие как iPad 1/2!",
                 "pt": "socket.io atualizado para a versão mais recente. Atenção: Isso pode quebrar dispositivos mais antigos como o iPad 1/2 !!",
                 "nl": "socket.io opgewaardeerd naar de nieuwste versie. Let op: dit kan oudere apparaten zoals iPad 1/2 kapot maken !!",
