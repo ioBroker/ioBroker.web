@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.0",
+        "version": "3.0.1",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.1": {
+                "en": "workaround for a socket.io bug added",
+                "de": "Problemumgehung für einen socket.io-Fehler hinzugefügt",
+                "ru": "добавлено обходное решение для ошибки socket.io",
+                "pt": "solução alternativa para um bug socket.io adicionado",
+                "nl": "tijdelijke oplossing voor een socket.io-bug toegevoegd",
+                "fr": "solution de contournement pour un bug socket.io ajouté",
+                "it": "soluzione alternativa per un bug socket.io aggiunto",
+                "es": "solución alternativa para un error socket.io agregado",
+                "pl": "dodano obejście błędu socket.io",
+                "zh-cn": "解决了socket.io错误的解决方法"
+            },
             "3.0.0": {
                 "en": "socket.io upgraded to latest version. Attention: This might break older devices like iPad 1/2!!",
                 "de": "socket.io wurde auf die neueste Version aktualisiert. Achtung: Dies unterstützt ältere Geräte wie das iPad 1/2 nicht mehr !!",
