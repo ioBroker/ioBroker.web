@@ -103,7 +103,7 @@ function startAdapter(options) {
             if (obj && obj.common && obj.common.webExtension && obj.native &&
                 (extensions[id.substring('system.adapter.'.length)] ||
                     obj.native.webInstance === '*' ||
-                    obj.native.webInstance === 'adapter.namespace'
+                    obj.native.webInstance === adapter.namespace
                 )
             ) {
                 adapter.setForeignState('system.adapter.' + adapter.namespace + '.alive', false, true, () => {

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.1",
+        "version": "3.0.2",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.3": {
+                "en": "Web extensions were fixed",
+                "de": "Web-Erweiterungen wurden behoben",
+                "ru": "Веб-расширения были исправлены",
+                "pt": "As extensões da Web foram corrigidas",
+                "nl": "Webextensies zijn opgelost",
+                "fr": "Les extensions Web ont été corrigées",
+                "it": "Le estensioni Web sono state corrette",
+                "es": "Se corrigieron las extensiones web",
+                "pl": "Rozszerzenia sieci zostały naprawione",
+                "zh-cn": "网络扩展是固定的"
+            },
             "3.0.1": {
                 "en": "workaround for a socket.io bug added",
                 "de": "Problemumgehung für einen socket.io-Fehler hinzugefügt",
@@ -51,126 +63,6 @@
                 "es": "Se agregó una solución alternativa para el material",
                 "pl": "Dodano obejście dla materiału",
                 "zh-cn": "添加了物料的解决方法"
-            },
-            "2.4.9": {
-                "en": "permission errors fixed when whitelist had at least one entry",
-                "de": "Berechtigungsfehler behoben, wenn die Whitelist mindestens einen Eintrag hatte",
-                "ru": "исправлены ошибки разрешения, когда в белом списке была хотя бы одна запись",
-                "pt": "erros de permissão corrigidos quando a lista de permissões tinha pelo menos uma entrada",
-                "nl": "toestemmingsfouten opgelost wanneer de witte lijst ten minste één vermelding had",
-                "fr": "erreurs d'autorisation résolues lorsque la liste blanche contenait au moins une entrée",
-                "it": "errori di autorizzazione corretti quando la whitelist aveva almeno una voce",
-                "es": "errores de permiso corregidos cuando la lista blanca tenía al menos una entrada",
-                "pl": "błędy uprawnień zostały naprawione, gdy biała lista miała co najmniej jeden wpis",
-                "zh-cn": "修复了白名单中至少有一项的权限错误"
-            },
-            "2.4.8": {
-                "en": "Fixed login of non-admin user ",
-                "de": "Fehler beim Anmelden eines Benutzers ohne Administratorrechte behoben",
-                "ru": "Исправлена ошибка входа пользователя без прав администратора",
-                "pt": "Corrigido login do usuário não administrador",
-                "nl": "Vaste aanmelding van niet-admin-gebruiker",
-                "fr": "Connexion fixe de l'utilisateur non-administrateur",
-                "it": "Risolto il login dell'utente non amministratore",
-                "es": "Inicio de sesión fijo de usuario no administrador",
-                "pl": "Naprawiono logowanie użytkownika niebędącego administratorem",
-                "zh-cn": "固定非管理员用户登录"
-            },
-            "2.4.6": {
-                "en": "Fixed issue with simple-api",
-                "de": "Problem mit Simple-API behoben",
-                "ru": "Исправлена проблема с Simple API",
-                "pt": "Corrigido o problema com a API simples",
-                "nl": "Probleem opgelost met simple-api",
-                "fr": "Correction d'un problème avec simple-api",
-                "it": "Risolto il problema con simple-api",
-                "es": "Problema solucionado con simple-api",
-                "pl": "Naprawiono problem z interfejsem Simple-API",
-                "zh-cn": "解决了简单API的问题"
-            },
-            "2.4.4": {
-                "en": "Fixed issue with socket.io.js not found",
-                "de": "Problem behoben, bei dem socket.io.js nicht gefunden wurde",
-                "ru": "Исправлена проблема с не найденным socket.io.js",
-                "pt": "Corrigido o problema com o socket.io.js não encontrado",
-                "nl": "Er is een probleem met socket.io.js niet gevonden",
-                "fr": "Correction du problème avec socket.io.js introuvable",
-                "it": "Risolto il problema con socket.io.js non trovato",
-                "es": "Solucionado el problema con socket.io.js no encontrado",
-                "pl": "Naprawiono problem z nie znaleziono pliku socket.io.js",
-                "zh-cn": "修复了找不到socket.io.js的问题"
-            },
-            "2.4.3": {
-                "en": "Add Chinese support",
-                "de": "Chinesische Unterstützung hinzufügen",
-                "ru": "Добавить поддержку китайцев",
-                "pt": "Adicionar suporte chinês",
-                "nl": "Voeg Chinese ondersteuning toe",
-                "fr": "Ajouter un support chinois",
-                "it": "Aggiungi supporto cinese",
-                "es": "Añadir soporte chino",
-                "pl": "Dodaj chińskie wsparcie",
-                "zh-cn": "添加中文支持"
-            },
-            "2.4.2": {
-                "en": "Fixed error with the access by the version",
-                "de": "Fehler beim Zugriff der Version behoben",
-                "ru": "Исправлена ​​ошибка с доступом к версии",
-                "pt": "Corrigido erro com o acesso pela versão",
-                "nl": "Vaste fout met de toegang door de versie",
-                "fr": "Erreur corrigée avec l'accès par la version",
-                "it": "Risolto errore con l'accesso dalla versione",
-                "es": "Se arregló el error con el acceso de la versión",
-                "pl": "Naprawiono błąd związany z dostępem przez wersję"
-            },
-            "2.4.1": {
-                "en": "The support of the versioned links to adapter was added\nWhiteList was corrected\nCustom login background is supported",
-                "de": "Die Unterstützung der versionierten Links zum Adapter wurde hinzugefügt\nWhiteList wurde korrigiert\nBenutzerdefinierter Login-Hintergrund wird unterstützt",
-                "ru": "Добавлена ​​поддержка версий, связанных с адаптером.\nWhiteList был исправлен\nПользовательский фоновый вход поддерживается",
-                "pt": "O suporte dos links com versão para o adaptador foi adicionado\nWhiteList foi corrigido\nFundo de login personalizado é suportado",
-                "nl": "De ondersteuning van de versie-links naar adapter is toegevoegd\nWhiteList is gecorrigeerd\nAangepaste inlogachtergrond wordt ondersteund",
-                "fr": "Le support des liens versionnés vers l'adaptateur a été ajouté\nWhiteList a été corrigé\nLe fond de connexion personnalisé est pris en charge",
-                "it": "È stato aggiunto il supporto dei collegamenti con versione all'adattatore\nWhiteList è stato corretto\nLo sfondo di login personalizzato è supportato",
-                "es": "Se agregó el soporte de los enlaces versionados al adaptador\nWhiteList fue corregido\nSe admite el fondo de inicio de sesión personalizado",
-                "pl": "Dodano wsparcie dla wersjonowanych łączy do adaptera\nWhiteList został poprawiony\nNiestandardowe tło logowania jest obsługiwane"
-            },
-            "2.4.0": {
-                "en": "Pre-settings for instances now supported",
-                "de": "Voreinstellungen für Instanzen werden jetzt unterstützt",
-                "ru": "Предварительные настройки для поддерживаемых экземпляров",
-                "pt": "Pré-configurações para instâncias agora suportadas",
-                "nl": "Pre-instellingen voor exemplaren die nu worden ondersteund",
-                "fr": "Pré-réglages pour les instances maintenant supportées",
-                "it": "Le preimpostazioni per le istanze ora supportate",
-                "es": "Pre-configuraciones para instancias ahora compatibles",
-                "pl": "Wstępne ustawienia instancji są teraz obsługiwane"
-            },
-            "2.3.6": {
-                "en": "URLs were sanitized",
-                "de": "URLs wurden bereinigt",
-                "ru": "URL-адреса были дезинфицированы",
-                "pt": "URLs foram higienizados",
-                "nl": "URL's zijn ontsmet",
-                "fr": "Les URL ont été nettoyées",
-                "it": "Gli URL sono stati disinfettati",
-                "es": "Las URL se desinfectaron",
-                "pl": "Adresy URL zostały odkażone"
-            },
-            "2.2.0": {
-                "en": "Ready for Admin3",
-                "de": "Bereit für Admin3",
-                "ru": "Готово для Admin3",
-                "pt": "Pronto para Admin3",
-                "nl": "Klaar voor Admin3",
-                "fr": "Prêt pour Admin3",
-                "it": "Pronto per Admin3",
-                "es": "Listo para Admin3",
-                "pl": "Gotowy na Admin3"
-            },
-            "2.1.9": {
-                "en": "Fix tiles on welcome screen",
-                "de": "Korrigiere Kacheln auf dem Welcome Screen",
-                "ru": "Поправлены иконки на welcome странице"
             }
         },
         "desc": {
