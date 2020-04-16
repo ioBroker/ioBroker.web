@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.2",
+        "version": "3.0.4",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.4": {
+                "en": " js-controller 3.0 warnings prevented and added Sentry error reporting with js-controller 3.0",
+                "de": " Warnungen zu js-controller 3.0 wurden verhindert und Sentry-Fehlerberichte mit js-controller 3.0 hinzugefügt",
+                "ru": " Предупреждения js-controller 3.0 предотвращены и добавлены отчеты об ошибках Sentry с помощью js-controller 3.0",
+                "pt": " Avisos do js-controller 3.0 impedidos e adicionados relatórios de erros do Sentry com o js-controller 3.0",
+                "nl": " js-controller 3.0-waarschuwingen voorkomen en toegevoegd Sentry-foutrapportage met js-controller 3.0",
+                "fr": " avertissements js-controller 3.0 empêchés et ajout de rapports d'erreurs Sentry avec js-controller 3.0",
+                "it": " Gli avvisi di js-controller 3.0 hanno impedito e aggiunto la segnalazione degli errori di Sentry con js-controller 3.0",
+                "es": " Las advertencias de js-controller 3.0 impidieron y agregaron informes de errores de Sentry con js-controller 3.0",
+                "pl": " Zapobiegano ostrzeżeniom js-controller 3.0 i dodano raportowanie błędów Sentry w js-controller 3.0",
+                "zh-cn": " 防止js-controller 3.0警告并使用js-controller 3.0添加了Sentry错误报告"
+            },
             "3.0.3": {
                 "en": "Web extensions were fixed",
                 "de": "Web-Erweiterungen wurden behoben",
@@ -107,7 +119,12 @@
                 "name": "bluefox",
                 "email": "dogafox@gmail.com"
             }
-        ]
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
+            }
+        }
     },
     "native": {
         "port": 8082,
