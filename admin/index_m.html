@@ -518,7 +518,7 @@
     function fillNameSelect($this, defaultUser) {
         for (var u in users) {
             if (!users.hasOwnProperty(u)) continue;
-            var value = users[u].common.name;
+            var value = users[u]._id.replace('system.user.', '');
             var valueText = users[u].common.name[0].toUpperCase() + users[u].common.name.substring(1);
             addOptionIfAbsent($this, value, valueText, defaultUser);
         }
