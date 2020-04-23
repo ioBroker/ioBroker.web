@@ -987,16 +987,25 @@ function initWebServer(settings) {
                 adapter.terminate ? adapter.terminate(1): process.exit(1);
             }
             try {
+                server.server.on('error', e => {
+                    if (e.toString().includes('EACCES') && port <= 1024) {
+                        adapter.log.error(`node.js process has no rights to start server on the port ${port}.\n` +
+                            `Do you know that on linux you need special permissions for ports under 1024?\n` +
+                            `You can call in shell following scrip to allow it for node.js: "iobroker fix"`
+                        );
+                    } else {
+                        adapter.log.error(`Cannot start server on ${settings.bind || '0.0.0.0'}:${port}: ${e}`);
+                    }
+                });
                 server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
             } catch (e) {
                 if (e.toString().includes('EACCES') && port <= 1024) {
-                    // What is with darwin??
                     return adapter.log.error(`node.js process has no rights to start server on the port ${port}.\n` +
                         `Do you know that on linux you need special permissions for ports under 1024?\n` +
-                        `You can call in shell following scrip to allow it for node.js:\n` +
-                        ` Debian:   "sudo apt-get install -y libcap2-bin && sudo setcap cap_net_admin,cap_net_raw,cap_net_bind_service=+eip $(eval readlink -f which node)"\n` +
-                        ` Yum:      "sudo yum install -y libcap2-bin && sudo setcap cap_net_admin,cap_net_raw,cap_net_bind_service=+eip $(eval readlink -f which node)"`
+                        `You can call in shell following scrip to allow it for node.js: "iobroker fix"`
                     );
+                } else {
+                    return adapter.log.error(`Cannot start server on ${settings.bind || '0.0.0.0'}:${port}: ${e}`);
                 }
             }
 
