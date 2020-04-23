@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.4",
+        "version": "3.0.5",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.5": {
+                "en": "fixed the sentry warnings",
+                "de": "Die Sentry-Warnungen wurden behoben",
+                "ru": "исправлены sentry предупреждения",
+                "pt": "corrigido os avisos de sentinela",
+                "nl": "de schildwachtwaarschuwingen opgelost",
+                "fr": "correction des avertissements de sentinelle",
+                "it": "risolti gli avvisi di sentinella",
+                "es": "arreglado las advertencias centinela",
+                "pl": "naprawiono ostrzeżenia wartowników",
+                "zh-cn": "修复了哨兵警告"
+            },
             "3.0.4": {
                 "en": " js-controller 3.0 warnings prevented and added Sentry error reporting with js-controller 3.0",
                 "de": " Warnungen zu js-controller 3.0 wurden verhindert und Sentry-Fehlerberichte mit js-controller 3.0 hinzugefügt",

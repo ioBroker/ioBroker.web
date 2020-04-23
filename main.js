@@ -106,10 +106,8 @@ function startAdapter(options) {
                     obj.native.webInstance === adapter.namespace
                 )
             ) {
-                adapter.setForeignState('system.adapter.' + adapter.namespace + '.alive', false, true, () => {
-                    adapter.terminate ? adapter.terminate(-100): process.exit(-100);
-                });
-                return;
+                return adapter.setForeignState('system.adapter.' + adapter.namespace + '.alive', false, true, () =>
+                    adapter.terminate ? adapter.terminate(-100): process.exit(-100));
             }
 
             if (obj && obj.common && obj.common.webPreSettings) {
@@ -564,7 +562,12 @@ function getListOfAllAdapters(callback) {
                     }
                 }
 
-                indexHtml = /*indexHtml || */fs.readFileSync(__dirname + '/www/index.html').toString();
+                if (!indexHtml && !fs.existsSync(__dirname + '/www/index.html')) {
+                    return callback(null, __dirname + '/www/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"');
+                }
+
+                indexHtml = indexHtml || fs.readFileSync(__dirname + '/www/index.html').toString();
+
                 list.sort((a, b) => {
                     if (a.order === undefined && b.order === undefined) {
                         if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
