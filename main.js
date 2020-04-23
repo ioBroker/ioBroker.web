@@ -479,132 +479,133 @@ function replaceInLink(link, instanceObj, instances) {
 }
 
 function getListOfAllAdapters(callback) {
-    try {
         // read all instances
         adapter.getObjectView('system', 'instance', {}, (err, instances) => {
             adapter.getObjectView('system', 'adapter', {}, (err, adapters) => {
-                const list = [];
-                const mapInstance = {};
-                for (let r = 0; r < instances.rows.length; r++) {
-                    mapInstance[instances.rows[r].id] = instances.rows[r].value;
-                }
-                for (let a = 0; a < adapters.rows.length; a++) {
-                    const obj = adapters.rows[a].value;
-                    let found = '';
-                    if (instances && instances.rows) {
-                        found = '';
-                        // find if any instance of this adapter is exists and started
-                        for (let i = 0; i < instances.rows.length; i++) {
-                            let id = instances.rows[i].id;
-                            const ids = id.split('.');
-                            ids.pop();
-                            id = ids.join('.');
-                            if (id === obj._id && instances.rows[i].value.common && (instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)) {
-                                found = instances.rows[i].id;
-                                break;
+                try {
+                    const list = [];
+                    const mapInstance = {};
+                    for (let r = 0; r < instances.rows.length; r++) {
+                        mapInstance[instances.rows[r].id] = instances.rows[r].value;
+                    }
+                    for (let a = 0; a < adapters.rows.length; a++) {
+                        const obj = adapters.rows[a].value;
+                        let found = '';
+                        if (instances && instances.rows) {
+                            found = '';
+                            // find if any instance of this adapter is exists and started
+                            for (let i = 0; i < instances.rows.length; i++) {
+                                let id = instances.rows[i].id;
+                                const ids = id.split('.');
+                                ids.pop();
+                                id = ids.join('.');
+                                if (id === obj._id && instances.rows[i].value.common && (instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)) {
+                                    found = instances.rows[i].id;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (found) {
+                            if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
+                                if (obj.common.welcomeScreen) {
+                                    if (obj.common.welcomeScreen instanceof Array) {
+                                        for (let w = 0; w < obj.common.welcomeScreen.length; w++) {
+                                            // temporary disabled
+                                            if (obj.common.welcomeScreen[w].name === 'vis editor') {
+                                                continue;
+                                            }
+                                            if (obj.common.welcomeScreen[w].localLink && typeof obj.common.welcomeScreen[w].localLink === 'boolean') {
+                                                obj.common.welcomeScreen[w].localLink = obj.common.localLink;
+                                            }
+                                            if (obj.common.welcomeScreen[w].localLink) {
+                                                obj.common.welcomeScreen[w].id = found;
+                                            }
+                                            list.push(obj.common.welcomeScreen[w]);
+                                        }
+                                    } else {
+                                        if (obj.common.welcomeScreen.localLink && typeof obj.common.welcomeScreen.localLink === 'boolean') {
+                                            obj.common.welcomeScreen.localLink = obj.common.localLink;
+                                        }
+                                        if (obj.common.welcomeScreen.localLink) {
+                                            obj.common.welcomeScreen.id = found;
+                                        }
+                                        list.push(obj.common.welcomeScreen);
+                                    }
+                                }
+                                if (obj.common.welcomeScreenPro) {
+                                    if (obj.common.welcomeScreenPro instanceof Array) {
+                                        for (let ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
+                                            const tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
+                                            tile.pro = true;
+                                            if (tile.localLink && typeof tile.localLink === 'boolean') {
+                                                tile.localLink = obj.common.localLink;
+                                            }
+                                            if (tile.localLink) {
+                                                tile.id = found;
+                                            }
+                                            list.push(tile);
+                                        }
+                                    } else {
+                                        const tile_ = Object.assign({}, obj.common.welcomeScreenPro);
+                                        tile_.pro = true;
+                                        if (tile_.localLink && typeof tile_.localLink === 'boolean') {
+                                            tile_.localLink = obj.common.localLink;
+                                        }
+                                        if (tile_.localLink) {
+                                            tile_.id = found;
+                                        }
+                                        list.push(tile_);
+                                    }
+                                }
                             }
                         }
                     }
 
-                    if (found) {
-                        if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
-                            if (obj.common.welcomeScreen) {
-                                if (obj.common.welcomeScreen instanceof Array) {
-                                    for (let w = 0; w < obj.common.welcomeScreen.length; w++) {
-                                        // temporary disabled
-                                        if (obj.common.welcomeScreen[w].name === 'vis editor') {
-                                            continue;
-                                        }
-                                        if (obj.common.welcomeScreen[w].localLink && typeof obj.common.welcomeScreen[w].localLink === 'boolean') {
-                                            obj.common.welcomeScreen[w].localLink = obj.common.localLink;
-                                        }
-                                        if (obj.common.welcomeScreen[w].localLink) {
-                                            obj.common.welcomeScreen[w].id = found;
-                                        }
-                                        list.push(obj.common.welcomeScreen[w]);
-                                    }
-                                } else {
-                                    if (obj.common.welcomeScreen.localLink && typeof obj.common.welcomeScreen.localLink === 'boolean') {
-                                        obj.common.welcomeScreen.localLink = obj.common.localLink;
-                                    }
-                                    if (obj.common.welcomeScreen.localLink) {
-                                        obj.common.welcomeScreen.id = found;
-                                    }
-                                    list.push(obj.common.welcomeScreen);
-                                }
-                            }
-                            if (obj.common.welcomeScreenPro) {
-                                if (obj.common.welcomeScreenPro instanceof Array) {
-                                    for (let ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
-                                        const tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
-                                        tile.pro = true;
-                                        if (tile.localLink && typeof tile.localLink === 'boolean') {
-                                            tile.localLink = obj.common.localLink;
-                                        }
-                                        if (tile.localLink) {
-                                            tile.id = found;
-                                        }
-                                        list.push(tile);
-                                    }
-                                } else {
-                                    const tile_ = Object.assign({}, obj.common.welcomeScreenPro);
-                                    tile_.pro = true;
-                                    if (tile_.localLink && typeof tile_.localLink === 'boolean') {
-                                        tile_.localLink = obj.common.localLink;
-                                    }
-                                    if (tile_.localLink) {
-                                        tile_.id = found;
-                                    }
-                                    list.push(tile_);
-                                }
-                            }
+                    if (!indexHtml && !fs.existsSync(__dirname + '/www/index.html')) {
+                        return callback(null, __dirname + '/www/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"');
+                    }
+
+                    indexHtml = indexHtml || fs.readFileSync(__dirname + '/www/index.html').toString();
+
+                    list.sort((a, b) => {
+                        if (a.order === undefined && b.order === undefined) {
+                            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                            return 0;
+                        } else if (a.order === undefined) {
+                            return -1;
+                        } else if (b.order === undefined) {
+                            return 1;
+                        } else {
+                            if (a.order > b.order) return 1;
+                            if (a.order < b.order) return -1;
+                            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                            return 0;
+                        }
+                    });
+
+                    // calculate localLinks
+                    for (let t = 0; t < list.length; t++) {
+                        if (list[t].localLink) {
+                            list[t].localLink = resolveLink(list[t].localLink, mapInstance[list[t].id], mapInstance);
                         }
                     }
+
+                    let text = 'systemLang = "' + lang + '";\n';
+                    text += 'list = ' + JSON.stringify(list, null, 2) + ';\n';
+
+                    // if login
+                    text += 'let authEnabled = ' + adapter.config.auth + ';\n';
+
+                    callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
+                } catch (e) {
+                    callback(e);
                 }
-
-                if (!indexHtml && !fs.existsSync(__dirname + '/www/index.html')) {
-                    return callback(null, __dirname + '/www/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"');
-                }
-
-                indexHtml = indexHtml || fs.readFileSync(__dirname + '/www/index.html').toString();
-
-                list.sort((a, b) => {
-                    if (a.order === undefined && b.order === undefined) {
-                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                        return 0;
-                    } else if (a.order === undefined) {
-                        return -1;
-                    } else if (b.order === undefined) {
-                        return 1;
-                    } else {
-                        if (a.order > b.order) return 1;
-                        if (a.order < b.order) return -1;
-                        if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                        if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-                        return 0;
-                    }
-                });
-
-                // calculate localLinks
-                for (let t = 0; t < list.length; t++) {
-                    if (list[t].localLink) {
-                        list[t].localLink = resolveLink(list[t].localLink, mapInstance[list[t].id], mapInstance);
-                    }
-                }
-
-                let text = 'systemLang = "' + lang + '";\n';
-                text += 'list = ' + JSON.stringify(list, null, 2) + ';\n';
-
-                // if login
-                text += 'let authEnabled = ' + adapter.config.auth + ';\n';
-
-                callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
             });
         });
-    } catch (e) {
-        callback(e);
-    }
+
 }
 
 function getInfoJs(settings) {
