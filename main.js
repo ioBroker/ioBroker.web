@@ -986,7 +986,20 @@ function initWebServer(settings) {
                 adapter.log.error('port ' + settings.port + ' already in use');
                 adapter.terminate ? adapter.terminate(1): process.exit(1);
             }
-            server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
+            try {
+                server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
+            } catch (e) {
+                if (e.toString().includes('EACCES') && port <= 1024) {
+                    // What is with darwin??
+                    return adapter.log.error(`node.js process has no rights to start server on the port ${port}.\n` +
+                        `Do you know that on linux you need special permissions for ports under 1024?\n` +
+                        `You can call in shell following scrip to allow it for node.js:\n` +
+                        ` Debian:   "sudo apt-get install -y libcap2-bin && sudo setcap cap_net_admin,cap_net_raw,cap_net_bind_service=+eip $(eval readlink -f which node)"\n` +
+                        ` Yum:      "sudo yum install -y libcap2-bin && sudo setcap cap_net_admin,cap_net_raw,cap_net_bind_service=+eip $(eval readlink -f which node)"`
+                    );
+                }
+            }
+
             adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
         });
     }
