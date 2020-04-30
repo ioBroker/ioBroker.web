@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.5",
+        "version": "3.0.6",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.6": {
+                "en": "errors on webserver initialization are handled properly",
+                "de": "Fehler bei der Webserver-Initialisierung werden ordnungsgemäß behandelt",
+                "ru": "ошибки при инициализации веб-сервера обрабатываются правильно",
+                "pt": "erros na inicialização do servidor da web são tratados adequadamente",
+                "nl": "fouten bij het initialiseren van de webserver worden correct afgehandeld",
+                "fr": "les erreurs lors de l'initialisation du serveur Web sont gérées correctement",
+                "it": "gli errori sull'inizializzazione del server web sono gestiti correttamente",
+                "es": "los errores en la inicialización del servidor web se manejan correctamente",
+                "pl": "błędy przy inicjalizacji serwera są obsługiwane poprawnie",
+                "zh-cn": "网站服务器初始化错误得到正确处理"
+            },
             "3.0.5": {
                 "en": "fixed the sentry warnings",
                 "de": "Die Sentry-Warnungen wurden behoben",

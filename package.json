@@ -1,6 +1,6 @@
 {
     "name": "iobroker.web",
-    "version": "3.0.5",
+    "version": "3.0.6",
     "description": "ioBroker simple web Adapter",
     "author": {
         "name": "bluefox",
@@ -34,7 +34,7 @@
     },
     "devDependencies": {
         "gulp": "^4.0.2",
-        "mocha": "^7.1.1",
+        "mocha": "^7.1.2",
         "chai": "^4.2.0",
         "eslint": "^6.8.0"
     },

@@ -979,6 +979,21 @@ function initWebServer(settings) {
     }
 
     if (server.server) {
+        let serverListening = false;
+        server.server.on('error', e => {
+            if (e.toString().includes('EACCES') && port <= 1024) {
+                adapter.log.error(`node.js process has no rights to start server on the port ${port}.\n` +
+                    `Do you know that on linux you need special permissions for ports under 1024?\n` +
+                    `You can call in shell following scrip to allow it for node.js: "iobroker fix"`
+                );
+            } else {
+                adapter.log.error(`Cannot start server on ${settings.bind || '0.0.0.0'}:${port}: ${e}`);
+            }
+            if (!serverListening) {
+                adapter.terminate ? adapter.terminate(1) : process.exit(1);
+            }
+        });
+
         settings.port = parseInt(settings.port, 10);
         adapter.getPort(settings.port, port => {
             port = parseInt(port, 10);
@@ -986,28 +1001,9 @@ function initWebServer(settings) {
                 adapter.log.error('port ' + settings.port + ' already in use');
                 adapter.terminate ? adapter.terminate(1): process.exit(1);
             }
-            try {
-                server.server.on('error', e => {
-                    if (e.toString().includes('EACCES') && port <= 1024) {
-                        adapter.log.error(`node.js process has no rights to start server on the port ${port}.\n` +
-                            `Do you know that on linux you need special permissions for ports under 1024?\n` +
-                            `You can call in shell following scrip to allow it for node.js: "iobroker fix"`
-                        );
-                    } else {
-                        adapter.log.error(`Cannot start server on ${settings.bind || '0.0.0.0'}:${port}: ${e}`);
-                    }
-                });
-                server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined);
-            } catch (e) {
-                if (e.toString().includes('EACCES') && port <= 1024) {
-                    return adapter.log.error(`node.js process has no rights to start server on the port ${port}.\n` +
-                        `Do you know that on linux you need special permissions for ports under 1024?\n` +
-                        `You can call in shell following scrip to allow it for node.js: "iobroker fix"`
-                    );
-                } else {
-                    return adapter.log.error(`Cannot start server on ${settings.bind || '0.0.0.0'}:${port}: ${e}`);
-                }
-            }
+            server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, () => {
+                serverListening = true;
+            });
 
             adapter.log.info('http' + (settings.secure ? 's' : '') + ' server listening on port ' + port);
         });
@@ -1015,15 +1011,20 @@ function initWebServer(settings) {
 
     // Activate integrated socket
     if (ownSocket) {
-        const IOSocket = require(utils.appName + '.socketio/lib/socket.js');
         const socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
-        socketSettings.auth             = settings.auth;
-        socketSettings.secret           = secret;
-        socketSettings.store            = store;
-        socketSettings.ttl              = settings.ttl || 3600;
-        socketSettings.forceWebSockets  = settings.forceWebSockets || false;
-        server.io = new IOSocket(server.server, socketSettings, adapter);
+        socketSettings.auth = settings.auth;
+        socketSettings.secret = secret;
+        socketSettings.store = store;
+        socketSettings.ttl = settings.ttl || 3600;
+        socketSettings.forceWebSockets = settings.forceWebSockets || false;
+
+        try {
+            const IOSocket = require(utils.appName + '.socketio/lib/socket.js');
+            server.io = new IOSocket(server.server, socketSettings, adapter);
+        } catch (err) {
+            adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.')
+        }
     }
 
     // activate extensions
