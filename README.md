@@ -36,7 +36,7 @@ If not, the user will stay logged in for the configured "login timeout".
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.0.8 (2020-05-04)
 * (Apollon77) webserver initialization optimized again to prevent errors with invalid certificates 
 
 ### 3.0.7 (2020-04-30)
