@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.5",
+        "version": "3.0.8",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,30 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.8": {
+                "en": "webserver initialization optimized again to prevent errors with invalid certificates",
+                "de": "Die Webserver-Initialisierung wurde erneut optimiert, um Fehler mit ungültigen Zertifikaten zu vermeiden",
+                "ru": "Инициализация веб-сервера снова оптимизирована для предотвращения ошибок с недействительными сертификатами",
+                "pt": "inicialização do servidor da web otimizada novamente para evitar erros com certificados inválidos",
+                "nl": "de initialisatie van de webserver is opnieuw geoptimaliseerd om fouten met ongeldige certificaten te voorkomen",
+                "fr": "initialisation du serveur Web optimisée à nouveau pour éviter les erreurs avec des certificats invalides",
+                "it": "inizializzazione del server web nuovamente ottimizzata per prevenire errori con certificati non validi",
+                "es": "La inicialización del servidor web se optimizó nuevamente para evitar errores con certificados no válidos",
+                "pl": "inicjalizacja serwera WWW została ponownie zoptymalizowana, aby zapobiec błędom z nieprawidłowymi certyfikatami",
+                "zh-cn": "再次优化了Web服务器的初始化，以防止证书无效而出错"
+            },
+            "3.0.7": {
+                "en": "errors on webserver initialization are handled properly",
+                "de": "Fehler bei der Webserver-Initialisierung werden ordnungsgemäß behandelt",
+                "ru": "ошибки при инициализации веб-сервера обрабатываются правильно",
+                "pt": "erros na inicialização do servidor da web são tratados adequadamente",
+                "nl": "fouten bij het initialiseren van de webserver worden correct afgehandeld",
+                "fr": "les erreurs lors de l'initialisation du serveur Web sont gérées correctement",
+                "it": "gli errori sull'inizializzazione del server web sono gestiti correttamente",
+                "es": "los errores en la inicialización del servidor web se manejan correctamente",
+                "pl": "błędy przy inicjalizacji serwera są obsługiwane poprawnie",
+                "zh-cn": "网站服务器初始化错误得到正确处理"
+            },
             "3.0.5": {
                 "en": "fixed the sentry warnings",
                 "de": "Die Sentry-Warnungen wurden behoben",
