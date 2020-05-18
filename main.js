@@ -261,10 +261,10 @@ function updatePreSettings(obj) {
 function getExtensionsAndSettings(callback) {
     adapter.getObjectView('system', 'instance', null, (err, doc) => {
         if (err) {
-            if (callback) callback (err, []);
+            callback && callback(err, []);
         } else {
             if (doc.rows.length === 0) {
-                if (callback) callback (null, []);
+                callback && callback(null, []);
             } else {
                 const res = [];
                 for (let i = 0; i < doc.rows.length; i++) {
@@ -285,7 +285,7 @@ function getExtensionsAndSettings(callback) {
                         }
                     }
                 }
-                if (callback) callback (null, res);
+                callback && callback(null, res);
             }
         }
     });
@@ -293,7 +293,7 @@ function getExtensionsAndSettings(callback) {
 
 function main() {
     getExtensionsAndSettings((err, ext) => {
-        if (err) adapter.log.error('Cannot read extensions: ' + err);
+        err && adapter.log.error('Cannot read extensions: ' + err);
         if (ext) {
             for (let e = 0; e < ext.length; e++) {
                 if (ext[e] && ext[e].common) {
@@ -344,17 +344,21 @@ function main() {
 let indexHtml;
 
 function getLinkVar(_var, obj, attr, link) {
-    if (attr === 'protocol') attr = 'secure';
+    if (attr === 'protocol') {
+        attr = 'secure';
+    }
 
     if (_var === 'ip') {
-        link = link.replace('%' + _var + '%', '$host$');
+        link = link.replace(`%${_var}%`, '$host$');
     } else
     if (_var === 'instance') {
         const instance = obj._id.split('.').pop();
-        link = link.replace('%' + _var + '%', instance);
+        link = link.replace(`%${_var}%`, instance);
     } else {
         if (obj) {
-            if (attr.match(/^native_/)) attr = attr.substring(7);
+            if (attr.startsWith('native_')) {
+                attr = attr.substring(7);
+            }
 
             let val = obj.native[attr];
             if (_var === 'bind' && (!val || val === '0.0.0.0')) {
@@ -362,26 +366,27 @@ function getLinkVar(_var, obj, attr, link) {
             }
 
             if (attr === 'secure') {
-                link = link.replace('%' + _var + '%', val ? 'https' : 'http');
+                link = link.replace(`%${_var}%`, val ? 'https' : 'http');
             } else {
-                if (link.indexOf('%' + _var + '%') === -1) {
-                    link = link.replace('%native_' + _var + '%', val);
+                if (!link.includes(`%${_var}%`)) {
+                    link = link.replace(`%native_${_var}%`, val);
                 } else {
-                    link = link.replace('%' + _var + '%', val);
+                    link = link.replace(`%${_var}%`, val);
                 }
             }
         } else {
             if (attr === 'secure') {
-                link = link.replace('%' + _var + '%', 'http');
+                link = link.replace(`%${_var}%`, 'http');
             } else {
-                if (link.indexOf('%' + _var + '%') === -1) {
-                    link = link.replace('%native_' + _var + '%', '');
+                if (!link.includes(`%${_var}%`)) {
+                    link = link.replace(`%native_${_var}%`, '');
                 } else {
-                    link = link.replace('%' + _var + '%', '');
+                    link = link.replace(`%${_var}%`, '');
                 }
             }
         }
     }
+
     return link;
 }
 
@@ -400,7 +405,7 @@ function resolveLink(link, instanceObj, instancesMap) {
 
             parts = _var.split('_');
             // like "port"
-            if (_var.match(/^native_/)) {
+            if (_var.startsWith('native_')) {
                 link = getLinkVar(_var, instanceObj, _var, link);
                 vars.splice(v, 1);
             } else
@@ -409,11 +414,12 @@ function resolveLink(link, instanceObj, instancesMap) {
                 vars.splice(v, 1);
             } else
             // like "web.0_port"
-            if (parts[0].match(/\.[0-9]+$/)) {
+            if (parts[0].match(/\.\d+$/)) {
                 link = getLinkVar(_var, instancesMap['system.adapter.' + parts[0]], parts[1], link);
                 vars.splice(v, 1);
             }
         }
+
         const links = {};
         let instances;
         const adptr = parts[0];
@@ -421,7 +427,10 @@ function resolveLink(link, instanceObj, instancesMap) {
         for (v = 0; v < vars.length; v++) {
             _var = vars[v];
             _var = _var.replace(/%/g, '');
-            if (_var.match(/^native_/)) _var = _var.substring(7);
+
+            if (_var.startsWith('native_')) {
+                _var = _var.substring(7);
+            }
 
             parts = _var.split('_');
             if (!instances) {
@@ -444,16 +453,16 @@ function resolveLink(link, instanceObj, instancesMap) {
         if (instances) {
             result = [];
             let count = 0;
-            let firtsLink = '';
+            let firstLink = '';
             for (const d in links) {
                 if (links.hasOwnProperty(d)) {
                     result[links[d].instance] = links[d].link;
-                    firtsLink = firtsLink || links[d].link;
+                    firstLink = firstLink || links[d].link;
                     count++;
                 }
             }
             if (count < 2) {
-                link = firtsLink;
+                link = firstLink;
                 result = null;
             }
         }
@@ -464,7 +473,7 @@ function resolveLink(link, instanceObj, instancesMap) {
 function replaceInLink(link, instanceObj, instances) {
     if (typeof link === 'object') {
         const links = JSON.parse(JSON.stringify(link));
-        let first;
+        let first = '';
         for (const v in links) {
             if (links.hasOwnProperty(v)) {
                 links[v] = resolveLink(links[v], instanceObj, instances);
@@ -1027,8 +1036,7 @@ function initWebServer(settings) {
     }
 
     // activate extensions
-    for (const e in extensions) {
-        if (!extensions.hasOwnProperty(e)) continue;
+    Object.keys(extensions).forEach(e => {
         try {
             // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
             const parts = extensions[e].path.split('/');
@@ -1045,7 +1053,7 @@ function initWebServer(settings) {
         } catch (err) {
             adapter.log.error('Cannot start extension "' + e + '": ' + err);
         }
-    }
+    });
 
     // Activate integrated simple API
     if (settings.simpleapi) {
