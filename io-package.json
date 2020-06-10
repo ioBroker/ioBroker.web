@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.8",
+        "version": "3.0.9",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.9": {
+                "en": "Upgrade socketio adapter version\nOptimize error handling for webserver initialization again",
+                "de": "Aktualisieren Sie die Version des Socketio-Adapters\nOptimieren Sie die Fehlerbehandlung für die Webserver-Initialisierung erneut",
+                "ru": "Обновите версию адаптера socketio\nОптимизируйте обработку ошибок для инициализации веб-сервера снова",
+                "pt": "Atualizar a versão do adaptador socketio\nOtimize o tratamento de erros para a inicialização do servidor da web novamente",
+                "nl": "Upgrade socketio adapterversie\nOptimaliseer de foutafhandeling voor het opnieuw initialiseren van de webserver",
+                "fr": "Mettre à niveau la version de l'adaptateur socketio\nOptimiser à nouveau la gestion des erreurs pour l'initialisation du serveur Web",
+                "it": "Aggiorna la versione dell'adattatore socketio\nOttimizza nuovamente la gestione degli errori per l'inizializzazione del server web",
+                "es": "Actualizar la versión del adaptador socketio\nOptimizar el manejo de errores para la inicialización del servidor web nuevamente",
+                "pl": "Zaktualizuj wersję adaptera socketio\nPonownie zoptymalizuj obsługę błędów w celu inicjalizacji serwera WWW",
+                "zh-cn": "升级socketio适配器版本\n再次优化错误处理以进行Web服务器初始化"
+            },
             "3.0.8": {
                 "en": "webserver initialization optimized again to prevent errors with invalid certificates",
                 "de": "Die Webserver-Initialisierung wurde erneut optimiert, um Fehler mit ungültigen Zertifikaten zu vermeiden",
