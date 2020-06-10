@@ -22,7 +22,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "iobroker.simple-api": ">=2.4.0",
-    "iobroker.socketio": ">=3.0.3",
+    "iobroker.socketio": ">=3.0.9",
     "mime-types": "^2.1.26",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
@@ -33,6 +33,7 @@
     "@iobroker/adapter-core": "^2.4.0"
   },
   "devDependencies": {
+    "@alcalzone/release-script": "^1.4.1",
     "gulp": "^4.0.2",
     "mocha": "^7.1.2",
     "chai": "^4.2.0",
@@ -43,7 +44,8 @@
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit"
+    "test": "node node_modules/mocha/bin/mocha --exit",
+    "release": "release-script"
   },
   "license": "MIT",
   "maintainers": [
