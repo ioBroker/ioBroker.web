@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.9",
+        "version": "3.0.10",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.10": {
+                "en": "socketio pingTimeout and pinInterval increased to prevent too fast reconnections and bigger visualizations",
+                "de": "Socketio PingTimeout und PinInterval wurden erhöht, um zu schnelle Wiederverbindungen und größere Visualisierungen zu vermeiden",
+                "ru": "socketio pingTimeout и pinInterval увеличены, чтобы предотвратить слишком быстрое переподключение и большую визуализацию",
+                "pt": "socketio pingTimeout e pinInterval aumentados para evitar reconexões muito rápidas e visualizações maiores",
+                "nl": "socketio pingTimeout en pinInterval verhoogd om te snelle herverbindingen en grotere visualisaties te voorkomen",
+                "fr": "socketio pingTimeout et pinInterval augmentés pour éviter des reconnexions trop rapides et des visualisations plus importantes",
+                "it": "socketio pingTimeout e pinInterval aumentati per impedire riconnessioni troppo veloci e visualizzazioni più grandi",
+                "es": "socketio pingTimeout y pinInterval aumentaron para evitar reconexiones demasiado rápidas y visualizaciones más grandes",
+                "pl": "Zwiększono wartość socketio pingTimeout i pinInterval, aby zapobiec zbyt szybkim ponownym połączeniom i większym wizualizacjom",
+                "zh-cn": "增加了socketio pingTimeout和pinInterval，以防止重新连接速度过快和较大的可视化效果"
+            },
             "3.0.9": {
                 "en": "Upgrade socketio adapter version\nOptimize error handling for webserver initialization again",
                 "de": "Aktualisieren Sie die Version des Socketio-Adapters\nOptimieren Sie die Fehlerbehandlung für die Webserver-Initialisierung erneut",

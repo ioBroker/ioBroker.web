@@ -36,7 +36,7 @@ If not, the user will stay logged in for the configured "login timeout".
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.0.10 (2020-07-28)
 * (Apollon77) socketio pingTimeout and pinInterval increased to prevent too fast reconnections and bigger visualizations
 
 ### 3.0.9 (2020-06-11)
