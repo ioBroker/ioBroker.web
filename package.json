@@ -20,10 +20,10 @@
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
-    "express-session": "^1.17.0",
+    "express-session": "^1.17.1",
     "iobroker.simple-api": ">=2.4.0",
-    "iobroker.socketio": ">=3.0.9",
-    "mime-types": "^2.1.26",
+    "iobroker.socketio": ">=3.0.12",
+    "mime-types": "^2.1.27",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
@@ -35,9 +35,9 @@
   "devDependencies": {
     "@alcalzone/release-script": "^1.4.1",
     "gulp": "^4.0.2",
-    "mocha": "^7.1.2",
+    "mocha": "^8.0.1",
     "chai": "^4.2.0",
-    "eslint": "^6.8.0"
+    "eslint": "^7.5.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
