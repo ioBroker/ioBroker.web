@@ -40,7 +40,7 @@ If not, the user will stay logged in for the configured "login timeout".
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 3.0.11 (2020-08-21)
 * (bluefox) Updated used npm libraries 
 
 ### 3.0.10 (2020-07-28)

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.10",
+        "version": "3.0.11",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.11": {
+                "en": "Updated used npm libraries",
+                "de": "Aktualisierte gebrauchte npm-Bibliotheken",
+                "ru": "Обновлены используемые библиотеки npm",
+                "pt": "Bibliotecas npm usadas atualizadas",
+                "nl": "Bijgewerkte gebruikte npm-bibliotheken",
+                "fr": "Bibliothèques npm utilisées mises à jour",
+                "it": "Librerie npm usate aggiornate",
+                "es": "Bibliotecas npm usadas actualizadas",
+                "pl": "Zaktualizowano używane biblioteki npm",
+                "zh-cn": "更新了使用过的npm库"
+            },
             "3.0.10": {
                 "en": "socketio pingTimeout and pinInterval increased to prevent too fast reconnections and bigger visualizations",
                 "de": "Socketio PingTimeout und PinInterval wurden erhöht, um zu schnelle Wiederverbindungen und größere Visualisierungen zu vermeiden",
