@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.11",
+        "version": "3.0.12",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,7 +16,7 @@
             "zh-cn": "Web服务器"
         },
         "news": {
-            "3.0.11": {
+            "3.0.12": {
                 "en": "Updated used npm libraries",
                 "de": "Aktualisierte gebrauchte npm-Bibliotheken",
                 "ru": "Обновлены используемые библиотеки npm",
