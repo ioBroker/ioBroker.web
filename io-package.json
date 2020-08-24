@@ -220,18 +220,6 @@
         "loginBackgroundColor": "",
         "loginBackgroundImage": false
     },
-    "objects": [
-        {
-            "_id": "connected",
-            "type": "info",
-            "common": {
-                "name": "Info about connected socket clients",
-                "type": "string",
-                "read": true,
-                "write": false
-            }
-        }
-    ],
     "instanceObjects": [
         {
             "_id": "",
@@ -241,6 +229,16 @@
                 "type": "meta.user"
             },
             "native": {}
+        },
+        {
+            "_id": "connected",
+            "type": "state",
+            "common": {
+                "name": "Info about connected socket clients",
+                "type": "string",
+                "read": true,
+                "write": false
+            }
         }
     ]
 }

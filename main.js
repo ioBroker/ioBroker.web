@@ -38,6 +38,9 @@ const webByVersion = {};
 let loginPage    = null;
 const FORBIDDEN_CHARS = /[\]\[*,;'"`<>\\\s?]/g; // with space
 
+const LOGIN_PAGE = '/login/index.html';
+const wwwDir = 'www';
+
 function getAppName() {
     const parts = __dirname.replace(/\\/g, '/').split('/');
     return parts[parts.length - 1].split('.')[0];
@@ -571,11 +574,11 @@ function getListOfAllAdapters(callback) {
                         }
                     }
 
-                    if (!indexHtml && !fs.existsSync(__dirname + '/www/index.html')) {
-                        return callback(null, __dirname + '/www/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"');
+                    if (!indexHtml && !fs.existsSync(__dirname + '/' + wwwDir + '/index.html')) {
+                        return callback(null, __dirname + '/' + wwwDir + '/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"');
                     }
 
-                    indexHtml = indexHtml || fs.readFileSync(__dirname + '/www/index.html').toString();
+                    indexHtml = indexHtml || fs.readFileSync(__dirname + '/' + wwwDir + '/index.html').toString();
 
                     list.sort((a, b) => {
                         if (a.order === undefined && b.order === undefined) {
@@ -649,7 +652,7 @@ function prepareLoginTemplate() {
         '            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
         '            background-size: 50px 50px;\n'
     ;
-    const template = fs.readFileSync(__dirname + '/www/login/index.html').toString('utf8');
+    const template = fs.readFileSync(__dirname + '/' + wwwDir + LOGIN_PAGE).toString('utf8');
     if (adapter.config.loginBackgroundColor) {
         def = 'background-color: ' + adapter.config.loginBackgroundColor + ';\n';
     }
@@ -672,60 +675,58 @@ function initAuth(server, settings) {
 
     store = new AdapterStore({adapter: adapter});
 
-    passport.use(new LocalStrategy(
-        function (username, password, done) {
-            username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
+    passport.use(new LocalStrategy((username, password, done) => {
+        username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
 
-            if (bruteForce[username] && bruteForce[username].errors > 4) {
-                let minutes = (new Date().getTime() - bruteForce[username].time);
-                if (bruteForce[username].errors < 7) {
-                    if ((new Date().getTime() - bruteForce[username].time) < 60000) {
-                        minutes = 1;
-                    } else {
-                        minutes = 0;
-                    }
-                } else
-                if (bruteForce[username].errors < 10) {
-                    if ((new Date().getTime() - bruteForce[username].time) < 180000) {
-                        minutes = Math.ceil((180000 - minutes) / 60000);
-                    } else {
-                        minutes = 0;
-                    }
-                } else
-                if (bruteForce[username].errors < 15) {
-                    if ((new Date().getTime() - bruteForce[username].time) < 600000) {
-                        minutes = Math.ceil((600000 - minutes) / 60000);
-                    } else {
-                        minutes = 0;
-                    }
-                } else
-                if ((new Date().getTime() - bruteForce[username].time) < 3600000) {
-                    minutes = Math.ceil((3600000 - minutes) / 60000);
+        if (bruteForce[username] && bruteForce[username].errors > 4) {
+            let minutes = (new Date().getTime() - bruteForce[username].time);
+            if (bruteForce[username].errors < 7) {
+                if ((new Date().getTime() - bruteForce[username].time) < 60000) {
+                    minutes = 1;
                 } else {
                     minutes = 0;
                 }
-
-                if (minutes) {
-                    return done('Too many errors. Try again in ' + minutes + ' ' + (minutes === 1 ? 'minute' : 'minutes') + '.', false);
-                }
-            }
-            adapter.checkPassword(username, password, (res) => {
-                if (!res) {
-                    bruteForce[username] = bruteForce[username] || {errors: 0};
-                    bruteForce[username].time = new Date().getTime();
-                    bruteForce[username].errors++;
-                } else if (bruteForce[username]) {
-                    delete bruteForce[username];
-                }
-
-                if (res) {
-                    return done(null, username);
+            } else
+            if (bruteForce[username].errors < 10) {
+                if ((new Date().getTime() - bruteForce[username].time) < 180000) {
+                    minutes = Math.ceil((180000 - minutes) / 60000);
                 } else {
-                    return done(null, false);
+                    minutes = 0;
                 }
-            });
+            } else
+            if (bruteForce[username].errors < 15) {
+                if ((new Date().getTime() - bruteForce[username].time) < 600000) {
+                    minutes = Math.ceil((600000 - minutes) / 60000);
+                } else {
+                    minutes = 0;
+                }
+            } else
+            if ((new Date().getTime() - bruteForce[username].time) < 3600000) {
+                minutes = Math.ceil((3600000 - minutes) / 60000);
+            } else {
+                minutes = 0;
+            }
+
+            if (minutes) {
+                return done('Too many errors. Try again in ' + minutes + ' ' + (minutes === 1 ? 'minute' : 'minutes') + '.', false);
+            }
         }
-    ));
+        adapter.checkPassword(username, password, (res) => {
+            if (!res) {
+                bruteForce[username] = bruteForce[username] || {errors: 0};
+                bruteForce[username].time = new Date().getTime();
+                bruteForce[username].errors++;
+            } else if (bruteForce[username]) {
+                delete bruteForce[username];
+            }
+
+            if (res) {
+                return done(null, username);
+            } else {
+                return done(null, false);
+            }
+        });
+    }));
     passport.serializeUser((user, done) => done(null, user));
 
     passport.deserializeUser((user, done) => done(null, user));
@@ -737,11 +738,11 @@ function initAuth(server, settings) {
     server.app.use(bodyParser.json());
     server.app.use(bodyParser.text());
     server.app.use(session({
-        secret:            secret,
+        secret,
         saveUninitialized: true,
         resave:            true,
         cookie:            {maxAge: settings.ttl * 1000},
-        store:             store
+        store
     }));
     server.app.use(passport.initialize());
     server.app.use(passport.session());
@@ -789,6 +790,26 @@ function initWebServer(settings) {
         });
         */
 
+        // replace socket.io
+        server.app.use((req, res, next) => {
+            if (socketIoFile !== false && (req.url.startsWith('socket.io.js') || req.url.match(/\/socket\.io\.js(\?.*)?$/))) {
+                if (socketIoFile) {
+                    res.contentType('text/javascript');
+                    return res.status(200).send(socketIoFile);
+                } else {
+                    socketIoFile = fs.readFileSync(path.join(__dirname, './www/lib/js/socket.io.js'));
+                    if (socketIoFile) {
+                        res.contentType('text/javascript');
+                        return res.status(200).send(socketIoFile);
+                    } else {
+                        socketIoFile = false;
+                        return res.status(404).end();
+                    }
+                }
+            }
+            next();
+        });
+
         if (settings.auth) {
             initAuth(server, settings);
 
@@ -806,7 +827,7 @@ function initWebServer(settings) {
                         if (parts[0] === 'lib') {
 						    return res.status(200).send('');
                         } else {
-                            return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                            return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
                         }
                     } else {
                         return res.redirect(redirect);
@@ -826,7 +847,7 @@ function initWebServer(settings) {
                         if (parts[0] === 'lib') {
 						    return res.status(200).send('');
                         } else {
-                            return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                            return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
                         }
                     } else {
                         return res.redirect(redirect);
@@ -839,6 +860,8 @@ function initWebServer(settings) {
                 let redirect = '../';
                 let parts;
                 req.body = req.body || {};
+                const isDev = req.url.includes('?dev&');
+
                 const origin = req.body.origin || '?href=%2F';
                 if (origin) {
                     parts = origin.split('=');
@@ -864,29 +887,40 @@ function initWebServer(settings) {
                 passport.authenticate('local', (err, user, info) => {
                     if (err) {
                         adapter.log.warn('Cannot login user: ' + err);
-                        return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
+                        return res.redirect(LOGIN_PAGE + origin + (origin ? '&error' : '?error'));
                     }
                     if (!user) {
-                        return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
+                        return res.redirect(LOGIN_PAGE + origin + (origin ? '&error' : '?error'));
                     }
                     req.logIn(user, err => {
                         if (err) {
                             adapter.log.warn('Cannot login user: ' + err);
-                            return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
+                            return res.redirect(LOGIN_PAGE + origin + (origin ? '&error' : '?error'));
                         }
                         if (req.body.stayLoggedIn) {
                             req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
+                            req.session.cookie.httpOnly = true;
                         } else {
                             req.session.cookie.maxAge = settings.ttl * 1000;
+                            req.session.cookie.httpOnly = true;
                         }
-                        return res.redirect(redirect);
+                        if (isDev) {
+                            return res.redirect('http://localhost:3000' + redirect);
+                        } else {
+                            return res.redirect(redirect);
+                        }
                     });
                 })(req, res, next);
             });
 
             server.app.get('/logout', (req, res) => {
+                const isDev = req.url.includes('?dev');
                 req.logout();
-                res.redirect('/login/index.html');
+                if (isDev) {
+                    res.redirect('http://localhost:3000/index.html?login');
+                } else {
+                    res.redirect(LOGIN_PAGE);
+                }
             });
 
             // route middleware to make sure a user is logged in
@@ -894,7 +928,7 @@ function initWebServer(settings) {
                 // return favicon always
                 if (req.originalUrl.startsWith('/login/favicon.ico')) {
                     res.set('Content-Type', 'image/x-icon');
-                    return res.send(fs.readFileSync(__dirname + '/www/login/favicon.ico'));
+                    return res.send(fs.readFileSync(__dirname + '/' + wwwDir + '/login/favicon.ico'));
                 }
                 // if cache.manifest got back not 200 it makes an error
                 if (req.isAuthenticated() ||
@@ -905,7 +939,7 @@ function initWebServer(settings) {
                 ) {
                     return next();
                 } else {
-                    autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
+                    autoLogonOrRedirectToLogin(req, res, next, LOGIN_PAGE + '?href=' + encodeURIComponent(req.originalUrl));
                 }
             });
         } else {
@@ -978,17 +1012,19 @@ function initWebServer(settings) {
         }
 
         const appOptions = {};
-        if (settings.cache) appOptions.maxAge = 30758400000;
+        if (settings.cache) {
+            appOptions.maxAge = 30758400000;
+        }
 
         try {
             server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
         } catch (err) {
-            adapter.log.error(`Cannot create webserver: ${err}`);
+            adapter.log.error(`Cannot create web-server: ${err}`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
         if (!server.server) {
-            adapter.log.error(`Cannot create webserver`);
+            adapter.log.error(`Cannot create web-server`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
@@ -1045,8 +1081,8 @@ function initWebServer(settings) {
         socketSettings.forceWebSockets = settings.forceWebSockets || false;
 
         try {
-            const IOSocket = require(utils.appName + '.socketio/lib/socket.js');
-            server.io = new IOSocket(server.server, socketSettings, adapter);
+            const IOSocket = require('./lib/socket.js'); // get later from the valid place utils.appName + '.socketio/lib/socket.js'
+            server.io = new IOSocket(server.server, socketSettings, adapter, null, store);
         } catch (err) {
             adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.')
         }
@@ -1192,7 +1228,7 @@ function initWebServer(settings) {
                                 }
                             } catch (e) {
                                 try {
-                                    socketIoFile = fs.readFileSync(__dirname + '/www/lib/js/socket.io.js');
+                                    socketIoFile = fs.readFileSync(__dirname + '/' + wwwDir + '/lib/js/socket.io.js');
                                 } catch (e) {
                                     adapter.log.error('Cannot read socket.io.js: ' + e);
                                     socketIoFile = false;
