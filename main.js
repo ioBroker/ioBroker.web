@@ -741,7 +741,7 @@ function initAuth(server, settings) {
         secret,
         saveUninitialized: true,
         resave:            true,
-        cookie:            {maxAge: settings.ttl * 1000},
+        cookie:            {maxAge: settings.ttl * 1000}, // default TTL
         store
     }));
     server.app.use(passport.initialize());
@@ -766,6 +766,9 @@ function initWebServer(settings) {
     adapter.subscribeForeignObjects('system.config');
 
     settings.ttl = parseInt(settings.ttl, 10) || 3600;
+    if (settings.ttl < 30) {
+        settings.ttl = 30;
+    }
     if (!settings.whiteListEnabled && settings.whiteListSettings) delete settings.whiteListSettings;
 
     settings.defaultUser = settings.defaultUser || 'system.user.admin';
@@ -938,6 +941,42 @@ function initWebServer(settings) {
                     /\.ico(\?.*)?$/.test(req.originalUrl)
                 ) {
                     return next();
+                } else {
+                    autoLogonOrRedirectToLogin(req, res, next, LOGIN_PAGE + '?href=' + encodeURIComponent(req.originalUrl));
+                }
+            });
+
+            // todo
+            server.app.get('/prolongSession', (req, res, next) => {
+                if (req.isAuthenticated()) {
+                    req.session.touch();
+                    const parts = req.headers.cookie.split(';');
+                    const cookie = {};
+                    parts.forEach(item => {
+                        let [name, value] = item.split('=');
+                        cookie[name.trim()] = value;
+                    });
+
+                    if (cookie['connect.sid']) {
+                        store && store.get(req.session.id, (err, obj) => {
+                            // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
+                            if (obj) {
+                                const expires = new Date();
+                                expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
+
+                                obj.cookie.expires = expires.toISOString();
+                                console.log('Session ' + req.session.id + ' expires on ' + obj.cookie.expires);
+
+                                store.set(req.session.id, obj);
+                                res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
+                                res.send(obj.cookie.expires);
+                            } else {
+                                res.status(501).send('cannot prolong');
+                            }
+                        });
+                    } else {
+                        res.status(501).send('cannot prolong');
+                    }
                 } else {
                     autoLogonOrRedirectToLogin(req, res, next, LOGIN_PAGE + '?href=' + encodeURIComponent(req.originalUrl));
                 }

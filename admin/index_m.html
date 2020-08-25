@@ -178,8 +178,11 @@
     function load(settings, onChange) {
         if (!settings) return;
 
-        if (!settings.lePort) settings.lePort = 80;
-        if (settings.whiteListEnabled === undefined) settings.whiteListEnabled = false;
+        settings.lePort = settings.lePort || 80;
+        settings.whiteListEnabled = settings.whiteListEnabled || false;
+        if (settings.ttl < 30) {
+            settings.ttl = 30;
+        }
 
         getIPs(function(ips) {
             for (var i = 0; i < ips.length; i++) {
@@ -289,7 +292,11 @@
         }
 
         obj['whiteListSettings'] = getWhiteListSettings();
+        obj.ttl = parseInt(obj.ttl, 10);
 
+        if (obj.ttl < 30) {
+            obj.ttl = 30;
+        }
         callback(obj);
     }
 
@@ -358,7 +365,6 @@
     }
 
     function getWhiteListSettings() {
-
         var settings = {};
 
         try {
@@ -722,7 +728,7 @@
                     <label class="translate" for="defaultUser">Run as:</label>
                 </div>
                 <div class="col s12 m3 col-ttl">
-                    <input class="value" id="ttl" />
+                    <input class="value" id="ttl" type="number" min="30"/>
                     <label class="translate" for="ttl">Login timeout(sec):</label>
                 </div>
             </div>
