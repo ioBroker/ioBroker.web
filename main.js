@@ -581,9 +581,11 @@ function getListOfAllAdapters(callback) {
                     indexHtml = indexHtml || fs.readFileSync(__dirname + '/' + wwwDir + '/index.html').toString();
 
                     list.sort((a, b) => {
+                        const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
+                        const bName = (typeof b.name === 'object' ? b.name[lang] || b.name.en : b.name).toLowerCase();
                         if (a.order === undefined && b.order === undefined) {
-                            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                            if (aName > bName) return 1;
+                            if (aName < bName) return -1;
                             return 0;
                         } else if (a.order === undefined) {
                             return -1;
@@ -592,8 +594,8 @@ function getListOfAllAdapters(callback) {
                         } else {
                             if (a.order > b.order) return 1;
                             if (a.order < b.order) return -1;
-                            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                            if (aName > bName) return 1;
+                            if (aName < bName) return -1;
                             return 0;
                         }
                     });
@@ -962,13 +964,13 @@ function initWebServer(settings) {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 const expires = new Date();
-                                expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
+                                //expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
 
                                 obj.cookie.expires = expires.toISOString();
                                 console.log('Session ' + req.session.id + ' expires on ' + obj.cookie.expires);
 
                                 store.set(req.session.id, obj);
-                                res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
+                                //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
                                 res.send(obj.cookie.expires);
                             } else {
                                 res.status(501).send('cannot prolong');
