@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",

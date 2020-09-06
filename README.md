@@ -42,7 +42,7 @@ If not, the user will stay logged in for the configured "login timeout".
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 3.0.13 (2020-09-06)
 * (bluefox) Added the support of multi-language names for the welcome screen.
 
 ### 3.0.12 (2020-08-22)

@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.12",
+        "version": "3.0.13",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.13": {
+                "en": "Added the support of multi-language names for the welcome screen.",
+                "de": "Unterstützung für mehrsprachige Namen für den Begrüßungsbildschirm hinzugefügt.",
+                "ru": "Добавлена поддержка многоязычных имен для экрана приветствия.",
+                "pt": "Adicionado o suporte de nomes em vários idiomas para a tela de boas-vindas.",
+                "nl": "Ondersteuning toegevoegd voor meertalige namen voor het welkomstscherm.",
+                "fr": "Ajout de la prise en charge des noms multilingues pour l'écran d'accueil.",
+                "it": "Aggiunto il supporto di nomi multilingue per la schermata di benvenuto.",
+                "es": "Se agregó la compatibilidad con nombres en varios idiomas para la pantalla de bienvenida.",
+                "pl": "Dodano obsługę wielojęzycznych nazw na ekranie powitalnym.",
+                "zh-cn": "在欢迎屏幕中增加了对多语言名称的支持。"
+            },
             "3.0.12": {
                 "en": "Updated used npm libraries",
                 "de": "Aktualisierte gebrauchte npm-Bibliotheken",
