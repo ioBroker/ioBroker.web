@@ -130,16 +130,21 @@
                     if (!document.location.href.match(/iobroker\.(pro|net)/) && list[i].localLink) {
                         list[i].link = list[i].localLink.replace('$host$', location.hostname);
                     }
+                    var name = (list[i].name || list[i].link);
+                    if (typeof name === 'object') {
+                        name = name[systemLang] || name.en;
+                    }
+
                     text +=
                         '<div class="adapter-tile" onclick="location.href = \'' + list[i].link + '\'">' +
-                            '<div class="adapter-link" >' +
-                                '<div class="adapter-main" style="background-image: url(\'' + list[i].img + '\')">' +
-                                    '<div class="adapter-overlay"></div>' +
-                                '</div>' +
-                                '<div class="adapter-footer">' +
-                                    '<p>' + (list[i].name || list[i].link) + '</p>' +
-                                '</div>' +
-                            '</div>' +
+                        '<div class="adapter-link" >' +
+                        '<div class="adapter-main" style="background-image: url(\'' + list[i].img + '\')">' +
+                        '<div class="adapter-overlay"></div>' +
+                        '</div>' +
+                        '<div class="adapter-footer">' +
+                        '<p>' + name + '</p>' +
+                        '</div>' +
+                        '</div>' +
                         '</div>';
                 }
             }

@@ -578,9 +578,11 @@ function getListOfAllAdapters(callback) {
                     indexHtml = indexHtml || fs.readFileSync(__dirname + '/www/index.html').toString();
 
                     list.sort((a, b) => {
+                        const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
+                        const bName = (typeof b.name === 'object' ? b.name[lang] || b.name.en : b.name).toLowerCase();
                         if (a.order === undefined && b.order === undefined) {
-                            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                            if (aName > bName) return 1;
+                            if (aName < bName) return -1;
                             return 0;
                         } else if (a.order === undefined) {
                             return -1;
@@ -589,8 +591,8 @@ function getListOfAllAdapters(callback) {
                         } else {
                             if (a.order > b.order) return 1;
                             if (a.order < b.order) return -1;
-                            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-                            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                            if (aName > bName) return 1;
+                            if (aName < bName) return -1;
                             return 0;
                         }
                     });
