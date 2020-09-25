@@ -253,6 +253,18 @@
                 "type": "meta.user"
             },
             "native": {}
+        },
+        {
+            "_id": "connected",
+            "type": "state",
+            "common": {
+                "role": "text",
+                "name": "Active instances",
+                "type": "string",
+                "read": true,
+                "write": false
+            },
+            "native": {}
         }
     ]
 }
