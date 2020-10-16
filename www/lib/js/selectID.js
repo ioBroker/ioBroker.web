@@ -1178,7 +1178,6 @@ function filterChanged(e) {
                 }
             });
         } else if (attr === 'role')  {
-            
             // remove jquery UI - todo
             $input.autocomplete({
                 minLength:  0,
@@ -1476,7 +1475,7 @@ function filterChanged(e) {
         }
 
         // toolbar buttons
-        var tds = 
+        var tds =
             '<button class="ui-button-icon-only panel-button btn-refresh"></button>\n' +
             '<button class="panel-button btn-list"></button>\n' +
             '<button class="panel-button btn-collapse"></button>\n'  +
@@ -1488,7 +1487,7 @@ function filterChanged(e) {
         }
 
         if (data.filter && data.filter.type === 'state' && multiselect) {
-            tds += 
+            tds +=
                 '<div class="iob-toolbar-sep"></div>\n' +
                 '<button class="panel-button btn-select-all"></button>\n' +
                 '<button class="panel-button btn-unselect-all"></button>\n' +
@@ -1522,7 +1521,7 @@ function filterChanged(e) {
             height = Math.round(window.innerHeight * 0.6) + 'px';
         }
 
-        var text = 
+        var text =
             '<div class="dialog-select-container' + (isMaterial ? ' material' : ' old-style') + '" style="width: 100%; height: ' + height + '">\n' +
             '    <div class="main-toolbar-table m">' + tds + '</div>\n' +
             '       <table class="main-header-table">\n'
@@ -2306,7 +2305,7 @@ function filterChanged(e) {
 
                                 if (obj && obj.type === 'state' && isCommon && isCommon.type !== 'file') {
                                     addClippyToElement($elem, state.val,
-                                        obj && data.quickEditCallback && 
+                                        obj && data.quickEditCallback &&
                                         obj.type === 'state' &&
                                         (data.expertMode || isCommon.write !== false) ? key : undefined);
                                 }
@@ -3468,7 +3467,7 @@ function filterChanged(e) {
                     });
 
                     data.socket.on('connect', function () {
-                        if (connectTimeout) clearTimeout(connectTimeout);
+                        connectTimeout && clearTimeout(connectTimeout);
                         this.emit('name', data.connCfg.socketName || 'selectId');
                         this.emit('getObjects', function (err, res) {
                             data.objects = res;
