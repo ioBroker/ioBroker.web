@@ -742,6 +742,30 @@ function initAuth(server, settings) {
     server.app.use(passport.session());
     server.app.use(flash());
 }
+
+/**
+ * Send response to a byte ranges request
+ *
+ * @param {object} req - request object
+ * @param {object} res - response object
+ * @param {Buffer} buffer - buffer to be sent
+ * @returns {void}
+ */
+function sendRange(req, res, buffer) {
+    if (req.range(buffer.length) > 1) {
+        adapter.log.warn('Multiple ranges currently not supported, sending whole buffer');
+        res.status(200).send(buffer);
+        return;
+    }
+
+    // This is for <video> tag on iOS Safari, only one range is used by Safari, so this is enough for now
+    const range = req.range(buffer.length)[0];
+    res.set('Content-Range', `bytes ${range.start}-${range.end}/${buffer.length}`);
+    const buf = buffer.slice(range.start, range.end + 1);
+    res.set('Content-Length', buf.length);
+    res.status(206).send(buf);
+}
+
 //settings: {
 //    "port":   8080,
 //    "auth":   false,
@@ -1146,14 +1170,18 @@ function initWebServer(settings) {
             if (webByVersion[id]) {
                 if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
                     // redirect to version
-                    res.set('location', '/' + id + '/' + webByVersion[id] + '/' + url);
+                    res.set('location', `/${id}/${webByVersion[id]}/${url}`);
                     return res.status(301).send();
                 }
             }
 
-            if (settings.cache && cache[id + '/' + url] && !noFileCache) {
-                res.contentType(cache[id + '/' + url].mimeType);
-                res.status(200).send(cache[id + '/' + url].buffer);
+            if (settings.cache && cache[`${id}/${url}`] && !noFileCache) {
+                res.contentType(cache[`${id}/${url}`].mimeType);
+                if (req.headers.range) {
+                    sendRange(req, res, cache[`${id}/${url}`].buffer);
+                } else {
+                    res.status(200).send(cache[`${id}/${url}`].buffer);
+                }
             } else {
                 if (id === 'login' && url === 'index.html') {
                     loginPage = loginPage || prepareLoginTemplate();
@@ -1213,7 +1241,12 @@ function initWebServer(settings) {
                             }
 
                             res.contentType(mimeType);
-                            res.status(200).send(buffer);
+
+                            if (req.headers.range) {
+                                sendRange(req, res, buffer);
+                            } else {
+                                res.status(200).send(buffer);
+                            }
                         }
                     });
                 }
