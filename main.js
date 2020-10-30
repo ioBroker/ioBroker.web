@@ -190,7 +190,7 @@ function startAdapter(options) {
                         main();
                     }
                 } else {
-                    adapter.logger.error('Cannot find object system.config');
+                    adapter.log.error('Cannot find object system.config');
                 }
             });
 
