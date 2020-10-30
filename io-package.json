@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.13",
+        "version": "3.0.14",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.0.14": {
+                "en": "Prevent crash case (Sentry IOBROKER-WEB-1D)\nSupport html <video> tag on Safari (iOS)",
+                "de": "Absturz verhindern (Sentry IOBROKER-WEB-1D)\nUnterstützt HTML<video> Tag auf Safari (iOS)",
+                "ru": "Предотвращение сбоя (Sentry IOBROKER-WEB-1D)\nПоддержка html<video> тег в Safari (iOS)",
+                "pt": "Prevenir caso de travamento (Sentry IOBROKER-WEB-1D)\nSuporte html<video> tag no Safari (iOS)",
+                "nl": "Voorkom crash case (Sentry IOBROKER-WEB-1D)\nOndersteuning van html<video> tag op Safari (iOS)",
+                "fr": "Prévenir les cas de crash (Sentry IOBROKER-WEB-1D)\nSupport html<video> tag sur Safari (iOS)",
+                "it": "Prevenire il crash case (Sentry IOBROKER-WEB-1D)\nSupporto HTML<video> tag su Safari (iOS)",
+                "es": "Caso de prevención de accidentes (Sentry IOBROKER-WEB-1D)\nSoporte html<video> etiqueta en Safari (iOS)",
+                "pl": "Zapobiegaj awariom (Sentry IOBROKER-WEB-1D)\nWsparcie html<video> tag w Safari (iOS)",
+                "zh-cn": "防止崩溃情况（Sentry IOBROKER-WEB-1D）\n支持HTML<video>在Safari（iOS）上标记"
+            },
             "3.0.13": {
                 "en": "Added the support of multi-language names for the welcome screen.",
                 "de": "Unterstützung für mehrsprachige Namen für den Begrüßungsbildschirm hinzugefügt.",

@@ -43,7 +43,7 @@ If not, the user will stay logged in for the configured "login timeout".
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.0.14 (2020-10-30)
 * (Apollon77) Prevent crash case (Sentry IOBROKER-WEB-1D)
 * (foxriver76) Support html <video> tag on Safari (iOS)
 
