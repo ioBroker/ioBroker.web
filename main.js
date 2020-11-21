@@ -832,7 +832,7 @@ function initWebServer(settings) {
                     } else if (adapter.config.basicAuth) {
                         // if basic auth active, we tell it by sending header with 401 status
                         res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
-                        return res.status(401).send('Basic Authentication active');
+                        return res.status(401).send('Basic Authentication has been aborted. You have to reload the page.');
                     } else {
                         return res.redirect(redirect);
                     }
@@ -858,7 +858,7 @@ function initWebServer(settings) {
                     } else if (adapter.config.basicAuth) {
                         // if basic auth active, we tell it by sending header with 401 status
                         res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
-                        return res.status(401).send('Basic Authentication active');
+                        return res.status(401).send('Basic Authentication has been aborted. You have to reload the page.');
                     } else {
                         return res.redirect(redirect);
                     }
