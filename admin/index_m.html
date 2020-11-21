@@ -147,6 +147,7 @@
             $('#defaultUser').val('admin');
             $('.col-defaultUser').hide();
             $('.col-ttl').show();
+            $('#basicAuthDiv').show();
             if ((id === 'auth' || id === 'secure') && !$secure.prop('checked')) {
                 confirmMessage(_('Unsecure_Auth'), _('Warning!'), 'security', [_('Ignore warning'), _('Disable authentication')], function (result) {
                     if (result === 1) {
@@ -159,6 +160,7 @@
             $('.tab-login').addClass('disabled');
             $('.col-defaultUser').show();
             $('.col-ttl').hide();
+            $('#basicAuthDiv').hide();
         }
 
         if ($('#whiteListEnabled').prop('checked')) {
@@ -717,6 +719,7 @@
                     <input class="value" id="auth" type="checkbox" />
                     <label class="translate" for="auth">Authentication:</label>
                 </div>
+
                 <div class="col s12 m3 col-defaultUser">
                     <select class="value" id="defaultUser"></select>
                     <label class="translate" for="defaultUser">Run as:</label>
@@ -724,6 +727,12 @@
                 <div class="col s12 m3 col-ttl">
                     <input class="value" id="ttl" />
                     <label class="translate" for="ttl">Login timeout(sec):</label>
+                </div>
+            </div>
+            <div class="row" id="basicAuthDiv">
+                <div class="col s12 m3">
+                    <input class="value" id="basicAuth" type="checkbox" />
+                    <label class="translate" for="basicAuth">Basic Authentication</label>
                 </div>
             </div>
             <div class="row">

@@ -41,6 +41,11 @@ If not, the user will stay logged in for the configured "login timeout".
 	### __WORK IN PROGRESS__
 -->
 
+## "Basic Authentication" option
+Allows Login via Basic Authentication by sending `401` Unauthorized with a `WWW-Authenticate` header.
+This can be used for applications like *FullyBrowser*. When entering the wrong credentials once, you will be redirected 
+to the Login Page. 
+
 ## Changelog
 
 ### 3.0.14 (2020-10-30)
