@@ -659,8 +659,8 @@ function initAuth(server, settings) {
     cookieParser =     require('cookie-parser');
     bodyParser =       require('body-parser');
     AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
-    passportSocketIo = require('passport.socketio');
-    password =         require(utils.controllerDir + '/lib/password.js');
+    // passportSocketIo = require('passport.socketio');
+    // password =         require(utils.controllerDir + '/lib/password.js');
     passport =         require('passport');
     LocalStrategy =    require('passport-local').Strategy;
     flash =            require('connect-flash'); // TODO report error to user
@@ -820,17 +820,25 @@ function initWebServer(settings) {
                         // return always valid js file for js, because if cache is active it leads to errors
                         const parts = req.originalUrl.split('/');
                         parts.shift();
-                        const ref = parts.join('/');
+
+                        // const ref = parts.join('/');
+
                         // if request for web/lib, ignore it, because no redirect information
                         if (parts[0] === 'lib') {
                             return res.status(200).send('');
                         } else {
                             return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
                         }
+                    } else if (adapter.config.basicAuth) {
+                        // if basic auth active, we tell it by sending header with 401 status
+                        res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
+                        return res.status(401).send('Basic Authentication active');
                     } else {
                         return res.redirect(redirect);
                     }
                 }
+
+                // if whitelist is used
                 const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                 const whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
                 adapter.log.silly('whiteListIp ' + whiteListIp);
@@ -841,12 +849,16 @@ function initWebServer(settings) {
                         // return always valid js file for js, because if cache is active it leads to errors
                         const parts = req.originalUrl.split('/');
                         parts.shift();
-                        const ref = parts.join('/');
+                        // const ref = parts.join('/');
                         if (parts[0] === 'lib') {
 						    return res.status(200).send('');
                         } else {
                             return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
                         }
+                    } else if (adapter.config.basicAuth) {
+                        // if basic auth active, we tell it by sending header with 401 status
+                        res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
+                        return res.status(401).send('Basic Authentication active');
                     } else {
                         return res.redirect(redirect);
                     }
@@ -923,7 +935,43 @@ function initWebServer(settings) {
                     /\.ico(\?.*)?$/.test(req.originalUrl)
                 ) {
                     return next();
+                } else if (adapter.config.basicAuth && typeof req.headers.authorization === 'string' && req.headers.authorization.startsWith('Basic')) {
+                    // not logged in yet and basic auth is active + header present
+                    const b64auth = req.headers.authorization.split(' ')[1];
+                    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+                    req.body = req.body || {};
+
+                    req.body.username = login;
+                    req.body.password = password;
+                    req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
+
+                    const origin = req.body.origin || '?href=%2F';
+                    const redirect = req.originalUrl;
+
+                    passport.authenticate('local', (err, user) => {
+                        if (err) {
+                            adapter.log.warn(`Cannot login user: ${err}`);
+                            return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                        }
+                        if (!user) {
+                            return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                        }
+                        req.logIn(user, err => {
+                            if (err) {
+                                adapter.log.warn(`Cannot login user: ${err}`);
+                                return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                            }
+                            if (req.body.stayLoggedIn) {
+                                req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
+                            } else {
+                                req.session.cookie.maxAge = settings.ttl * 1000;
+                            }
+                            return res.redirect(redirect);
+                        });
+                    })(req, res, next);
                 } else {
+                    // not logged in yet, redirect, auto login or send 401 if basicAuth activated
                     autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
                 }
             });
