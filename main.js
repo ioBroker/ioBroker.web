@@ -162,7 +162,9 @@ function startAdapter(options) {
             }
         },
         stateChange: (id, state) => {
-            if (webServer && webServer.io) webServer.io.publishAll('stateChange', id, state);
+            if (webServer && webServer.io) {
+                webServer.io.publishAll('stateChange', id, state);
+            }
         },
         unload: callback => {
             try {
@@ -240,7 +242,9 @@ function extractPreSetting(obj, attr) {
     }
 }
 function updatePreSettings(obj) {
-    if (!obj || !obj.common) return;
+    if (!obj || !obj.common) {
+        return;
+    }
     if (obj.common.webPreSettings) {
         for (const attr of Object.keys(obj.common.webPreSettings)) {
             webPreSettings[obj._id] = webPreSettings[obj._id] || {};
@@ -576,18 +580,30 @@ function getListOfAllAdapters(callback) {
                     const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
                     const bName = (typeof b.name === 'object' ? b.name[lang] || b.name.en : b.name).toLowerCase();
                     if (a.order === undefined && b.order === undefined) {
-                        if (aName > bName) return 1;
-                        if (aName < bName) return -1;
+                        if (aName > bName) {
+                            return 1;
+                        }
+                        if (aName < bName) {
+                            return -1;
+                        }
                         return 0;
                     } else if (a.order === undefined) {
                         return -1;
                     } else if (b.order === undefined) {
                         return 1;
                     } else {
-                        if (a.order > b.order) return 1;
-                        if (a.order < b.order) return -1;
-                        if (aName > bName) return 1;
-                        if (aName < bName) return -1;
+                        if (a.order > b.order) {
+                            return 1;
+                        }
+                        if (a.order < b.order) {
+                            return -1;
+                        }
+                        if (aName > bName) {
+                            return 1;
+                        }
+                        if (aName < bName) {
+                            return -1;
+                        }
                         return 0;
                     }
                 });
@@ -704,7 +720,7 @@ function initAuth(server, settings) {
                     return done('Too many errors. Try again in ' + minutes + ' ' + (minutes === 1 ? 'minute' : 'minutes') + '.', false);
                 }
             }
-            adapter.checkPassword(username, password, (res) => {
+            adapter.checkPassword(username, password, res => {
                 if (!res) {
                     bruteForce[username] = bruteForce[username] || {errors: 0};
                     bruteForce[username].time = new Date().getTime();
@@ -784,7 +800,9 @@ function initWebServer(settings) {
     adapter.subscribeForeignObjects('system.config');
 
     settings.ttl = parseInt(settings.ttl, 10) || 3600;
-    if (!settings.whiteListEnabled && settings.whiteListSettings) delete settings.whiteListSettings;
+    if (!settings.whiteListEnabled && settings.whiteListSettings) {
+        delete settings.whiteListSettings;
+    }
 
     settings.defaultUser = settings.defaultUser || 'system.user.admin';
     if (!settings.defaultUser.startsWith('system.user.')) {
@@ -811,6 +829,48 @@ function initWebServer(settings) {
         if (settings.auth) {
             initAuth(server, settings);
 
+            /**
+             * Authenticates at the server with the given username and password provided in req
+             *
+             * @param {object} req - request object having properties username and password
+             * @param {object} res - response object
+             * @param {function} next - express next function
+             * @param {string} redirect - redirect path
+             * @param {string} origin - origin path
+             */
+            const authenticate = (req, res, next, redirect, origin) => {
+                passport.authenticate('local', (err, user) => {
+                    if (err) {
+                        adapter.log.warn(`Cannot login user: ${err}`);
+                        return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                    }
+                    if (!user) {
+                        return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                    }
+                    req.logIn(user, err => {
+                        if (err) {
+                            adapter.log.warn(`Cannot login user: ${err}`);
+                            return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                        }
+                        if (req.body.stayLoggedIn) {
+                            req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
+                        } else {
+                            req.session.cookie.maxAge = settings.ttl * 1000;
+                        }
+                        return res.redirect(redirect);
+                    });
+                })(req, res, next);
+            };
+
+            /**
+             * Auto Logon if possible else it will redirect or return Basic Auth information if activated
+             *
+             * @param {Request} req - request object
+             * @param {Response} res - response object
+             * @param {function} next - next function of express
+             * @param {string} redirect - redirect path
+             * @returns {void|*|Response}
+             */
             const autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
                 if (!settings.whiteListSettings) {
                     if (/\.css(\?.*)?$/.test(req.originalUrl)) {
@@ -892,27 +952,7 @@ function initWebServer(settings) {
                     redirect = parts.join('#');
                 }
 
-                passport.authenticate('local', (err, user, info) => {
-                    if (err) {
-                        adapter.log.warn('Cannot login user: ' + err);
-                        return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
-                    }
-                    if (!user) {
-                        return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
-                    }
-                    req.logIn(user, err => {
-                        if (err) {
-                            adapter.log.warn('Cannot login user: ' + err);
-                            return res.redirect('/login/index.html' + origin + (origin ? '&error' : '?error'));
-                        }
-                        if (req.body.stayLoggedIn) {
-                            req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
-                        } else {
-                            req.session.cookie.maxAge = settings.ttl * 1000;
-                        }
-                        return res.redirect(redirect);
-                    });
-                })(req, res, next);
+                authenticate(req, res, next, redirect, origin);
             });
 
             server.app.get('/logout', (req, res) => {
@@ -949,27 +989,7 @@ function initWebServer(settings) {
                     const origin = req.body.origin || '?href=%2F';
                     const redirect = req.originalUrl;
 
-                    passport.authenticate('local', (err, user) => {
-                        if (err) {
-                            adapter.log.warn(`Cannot login user: ${err}`);
-                            return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
-                        }
-                        if (!user) {
-                            return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
-                        }
-                        req.logIn(user, err => {
-                            if (err) {
-                                adapter.log.warn(`Cannot login user: ${err}`);
-                                return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
-                            }
-                            if (req.body.stayLoggedIn) {
-                                req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
-                            } else {
-                                req.session.cookie.maxAge = settings.ttl * 1000;
-                            }
-                            return res.redirect(redirect);
-                        });
-                    })(req, res, next);
+                    authenticate(req, res, next, redirect, origin);
                 } else {
                     // not logged in yet, redirect, auto login or send 401 if basicAuth activated
                     autoLogonOrRedirectToLogin(req, res, next, '/login/index.html?href=' + encodeURIComponent(req.originalUrl));
@@ -1045,7 +1065,9 @@ function initWebServer(settings) {
         }
 
         const appOptions = {};
-        if (settings.cache) appOptions.maxAge = 30758400000;
+        if (settings.cache) {
+            appOptions.maxAge = 30758400000;
+        }
 
         try {
             server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
@@ -1161,7 +1183,9 @@ function initWebServer(settings) {
             // remove '////' at start and let only one
             if (url[0] === '/' && url[1] === '/') {
                 let i = 2;
-                while (url[i] === '/') i++;
+                while (url[i] === '/') {
+                    i++;
+                }
                 url = url.substring(i - 1);
             }
             if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
