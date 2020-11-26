@@ -242,7 +242,8 @@
         "leUpdate": false,
         "leCheckPort": 80,
         "loginBackgroundColor": "",
-        "loginBackgroundImage": false
+        "loginBackgroundImage": false,
+        "basicAuth": false
     },
     "objects": [
         {
