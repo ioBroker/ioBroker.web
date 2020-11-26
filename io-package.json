@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.0.14",
+        "version": "3.1.0",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.1.0": {
+                "en": "Add option for Basic Auth",
+                "de": "Option für Basic Auth hinzufügen",
+                "ru": "Добавить опцию для базовой аутентификации",
+                "pt": "Adicionar opção para autenticação básica",
+                "nl": "Optie toevoegen voor Basic Auth",
+                "fr": "Ajouter une option pour l'authentification de base",
+                "it": "Aggiungi l'opzione per l'autenticazione di base",
+                "es": "Agregar opción para autenticación básica",
+                "pl": "Dodaj opcję dla Basic Auth",
+                "zh-cn": "添加基本身份验证选项"
+            },
             "3.0.14": {
                 "en": "Prevent crash case (Sentry IOBROKER-WEB-1D)\nSupport html <video> tag on Safari (iOS)",
                 "de": "Absturz verhindern (Sentry IOBROKER-WEB-1D)\nUnterstützt HTML<video> Tag auf Safari (iOS)",

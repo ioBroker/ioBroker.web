@@ -48,7 +48,7 @@ to the Login Page.
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.1.0 (2020-11-26)
 * (foxriver76) Add option for Basic Auth
 
 ### 3.0.14 (2020-10-30)
