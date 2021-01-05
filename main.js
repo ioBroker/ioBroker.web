@@ -1081,6 +1081,7 @@ async function initWebServer(settings) {
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
+
         server.server.__server = server;
     } else {
         adapter.log.error('port missing');
