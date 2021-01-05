@@ -71,11 +71,11 @@ describe('Test WEB', function() {
     initTests();
 
     after('Test WEB: Stop js-controller', function (done) {
-        this.timeout(6000);
+        this.timeout(9000);
 
         setup.stopController((normalTerminated) => {
             console.log('Adapter normal terminated: ' + normalTerminated);
-            done();
+            setTimeout(done, 3000);
         });
     });
 });
