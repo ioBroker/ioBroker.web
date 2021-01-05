@@ -789,7 +789,7 @@ function sendRange(req, res, buffer) {
 //    "bind":   "0.0.0.0", // "::"
 //    "cache":  false
 //}
-function initWebServer(settings) {
+async function initWebServer(settings) {
 
     const server = {
         app:       null,
@@ -1069,38 +1069,23 @@ function initWebServer(settings) {
             appOptions.maxAge = 30758400000;
         }
 
-        if (settings.secure) {
-            if (settings.leConfig && settings.leConfig.email && settings.leConfig.domains && settings.leEnabled) {
-                adapter.log.debug('Using Greenlock');
-                try {
-                    LE.createServer(server.app, settings, adapter);
-                } catch (err) {
-                    adapter.log.error(`Cannot create webserver: ${err}`);
-                    adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
-                    return;
-                }
-            } else {
-                adapter.log.debug('Using https createServer');
-                try {
-                    server.server = require('https').createServer(settings.certificates, server.app);
-                } catch (err) {
-                    adapter.log.error('HTTPS server could not be started: ' + err);
-                }
-            }
-        } else {
-            adapter.log.debug('Using http createServer');
-            server.server = require('http').createServer(server.app);
+        try {
+            server.server = await LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+        } catch (err) {
+            adapter.log.error(`Cannot create webserver: ${err}`);
+            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            return;
         }
-        if (server.server) {
-            server.server.__server = server;
+        if (!server.server) {
+            adapter.log.error(`Cannot create webserver`);
+            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            return;
         }
+        server.server.__server = server;
     } else {
         adapter.log.error('port missing');
         adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION): process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
     }
-
-    // TODO: need to do something so that when the LE.createServer is used somehow code below is called.
-    // INTENTIONALLY OMITTED FOR THIS COMMIT TO SHARE POC.
 
     if (server.server) {
         let serverListening = false;
