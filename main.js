@@ -788,11 +788,11 @@ function sendRange(req, res, buffer) {
 //}
 async function initWebServer(settings) {
 
-    if (adapter.config.secure) {
+    if (settings.secure) {
         // Load certificates and/or get Lets Encrypt config.
         const certObj = await adapter.getCertificatesAsync();
-        adapter.config.certificates = certObj[0];
-        adapter.config.leConfig = certObj[1];
+        settings.certificates = certObj[0];
+        settings.leConfig = certObj[1];
     }
 
     const server = {
