@@ -311,16 +311,13 @@ function main() {
             }
         }
 
-        if (adapter.config.secure) {
-            // Load certificates
-            adapter.getCertificates((err, certificates, leConfig) => {
-                adapter.config.certificates = certificates;
-                adapter.config.leConfig     = leConfig;
-                webServer = initWebServer(adapter.config);
-            });
-        } else {
-            webServer = initWebServer(adapter.config);
-        }
+        // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
+        initWebServer(adapter.config).then(returnedServer => {
+            webServer = returnedServer;
+        }).catch(err => {
+            adapter.log.error(`Failed to initWebServer: ${err}`);
+            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+        });
         // monitor extensions and pro keys
         adapter.subscribeForeignObjects('system.adapter.*');
     });
@@ -790,6 +787,13 @@ function sendRange(req, res, buffer) {
 //    "cache":  false
 //}
 async function initWebServer(settings) {
+
+    if (adapter.config.secure) {
+        // Load certificates and/or get Lets Encrypt config.
+        const certObj = await adapter.getCertificatesAsync();
+        adapter.config.certificates = certObj[0];
+        adapter.config.leConfig = certObj[1];
+    }
 
     const server = {
         app:       null,
