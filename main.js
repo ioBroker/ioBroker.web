@@ -1016,37 +1016,40 @@ function initWebServer(settings) {
             }
         }
 
-        // Init read from states
-        server.app.get('/state/*', (req, res) => {
-            try {
-                const fileName = req.url.split('/', 3)[2].split('?', 2);
-                adapter.getForeignObject(fileName[0], (err, obj) => {
-                    let contentType = 'text/plain';
-                    if (obj && obj.common.type === 'file')  {
-                        contentType = mime.lookup(fileName[0]);
-                    }
-                    adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : settings.defaultUser}, (err, obj) => {
-                        if (!err && obj !== null && obj !== undefined) {
-                            if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
-                                res.set('Content-Type', 'application/json');
-                            } else {
-                                res.set('Content-Type', contentType || 'text/plain');
-                            }
-                            res.status(200).send(obj);
-                        } else {
-                            res.status(404).send('404 Not found. File ' + escapeHtml(fileName[0]) + ' not found');
+        if (!settings.disableStates) {
+            adapter.log.debug('Activating states & socket info');
+            // Init read from states
+            server.app.get('/state/*', (req, res) => {
+                try {
+                    const fileName = req.url.split('/', 3)[2].split('?', 2);
+                    adapter.getForeignObject(fileName[0], (err, obj) => {
+                        let contentType = 'text/plain';
+                        if (obj && obj.common.type === 'file')  {
+                            contentType = mime.lookup(fileName[0]);
                         }
+                        adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : settings.defaultUser}, (err, obj) => {
+                            if (!err && obj !== null && obj !== undefined) {
+                                if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
+                                    res.set('Content-Type', 'application/json');
+                                } else {
+                                    res.set('Content-Type', contentType || 'text/plain');
+                                }
+                                res.status(200).send(obj);
+                            } else {
+                                res.status(404).send('404 Not found. File ' + escapeHtml(fileName[0]) + ' not found');
+                            }
+                        });
                     });
-                });
-            } catch (e) {
-                res.status(500).send('500. Error' + e);
-            }
-        });
+                } catch (e) {
+                    res.status(500).send('500. Error' + e);
+                }
+            });
 
-        server.app.get('*/_socket/info.js', (req, res) => {
-            res.set('Content-Type', 'application/javascript');
-            res.status(200).send(getInfoJs(settings));
-        });
+            server.app.get('*/_socket/info.js', (req, res) => {
+                res.set('Content-Type', 'application/javascript');
+                res.status(200).send(getInfoJs(settings));
+            });
+        }
 
         // Enable CORS
         if (settings.socketio) {
@@ -1125,6 +1128,7 @@ function initWebServer(settings) {
 
     // Activate integrated socket
     if (ownSocket) {
+        adapter.log.debug('Activating IOSocket');
         const socketSettings = JSON.parse(JSON.stringify(settings));
         // Authentication checked by server itself
         socketSettings.auth = settings.auth;
@@ -1141,28 +1145,32 @@ function initWebServer(settings) {
         }
     }
 
-    // activate extensions
-    Object.keys(extensions).forEach(e => {
-        try {
-            // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
-            const parts = extensions[e].path.split('/');
-            parts.shift();
-            let extAPI;
-            if (fs.existsSync(__dirname + '/' + parts.join('/'))) {
-                extAPI = require(__dirname + '/' + parts.join('/'));
-            } else {
-                extAPI = require(utils.appName + '.' + extensions[e].path);
-            }
+    if (!settings.disableExtensions) {
+        adapter.log.debug('Activating extensions');
+        // activate extensions
+        Object.keys(extensions).forEach(e => {
+            try {
+                // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
+                const parts = extensions[e].path.split('/');
+                parts.shift();
+                let extAPI;
+                if (fs.existsSync(__dirname + '/' + parts.join('/'))) {
+                    extAPI = require(__dirname + '/' + parts.join('/'));
+                } else {
+                    extAPI = require(utils.appName + '.' + extensions[e].path);
+                }
 
-            extensions[e].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[e].config, server.app);
-            adapter.log.info('Connect extension "' + extensions[e].path + '"');
-        } catch (err) {
-            adapter.log.error('Cannot start extension "' + e + '": ' + err);
-        }
-    });
+                extensions[e].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[e].config, server.app);
+                adapter.log.info('Connect extension "' + extensions[e].path + '"');
+            } catch (err) {
+                adapter.log.error('Cannot start extension "' + e + '": ' + err);
+            }
+        });
+    }
 
     // Activate integrated simple API
     if (settings.simpleapi) {
+        adapter.log.debug('Activating simple API');
         try {
             const SimpleAPI = require(utils.appName + '.simple-api/lib/simpleapi.js');
 
@@ -1172,7 +1180,8 @@ function initWebServer(settings) {
         }
     }
 
-    if (server.app) {
+    if (server.app && !settings.disableFilesObjects) {
+        adapter.log.debug('Activating web files from objectDB');
         // deliver web files from objectDB
         server.app.use('/', (req, res) => {
 
