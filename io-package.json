@@ -260,7 +260,10 @@
         "leCheckPort": 80,
         "loginBackgroundColor": "",
         "loginBackgroundImage": false,
-        "basicAuth": false
+        "basicAuth": false,
+        "disableExtensions": false,
+        "disableStates": false,
+        "disableFilesObjects": false
     },
     "objects": [
         {
