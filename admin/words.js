@@ -375,6 +375,18 @@ systemDictionary = {
         'pl': 'Użyj tej instancji do automatycznej aktualizacji',
         'zh-cn': "自动更新Let's Encrypt证书"
     },
+    'Use Lets Encrypt staging (for testing):': {
+        'en': 'Use Lets Encrypt staging (for testing)',
+        'de': 'Verwenden Sie Lets Encrypt Staging (zum Testen)',
+        'ru': 'Используйте Lets Encrypt staging (для тестирования)',
+        'pt': 'Use o teste Lets Encrypt (para teste)',
+        'nl': 'Gebruik Lets Encrypt enscenering (voor testen)',
+        'fr': 'Utiliser la mise en scène Lets Encrypt (pour les tests)',
+        'it': 'Usa Lets Encrypt staging (per test)',
+        'es': 'Use Lets Encrypt staging (para pruebas)',
+        'pl': 'Użyj Lets Encrypt staging (do testowania)',
+        'zh-cn': '使用Lets Encrypt暂存（用于测试）'
+    },
     'Port to check the domain:': {
         'en': 'Port to check the domain',
         'de': 'Port um die Domain zu prüfen',

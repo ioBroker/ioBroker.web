@@ -311,16 +311,13 @@ function main() {
             }
         }
 
-        if (adapter.config.secure) {
-            // Load certificates
-            adapter.getCertificates((err, certificates, leConfig) => {
-                adapter.config.certificates = certificates;
-                adapter.config.leConfig     = leConfig;
-                webServer = initWebServer(adapter.config);
-            });
-        } else {
-            webServer = initWebServer(adapter.config);
-        }
+        // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
+        initWebServer(adapter.config).then(returnedServer => {
+            webServer = returnedServer;
+        }).catch(err => {
+            adapter.log.error(`Failed to initWebServer: ${err}`);
+            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+        });
         // monitor extensions and pro keys
         adapter.subscribeForeignObjects('system.adapter.*');
     });
@@ -789,7 +786,14 @@ function sendRange(req, res, buffer) {
 //    "bind":   "0.0.0.0", // "::"
 //    "cache":  false
 //}
-function initWebServer(settings) {
+async function initWebServer(settings) {
+
+    if (settings.secure) {
+        // Load certificates and/or get Lets Encrypt config.
+        const certObj = await adapter.getCertificatesAsync();
+        settings.certificates = certObj[0];
+        settings.leConfig = certObj[1];
+    }
 
     const server = {
         app:       null,
@@ -1070,7 +1074,7 @@ function initWebServer(settings) {
         }
 
         try {
-            server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+            server.server = await LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
         } catch (err) {
             adapter.log.error(`Cannot create webserver: ${err}`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
