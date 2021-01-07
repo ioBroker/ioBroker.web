@@ -70,7 +70,7 @@ This can be used for applications like *FullyBrowser*. When entering the wrong c
 to the Login Page. 
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 3.1.1 (2021-01-08)
 * (raintonr) Support of new Let's Encrypt (only with js-controller 3.2.x)
 * (raintonr) Allowed to disable serve files or states from DB
 
