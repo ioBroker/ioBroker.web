@@ -70,6 +70,9 @@ This can be used for applications like *FullyBrowser*. When entering the wrong c
 to the Login Page. 
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (raintonr) Support of new Let's Encrypt (only with js-controller 3.2.x)
+* (raintonr) Allowed to disable serve files or states from DB
 
 ### 3.1.0 (2020-11-26)
 * (foxriver76) Add option for Basic Auth

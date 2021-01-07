@@ -677,13 +677,14 @@
                 <li class="tab col s2"><a href="#tab-main"            class="translate active">Main settings</a></li>
                 <li class="tab col s2 le-settings"><a href="#tab-le"  class="translate">Let's Encrypt SSL</a></li>
                 <li class="tab col s2"><a href="#tab-white-list"      class="translate">White List</a></li>
+                <li class="tab col s2"><a href="#tab-advanced" class="translate">Advanced</a></li>
                 <li class="tab col s2 tab-login"><a href="#tab-login" class="translate">Background</a></li>
             </ul>
         </div>
         <div id="tab-main" class="col s12 page">
             <div class="row">
                 <div class="col s12 m4 l2">
-                    <img src="web.png" class="logo">
+                    <img src="web.png" class="logo" alt="logo"/>
                 </div>
             </div>
             <div class="row">
@@ -753,30 +754,6 @@
                 <div class="col s12 m3 socketio">
                     <input type="checkbox" class="value" id="forceWebSockets"/>
                     <span class="translate" for="forceWebSockets">Force Web-Sockets:</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 m12">
-                    <h6 class="translate">Disable Default Functions</h6>
-                    <p class="translate">Warning: Incorrectly disabling functions use can cause unexpected behaviour.</p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 m6">
-                    <input type="checkbox" class="value" id="disableExtensions"/>
-                    <span class="translate" for="disableExtensions">Disable extension handling:</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 m6">
-                    <input type="checkbox" class="value" id="disableStates"/>
-                    <span class="translate" for="disableStates">Disable states and socket info:</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 m6">
-                    <input type="checkbox" class="value" id="disableFilesObjects"/>
-                    <span class="translate" for="disableFilesObjects">Do not serve web files from objectDB:</span>
                 </div>
             </div>
         </div>
@@ -919,6 +896,32 @@
                 </tr>
                 </tbody>
             </table >
+        </div>
+        <div id="tab-advanced" class="col s12 page">
+            <div class="row">
+                <div class="col s12 m12">
+                    <h6 class="translate">Disable Default Functions</h6>
+                    <p class="translate">Warning: Incorrectly disabling functions use can cause unexpected behaviour.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6">
+                    <input type="checkbox" class="value" id="disableExtensions"/>
+                    <span class="translate" for="disableExtensions">Disable extension handling:</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6">
+                    <input type="checkbox" class="value" id="disableStates"/>
+                    <span class="translate" for="disableStates">Disable states and socket info:</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6">
+                    <input type="checkbox" class="value" id="disableFilesObjects"/>
+                    <span class="translate" for="disableFilesObjects">Do not serve web files from objectDB:</span>
+                </div>
+            </div>
         </div>
         <div id="tab-login" class="col s12 page">
             <div class="row">

@@ -1073,11 +1073,11 @@ async function initWebServer(settings) {
 
         const appOptions = {};
         if (settings.cache) {
-            appOptions.maxAge = 30758400000;
+            appOptions.maxAge = 30758400000; // one year
         }
 
         try {
-            server.server = await LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+            server.server = await LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
         } catch (err) {
             adapter.log.error(`Cannot create webserver: ${err}`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);

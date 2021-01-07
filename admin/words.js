@@ -376,9 +376,9 @@ systemDictionary = {
         'zh-cn': "自动更新Let's Encrypt证书"
     },
     'Use Lets Encrypt staging (for testing):': {
-        'en': 'Use Lets Encrypt staging (for testing)',
-        'de': 'Verwenden Sie Lets Encrypt Staging (zum Testen)',
-        'ru': 'Используйте Lets Encrypt staging (для тестирования)',
+        'en': 'Use Lets Encrypt staging (for testing/debug. Only for developer)',
+        'de': 'Lets Encrypt Staging verwenden (nur zum Testen oder Debuggen. Nur für Entwickler)',
+        'ru': 'Используйте Lets Encrypt staging (для тестирования/отладки. Только для разработчиков)',
         'pt': 'Use o teste Lets Encrypt (para teste)',
         'nl': 'Gebruik Lets Encrypt enscenering (voor testen)',
         'fr': 'Utiliser la mise en scène Lets Encrypt (pour les tests)',
@@ -662,5 +662,17 @@ systemDictionary = {
         'es': 'No sirva archivos web desde objectDB',
         'pl': 'Nie udostępniaj plików internetowych z objectDB',
         'zh-cn': '不要提供来自objectDB的Web文件'
+    },
+    "Advanced": {
+        "en": "Advanced",
+        "de": "Extra",
+        "ru": "Дополнительно",
+        "pt": "Avançado",
+        "nl": "Geavanceerd",
+        "fr": "Avancée",
+        "it": "Avanzate",
+        "es": "Avanzado",
+        "pl": "Zaawansowane",
+        "zh-cn": "高级"
     }
 };
