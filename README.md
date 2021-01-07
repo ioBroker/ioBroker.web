@@ -36,6 +36,29 @@ After 15th wrong attempt the user must wait 1 hour.
 If this options is selected the user stays logged in for one month.
 If not, the user will stay logged in for the configured "login timeout".
 
+## Access state's values
+You can access the normal and binary state values via the HTTP get request.
+
+```
+http://IP:8082/state/system.adapter.web.0.alive =>
+{"val":true,"ack":true,"ts":1606831924559,"q":0,"from":"system.adapter.web.0","lc":1606777539894}
+```
+
+or
+
+```
+http://IP:8082/state/javascript.picture.png =>
+[IMAGE]
+```
+
+The image must be written in the javascript adapter like:
+
+```
+createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
+    setBinaryState('javascript.0.picture.png', fs.readFileSync('/tmp/picture.png'));
+});
+```
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__

@@ -34,7 +34,7 @@ const tests = {
     
     'read admin file': function (done) {
         this.timeout(2000);
-        request(process.env.TEST_PROTOCOL + '://localhost:' + process.env.TEST_PORT + '/adapter/web/index.html', function (error, response, body) {
+        request(process.env.TEST_PROTOCOL + '://localhost:' + process.env.TEST_PORT + '/adapter/web/index_m.html', function (error, response, body) {
             expect(error).to.be.not.ok;
             expect(response.headers['content-type'].split(';')[0]).to.be.equal('text/html');
             expect(response.statusCode).to.be.equal(200);

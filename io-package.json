@@ -222,6 +222,11 @@
                 "js-controller": ">=2.0.0"
             }
         ],
+        "globalDependencies": [
+            {
+                "admin": ">=3.0.0"
+            }
+        ],        
         "authors": [
             {
                 "name": "bluefox",
@@ -255,7 +260,10 @@
         "leCheckPort": 80,
         "loginBackgroundColor": "",
         "loginBackgroundImage": false,
-        "basicAuth": false
+        "basicAuth": false,
+        "disableExtensions": false,
+        "disableStates": false,
+        "disableFilesObjects": false
     },
     "objects": [
         {

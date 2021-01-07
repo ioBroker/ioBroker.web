@@ -602,5 +602,65 @@ systemDictionary = {
         'es': 'Autenticación básica',
         'pl': 'Uwierzytelnianie podstawowe',
         'zh-cn': '基本身份验证'
+    },
+    'Disable Default Functions': {
+        'en': 'Disable Default Functions',
+        'de': 'Standardfunktionen deaktivieren',
+        'ru': 'Отключить функции по умолчанию',
+        'pt': 'Desativar funções padrão',
+        'nl': 'Schakel standaardfuncties uit',
+        'fr': 'Désactiver les fonctions par défaut',
+        'it': 'Disabilita le funzioni predefinite',
+        'es': 'Deshabilitar funciones predeterminadas',
+        'pl': 'Wyłącz funkcje domyślne',
+        'zh-cn': '禁用默认功能'
+    },
+    'Warning: Incorrectly disabling functions use can cause unexpected behaviour.': {
+        'en': 'Warning: Incorrectly disabling functions use can cause unexpected behaviour.',
+        'de': 'Warnung: Das falsche Deaktivieren der Verwendung von Funktionen kann zu unerwartetem Verhalten führen.',
+        'ru': 'Предупреждение: неправильное отключение использования функций может вызвать непредвиденное поведение.',
+        'pt': 'Aviso: A desativação incorreta do uso de funções pode causar um comportamento inesperado.',
+        'nl': 'Waarschuwing: het onjuist uitschakelen van het gebruik van functies kan onverwacht gedrag veroorzaken.',
+        'fr': "Avertissement: la désactivation incorrecte de l'utilisation des fonctions peut provoquer un comportement inattendu.",
+        'it': "Avvertenza: la disabilitazione errata dell'uso delle funzioni può causare comportamenti imprevisti.",
+        'es': 'Advertencia: la desactivación incorrecta del uso de funciones puede provocar un comportamiento inesperado.',
+        'pl': 'Ostrzeżenie: Niepoprawne wyłączenie używania funkcji może spowodować nieoczekiwane zachowanie.',
+        'zh-cn': '警告：错误地禁用功能使用会导致意外行为。'
+    },
+    'Disable extension handling:': {
+        'en': 'Disable extension handling',
+        'de': 'Deaktivieren Sie die Erweiterungsbehandlung',
+        'ru': 'Отключить обработку расширений',
+        'pt': 'Desative o manuseio de extensões',
+        'nl': 'Verwerking van extensies uitschakelen',
+        'fr': 'Désactivez la gestion des extensions',
+        'it': 'Disabilita la gestione delle estensioni',
+        'es': 'Deshabilitar el manejo de extensiones',
+        'pl': 'Wyłącz obsługę rozszerzeń',
+        'zh-cn': '禁用扩展处理：'
+    },
+    'Disable states and socket info:': {
+        'en': 'Disable states and socket info',
+        'de': 'Status und Socket-Informationen deaktivieren',
+        'ru': 'Отключить состояния и информацию о сокете',
+        'pt': 'Desative estados e informações de soquete',
+        'nl': 'Schakel statussen en socketinformatie uit',
+        'fr': 'Désactivez les états et les informations de socket',
+        'it': 'Disabilita stati e informazioni socket',
+        'es': 'Deshabilitar estados e información de socket',
+        'pl': 'Wyłącz stany i informacje o gnieździe',
+        'zh-cn': '禁用状态和套接字信息'
+    },
+    'Do not serve web files from objectDB:': {
+        'en': 'Do not serve web files from objectDB',
+        'de': 'Stellen Sie keine Webdateien aus objectDB bereit',
+        'ru': 'Не обслуживать веб-файлы из objectDB',
+        'pt': 'Não veicular arquivos da web de objectDB',
+        'nl': 'Serveer geen webbestanden vanuit objectDB',
+        'fr': 'Ne diffusez pas de fichiers Web depuis objectDB',
+        'it': 'Non servire file web da objectDB',
+        'es': 'No sirva archivos web desde objectDB',
+        'pl': 'Nie udostępniaj plików internetowych z objectDB',
+        'zh-cn': '不要提供来自objectDB的Web文件'
     }
 };
