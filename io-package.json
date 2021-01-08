@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.1.1",
+        "version": "3.2.0",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.2.0": {
+                "en": "Support of new Let's Encrypt (only with js-controller 3.2.x)\nAllow to disable to serve files or states from DB",
+                "de": "Unterstützung des neuen Let's Encrypt (nur mit js-controller 3.2.x)\nDeaktivieren Sie diese Option, um Dateien oder Status aus der Datenbank bereitzustellen",
+                "ru": "Поддержка нового Let's Encrypt (только с js-controller 3.2.x)\nРазрешить отключение обслуживания файлов или состояний из БД",
+                "pt": "Suporte do novo Let's Encrypt (apenas com js-controller 3.2.x)\nPermitir desabilitar para servir arquivos ou estados do banco de dados",
+                "nl": "Ondersteuning van nieuwe Let's Encrypt (alleen met js-controller 3.2.x)\nSta toe om bestanden of toestanden van DB uit te schakelen",
+                "fr": "Prise en charge du nouveau Let's Encrypt (uniquement avec js-controller 3.2.x)\nAutoriser à désactiver pour servir des fichiers ou des états de la base de données",
+                "it": "Supporto del nuovo Let's Encrypt (solo con js-controller 3.2.x)\nConsenti di disabilitare per servire file o stati dal DB",
+                "es": "Soporte del nuevo Let's Encrypt (solo con js-controller 3.2.x)\nPermitir deshabilitar para servir archivos o estados desde DB",
+                "pl": "Obsługa nowego Let's Encrypt (tylko z js-controller 3.2.x)\nZezwól na wyłączenie obsługi plików lub stanów z bazy danych",
+                "zh-cn": "支持新的Let's Encrypt（仅适用于js-controller 3.2.x）\n允许禁用以从数据库提供文件或状态"
+            },
             "3.1.0": {
                 "en": "Add option for Basic Auth",
                 "de": "Option für Basic Auth hinzufügen",
