@@ -1077,7 +1077,11 @@ async function initWebServer(settings) {
         }
 
         try {
-            server.server = await LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
+            if (typeof LE.createServerAsync === 'function') {
+                server.server = await LE.createServerAsync(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
+            } else {
+                server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+            }
         } catch (err) {
             adapter.log.error(`Cannot create webserver: ${err}`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);

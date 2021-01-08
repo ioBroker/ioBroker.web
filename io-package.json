@@ -16,18 +16,6 @@
             "zh-cn": "Web服务器"
         },
         "news": {
-            "3.1.1": {
-                "en": "Support of new Let's Encrypt (only with js-controller 3.2.x)\nAllowed to disable serve files or states from DB",
-                "de": "Unterstützung des neuen Let's Encrypt (nur mit js-controller 3.2.x)\nErlaubt das Deaktivieren von Servedateien oder -zuständen aus der Datenbank",
-                "ru": "Поддержка нового Let's Encrypt (только с js-controller 3.2.x)\nРазрешено отключать обслуживание файлов или состояний из БД",
-                "pt": "Suporte do novo Let's Encrypt (apenas com js-controller 3.2.x)\nTem permissão para desativar arquivos de serviço ou estados do banco de dados",
-                "nl": "Ondersteuning van nieuwe Let's Encrypt (alleen met js-controller 3.2.x)\nToegestaan om serve-bestanden of statussen van DB uit te schakelen",
-                "fr": "Prise en charge du nouveau Let's Encrypt (uniquement avec js-controller 3.2.x)\nAutorisé à désactiver les fichiers de service ou les états de la base de données",
-                "it": "Supporto del nuovo Let's Encrypt (solo con js-controller 3.2.x)\nAutorizzato a disabilitare i file o gli stati di servizio dal DB",
-                "es": "Soporte del nuevo Let's Encrypt (solo con js-controller 3.2.x)\nSe permite deshabilitar archivos de servicio o estados de la base de datos",
-                "pl": "Obsługa nowego Let's Encrypt (tylko z js-controller 3.2.x)\nZezwolono na wyłączenie obsługi plików lub stanów z bazy danych",
-                "zh-cn": "支持新的Let's Encrypt（仅适用于js-controller 3.2.x）\n允许从数据库禁用服务文件或状态"
-            },
             "3.1.0": {
                 "en": "Add option for Basic Auth",
                 "de": "Option für Basic Auth hinzufügen",
