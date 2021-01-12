@@ -71,7 +71,7 @@ to the Login Page.
 
 ## Changelog
 
-### 3.2.2 (2021-01-12)
+### __WORK IN PROGRESS__
 * (Apollon77) If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)
 * (Apollon77) update dependencies of socketio and simple-api
 
