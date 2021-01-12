@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.2.1",
+        "version": "3.2.2",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.2.2": {
+                "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)\nupdate dependencies of socketio and simple-api",
+                "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).\nAktualisieren Sie die Abhängigkeiten von Socketio und Simple-API",
+                "ru": "Если порт не указан, используйте 8082 по умолчанию (Sentry IOBROKER-WEB-2S)\nобновить зависимости socketio и simple-api",
+                "pt": "Se nenhuma porta for fornecida, use o padrão 8082 (Sentry IOBROKER-WEB-2S)\natualizar dependências de socketio e simple-api",
+                "nl": "Als er geen poort is opgegeven, gebruik dan standaard 8082 (Sentry IOBROKER-WEB-2S)\nupdate afhankelijkheden van socketio en simple-api",
+                "fr": "Si aucun port n'est fourni, utilisez la valeur par défaut 8082 (Sentry IOBROKER-WEB-2S)\nmettre à jour les dépendances de socketio et simple-api",
+                "it": "Se non viene fornita alcuna porta, utilizzare l'impostazione predefinita 8082 (Sentry IOBROKER-WEB-2S)\naggiorna le dipendenze di socketio e simple-api",
+                "es": "Si no se proporciona ningún puerto, utilice el 8082 predeterminado (Sentry IOBROKER-WEB-2S)\nactualizar las dependencias de socketio y simple-api",
+                "pl": "Jeśli nie podano portu, użyj domyślnego 8082 (Sentry IOBROKER-WEB-2S)\naktualizuj zależności socketio i simple-api",
+                "zh-cn": "如果未提供任何端口，请使用默认的8082（Sentry IOBROKER-WEB-2S）\n更新socketio和simple-api的依赖关系"
+            },
             "3.2.1": {
                 "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)",
                 "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).",
