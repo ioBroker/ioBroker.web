@@ -1116,7 +1116,7 @@ async function initWebServer(settings) {
             }
         });
 
-        settings.port = parseInt(settings.port, 10) | 8082;
+        settings.port = parseInt(settings.port, 10) || 8082;
         serverPort = settings.port;
 
         adapter.getPort(settings.port, port => {
