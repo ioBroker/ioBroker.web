@@ -23,7 +23,7 @@
     "express-session": "^1.17.1",
     "iobroker.simple-api": ">=2.4.0",
     "iobroker.socketio": ">=3.0.13",
-    "mime-types": "^2.1.27",
+    "mime-types": "^2.1.28",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
@@ -33,11 +33,11 @@
     "@iobroker/adapter-core": "^2.4.0"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^1.8.1",
+    "@alcalzone/release-script": "^1.8.3",
     "gulp": "^4.0.2",
     "mocha": "^8.2.1",
     "chai": "^4.2.0",
-    "eslint": "^7.14.0"
+    "eslint": "^7.17.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
