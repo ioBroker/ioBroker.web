@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.2.0",
+        "version": "3.2.1",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.2.1": {
+                "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)",
+                "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).",
+                "ru": "Если порт не указан, используйте 8082 по умолчанию (Sentry IOBROKER-WEB-2S)",
+                "pt": "Se nenhuma porta for fornecida, use o padrão 8082 (Sentry IOBROKER-WEB-2S)",
+                "nl": "Als er geen poort is opgegeven, gebruik dan standaard 8082 (Sentry IOBROKER-WEB-2S)",
+                "fr": "Si aucun port n'est fourni, utilisez la valeur par défaut 8082 (Sentry IOBROKER-WEB-2S)",
+                "it": "Se non viene fornita alcuna porta, utilizzare l'impostazione predefinita 8082 (Sentry IOBROKER-WEB-2S)",
+                "es": "Si no se proporciona ningún puerto, utilice el 8082 predeterminado (Sentry IOBROKER-WEB-2S)",
+                "pl": "Jeśli nie podano portu, użyj domyślnego 8082 (Sentry IOBROKER-WEB-2S)",
+                "zh-cn": "如果未提供任何端口，请使用默认的8082（Sentry IOBROKER-WEB-2S）"
+            },
             "3.2.0": {
                 "en": "Support of new Let's Encrypt (only with js-controller 3.2.x)\nAllow to disable to serve files or states from DB",
                 "de": "Unterstützung des neuen Let's Encrypt (nur mit js-controller 3.2.x)\nDeaktivieren Sie diese Option, um Dateien oder Status aus der Datenbank bereitzustellen",

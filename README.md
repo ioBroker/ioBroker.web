@@ -71,7 +71,7 @@ to the Login Page.
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.2.1 (2021-01-12)
 * (Apollon77) If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)
 
 ### 3.2.0 (2021-01-08)
