@@ -37,7 +37,7 @@
     "gulp": "^4.0.2",
     "mocha": "^8.2.1",
     "chai": "^4.2.0",
-    "eslint": "^7.17.0"
+    "eslint": "^7.18.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
