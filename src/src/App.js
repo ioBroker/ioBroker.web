@@ -126,9 +126,8 @@ class App extends GenericApp {
     checkDisabledTabs(nameTab) {
         return (!this.state.native['auth'] && nameTab === "background") || (!this.state.native['secure'] && nameTab === "certificates")
     }
-    
+
     render() {
-        console.log('this', this)
         if (!this.state.loaded) {
             return <MuiThemeProvider theme={this.state.theme}>
                 <Loader theme={this.state.themeType} />

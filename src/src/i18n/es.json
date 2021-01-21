@@ -41,5 +41,6 @@
   "button_title2":"Ignorar advertencia",
   "Warning":"¡Advertencia!",
   "modal_title":"La contraseña se enviará a través de una conexión no segura. Para proteger sus contraseñas, ¡habilite la conexión segura (HTTPS)!",
-  "Authentication_deactivated":"La autenticación fue desactivada"
+  "Authentication_deactivated":"La autenticación fue desactivada",
+  "incorrect_ip":"El IP proporcionado no es válido"
 }

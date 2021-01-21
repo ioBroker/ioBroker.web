@@ -41,5 +41,6 @@
   "button_title2":"Zignoruj ​​ostrzeżenie",
   "Warning":"Ostrzeżenie!",
   "modal_title":"Hasło zostanie wysłane przez połączenie bez zabezpieczeń. Aby chronić swoje hasła, włącz bezpieczne połączenie (HTTPS)!",
-  "Authentication_deactivated":"Uwierzytelnianie zostało dezaktywowane"
+  "Authentication_deactivated":"Uwierzytelnianie zostało dezaktywowane",
+  "incorrect_ip":"Podany adres IP jest nieprawidłowy"
 }

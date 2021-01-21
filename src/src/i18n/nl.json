@@ -41,5 +41,6 @@
   "button_title2":"Negeer waarschuwing",
   "Warning":"Waarschuwing!",
   "modal_title":"Het wachtwoord wordt verzonden via onbeveiligde verbinding. Ter beveiliging van uw wachtwoorden schakelt u de beveiligde verbinding (HTTPS) in!",
-  "Authentication_deactivated":"Verificatie was gedeactiveerd"
+  "Authentication_deactivated":"Verificatie was gedeactiveerd",
+  "incorrect_ip":"Het opgegeven IP-adres is niet geldig"
 }

@@ -41,5 +41,6 @@
   "button_title2":"Ignora l'avviso",
   "Warning":"Avvertimento!",
   "modal_title":"La password verrà inviata tramite connessione non protetta. Per proteggere le tue password abilita la connessione sicura (HTTPS)!",
-  "Authentication_deactivated":"L'autenticazione è stata disattivata"
+  "Authentication_deactivated":"L'autenticazione è stata disattivata",
+  "incorrect_ip":"L'IP fornito non è valido"
 }

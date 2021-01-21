@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
-import { MdClose as IconClose } from 'react-icons/md';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import CustomCheckbox from '../Components/CustomCheckbox';
@@ -11,6 +9,7 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import CustomInput from '../Components/CustomInput';
 import CustomSelect from '../Components/CustomSelect';
 import I18n from '@iobroker/adapter-react/i18n';
+import Toast from '../Components/Toast';
 
 const styles = theme => ({
     tab: {
@@ -173,7 +172,11 @@ class WhiteList extends Component {
                         newObj[keyObj] = copyObj[keyObj];
                     }
                 });
-                onChange(`whiteListSettings`, newObj);
+                if (!this.validateIp(e)) {
+                    this.setState({ toast: 'incorrect_ip' })
+                } else {
+                    onChange(`whiteListSettings`, newObj);
+                }
             }}
         />
     }
@@ -212,11 +215,21 @@ class WhiteList extends Component {
         </IconButton>
     }
 
+    validateIp(ip) {
+        if (ip.indexOf('*') !== -1 && ip.lastIndexOf('.') > ip.indexOf('*')) {
+            return false;
+        }
+        let expression = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+        return expression.test(ip.replace('*', '111'));
+    }
+
     render() {
         const { classes, native, onChange } = this.props;
         const { whiteListSettings } = native;
+        const { toast } = this.state;
         const tableHeadArr = ['to_read', 'list', 'write', 'delete', 'to_read', 'list', 'write', 'to_create', 'delete', 'to_read', 'list', 'write', 'to_create', 'delete'];
         return <form className={classes.tab}>
+            <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <div style={{ position: 'relative' }} className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomCheckbox

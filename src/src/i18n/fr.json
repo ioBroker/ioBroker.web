@@ -41,5 +41,6 @@
   "button_title2":"Ignorer l'avertissement",
   "Warning":"Attention!",
   "modal_title":"Le mot de passe sera envoyé via une connexion non sécurisée. Pour protéger vos mots de passe, activez la connexion sécurisée (HTTPS)!",
-  "Authentication_deactivated":"L'authentification a été désactivée"
+  "Authentication_deactivated":"L'authentification a été désactivée",
+  "incorrect_ip":"L'adresse IP fournie n'est pas valide"
 }

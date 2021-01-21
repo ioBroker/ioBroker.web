@@ -41,5 +41,6 @@
   "button_title2":"Ignorar aviso",
   "Warning":"Atenção!",
   "modal_title":"A senha será enviada por meio de conexão não segura. Para proteger suas senhas, ative a conexão segura (HTTPS)!",
-  "Authentication_deactivated":"A autenticação foi desativada"
+  "Authentication_deactivated":"A autenticação foi desativada",
+  "incorrect_ip":"O IP fornecido não é válido"
 }

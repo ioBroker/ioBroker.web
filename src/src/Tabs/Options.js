@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Snackbar from '@material-ui/core/Snackbar';
-import IconButton from '@material-ui/core/IconButton';
-import { MdClose as IconClose } from 'react-icons/md';
 import Logo from '@iobroker/adapter-react/Components/Logo';
 import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
@@ -11,6 +8,7 @@ import CustomCheckbox from '../Components/CustomCheckbox';
 import I18n from '@iobroker/adapter-react/i18n';
 import CustomModal from '../Components/CustomModal';
 import Security from '@material-ui/icons/Security';
+import Toast from '../Components/Toast';
 
 const styles = theme => ({
     block_wrapper: {
@@ -137,43 +135,13 @@ class Options extends Component {
         }
     };
 
-    renderToast() {
-        const { classes } = this.props;
-        const { toast } = this.state;
-        if (!toast) return null;
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                open={true}
-                autoHideDuration={6000}
-                onClose={() => this.setState({ toast: '' })}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{I18n.t(toast)}</span>}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={classes.close}
-                        onClick={() => this.setState({ toast: '' })}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-            />);
-    }
-
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAdressOptions, usersOptions, openModal } = this.state;
+        const { certificatesOptions, ipAdressOptions, usersOptions, openModal, toast } = this.state;
         let newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
         return <form className={classes.tab}>
+            <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <CustomModal
                 open={openModal}
                 buttomClick={() => {
@@ -327,7 +295,6 @@ class Options extends Component {
                     </div>
                 </div>
             </div>
-            {this.renderToast()}
         </form>;
     }
 }
