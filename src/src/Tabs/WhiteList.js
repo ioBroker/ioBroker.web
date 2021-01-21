@@ -145,7 +145,7 @@ class WhiteList extends Component {
             onChange={(e) => {
                 const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                 newObj[el].user = e;
-                onChange(`whiteListSettings`, newObj);
+                onChange('whiteListSettings', newObj);
             }}
         />
     }
@@ -173,7 +173,7 @@ class WhiteList extends Component {
                 if (!this.validateIp(e)) {
                     this.setState({ toast: 'incorrect_ip' })
                 } else {
-                    onChange(`whiteListSettings`, newObj);
+                    onChange('whiteListSettings', newObj);
                 }
             }}
         />
@@ -284,7 +284,7 @@ class WhiteList extends Component {
                                                     onChange={(e) => {
                                                         const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                                                         newObj[el][elProperty][attr] = e;
-                                                        onChange(`whiteListSettings`, newObj);
+                                                        onChange('whiteListSettings', newObj);
                                                     }}
                                                 />
                                             </TableCell>))}
@@ -339,7 +339,7 @@ class WhiteList extends Component {
                                                                     onChange={(e) => {
                                                                         const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                                                                         newObj[el][element][attr] = e;
-                                                                        onChange(`whiteListSettings`, newObj);
+                                                                        onChange('whiteListSettings', newObj);
                                                                     }}
                                                                 />
                                                             </TableCell>)}

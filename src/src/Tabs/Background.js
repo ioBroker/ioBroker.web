@@ -60,9 +60,6 @@ class Background extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inAction: false,
-            toast: '',
-            errorWithPercent: false,
             imgSRC: ''
         };
     }
@@ -73,7 +70,7 @@ class Background extends Component {
 
     readFile() {
         const { socket } = this.props;
-        socket.getRawSocket().emit('readFile', `web.${instance}`, 'login-bg.png', (err, data) => {
+        socket.getRawSocket().emit('readFile', `web.${this.props.instance}`, 'login-bg.png', (err, data) => {
             if (!err && data) {
                 let arrayBufferView = new Uint8Array(data);
                 let blob = new Blob([arrayBufferView], { type: 'image/png' });
