@@ -108,7 +108,7 @@ CustomModal.defaultProps = {
 CustomModal.propTypes = {
     open: PropTypes.bool,
     close: PropTypes.func,
-    children: PropTypes.object,
+    children: PropTypes.any,
     titleButtom: PropTypes.string,
     titleButtom2: PropTypes.string,
     buttomClick: PropTypes.func

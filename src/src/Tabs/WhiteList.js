@@ -244,10 +244,10 @@ class WhiteList extends Component {
                         <Table className={`${classes.table} ${classes.max_table}`} aria-label="spanning table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell col align="center" rowSpan={2}>
+                                    <TableCell align="center" rowSpan={2}>
                                         {this.buttonAdd()}
                                     </TableCell>
-                                    <TableCell col align="center" rowSpan={2}>
+                                    <TableCell align="center" rowSpan={2}>
                                         IP</TableCell>
                                     <TableCell align="center" rowSpan={2}>
                                         {I18n.t('user')}</TableCell>
@@ -259,7 +259,7 @@ class WhiteList extends Component {
                                         {I18n.t('file')}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    {tableHeadArr.map((el, index) => (<TableCell key={`${el}_${index}`} align="center">
+                                    {tableHeadArr.map((el, index) => (<TableCell key={`${el}_${index}_max`} align="center">
                                         {I18n.t(el)}</TableCell>))}
                                 </TableRow>
                             </TableHead>
@@ -275,22 +275,21 @@ class WhiteList extends Component {
                                         <TableCell style={{ background: '#dcdcdc', borderBottom: '1px solid #afafaf' }}>
                                             {this.tableSelect(el, { marginTop: -1 })}
                                         </TableCell>
-                                        {['object', 'state', 'file'].map((elProperty, indexProperty) => (<>
-                                            {Object.keys(whiteListSettings[el][elProperty]).map((attr, index) =>
-                                                <TableCell style={{ background: indexProperty % 2 ? '#dcdcdc' : null, borderBottom: indexProperty % 2 ? '1px solid #afafaf' : null }} key={`object_${attr}`} align="center">
-                                                    <CustomCheckbox
-                                                        table
-                                                        checked={whiteListSettings[el][elProperty][attr]}
-                                                        attr={attr}
-                                                        native={native}
-                                                        className={classes.check_box_style}
-                                                        onChange={(e) => {
-                                                            const newObj = JSON.parse(JSON.stringify(whiteListSettings));
-                                                            newObj[el][elProperty][attr] = e;
-                                                            onChange(`whiteListSettings`, newObj);
-                                                        }}
-                                                    />
-                                                </TableCell>)}</>))}
+                                        {['object', 'state', 'file'].map((elProperty, indexProperty) => Object.keys(whiteListSettings[el][elProperty]).map((attr, index) =>
+                                            <TableCell style={{ background: Boolean(indexProperty % 2) ? '#dcdcdc' : null, borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
+                                                <CustomCheckbox
+                                                    table
+                                                    checked={whiteListSettings[el][elProperty][attr]}
+                                                    attr={attr}
+                                                    native={native}
+                                                    className={classes.check_box_style}
+                                                    onChange={(e) => {
+                                                        const newObj = JSON.parse(JSON.stringify(whiteListSettings));
+                                                        newObj[el][elProperty][attr] = e;
+                                                        onChange(`whiteListSettings`, newObj);
+                                                    }}
+                                                />
+                                            </TableCell>))}
                                     </TableRow>
                                 })}
                             </TableBody>
@@ -304,7 +303,7 @@ class WhiteList extends Component {
                                     return <div
                                         key={`${index}_wrapper`}
                                         className={classes.card}
-                                        style={{ background: index % 2 ? '#efefef' : null }}>
+                                        style={{ background: Boolean(index % 2) ? '#efefef' : null }}>
                                         <div style={{ width: 'fit-content' }}>
                                             <div>
                                                 {this.buttonRemove(el)}
@@ -332,7 +331,7 @@ class WhiteList extends Component {
                                                 <TableBody>
                                                     <TableRow>
                                                         {Object.keys(whiteListSettings[el][element]).map((attr) =>
-                                                            <TableCell key={`${element}_${attr}_mini`} align="center">
+                                                            <TableCell key={`${element}_${attr}_mini_check`} align="center">
                                                                 <CustomCheckbox
                                                                     table
                                                                     checked={whiteListSettings[el][element][attr]}

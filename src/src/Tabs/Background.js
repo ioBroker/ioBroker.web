@@ -123,22 +123,20 @@ class Background extends Component {
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomInput
-                        title={
-                            <p style={{ height: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                {I18n.t('color')}
-                                <CustomInput
-                                    attr='loginBackgroundColorHelper'
-                                    type='color'
-                                    style={{ marginTop: -1, marginLeft: 10, minWidth: 60 }}
-                                    native={native}
-                                    onChange={async (e, value) => {
-                                        await onChange('loginBackgroundColorHelper', value);
-                                        await onChange('loginBackgroundColor', value);
-                                    }}
-                                    variant="outlined"
-                                    size="small"
-                                /></p>
-                        }
+                        styleComponentBlock={{ height: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                        component={<CustomInput
+                            attr='loginBackgroundColorHelper'
+                            type='color'
+                            style={{ marginTop: -1, marginLeft: 10, minWidth: 60 }}
+                            native={native}
+                            onChange={async (e, value) => {
+                                await onChange('loginBackgroundColorHelper', value);
+                                await onChange('loginBackgroundColor', value);
+                            }}
+                            variant="outlined"
+                            size="small"
+                        />}
+                        title='color'
                         attr='loginBackgroundColor'
                         style={{ marginTop: -1, marginBottom: 20 }}
                         native={native}

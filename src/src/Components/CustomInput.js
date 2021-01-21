@@ -15,7 +15,7 @@ const styles = theme => ({
     }
 });
 
-const CustomInput = ({ size, variant, table, value, title, attr, type, style, classes, native, onChange, className }) => {
+const CustomInput = ({ styleComponentBlock, component, size, variant, table, value, title, attr, type, style, classes, native, onChange, className }) => {
     const error = false;
     return (<FormControl className={`${type === 'number' ? classes.input_namber : classes.input + ' ' + classes.controlElement} ${className}`} style={Object.assign({ paddingTop: 5 }, style)}>
         <TextField
@@ -36,7 +36,10 @@ const CustomInput = ({ size, variant, table, value, title, attr, type, style, cl
             margin="normal"
             size={size}
         />
-        <FormHelperText style={{ marginTop: -3 }}>{I18n.t(title)}</FormHelperText>
+        <div style={styleComponentBlock}>
+            <FormHelperText style={{ marginTop: -3 }}>{I18n.t(title)}</FormHelperText>
+            {component}
+        </div>
     </FormControl>);
 }
 
@@ -47,7 +50,9 @@ CustomInput.defaultProps = {
     table: false,
     native: {},
     variant: 'standard',
-    size: 'medium'
+    size: 'medium',
+    component: null,
+    styleComponentBlock: null
 };
 
 CustomInput.propTypes = {
@@ -56,7 +61,9 @@ CustomInput.propTypes = {
     type: PropTypes.string,
     style: PropTypes.object,
     native: PropTypes.object,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    component: PropTypes.object,
+    styleComponentBlock: PropTypes.object
 };
 
 export default withStyles(styles)(CustomInput);
