@@ -36,5 +36,10 @@
   "color":"Couleur d'arrière-plan de l'écran de connexion",
   "background_image":"Image de fond",
   "upload_image":"Importer une image",
-  "place_the_files_here":"Placez les fichiers ici"
+  "place_the_files_here":"Placez les fichiers ici",
+  "button_title":"Désactiver l'authentification",
+  "button_title2":"Ignorer l'avertissement",
+  "Warning":"Attention!",
+  "modal_title":"Le mot de passe sera envoyé via une connexion non sécurisée. Pour protéger vos mots de passe, activez la connexion sécurisée (HTTPS)!",
+  "Authentication_deactivated":"L'authentification a été désactivée"
 }

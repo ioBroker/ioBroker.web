@@ -36,5 +36,10 @@
   "color":"Kolor tła ekranu logowania",
   "background_image":"Zdjęcie w tle",
   "upload_image":"Załaduj obrazek",
-  "place_the_files_here":"umieść pliki tutaj"
+  "place_the_files_here":"umieść pliki tutaj",
+  "button_title":"Wyłącz uwierzytelnianie",
+  "button_title2":"Zignoruj ​​ostrzeżenie",
+  "Warning":"Ostrzeżenie!",
+  "modal_title":"Hasło zostanie wysłane przez połączenie bez zabezpieczeń. Aby chronić swoje hasła, włącz bezpieczne połączenie (HTTPS)!",
+  "Authentication_deactivated":"Uwierzytelnianie zostało dezaktywowane"
 }

@@ -36,5 +36,10 @@
   "color": "Background color of the login screen",
   "background_image": "Background image",
   "upload_image": "Upload image",
-  "place_the_files_here": "place the files here"
+  "place_the_files_here": "place the files here",
+  "button_title":"Disable authentication",
+  "button_title2":"Ignore warning",
+  "Warning":"Warning!",
+  "modal_title":"The password will be sent via unsecure connection. To protect your passwords enable the secure connection (HTTPS)!",
+  "Authentication_deactivated":"Authentication was deactivated"
 }

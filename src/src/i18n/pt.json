@@ -36,5 +36,10 @@
   "color":"Cor de fundo da tela de login",
   "background_image":"Imagem de fundo",
   "upload_image":"Enviar Imagem",
-  "place_the_files_here":"coloque os arquivos aqui"
+  "place_the_files_here":"coloque os arquivos aqui",
+  "button_title":"Desativar autenticação",
+  "button_title2":"Ignorar aviso",
+  "Warning":"Atenção!",
+  "modal_title":"A senha será enviada por meio de conexão não segura. Para proteger suas senhas, ative a conexão segura (HTTPS)!",
+  "Authentication_deactivated":"A autenticação foi desativada"
 }

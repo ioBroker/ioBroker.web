@@ -36,5 +36,10 @@
   "color":"Achtergrondkleur van het inlogscherm",
   "background_image":"Achtergrond afbeelding",
   "upload_image":"Afbeelding uploaden",
-  "place_the_files_here":"plaats de bestanden hier"
+  "place_the_files_here":"plaats de bestanden hier",
+  "button_title":"Schakel verificatie uit",
+  "button_title2":"Negeer waarschuwing",
+  "Warning":"Waarschuwing!",
+  "modal_title":"Het wachtwoord wordt verzonden via onbeveiligde verbinding. Ter beveiliging van uw wachtwoorden schakelt u de beveiligde verbinding (HTTPS) in!",
+  "Authentication_deactivated":"Verificatie was gedeactiveerd"
 }

@@ -7,6 +7,7 @@ import { MdClose as IconClose } from 'react-icons/md';
 import CustomCheckbox from '../Components/CustomCheckbox';
 import CustomInput from '../Components/CustomInput';
 import HintComponent from '../Components/HintComponent';
+import logo from '../assets/le.png'
 
 const styles = theme => ({
     tab: {
@@ -21,11 +22,14 @@ const styles = theme => ({
     columnSettings: {
         width: 'calc(100% - 10px)'
     },
-    fotn_size:{
-        '@media screen and (max-width: 460px)':{
+    logo_width: {
+        width: 200
+    },
+    fotn_size: {
+        '@media screen and (max-width: 460px)': {
             '& > *': {
-               fontSize: '3.2vw',
-             }
+                fontSize: '3.2vw',
+            }
         }
     }
 
@@ -67,41 +71,10 @@ class Certificates extends Component {
         }
     };
 
-    renderToast() {
-        const { classes } = this.props;
-        const { toast } = this.state;
-        if (!toast) return null;
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={true}
-                autoHideDuration={6000}
-                onClose={() => this.setState({ toast: '' })}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{toast}</span>}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={classes.close}
-                        onClick={() => this.setState({ toast: '' })}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-            />);
-    }
-
     render() {
         const { classes, native, onChange, common: { readme } } = this.props;
         return <form className={classes.tab}>
-            <img alt='logo' />
+            <img className={classes.logo_width} alt='logo' src={logo} />
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomCheckbox
@@ -141,7 +114,6 @@ class Certificates extends Component {
                     }} />
                 </div>
             </div>
-            {this.renderToast()}
         </form>;
     }
 }

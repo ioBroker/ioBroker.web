@@ -9,6 +9,8 @@ import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
 import I18n from '@iobroker/adapter-react/i18n';
+import CustomModal from '../Components/CustomModal';
+import Security from '@material-ui/icons/Security';
 
 const styles = theme => ({
     block_wrapper: {
@@ -45,6 +47,19 @@ const styles = theme => ({
         '@media screen and (max-width: 940px)': {
             width: '100%'
         }
+    },
+    block_warning: {
+        background: '#2196f3',
+        color: '#fff',
+        margin: '20px 2px',
+        padding: '8px',
+        fontSize: '20px'
+    },
+    block_warning_content: {
+        marginBottom: '200px',
+        flexFlow: 'wrap',
+        display: 'flex',
+        alignItems: 'flex-end'
     }
 });
 
@@ -58,7 +73,8 @@ class Options extends Component {
             errorWithPercent: false,
             ipAdressOptions: [],
             certificatesOptions: [],
-            usersOptions: []
+            usersOptions: [],
+            openModal: false
         };
         const { instance, socket, adapterName } = this.props;
         socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
@@ -107,6 +123,13 @@ class Options extends Component {
         socket.unsubscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
     }
 
+    componentDidUpdate(prevProps) {
+        const { native: { auth, secure } } = prevProps;
+        if (!this.props.native.secure && this.props.native.auth && !this.state.openModal && ((auth !== this.props.native.auth) || (secure !== this.props.native.secure))) {
+            this.setState({ openModal: true })
+        }
+    }
+
     onAliveChanged = (id, state) => {
         const { instance, adapterName } = this.props;
         if (id === `system.adapter.${adapterName}.${instance}.alive`) {
@@ -122,7 +145,7 @@ class Options extends Component {
             <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'left',
+                    horizontal: 'center',
                 }}
                 open={true}
                 autoHideDuration={6000}
@@ -130,7 +153,7 @@ class Options extends Component {
                 ContentProps={{
                     'aria-describedby': 'message-id',
                 }}
-                message={<span id="message-id">{toast}</span>}
+                message={<span id="message-id">{I18n.t(toast)}</span>}
                 action={[
                     <IconButton
                         key="close"
@@ -147,11 +170,26 @@ class Options extends Component {
 
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAdressOptions, usersOptions } = this.state;
+        const { certificatesOptions, ipAdressOptions, usersOptions, openModal } = this.state;
+        let newCommon = JSON.parse(JSON.stringify(common));
+        newCommon.icon = newCommon.extIcon;
         return <form className={classes.tab}>
+            <CustomModal
+                open={openModal}
+                buttomClick={() => {
+                    onChange('auth', false);
+                    this.setState({ openModal: !openModal });
+                    this.setState({ toast: 'Authentication_deactivated' });
+                }}
+                close={() => this.setState({ openModal: !openModal })}
+                titleButtom={I18n.t('button_title')}
+                titleButtom2={I18n.t('button_title2')}>
+                <div className={classes.block_warning}>{I18n.t('Warning')}</div>
+                <div className={classes.block_warning_content}><Security style={{ width: 100, height: 100 }} />{I18n.t('modal_title')}</div>
+            </CustomModal>
             <Logo
                 instance={instance}
-                common={common}
+                common={newCommon}
                 native={native}
                 onError={text => this.setState({ errorText: text })}
                 onLoad={onLoad}

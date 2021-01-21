@@ -36,5 +36,10 @@
   "color":"登录界面的背景颜色",
   "background_image":"背景图片",
   "upload_image":"上传图片",
-  "place_the_files_here":"将文件拖拽到这里"
+  "place_the_files_here":"将文件拖拽到这里",
+  "button_title":"禁用身份认证机制",
+  "button_title2":"忽略警告",
+  "Warning":"警告!",
+  "modal_title":"密码将通过不安全的连接发送。 要保护您的密码，请启用安全连接（HTTPS）！",
+  "Authentication_deactivated":"身份认证机制已停用"
 }

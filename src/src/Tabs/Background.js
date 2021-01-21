@@ -48,12 +48,12 @@ const styles = theme => ({
         maxWidth: 500,
         maxHeight: 500
     },
-    '@media screen and (max-width: 680px)':{
-        drop_zone:{
+    '@media screen and (max-width: 680px)': {
+        drop_zone: {
             width: 'calc(100% - 45px)',
             minWidth: '200px',
         },
-        imgStyle:{
+        imgStyle: {
             width: '100%',
         }
     }
@@ -119,37 +119,6 @@ class Background extends Component {
         reader.readAsArrayBuffer(file);
     }
 
-    renderToast() {
-        const { classes } = this.props;
-        const { toast } = this.state;
-        if (!toast) return null;
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={true}
-                autoHideDuration={6000}
-                onClose={() => this.setState({ toast: '' })}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{toast}</span>}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={classes.close}
-                        onClick={() => this.setState({ toast: '' })}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-            />);
-    }
-
     render() {
         const { classes, native, onChange } = this.props;
         const { imgSRC } = this.state;
@@ -160,7 +129,7 @@ class Background extends Component {
                         title={
                             <p style={{ height: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                 {I18n.t('color')}
-                        <CustomInput
+                                <CustomInput
                                     attr='loginBackgroundColorHelper'
                                     type='color'
                                     style={{ marginTop: -1, marginLeft: 10, minWidth: 60 }}
@@ -216,7 +185,6 @@ class Background extends Component {
                     </Dropzone>
                 </div>
             </div>
-            {this.renderToast()}
         </form>;
     }
 }

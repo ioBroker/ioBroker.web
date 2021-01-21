@@ -36,5 +36,10 @@
   "color":"Colore di sfondo della schermata di accesso",
   "background_image":"Immagine di sfondo",
   "upload_image":"Carica immagine",
-  "place_the_files_here":"posiziona i file qui"
+  "place_the_files_here":"posiziona i file qui",
+  "button_title":"Disabilitare l'autenticazione",
+  "button_title2":"Ignora l'avviso",
+  "Warning":"Avvertimento!",
+  "modal_title":"La password verrà inviata tramite connessione non protetta. Per proteggere le tue password abilita la connessione sicura (HTTPS)!",
+  "Authentication_deactivated":"L'autenticazione è stata disattivata"
 }

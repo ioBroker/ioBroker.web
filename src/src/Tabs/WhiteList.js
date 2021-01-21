@@ -132,37 +132,6 @@ class WhiteList extends Component {
         }
     };
 
-    renderToast() {
-        const { classes } = this.props;
-        const { toast } = this.state;
-        if (!toast) return null;
-        return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                open={true}
-                autoHideDuration={6000}
-                onClose={() => this.setState({ toast: '' })}
-                ContentProps={{
-                    'aria-describedby': 'message-id',
-                }}
-                message={<span id="message-id">{toast}</span>}
-                action={[
-                    <IconButton
-                        key="close"
-                        aria-label="Close"
-                        color="inherit"
-                        className={classes.close}
-                        onClick={() => this.setState({ toast: '' })}
-                    >
-                        <IconClose />
-                    </IconButton>,
-                ]}
-            />);
-    }
-
     tableSelect(el, style) {
         const { classes, native, onChange } = this.props;
         const { whiteListSettings } = native;
@@ -374,7 +343,6 @@ class WhiteList extends Component {
                     </TableContainer>
                 </div>
             </div>
-            {this.renderToast()}
         </form>;
     }
 }

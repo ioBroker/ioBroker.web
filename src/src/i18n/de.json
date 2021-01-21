@@ -36,5 +36,10 @@
   "color":"Hintergrundfarbe des Anmeldebildschirms",
   "background_image":"Hintergrundbild",
   "upload_image":"Bild hochladen",
-  "place_the_files_here":"dateien hier platzieren"
+  "place_the_files_here":"dateien hier platzieren",
+  "button_title":"Authentifizierung deaktivieren",
+  "button_title2":"Warnung ignorieren",
+  "Warning":"Warnung!",
+  "modal_title":"Das Passwort wird über unsichere Verbindung gesendet. Um Ihre Passwörter zu schützen, aktivieren Sie die sichere Verbindung (HTTPS)!",
+  "Authentication_deactivated":"Die Authentifizierung wurde deaktiviert"
 }

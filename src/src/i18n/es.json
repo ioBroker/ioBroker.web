@@ -36,5 +36,10 @@
   "color":"Color de fondo de la pantalla de inicio de sesión",
   "background_image":"Imagen de fondo",
   "upload_image":"Cargar imagen",
-  "place_the_files_here":"coloca los archivos aquí"
+  "place_the_files_here":"coloca los archivos aquí",
+  "button_title":"Deshabilitar autenticación",
+  "button_title2":"Ignorar advertencia",
+  "Warning":"¡Advertencia!",
+  "modal_title":"La contraseña se enviará a través de una conexión no segura. Para proteger sus contraseñas, ¡habilite la conexión segura (HTTPS)!",
+  "Authentication_deactivated":"La autenticación fue desactivada"
 }
