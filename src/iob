@@ -1,2 +1,0 @@
-#!/usr/bin/env node
-require('/Users/zalash/MyProject/ioBroker.web/src/node_modules/iobroker.js-controller/lib/setup').execute();

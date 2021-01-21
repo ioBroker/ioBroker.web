@@ -6,9 +6,6 @@ import PropTypes from 'prop-types';
 const styles = theme => ({
     input: {
         minWidth: 300
-    },
-    input_namber: {
-        minWidth: 150
     }
 });
 

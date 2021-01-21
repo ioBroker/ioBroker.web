@@ -11,7 +11,7 @@ import Security from '@material-ui/icons/Security';
 import Toast from '../Components/Toast';
 
 const styles = theme => ({
-    block_wrapper: {
+    blockWrapper: {
         display: 'flex',
         flexDirection: 'column',
         marginRight: 20,
@@ -19,7 +19,7 @@ const styles = theme => ({
             marginRight: 0
         }
     },
-    display_none: {
+    displayNone: {
         display: 'none'
     },
     tab: {
@@ -34,11 +34,11 @@ const styles = theme => ({
     columnSettings: {
         width: 'calc(100% - 10px)',
     },
-    block_wrapper_checkbox: {
+    blockWrapperCheckbox: {
         display: 'flex',
         flexFlow: 'wrap'
     },
-    ip_input_style: {
+    ipInputStyle: {
         marginTop: 10,
         width: 900,
         marginRight: 20,
@@ -50,11 +50,11 @@ const styles = theme => ({
         background: '#2196f3',
         color: '#fff',
         margin: '20px 2px',
-        padding: '8px',
-        fontSize: '20px'
+        padding: 8,
+        fontSize: 20
     },
     block_warning_content: {
-        marginBottom: '200px',
+        marginBottom: 200,
         flexFlow: 'wrap',
         display: 'flex',
         alignItems: 'flex-end'
@@ -69,7 +69,7 @@ class Options extends Component {
             toast: '',
             isInstanceAlive: false,
             errorWithPercent: false,
-            ipAdressOptions: [],
+            ipAddressOptions: [],
             certificatesOptions: [],
             usersOptions: [],
             openModal: false
@@ -81,6 +81,7 @@ class Options extends Component {
 
     componentDidMount() {
         const { instance, socket, adapterName, common: { host } } = this.props;
+
         socket.getRawSocket().emit('getHostByIp', host, (err, data) => {
             if (data) {
                 let IPs4 = [{ title: `[IPv4] 0.0.0.0 - ${I18n.t('open_ip')}`, value: '0.0.0.0', family: 'ipv4' }];
@@ -102,17 +103,18 @@ class Options extends Component {
                 for (let i = 0; i < IPs6.length; i++) {
                     IPs4.push(IPs6[i]);
                 }
-                this.setState({ ipAdressOptions: IPs4 })
+                this.setState({ ipAddressOptions: IPs4 });
             }
         })
+
         socket.getCertificates()
-            .then(list => {
-                this.setState({ certificatesOptions: list })
-            });
+            .then(list =>
+                this.setState({ certificatesOptions: list }));
+
         socket.getUsers()
-            .then(list => {
-                this.setState({ usersOptions: list })
-            });
+            .then(list =>
+                this.setState({ usersOptions: list }));
+
         socket.subscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
     }
 
@@ -124,7 +126,7 @@ class Options extends Component {
     componentDidUpdate(prevProps) {
         const { native: { auth, secure } } = prevProps;
         if (!this.props.native.secure && this.props.native.auth && !this.state.openModal && ((auth !== this.props.native.auth) || (secure !== this.props.native.secure))) {
-            this.setState({ openModal: true })
+            this.setState({ openModal: true });
         }
     }
 
@@ -137,7 +139,7 @@ class Options extends Component {
 
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAdressOptions, usersOptions, openModal, toast } = this.state;
+        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast } = this.state;
         let newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
         return <form className={classes.tab}>
@@ -157,6 +159,7 @@ class Options extends Component {
             </CustomModal>
             <Logo
                 instance={instance}
+                classes={undefined}
                 common={newCommon}
                 native={native}
                 onError={text => this.setState({ errorText: text })}
@@ -167,8 +170,8 @@ class Options extends Component {
                     <CustomSelect
                         title='ip'
                         attr='bind'
-                        className={classes.ip_input_style}
-                        options={ipAdressOptions}
+                        className={classes.ipInputStyle}
+                        options={ipAddressOptions}
                         native={native}
                         onChange={onChange}
                     />
@@ -181,8 +184,8 @@ class Options extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div className={classes.block_wrapper_checkbox}>
-                    <div className={classes.block_wrapper}>
+                <div className={classes.blockWrapperCheckbox}>
+                    <div className={classes.blockWrapper}>
                         <CustomCheckbox
                             title='encryption'
                             attr='secure'
@@ -198,7 +201,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            className={native['auth'] ? null : classes.display_none}
+                            className={native['auth'] ? null : classes.displayNone}
                             title='basic_authentication'
                             attr='basicAuth'
                             style={{ marginTop: 10 }}
@@ -224,9 +227,9 @@ class Options extends Component {
                             onChange={onChange}
                         />
                     </div>
-                    <div className={classes.block_wrapper}>
+                    <div className={classes.blockWrapper}>
                         <CustomSelect
-                            className={native['secure'] ? null : classes.display_none}
+                            className={native['secure'] ? null : classes.displayNone}
                             title='public_certificate'
                             attr='certPublic'
                             options={[
@@ -237,7 +240,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomSelect
-                            className={!native['auth'] ? null : classes.display_none}
+                            className={!native['auth'] ? null : classes.displayNone}
                             title='users'
                             attr='defaultUser'
                             options={usersOptions.map(({ common: { name } }) => ({ title: name, value: name }))}
@@ -246,7 +249,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomInput
-                            className={native['auth'] ? null : classes.display_none}
+                            className={native['auth'] ? null : classes.displayNone}
                             title='time_out'
                             attr='ttl'
                             type='number'
@@ -269,9 +272,9 @@ class Options extends Component {
                             onChange={onChange}
                         />
                     </div>
-                    <div className={classes.block_wrapper_checkbox} >
+                    <div className={classes.blockWrapperCheckbox} >
                         <CustomSelect
-                            className={native['secure'] ? null : classes.display_none}
+                            className={native['secure'] ? null : classes.displayNone}
                             title='private_certificate'
                             attr='certPrivate'
                             options={[
@@ -282,7 +285,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomSelect
-                            className={native['secure'] ? null : classes.display_none}
+                            className={native['secure'] ? null : classes.displayNone}
                             title='chained_certificate'
                             attr='certChained'
                             options={[

@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const CustomModal = ({ open, close, children, titleButtom, titleButtom2, buttomClick }) => {
+const CustomModal = ({ open, close, children, titleButton, titleButton2, buttonClick }) => {
     const classes = useStyles();
     return (
         <Dialog
@@ -86,12 +86,12 @@ const CustomModal = ({ open, close, children, titleButtom, titleButtom2, buttomC
             <div className={classes.modal_content_wrapper}>
                 <div className={classes.close} onClick={close} />
                 {children}
-                <div className={`${classes.modal_button_block} ${titleButtom ? classes.modal_button_block_two : ''}`}>
-                    {titleButtom && <Button onClick={buttomClick}>
-                        {titleButtom}
+                <div className={`${classes.modal_button_block} ${titleButton ? classes.modal_button_block_two : ''}`}>
+                    {titleButton && <Button onClick={buttonClick}>
+                        {titleButton}
                     </Button>}
-                    {titleButtom2 && <Button onClick={close}>
-                        {titleButtom2}
+                    {titleButton2 && <Button onClick={close}>
+                        {titleButton2}
                     </Button>}
                 </div>
             </div>
@@ -101,7 +101,7 @@ const CustomModal = ({ open, close, children, titleButtom, titleButtom2, buttomC
 
 CustomModal.defaultProps = {
     open: false,
-    buttomClick: () => { },
+    buttonClick: () => { },
     close: () => { }
 };
 
@@ -109,9 +109,9 @@ CustomModal.propTypes = {
     open: PropTypes.bool,
     close: PropTypes.func,
     children: PropTypes.any,
-    titleButtom: PropTypes.string,
-    titleButtom2: PropTypes.string,
-    buttomClick: PropTypes.func
+    titleButton: PropTypes.string,
+    titleButton2: PropTypes.string,
+    buttonClick: PropTypes.func
 };
 
 export default CustomModal;

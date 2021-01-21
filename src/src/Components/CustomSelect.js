@@ -7,13 +7,13 @@ const styles = theme => ({
     input: {
         minWidth: 300
     },
-    input_namber: {
+    inputNumber: {
         minWidth: 150
     }
 });
 
 const CustomSelect = ({ table, value, title, attr, options, style, classes, native, onChange, className }) => {
-    return (<FormControl className={classes.input + ' ' + classes.controlElement + ' ' + className} style={Object.assign({ paddingTop: 5 }, style)}>
+    return <FormControl className={classes.input + ' ' + classes.controlElement + ' ' + className} style={Object.assign({ paddingTop: 5 }, style)}>
         <Select
             value={table ? value : native[attr] || '_'}
             onChange={e => {
@@ -29,7 +29,7 @@ const CustomSelect = ({ table, value, title, attr, options, style, classes, nati
             {options.map(item => (<MenuItem key={'key-' + item.value} value={item.value || '_'}>{I18n.t(item.title)}</MenuItem>))}
         </Select>
         <FormHelperText>{I18n.t(title)}</FormHelperText>
-    </FormControl>)
+    </FormControl>;
 }
 
 CustomSelect.defaultProps = {

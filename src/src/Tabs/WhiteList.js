@@ -16,9 +16,6 @@ const styles = theme => ({
         width: '100%',
         minHeight: '100%'
     },
-    input_namber: {
-        minWidth: 150
-    },
     button: {
         marginRight: 20,
         marginBottom: 40,
@@ -33,7 +30,7 @@ const styles = theme => ({
     table: {
         minWidth: 700,
         '& td': {
-            padding: '2px'
+            padding: 2
         }
     },
     display_none: {
@@ -47,10 +44,10 @@ const styles = theme => ({
         display: 'none'
     },
     card: {
-        padding: '1px',
+        padding: 1,
         margin: '20px 0',
         border: '1px solid',
-        borderRadius: '10px',
+        borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center'
@@ -58,7 +55,7 @@ const styles = theme => ({
     '@media screen and (max-width: 1700px)': {
         table: {
             '& th': {
-                padding: '2px'
+                padding: 2
             }
         }
     },
@@ -77,27 +74,28 @@ const styles = theme => ({
         }
     }
 });
+
 const baseObj = {
-    "user": "admin",
-    "object": {
-        "read": true,
-        "list": true,
-        "write": true,
-        "delete": true
+    user: 'admin',
+    object: {
+        read: true,
+        list: true,
+        write: true,
+        delete: true
     },
-    "state": {
-        "read": true,
-        "list": true,
-        "write": true,
-        "create": true,
-        "delete": true
+    state: {
+        read: true,
+        list: true,
+        write: true,
+        create: true,
+        delete: true
     },
-    "file": {
-        "read": true,
-        "list": true,
-        "write": true,
-        "create": true,
-        "delete": true
+    file: {
+        read: true,
+        list: true,
+        write: true,
+        create: true,
+        delete: true
     }
 }
 class WhiteList extends Component {
@@ -156,7 +154,7 @@ class WhiteList extends Component {
         const { native, onChange } = this.props;
         const { whiteListSettings } = native;
         if (el === 'default') {
-            return el
+            return el;
         }
         return <CustomInput
             table
@@ -189,7 +187,7 @@ class WhiteList extends Component {
             let number = 1;
             let newKey = '192.168.0.1';
             const addProperty = () => {
-                if (Object.keys(newObj).find(keysearch => keysearch === newKey)) {
+                if (Object.keys(newObj).find(keySearch => keySearch === newKey)) {
                     newKey = `192.168.0.${number}`;
                     number = number + 1;
                     addProperty();
@@ -197,7 +195,7 @@ class WhiteList extends Component {
             }
             addProperty();
             newObj = Object.assign({ [newKey]: baseObj }, newObj);
-            onChange(`whiteListSettings`, newObj);
+            onChange('whiteListSettings', newObj);
         }}>
             <AddCircleIcon />
         </IconButton>
@@ -209,7 +207,7 @@ class WhiteList extends Component {
         return <IconButton color="primary" onClick={() => {
             const copyObj = JSON.parse(JSON.stringify(whiteListSettings));
             delete copyObj[el]
-            onChange(`whiteListSettings`, copyObj);
+            onChange('whiteListSettings', copyObj);
         }} style={el === 'default' ? { display: 'none' } : null} aria-label="delete">
             <DeleteIcon />
         </IconButton>

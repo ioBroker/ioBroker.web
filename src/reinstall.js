@@ -1,6 +1,6 @@
 'use strict';
 // this script reads all iobroker packages from node_modules, deletes all and installs it anew
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const exec = require('child_process').exec;
 const deepClone = require('deep-clone');
@@ -48,7 +48,7 @@ function savePackages(root) {
     const deps = dirs.map(dir => {
         const fileName = root + '/node_modules/' + dir + '/package.json';
         try {
-            const pack = JSON.parse(fs.readFileSync(fileName).toString());
+            const pack = fs.readJSONSync(fileName);
             return {name: pack.name, version: pack.version};
         } catch (e) {
             console.error(`Cannot read or parse ${fileName}: ${e}`);
@@ -61,8 +61,8 @@ function savePackages(root) {
     if (fs.existsSync(root + '/package.json')) {
         const actual = require(root + '/package.json');
         actual.dependencies = actual.dependencies || {};
-        for (const pack in newPack.dependencies) {
-            if (newPack.dependencies.hasOwnProperty(pack) && (!actual.dependencies[pack] || !actual.dependencies[pack].match(/^file:/)) ) {
+        for (const pack of Object.keys(newPack.dependencies)) {
+            if (!actual.dependencies[pack] || !actual.dependencies[pack].match(/^file:/)) {
                 actual.dependencies[pack] = newPack.dependencies[pack];
             }
         }

@@ -72,21 +72,11 @@ class App extends GenericApp {
             return 0;
         }
     }
+
     renderTab() {
         switch (this.state.selectedTab) {
-            case 'options':
-                return (<Options
-                    key="options"
-                    common={this.common}
-                    socket={this.socket}
-                    native={this.state.native}
-                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
-                    instance={this.instance}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
-                    adapterName={this.adapterName}
-                />)
             case 'certificates':
-                return (<Certificates
+                return <Certificates
                     key="certificates"
                     common={this.common}
                     socket={this.socket}
@@ -95,9 +85,10 @@ class App extends GenericApp {
                     instance={this.instance}
                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
                     adapterName={this.adapterName}
-                />)
+                />;
+
             case 'whiteList':
-                return (<WhiteList
+                return <WhiteList
                     key="whiteList"
                     common={this.common}
                     socket={this.socket}
@@ -106,9 +97,10 @@ class App extends GenericApp {
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}
-                />)
+                />;
+
             case 'background':
-                return (<Background
+                return <Background
                     key="background"
                     common={this.common}
                     socket={this.socket}
@@ -117,14 +109,25 @@ class App extends GenericApp {
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}
-                />)
+                />;
+
+            case 'options':
             default:
-                return null
+                return <Options
+                    key="options"
+                    common={this.common}
+                    socket={this.socket}
+                    native={this.state.native}
+                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
+                    instance={this.instance}
+                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    adapterName={this.adapterName}
+                />;
         }
     }
 
     checkDisabledTabs(nameTab) {
-        return (!this.state.native['auth'] && nameTab === "background") || (!this.state.native['secure'] && nameTab === "certificates")
+        return (!this.state.native['auth'] && nameTab === 'background') || (!this.state.native['secure'] && nameTab === 'certificates');
     }
 
     render() {

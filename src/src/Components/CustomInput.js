@@ -7,17 +7,20 @@ const styles = theme => ({
     input: {
         minWidth: 300
     },
-    input_namber: {
+    inputNumber: {
         minWidth: 150
     },
-    height_input: {
+    heightInput: {
         height: 30
     }
 });
 
 const CustomInput = ({ styleComponentBlock, component, size, variant, table, value, title, attr, type, style, classes, native, onChange, className }) => {
     const error = false;
-    return (<FormControl className={`${type === 'number' ? classes.input_namber : classes.input + ' ' + classes.controlElement} ${className}`} style={Object.assign({ paddingTop: 5 }, style)}>
+    return <FormControl
+        className={(type === 'number' ? classes.inputNumber : classes.input + ' ' + classes.controlElement) + ' ' + className}
+        style={Object.assign({ paddingTop: 5 }, style)}
+    >
         <TextField
             error={!!error}
             variant={variant}
@@ -25,7 +28,7 @@ const CustomInput = ({ styleComponentBlock, component, size, variant, table, val
             type={type}
             helperText={error || ''}
             style={style}
-            className={classes.height_input}
+            className={classes.heightInput}
             onChange={e => {
                 if (table) {
                     onChange(e.target.value);
@@ -40,7 +43,7 @@ const CustomInput = ({ styleComponentBlock, component, size, variant, table, val
             <FormHelperText style={{ marginTop: -3 }}>{I18n.t(title)}</FormHelperText>
             {component}
         </div>
-    </FormControl>);
+    </FormControl>;
 }
 
 CustomInput.defaultProps = {

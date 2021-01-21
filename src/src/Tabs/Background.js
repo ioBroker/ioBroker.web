@@ -20,25 +20,25 @@ const styles = theme => ({
     columnSettings: {
         width: 'calc(100% - 10px)',
     },
-    drop_zone: {
+    dropZone: {
         marginTop: 30,
         width: 600,
         border: '2px dashed #bbb',
-        borderRadius: '5px',
-        padding: '25px',
+        borderRadius: 5,
+        padding: 25,
         textAlign: 'center',
         fontSize: '20pt',
         fontWeight: 'bold',
         fontFamily: 'Arial',
         color: '#bbb',
-        minWidth: '320px',
-        minHeight: '200px',
+        minWidth: 320,
+        minHeight: 200,
         transition: 'background 1s',
-        "&:focus": {
+        '&:focus': {
             outline: 'inherit'
         }
     },
-    drop_zone_active: {
+    dropZoneActive: {
         background: '#d6d6d69c'
     },
     imgStyle: {
@@ -46,9 +46,9 @@ const styles = theme => ({
         maxHeight: 500
     },
     '@media screen and (max-width: 680px)': {
-        drop_zone: {
+        dropZone: {
             width: 'calc(100% - 45px)',
-            minWidth: '200px',
+            minWidth: 200,
         },
         imgStyle: {
             width: '100%',
@@ -62,36 +62,18 @@ class Background extends Component {
         this.state = {
             inAction: false,
             toast: '',
-            isInstanceAlive: false,
             errorWithPercent: false,
             imgSRC: ''
         };
-        const { socket, instance, adapterName } = this.props;
-        socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
-            this.setState({ isInstanceAlive: state && state.val }));
     }
 
     componentDidMount() {
-        const { socket, instance, adapterName } = this.props;
         this.readFile();
-        socket.subscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
     }
-
-    componentWillUnmount() {
-        const { socket, instance, adapterName } = this.props;
-        socket.unsubscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
-    }
-
-    onAliveChanged = (id, state) => {
-        const { adapterName, instance } = this.props;
-        if (id === `system.adapter.${adapterName}.${instance}.alive`) {
-            this.setState({ isInstanceAlive: state && state.val });
-        }
-    };
 
     readFile() {
         const { socket } = this.props;
-        socket.getRawSocket().emit('readFile', 'web.0', 'login-bg.png', (err, data) => {
+        socket.getRawSocket().emit('readFile', `web.${instance}`, 'login-bg.png', (err, data) => {
             if (!err && data) {
                 let arrayBufferView = new Uint8Array(data);
                 let blob = new Blob([arrayBufferView], { type: 'image/png' });
@@ -101,7 +83,7 @@ class Background extends Component {
             } else {
                 this.setState({ imgSRC: '' });
             }
-        })
+        });
     }
 
     uploadFile(file, callback) {
@@ -109,7 +91,7 @@ class Background extends Component {
         let reader = new FileReader();
         reader.onload = ({ target: { result } }) => {
             socket.getRawSocket().emit('writeFile', `web.${instance}`, 'login-bg.png', result, () => {
-                if (callback) callback('login-bg.png');
+                callback && callback('login-bg.png');
                 this.readFile();
             });
         };
@@ -160,7 +142,7 @@ class Background extends Component {
                             title="upload_image"
                             attr="files"
                             native={native}
-                            onChange={(e) => this.uploadFile(e)}
+                            onChange={e => this.uploadFile(e)}
                         />
                     </div>
                     <Dropzone
@@ -169,7 +151,7 @@ class Background extends Component {
                         {({ getRootProps, getInputProps, isDragActive }) => (
                             <section>
                                 <div
-                                    className={`${classes.drop_zone} ${isDragActive ? classes.drop_zone_active : null}`}
+                                    className={`${classes.dropZone} ${isDragActive ? classes.dropZoneActive : null}`}
                                     {...getRootProps()}>
                                     <input {...getInputProps()} />
                                     <p>{I18n.t('place_the_files_here')}</p>

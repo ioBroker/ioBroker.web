@@ -19,10 +19,10 @@ const styles = theme => ({
     columnSettings: {
         width: 'calc(100% - 10px)'
     },
-    logo_width: {
+    logoWidth: {
         width: 200
     },
-    fotn_size: {
+    fontSize: {
         '@media screen and (max-width: 460px)': {
             '& > *': {
                 fontSize: '3.2vw',
@@ -38,64 +38,37 @@ class Certificates extends Component {
         this.state = {
             inAction: false,
             toast: '',
-            isInstanceAlive: false,
             errorWithPercent: false,
-            ipAdressOptions: []
+            ipAddressOptions: []
         };
-        const { socket, adapterName, instance } = this.props;
-        socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
-            this.setState({ isInstanceAlive: state && state.val }));
     }
-
-    componentDidMount() {
-        const { socket, adapterName, instance, common: { host } } = this.props;
-        socket.getIpAddresses(host)
-            .then(list => {
-                this.setState({ ipAdressOptions: list })
-            });
-        socket.subscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
-    }
-
-    componentWillUnmount() {
-        const { socket, adapterName, instance } = this.props;
-        socket.unsubscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
-    }
-
-    onAliveChanged = (id, state) => {
-        const { adapterName, instance } = this.props;
-        if (id === `system.adapter.${adapterName}.${instance}.alive`) {
-            this.setState({ isInstanceAlive: state && state.val });
-        }
-    };
 
     render() {
         const { classes, native, onChange, common: { readme } } = this.props;
         return <form className={classes.tab}>
-            <img className={classes.logo_width} alt='logo' src={logo} />
+            <img className={classes.logoWidth} alt='logo' src={logo} />
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomCheckbox
                         title='use_certificates'
                         attr='leEnabled'
-                        className={classes.fotn_size}
+                        className={classes.fontSize}
                         native={native}
                         onChange={onChange}
                     />
-                    <HintComponent openLink={() => {
-                        window.open(`${readme}#lets-encrypt-certificates`, '_blank');
-                    }} />
+                    <HintComponent openLink={() =>
+                        window.open(`${readme}#lets-encrypt-certificates`, '_blank')} />
                 </div>
                 <div style={native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
                     <CustomCheckbox
                         title='renew_certificates'
                         attr='leUpdate'
-                        className={classes.fotn_size}
+                        className={classes.fontSize}
                         native={native}
                         onChange={onChange}
                     />
-                    <HintComponent openLink={() => {
-                        window.open(`${readme}#lets-encrypt-certificates`, '_blank');
-                    }} />
+                    <HintComponent openLink={() =>
+                        window.open(`${readme}#lets-encrypt-certificates`, '_blank')} />
                 </div>
                 <div style={native['leUpdate'] && native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
                     <CustomInput
@@ -106,9 +79,8 @@ class Certificates extends Component {
                         native={native}
                         onChange={onChange}
                     />
-                    <HintComponent style={{ marginTop: 10, marginLeft: 20 }} openLink={() => {
-                        window.open(`${readme}#lets-encrypt-certificates`, '_blank');
-                    }} />
+                    <HintComponent style={{ marginTop: 10, marginLeft: 20 }} openLink={() =>
+                        window.open(`${readme}#lets-encrypt-certificates`, '_blank')} />
                 </div>
             </div>
         </form>;

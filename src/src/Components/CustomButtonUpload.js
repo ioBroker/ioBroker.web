@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import { TextField } from '@material-ui/core';
 import I18n from '@iobroker/adapter-react/i18n';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
     root: {
         '& > *': {
             margin: theme.spacing(1),
