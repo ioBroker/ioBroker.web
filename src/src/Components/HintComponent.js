@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ClickAwayListener, Fab, Tooltip } from '@material-ui/core';
+import { ClickAwayListener, Fab, makeStyles, Tooltip } from '@material-ui/core';
 import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
 import I18n from '@iobroker/adapter-react/i18n';
 
+const useStyles = makeStyles(({ name }) => ({
+    color_theme: {
+        color: name === 'dark' ? '#a2a2a2;' : '#c0c0c0',
+        backgroundColor: name === 'dark' ? '#ffffff00' : '#ffffff'
+    }
+}));
+
 const HintComponent = ({ children, openLink, style }) => {
     const [open, setOpen] = useState(false);
+    const classes = useStyles();
     return (
         <ClickAwayListener onClickAway={() => setOpen(false)}>
             <Tooltip arrow placement="top" title={I18n.t(children)} interactive open={open} onOpen={() => setOpen(true)}>
                 <Fab
+                    className={classes.color_theme}
                     style={Object.assign({
-                        backgroundColor: 'white',
                         boxShadow: 'none',
-                        color: 'silver',
                         marginLeft: 10,
                         width: 20,
                         height: 20,
@@ -41,7 +48,7 @@ HintComponent.propTypes = {
 HintComponent.defaultProps = {
     children: 'link',
     openLink: () => { },
-    style:{}
+    style: {}
 };
 
 export default HintComponent;

@@ -11,7 +11,10 @@ import CustomSelect from '../Components/CustomSelect';
 import I18n from '@iobroker/adapter-react/i18n';
 import Toast from '../Components/Toast';
 
-const styles = theme => ({
+const styles = ({ name }) => ({
+    background_theme: {
+        background: name === 'dark' ? '#3e3838' : '#dcdcdc'
+    },
     tab: {
         width: '100%',
         minHeight: '100%'
@@ -108,6 +111,8 @@ class WhiteList extends Component {
             errorWithPercent: false
         };
         const { socket, instance, adapterName } = this.props;
+        socket.getAdapterInstances('socketio').then(state =>
+            console.log('111111', state));
         socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
             this.setState({ isInstanceAlive: state && state.val }));
     }
@@ -264,17 +269,17 @@ class WhiteList extends Component {
                             <TableBody>
                                 {Object.keys(whiteListSettings).map((el, index) => {
                                     return <TableRow key={`${index}_max`}>
-                                        <TableCell style={{ background: '#dcdcdc', borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.buttonRemove(el)}
                                         </TableCell>
-                                        <TableCell style={{ background: '#dcdcdc', borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.tableInput(el, { marginTop: -1, minWidth: 150 })}
                                         </TableCell>
-                                        <TableCell style={{ background: '#dcdcdc', borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.tableSelect(el, { marginTop: -1 })}
                                         </TableCell>
                                         {['object', 'state', 'file'].map((elProperty, indexProperty) => Object.keys(whiteListSettings[el][elProperty]).map((attr, index) =>
-                                            <TableCell style={{ background: Boolean(indexProperty % 2) ? '#dcdcdc' : null, borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
+                                            <TableCell className={Boolean(indexProperty % 2) ? classes.background_theme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
                                                 <CustomCheckbox
                                                     table
                                                     checked={whiteListSettings[el][elProperty][attr]}
@@ -293,15 +298,15 @@ class WhiteList extends Component {
                             </TableBody>
                         </Table>
                         <div className={classes.mini_table}>
-                            <div style={{ position: 'sticky', top: -10, left: 12, background: 'white', zIndex: 22, borderBottom: '1px solid' }}>
+                            <div className={classes.background_theme} style={{ position: 'sticky', top: -10, left: 12, zIndex: 22, borderBottom: '1px solid' }}>
                                 {this.buttonAdd()}
                             </div>
                             <div>
                                 {Object.keys(whiteListSettings).map((el, index) => {
                                     return <div
                                         key={`${index}_wrapper`}
-                                        className={classes.card}
-                                        style={{ background: Boolean(index % 2) ? '#efefef' : null }}>
+                                        className={`${classes.card} ${Boolean(index % 2) ? classes.background_theme : null}`}
+                                    >
                                         <div style={{ width: 'fit-content' }}>
                                             <div>
                                                 {this.buttonRemove(el)}

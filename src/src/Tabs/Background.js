@@ -69,8 +69,8 @@ class Background extends Component {
     }
 
     readFile() {
-        const { socket } = this.props;
-        socket.getRawSocket().emit('readFile', `web.${this.props.instance}`, 'login-bg.png', (err, data) => {
+        const { socket, instance } = this.props;
+        socket.getRawSocket().emit('readFile', `web.${instance}`, 'login-bg.png', (err, data) => {
             if (!err && data) {
                 let arrayBufferView = new Uint8Array(data);
                 let blob = new Blob([arrayBufferView], { type: 'image/png' });

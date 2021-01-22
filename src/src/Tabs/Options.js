@@ -20,7 +20,7 @@ const styles = theme => ({
         }
     },
     displayNone: {
-        display: 'none'
+        display: 'none !important'
     },
     tab: {
         width: '100%',
@@ -146,14 +146,14 @@ class Options extends Component {
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <CustomModal
                 open={openModal}
-                buttomClick={() => {
+                buttonClick={() => {
                     onChange('auth', false);
                     this.setState({ openModal: !openModal });
                     this.setState({ toast: 'Authentication_deactivated' });
                 }}
                 close={() => this.setState({ openModal: !openModal })}
-                titleButtom={I18n.t('button_title')}
-                titleButtom2={I18n.t('button_title2')}>
+                titleButton={I18n.t('button_title')}
+                titleButton2={I18n.t('button_title2')}>
                 <div className={classes.block_warning}>{I18n.t('Warning')}</div>
                 <div className={classes.block_warning_content}><Security style={{ width: 100, height: 100 }} />{I18n.t('modal_title')}</div>
             </CustomModal>
@@ -228,23 +228,44 @@ class Options extends Component {
                         />
                     </div>
                     <div className={classes.blockWrapper}>
-                        <CustomSelect
-                            className={native['secure'] ? null : classes.displayNone}
-                            title='public_certificate'
-                            attr='certPublic'
-                            options={[
-                                { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'public').map(({ name }) => ({ title: name, value: name }))
-                            ]}
-                            style={{ marginTop: 10 }}
-                            native={native}
-                            onChange={onChange}
-                        />
+                        <div className={`${classes.blockWrapperCheckbox} ${native['secure'] ? null : classes.displayNone}`} >
+                            <CustomSelect
+                                title='public_certificate'
+                                attr='certPublic'
+                                options={[
+                                    { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'public').map(({ name }) => ({ title: name, value: name }))
+                                ]}
+                                style={{ marginTop: 10, marginRight: 20 }}
+                                native={native}
+                                onChange={onChange}
+                            />
+                            <CustomSelect
+                                title='private_certificate'
+                                attr='certPrivate'
+                                options={[
+                                    { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'private').map(({ name }) => ({ title: name, value: name }))
+                                ]}
+                                style={{ marginTop: 10, marginRight: 20 }}
+                                native={native}
+                                onChange={onChange}
+                            />
+                            <CustomSelect
+                                title='chained_certificate'
+                                attr='certChained'
+                                options={[
+                                    { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'chained').map(({ name }) => ({ title: name, value: name }))
+                                ]}
+                                style={{ marginTop: 10 }}
+                                native={native}
+                                onChange={onChange}
+                            />
+                        </div>
                         <CustomSelect
                             className={!native['auth'] ? null : classes.displayNone}
                             title='users'
                             attr='defaultUser'
                             options={usersOptions.map(({ common: { name } }) => ({ title: name, value: name }))}
-                            style={{ marginTop: 10 }}
+                            style={{ marginTop: 10, width: 300 }}
                             native={native}
                             onChange={onChange}
                         />
@@ -253,7 +274,7 @@ class Options extends Component {
                             title='time_out'
                             attr='ttl'
                             type='number'
-                            style={{ marginTop: -1 }}
+                            style={{ marginTop: -1, width: 300 }}
                             native={native}
                             onChange={onChange}
                         />
@@ -267,30 +288,6 @@ class Options extends Component {
                         <CustomCheckbox
                             title='web_sockets'
                             attr='forceWebSockets'
-                            style={{ marginTop: 10 }}
-                            native={native}
-                            onChange={onChange}
-                        />
-                    </div>
-                    <div className={classes.blockWrapperCheckbox} >
-                        <CustomSelect
-                            className={native['secure'] ? null : classes.displayNone}
-                            title='private_certificate'
-                            attr='certPrivate'
-                            options={[
-                                { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'private').map(({ name }) => ({ title: name, value: name }))
-                            ]}
-                            style={{ marginTop: 10, marginRight: 20 }}
-                            native={native}
-                            onChange={onChange}
-                        />
-                        <CustomSelect
-                            className={native['secure'] ? null : classes.displayNone}
-                            title='chained_certificate'
-                            attr='certChained'
-                            options={[
-                                { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'chained').map(({ name }) => ({ title: name, value: name }))
-                            ]}
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
