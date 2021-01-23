@@ -21,14 +21,15 @@ const CustomButtonUpload = ({ title, onChange }) => {
     return (
         <div className={classes.root}>
             <input
-                accept="image/*"
+                accept=".png,image/png"
                 className={classes.input}
                 id="contained-button-file"
                 multiple
                 type="file"
                 onChange={(e) => {
-                    setValueFileUpload(e.target.files[0].name)
-                    onChange(e.target.files[0])
+                    onChange(e.target.files[0] || e.dataTransfer.files[0],(name)=>{
+                        setValueFileUpload(name);
+                    });
                 }}
             />
             <label htmlFor="contained-button-file">

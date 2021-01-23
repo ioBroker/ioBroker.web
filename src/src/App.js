@@ -11,6 +11,7 @@ import Options from './Tabs/Options';
 import Certificates from './Tabs/Certificates';
 import WhiteList from './Tabs/WhiteList';
 import Background from './Tabs/Background';
+import Additionally from './Tabs/Additionally';
 
 const styles = theme => ({
     root: {},
@@ -39,9 +40,13 @@ const arrayTabName = [{
     translate: 'whiteList',
     index: 2
 }, {
+    name: 'additionally',
+    translate: 'additionally',
+    index: 3
+}, {
     name: 'background',
     translate: 'background',
-    index: 3
+    index: 4
 }]
 
 class App extends GenericApp {
@@ -109,7 +114,19 @@ class App extends GenericApp {
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}
-                />;
+                />; 
+
+            case 'additionally':
+                return <Additionally
+                    key="additionally"
+                    common={this.common}
+                    socket={this.socket}
+                    native={this.state.native}
+                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
+                    instance={this.instance}
+                    adapterName={this.adapterName}
+                />; 
 
             case 'options':
             default:
@@ -152,7 +169,6 @@ class App extends GenericApp {
                     </div>
                     {this.renderError()}
                     {this.renderSaveCloseButtons()}
-                    {/*this.renderAckTempPasswordDialog()*/}
                 </div>
             </MuiThemeProvider>
         );

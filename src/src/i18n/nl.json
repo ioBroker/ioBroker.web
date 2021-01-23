@@ -42,5 +42,12 @@
   "Warning":"Waarschuwing!",
   "modal_title":"Het wachtwoord wordt verzonden via onbeveiligde verbinding. Ter beveiliging van uw wachtwoorden schakelt u de beveiligde verbinding (HTTPS) in!",
   "Authentication_deactivated":"Verificatie was gedeactiveerd",
-  "incorrect_ip":"Het opgegeven IP-adres is niet geldig"
+  "incorrect_ip":"Het opgegeven IP-adres is niet geldig",
+  "use_lets":"Gebruik Lets Encrypt enscenering (voor testen)",
+  "additionally":"Geavanceerd",
+  "disable_default":"Schakel standaardfuncties uit",
+  "warning_incorrectly":"Waarschuwing: het onjuist uitschakelen van het gebruik van functies kan onverwacht gedrag veroorzaken.",
+  "disable_extensions":"Verwerking van extensies uitschakelen",
+  "disable_states":"Schakel statussen en socketinformatie uit",
+  "disable_files":"Serveer geen webbestanden vanuit objectDB"
 }

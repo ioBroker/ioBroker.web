@@ -42,5 +42,12 @@
   "Warning":"Ostrzeżenie!",
   "modal_title":"Hasło zostanie wysłane przez połączenie bez zabezpieczeń. Aby chronić swoje hasła, włącz bezpieczne połączenie (HTTPS)!",
   "Authentication_deactivated":"Uwierzytelnianie zostało dezaktywowane",
-  "incorrect_ip":"Podany adres IP jest nieprawidłowy"
+  "incorrect_ip":"Podany adres IP jest nieprawidłowy",
+  "use_lets":"Użyj Lets Encrypt staging (do testowania)",
+  "additionally":"Zaawansowane",
+  "disable_default":"Wyłącz funkcje domyślne",
+  "warning_incorrectly":"Ostrzeżenie: Niepoprawne wyłączenie używania funkcji może spowodować nieoczekiwane zachowanie.",
+  "disable_extensions":"Wyłącz obsługę rozszerzeń",
+  "disable_states":"Wyłącz stany i informacje o gnieździe",
+  "disable_files":"Nie udostępniaj plików internetowych z objectDB"
 }

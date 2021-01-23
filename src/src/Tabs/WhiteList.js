@@ -111,8 +111,6 @@ class WhiteList extends Component {
             errorWithPercent: false
         };
         const { socket, instance, adapterName } = this.props;
-        socket.getAdapterInstances('socketio').then(state =>
-            console.log('111111', state));
         socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
             this.setState({ isInstanceAlive: state && state.val }));
     }

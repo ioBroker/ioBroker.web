@@ -42,5 +42,12 @@
   "Warning":"Atenção!",
   "modal_title":"A senha será enviada por meio de conexão não segura. Para proteger suas senhas, ative a conexão segura (HTTPS)!",
   "Authentication_deactivated":"A autenticação foi desativada",
-  "incorrect_ip":"O IP fornecido não é válido"
+  "incorrect_ip":"O IP fornecido não é válido",
+  "use_lets":"Use o teste Lets Encrypt (para teste)",
+  "additionally":"Avançado",
+  "disable_default":"Desativar funções padrão",
+  "warning_incorrectly":"Aviso: A desativação incorreta do uso de funções pode causar um comportamento inesperado.",
+  "disable_extensions":"Desative o manuseio de extensões",
+  "disable_states":"Desative estados e informações de soquete",
+  "disable_files":"Não veicular arquivos da web de objectDB"
 }

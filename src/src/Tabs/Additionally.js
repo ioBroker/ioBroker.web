@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import CustomCheckbox from '../Components/CustomCheckbox';
-import CustomInput from '../Components/CustomInput';
-import HintComponent from '../Components/HintComponent';
-import logo from '../assets/le.png';
+import I18n from '@iobroker/adapter-react/i18n';
 
 const styles = theme => ({
     tab: {
@@ -32,7 +30,7 @@ const styles = theme => ({
 
 });
 
-class Certificates extends Component {
+class Additionally extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -44,44 +42,37 @@ class Certificates extends Component {
     }
 
     render() {
-        const { classes, native, onChange, common: { readme } } = this.props;
+        const { classes, native, onChange } = this.props;
         return <form className={classes.tab}>
-            <img className={classes.logoWidth} alt='logo' src={logo} />
             <div className={`${classes.column} ${classes.columnSettings}`}>
+                <h4>
+                {I18n.t('disable_default')}
+                </h4>
+                <p>
+                {I18n.t('warning_incorrectly')}
+                </p>
                 <div>
                     <CustomCheckbox
-                        title='use_certificates'
-                        attr='leEnabled'
+                        title='disable_extensions'
+                        attr='disableExtensions'
                         className={classes.fontSize}
-                        native={native}
-                        onChange={onChange}
-                    />
-                    <HintComponent openLink={() =>
-                        window.open(`${readme}#lets-encrypt-certificates`, '_blank')} />
-                </div>
-                <div style={native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
-                    <CustomCheckbox
-                        title='renew_certificates'
-                        attr='leUpdate'
-                        className={classes.fontSize}
-                        native={native}
-                        onChange={onChange}
-                    />
-                </div>
-                <div style={native['leUpdate'] && native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
-                    <CustomInput
-                        title='domain_name'
-                        attr='lePort'
-                        type='number'
-                        style={{ marginTop: -1 }}
                         native={native}
                         onChange={onChange}
                     />
                 </div>
                 <div style={native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
                     <CustomCheckbox
-                        title='use_lets'
-                        attr='leStaging'
+                        title='disable_states'
+                        attr='disableStates'
+                        className={classes.fontSize}
+                        native={native}
+                        onChange={onChange}
+                    />
+                </div>
+                <div style={native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
+                    <CustomCheckbox
+                        title='disable_files'
+                        attr='disableFilesObjects'
                         className={classes.fontSize}
                         native={native}
                         onChange={onChange}
@@ -92,7 +83,7 @@ class Certificates extends Component {
     }
 }
 
-Certificates.propTypes = {
+Additionally.propTypes = {
     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
@@ -104,4 +95,4 @@ Certificates.propTypes = {
     socket: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Certificates);
+export default withStyles(styles)(Additionally);

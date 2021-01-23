@@ -42,5 +42,12 @@
   "Warning":"Warning!",
   "modal_title":"The password will be sent via unsecure connection. To protect your passwords enable the secure connection (HTTPS)!",
   "Authentication_deactivated":"Authentication was deactivated",
-  "incorrect_ip":"The provided IP is not valid"
+  "incorrect_ip":"The provided IP is not valid",
+  "use_lets":"Use Lets Encrypt staging (for testing/debug. Only for developer)",
+  "additionally":"Advanced",
+  "disable_default":"Disable Default Functions",
+  "warning_incorrectly":"Warning: Incorrectly disabling functions use can cause unexpected behaviour.",
+  "disable_extensions":"Disable extension handling",
+  "disable_states":"Disable states and socket info",
+  "disable_files":"Do not serve web files from objectDB"
 }

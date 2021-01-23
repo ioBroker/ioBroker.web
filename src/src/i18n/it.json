@@ -42,5 +42,12 @@
   "Warning":"Avvertimento!",
   "modal_title":"La password verrà inviata tramite connessione non protetta. Per proteggere le tue password abilita la connessione sicura (HTTPS)!",
   "Authentication_deactivated":"L'autenticazione è stata disattivata",
-  "incorrect_ip":"L'IP fornito non è valido"
+  "incorrect_ip":"L'IP fornito non è valido",
+  "use_lets":"Usa Lets Encrypt staging (per test)",
+  "additionally":"Avanzate",
+  "disable_default":"Disabilita le funzioni predefinite",
+  "warning_incorrectly":"Avvertenza: la disabilitazione errata dell'uso delle funzioni può causare comportamenti imprevisti.",
+  "disable_extensions":"Disabilita la gestione delle estensioni",
+  "disable_states":"Disabilita stati e informazioni socket",
+  "disable_files":"Non servire file web da objectDB"
 }

@@ -42,5 +42,12 @@
   "Warning":"警告!",
   "modal_title":"密码将通过不安全的连接发送。 要保护您的密码，请启用安全连接（HTTPS）！",
   "Authentication_deactivated":"身份认证机制已停用",
-  "incorrect_ip":"提供的IP无效"
+  "incorrect_ip":"提供的IP无效",
+  "use_lets":"使用Lets Encrypt暂存（用于测试）",
+  "additionally":"高级",
+  "disable_default":"禁用默认功能",
+  "warning_incorrectly":"警告：错误地禁用功能使用会导致意外行为。",
+  "disable_extensions":"禁用扩展处理：",
+  "disable_states":"禁用状态和套接字信息",
+  "disable_files":"不要提供来自objectDB的Web文件"
 }

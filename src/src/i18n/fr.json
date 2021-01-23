@@ -42,5 +42,12 @@
   "Warning":"Attention!",
   "modal_title":"Le mot de passe sera envoyé via une connexion non sécurisée. Pour protéger vos mots de passe, activez la connexion sécurisée (HTTPS)!",
   "Authentication_deactivated":"L'authentification a été désactivée",
-  "incorrect_ip":"L'adresse IP fournie n'est pas valide"
+  "incorrect_ip":"L'adresse IP fournie n'est pas valide",
+  "use_lets":"Utiliser la mise en scène Lets Encrypt (pour les tests)",
+  "additionally":"Avancée",
+  "disable_default":"Désactiver les fonctions par défaut",
+  "warning_incorrectly":"Avertissement: la désactivation incorrecte de l'utilisation des fonctions peut provoquer un comportement inattendu.",
+  "disable_extensions":"Désactivez la gestion des extensions",
+  "disable_states":"Désactivez les états et les informations de socket",
+  "disable_files":"Ne diffusez pas de fichiers Web depuis objectDB"
 }

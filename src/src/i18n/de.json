@@ -42,5 +42,12 @@
   "Warning":"Warnung!",
   "modal_title":"Das Passwort wird über unsichere Verbindung gesendet. Um Ihre Passwörter zu schützen, aktivieren Sie die sichere Verbindung (HTTPS)!",
   "Authentication_deactivated":"Die Authentifizierung wurde deaktiviert",
-  "incorrect_ip":"Die angegebene IP-Adresse ist ungültig"
+  "incorrect_ip":"Die angegebene IP-Adresse ist ungültig",
+  "use_lets":"Lets Encrypt Staging verwenden (nur zum Testen oder Debuggen. Nur für Entwickler)",
+  "additionally":"Extra",
+  "disable_default":"Standardfunktionen deaktivieren",
+  "warning_incorrectly":"Warnung: Das falsche Deaktivieren der Verwendung von Funktionen kann zu unerwartetem Verhalten führen.",
+  "disable_extensions":"Deaktivieren Sie die Erweiterungsbehandlung",
+  "disable_states":"Status und Socket-Informationen deaktivieren",
+  "disable_files":"Stellen Sie keine Webdateien aus objectDB bereit"
 }

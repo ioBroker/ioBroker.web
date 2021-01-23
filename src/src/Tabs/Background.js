@@ -6,6 +6,7 @@ import CustomInput from '../Components/CustomInput';
 import CustomButtonUpload from '../Components/CustomButtonUpload';
 import I18n from '@iobroker/adapter-react/i18n';
 import Dropzone from 'react-dropzone';
+import Toast from '../Components/Toast';
 
 const styles = theme => ({
     tab: {
@@ -60,7 +61,8 @@ class Background extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            imgSRC: ''
+            imgSRC: '',
+            toast: ''
         };
     }
 
@@ -70,6 +72,7 @@ class Background extends Component {
 
     readFile() {
         const { socket, instance } = this.props;
+
         socket.getRawSocket().emit('readFile', `web.${instance}`, 'login-bg.png', (err, data) => {
             if (!err && data) {
                 let arrayBufferView = new Uint8Array(data);
@@ -85,20 +88,28 @@ class Background extends Component {
 
     uploadFile(file, callback) {
         const { socket, instance } = this.props;
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            this.setState({ toast: `File ${file.name} is too big. Maximum 5MB` });
+            this.setState({ imgSRC: '' });
+            callback && callback('');
+            return;
+        }
         let reader = new FileReader();
         reader.onload = ({ target: { result } }) => {
             socket.getRawSocket().emit('writeFile', `web.${instance}`, 'login-bg.png', result, () => {
-                callback && callback('login-bg.png');
                 this.readFile();
             });
         };
+        callback && callback(file.name);
         reader.readAsArrayBuffer(file);
     }
 
     render() {
         const { classes, native, onChange } = this.props;
-        const { imgSRC } = this.state;
+        const { imgSRC, toast } = this.state;
         return <form className={classes.tab}>
+            <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomInput
@@ -139,11 +150,11 @@ class Background extends Component {
                             title="upload_image"
                             attr="files"
                             native={native}
-                            onChange={e => this.uploadFile(e)}
+                            onChange={(e, callback) => this.uploadFile(e, callback)}
                         />
                     </div>
                     <Dropzone
-                        accept="image/*"
+                        accept=".png,image/png"
                         onDrop={acceptedFiles => this.uploadFile(acceptedFiles[0])}>
                         {({ getRootProps, getInputProps, isDragActive }) => (
                             <section>

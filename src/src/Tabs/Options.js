@@ -72,6 +72,10 @@ class Options extends Component {
             ipAddressOptions: [],
             certificatesOptions: [],
             usersOptions: [],
+            socketioOptions: [
+                { title: I18n.t('nothing'), value: 'none' },
+                { title: I18n.t('built_in'), value: '' }
+            ],
             openModal: false
         };
         const { instance, socket, adapterName } = this.props;
@@ -81,6 +85,11 @@ class Options extends Component {
 
     componentDidMount() {
         const { instance, socket, adapterName, common: { host } } = this.props;
+        const { socketioOptions } = this.state;
+        socket.getAdapterInstances('socketio').then(state => {
+            this.setState({ socketioOptions: [...socketioOptions, ...state.map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] })
+        }
+        );
 
         socket.getRawSocket().emit('getHostByIp', host, (err, data) => {
             if (data) {
@@ -139,7 +148,7 @@ class Options extends Component {
 
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast } = this.state;
+        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions } = this.state;
         let newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
         return <form className={classes.tab}>
@@ -218,10 +227,7 @@ class Options extends Component {
                         <CustomSelect
                             title='socket'
                             attr='socketio'
-                            options={[
-                                { title: I18n.t('nothing'), value: 'none' },
-                                { title: I18n.t('built_in'), value: '' }
-                            ]}
+                            options={socketioOptions}
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
@@ -286,6 +292,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomCheckbox
+                            className={native['socketio'] === '' ? null : classes.displayNone}
                             title='web_sockets'
                             attr='forceWebSockets'
                             style={{ marginTop: 10 }}
