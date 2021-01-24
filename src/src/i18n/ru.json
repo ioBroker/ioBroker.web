@@ -3,7 +3,7 @@
   "port": "Порт",
   "encryption": "Шифрование (HTTPS)",
   "authentication": "Аутентификация",
-  "basic_authentication": "Базовая аутентификация",
+  "basic_authentication": "Basic-Аутентификация",
   "cache": "Кэш",
   "socket": "Socket.IO Instance (Optional): (Используется для Rickshaw или Vis)",
   "public_certificate": "'Public' сертификат",

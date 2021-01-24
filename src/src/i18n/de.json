@@ -3,7 +3,7 @@
   "port": "Port",
   "encryption": "Verschlüsselung (HTTPS)",
   "authentication": "Authentifikation",
-  "basic_authentication": "Basisauthentifizierung",
+  "basic_authentication": "Basic-Authentifizierung",
   "cache": "Puffer",
   "socket": "Socket.IO Instance (Optional): (Wird von Rickshaw oder Vis benutzt)",
   "public_certificate": "Öffentliches Zertifikat",

@@ -207,11 +207,16 @@ class WhiteList extends Component {
     buttonRemove(el) {
         const { native, onChange } = this.props;
         const { whiteListSettings } = native;
-        return <IconButton color="primary" onClick={() => {
-            const copyObj = JSON.parse(JSON.stringify(whiteListSettings));
-            delete copyObj[el]
-            onChange('whiteListSettings', copyObj);
-        }} style={el === 'default' ? { display: 'none' } : null} aria-label="delete">
+        return <IconButton
+            color="primary"
+            onClick={() => {
+                const copyObj = JSON.parse(JSON.stringify(whiteListSettings));
+                delete copyObj[el];
+                onChange('whiteListSettings', copyObj);
+            }}
+            style={el === 'default' ? { display: 'none' } : null}
+            aria-label="delete"
+        >
             <DeleteIcon />
         </IconButton>
     }
@@ -245,23 +250,16 @@ class WhiteList extends Component {
                         <Table className={`${classes.table} ${classes.max_table}`} aria-label="spanning table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center" rowSpan={2}>
-                                        {this.buttonAdd()}
-                                    </TableCell>
-                                    <TableCell align="center" rowSpan={2}>
-                                        IP</TableCell>
-                                    <TableCell align="center" rowSpan={2}>
-                                        {I18n.t('user')}</TableCell>
-                                    <TableCell align="center" colSpan={4}>
-                                        {I18n.t('object')}</TableCell>
-                                    <TableCell align="center" colSpan={5}>
-                                        {I18n.t('status')}</TableCell>
-                                    <TableCell align="center" colSpan={5}>
-                                        {I18n.t('file')}</TableCell>
+                                    <TableCell align="center" rowSpan={2}>{this.buttonAdd()}</TableCell>
+                                    <TableCell align="center" rowSpan={2} style={{fontWeight: 'bold'}}>IP</TableCell>
+                                    <TableCell align="center" rowSpan={2} style={{fontWeight: 'bold'}}>{I18n.t('user')}</TableCell>
+                                    <TableCell align="center" colSpan={4} style={{fontWeight: 'bold'}}>{I18n.t('object')}</TableCell>
+                                    <TableCell align="center" colSpan={5} style={{fontWeight: 'bold'}}>{I18n.t('status')}</TableCell>
+                                    <TableCell align="center" colSpan={5} style={{fontWeight: 'bold'}}>{I18n.t('file')}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    {tableHeadArr.map((el, index) => (<TableCell key={`${el}_${index}_max`} align="center">
-                                        {I18n.t(el)}</TableCell>))}
+                                    {tableHeadArr.map((el, index) =>
+                                        <TableCell key={`${el}_${index}_max`} align="center">{I18n.t(el)}</TableCell>)}
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -271,7 +269,7 @@ class WhiteList extends Component {
                                             {this.buttonRemove(el)}
                                         </TableCell>
                                         <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
-                                            {this.tableInput(el, { marginTop: -1, minWidth: 150 })}
+                                            {this.tableInput(el, { marginTop: -1, minWidth: 150, paddingTop: 5 })}
                                         </TableCell>
                                         <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.tableSelect(el, { marginTop: -1 })}
@@ -305,20 +303,14 @@ class WhiteList extends Component {
                                         key={`${index}_wrapper`}
                                         className={`${classes.card} ${Boolean(index % 2) ? classes.background_theme : null}`}
                                     >
-                                        <div style={{ width: 'fit-content' }}>
-                                            <div>
-                                                {this.buttonRemove(el)}
-                                            </div>
-                                            <div>IP:
-                                            {this.tableInput(el, { marginTop: -5, minWidth: 150, marginLeft: 5 })}
-                                            </div>
-                                            <div>{I18n.t('user')}:
-                                        {this.tableSelect(el, { marginTop: -10, marginLeft: 5 })}
-                                            </div>
+                                        <div style={{ width: '100%', lineHeight: '30px', textAlign: 'center' }}>
+                                            <span>{this.buttonRemove(el)}</span>
+                                            <span style={{marginLeft: 10}}>IP: {this.tableInput(el, { marginTop: -5, minWidth: 150, marginLeft: 5, verticalAlign: 'middle'})}</span>
+                                            <span style={{marginLeft: 20}}>{I18n.t('user')}: {this.tableSelect(el, { marginTop: -10, marginLeft: 5, verticalAlign: 'middle' })}</span>
                                         </div>
                                         {['object', 'state', 'file'].map((element, indexEl) => {
                                             let newTableHeadArr = [...tableHeadArr].splice(indexEl === 0 ? 0 : 4, indexEl === 0 ? 4 : 5)
-                                            return <Table key={`${indexEl}_mini`} className={classes.table} aria-label="spanning table">
+                                            return <Table key={`${indexEl}_mini`} className={classes.table} style={{width: 'inherit'}} aria-label="spanning table">
                                                 <TableHead>
                                                     <TableRow>
                                                         <TableCell style={{ background: '#bbbbbb' }} align="center" colSpan={Object.keys(whiteListSettings[el][element]).length}>
