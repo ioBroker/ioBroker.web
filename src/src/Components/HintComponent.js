@@ -16,7 +16,14 @@ const HintComponent = ({ children, openLink, style }) => {
     const classes = useStyles();
     return (
         <ClickAwayListener onClickAway={() => setOpen(false)}>
-            <Tooltip arrow placement="top" title={I18n.t(children)} interactive open={open} onOpen={() => setOpen(true)}>
+            <Tooltip
+                arrow
+                placement="top"
+                title={I18n.t(children)}
+                interactive
+                open={open}
+                onOpen={() => setOpen(true)}
+            >
                 <Fab
                     className={classes.color_theme}
                     style={Object.assign({

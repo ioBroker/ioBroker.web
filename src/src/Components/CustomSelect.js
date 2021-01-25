@@ -13,7 +13,10 @@ const styles = theme => ({
 });
 
 const CustomSelect = ({ table, value, title, attr, options, style, classes, native, onChange, className }) => {
-    return <FormControl className={classes.input + ' ' + classes.controlElement + ' ' + className} style={Object.assign({ paddingTop: 5 }, style)}>
+    return <FormControl
+        className={classes.input + ' ' + classes.controlElement + ' ' + className}
+        style={Object.assign({ paddingTop: 5 }, style)}
+    >
         <Select
             value={table ? value : native[attr] || '_'}
             onChange={e => {

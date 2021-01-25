@@ -103,8 +103,6 @@ class App extends GenericApp {
 
         if (secure && (!certPrivate || !certPublic)) {
             this.setState({ toast: 'set_certificates' });
-            e.preventDefault();
-            e.stopPropagation();
             return false;
         } else {
             return true;

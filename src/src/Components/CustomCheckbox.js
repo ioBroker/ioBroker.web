@@ -10,14 +10,17 @@ const styles = theme => ({
 });
 
 const CustomCheckbox = ({ title, attr, style, classes, native, onChange, className, table, checked }) => {
-    return (<FormControlLabel key={attr} style={Object.assign({ paddingTop: 5 }, style)} className={classes.controlElement + ' ' + className}
+    return <FormControlLabel
+        key={attr}
+        style={Object.assign({ paddingTop: 5 }, style)}
+        className={classes.controlElement + ' ' + className}
         control={
             <Checkbox
                 checked={table ? checked : native[attr]}
-                onChange={(el) => {
-                    if(table){
+                onChange={el => {
+                    if (table) {
                         onChange(el.target.checked);
-                    }else{
+                    } else {
                         onChange(attr, !native[attr]);
                     }
                 }}
@@ -25,7 +28,7 @@ const CustomCheckbox = ({ title, attr, style, classes, native, onChange, classNa
             />
         }
         label={I18n.t(title)}
-    />);
+    />;
 }
 
 CustomCheckbox.defaultProps = {
