@@ -5,7 +5,7 @@ import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
 import I18n from '@iobroker/adapter-react/i18n';
 
 const useStyles = makeStyles(({ name }) => ({
-    color_theme: {
+    colorTheme: {
         color: name === 'dark' ? '#a2a2a2;' : '#c0c0c0',
         backgroundColor: name === 'dark' ? '#ffffff00' : '#ffffff'
     }
@@ -25,7 +25,7 @@ const HintComponent = ({ children, openLink, style }) => {
                 onOpen={() => setOpen(true)}
             >
                 <Fab
-                    className={classes.color_theme}
+                    className={classes.colorTheme}
                     style={Object.assign({
                         boxShadow: 'none',
                         marginLeft: 10,

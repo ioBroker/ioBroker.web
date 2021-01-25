@@ -5,28 +5,28 @@ import { Dialog } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
-    modal_content_wrapper: {
+    modalContentWrapper: {
         margin: '20px 0',
         padding: '0 35px',
         // background: '#f6f6f6',
         overflowX: 'hidden',
         minWidth: '320px'
     },
-    modal_button_block: {
+    modalButtonBlock: {
         display: 'flex',
         justifyContent: 'flex-end',
         marginTop: '20px',
         flexFlow: 'wrap',
         borderTop: '1px solid silver'
     },
-    modal_button_block_two: {
+    modalButtonBlockTwo: {
         justifyContent: 'space-around',
         flexFlow: 'wrap-reverse',
         '& button': {
             margin: '5px'
         }
     },
-    modal_wrapper: {
+    modalWrapper: {
         position: 'relative',
         '[class*="MuiPaper-root MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthXl MuiPaper-elevation24 MuiPaper-rounded"]': {
             background: '#f6f6f6'
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
         },
     },
     '@media screen and (max-width: 460px)': {
-        modal_content_wrapper: {
+        modalContentWrapper: {
             minWidth: 'auto'
         }
     }
@@ -81,12 +81,12 @@ const CustomModal = ({ open, close, children, titleButton, titleButton2, buttonC
             onClose={close}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
-            className={classes.modal_wrapper}
+            className={classes.modalWrapper || ''}
         >
-            <div className={classes.modal_content_wrapper}>
+            <div className={classes.modalContentWrapper}>
                 <div className={classes.close} onClick={close} />
                 {children}
-                <div className={`${classes.modal_button_block} ${titleButton ? classes.modal_button_block_two : ''}`}>
+                <div className={`${classes.modalButtonBlock} ${titleButton ? classes.modalButtonBlockTwo : ''}`}>
                     {titleButton && <Button onClick={buttonClick}>
                         {titleButton}
                     </Button>}

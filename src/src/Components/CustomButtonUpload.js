@@ -21,7 +21,7 @@ const CustomButtonUpload = ({ title, onChange }) => {
     return <div className={classes.root}>
         <input
             accept="image/*"
-            className={classes.input}
+            className={classes.input || ''}
             id="contained-button-file"
             multiple
             type="file"

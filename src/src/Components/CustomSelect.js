@@ -2,6 +2,7 @@ import { FormControl, FormHelperText, Input, MenuItem, Select, withStyles } from
 import React from 'react';
 import I18n from '@iobroker/adapter-react/i18n';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 const styles = theme => ({
     input: {
@@ -14,7 +15,7 @@ const styles = theme => ({
 
 const CustomSelect = ({ table, value, title, attr, options, style, classes, native, onChange, className }) => {
     return <FormControl
-        className={classes.input + ' ' + classes.controlElement + ' ' + className}
+        className={clsx(classes.input, classes.controlElement, className)}
         style={Object.assign({ paddingTop: 5 }, style)}
     >
         <Select

@@ -2,6 +2,7 @@ import { FormControl, FormHelperText, TextField, withStyles } from '@material-ui
 import React from 'react';
 import I18n from '@iobroker/adapter-react/i18n';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 const styles = theme => ({
     input: {
@@ -18,7 +19,7 @@ const styles = theme => ({
 const CustomInput = ({ styleComponentBlock, component, size, variant, table, value, title, attr, type, style, classes, native, onChange, className }) => {
     const error = false;
     return <FormControl
-        className={(type === 'number' ? classes.inputNumber : classes.input + ' ' + classes.controlElement) + ' ' + className}
+        className={clsx(type === 'number' ? classes.inputNumber : classes.input + ' ' + classes.controlElement, className)}
         style={Object.assign({ paddingTop: 5 }, style)}
     >
         <TextField

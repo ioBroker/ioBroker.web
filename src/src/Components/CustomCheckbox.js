@@ -1,5 +1,6 @@
 import { Checkbox, FormControlLabel, withStyles } from '@material-ui/core';
 import React from 'react';
+import clsx from 'clsx';
 import I18n from '@iobroker/adapter-react/i18n';
 import PropTypes from 'prop-types';
 
@@ -13,7 +14,7 @@ const CustomCheckbox = ({ title, attr, style, classes, native, onChange, classNa
     return <FormControlLabel
         key={attr}
         style={Object.assign({ paddingTop: 5 }, style)}
-        className={classes.controlElement + ' ' + className}
+        className={clsx(classes.controlElement, className)}
         control={
             <Checkbox
                 checked={table ? checked : native[attr]}
