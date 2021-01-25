@@ -108,7 +108,8 @@ class WhiteList extends Component {
             inAction: false,
             toast: '',
             isInstanceAlive: false,
-            errorWithPercent: false
+            errorWithPercent: false,
+            usersOptions: []
         };
         const { socket, instance, adapterName } = this.props;
         socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
@@ -118,6 +119,9 @@ class WhiteList extends Component {
     componentDidMount() {
         const { socket, instance, adapterName } = this.props;
         socket.subscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
+        socket.getUsers()
+            .then(list =>
+                this.setState({ usersOptions: list }));
     }
 
     componentWillUnmount() {
@@ -134,6 +138,7 @@ class WhiteList extends Component {
 
     tableSelect(el, style) {
         const { classes, native, onChange } = this.props;
+        const { usersOptions } = this.state;
         const { whiteListSettings } = native;
         if (el === 'default') {
             return whiteListSettings[el].user
@@ -141,7 +146,7 @@ class WhiteList extends Component {
         return <CustomSelect
             table
             value={whiteListSettings[el].user}
-            options={[{ title: 'auth', value: 'auth' }, { title: 'admin', value: 'admin' },]}
+            options={[{ title: 'auth', value: 'auth' }, ...usersOptions.map(({ common: { name } }) => ({ title: name, value: name }))]}
             native={native}
             style={style}
             className={classes.mini_table_select}

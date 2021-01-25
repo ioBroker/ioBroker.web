@@ -149,6 +149,7 @@ class Options extends Component {
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
         const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions } = this.state;
+        console.log(usersOptions)
         let newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
         return <form className={classes.tab}>
