@@ -97,6 +97,20 @@ class App extends GenericApp {
         }
     }
 
+    onPrepareSave(settings) {
+        super.onPrepareSave(settings);
+        const { secure, certPublic, certPrivate } = this.state.native;
+
+        if (secure && (!certPrivate || !certPublic)) {
+            this.setState({ toast: 'set_certificates' });
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     renderTab() {
         const { selectedTab, native } = this.state;
         switch (selectedTab) {
