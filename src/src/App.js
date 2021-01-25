@@ -12,6 +12,7 @@ import Certificates from './Tabs/Certificates';
 import WhiteList from './Tabs/WhiteList';
 import Background from './Tabs/Background';
 import Additionally from './Tabs/Additionally';
+import Toast from './Components/Toast';
 
 const styles = theme => ({
     root: {},
@@ -65,12 +66,13 @@ class App extends GenericApp {
             'pl': require('./i18n/pl'),
             'zh-cn': require('./i18n/zh-cn'),
         };
-
         super(props, extendedProps);
+        this.saveCloseButtons = React.createRef();
     }
 
     getSelectedTab() {
-        const tab = this.state.selectedTab;
+        const { selectedTab } = this.state;
+        const tab = selectedTab;
         if (tab) {
             return arrayTabName.find((el) => el.name === tab)?.index || 0;
         } else {
@@ -78,14 +80,32 @@ class App extends GenericApp {
         }
     }
 
+    componentDidUpdate() {
+        const { secure, certPublic, certPrivate } = this.state.native;
+        const buttonTag = this.saveCloseButtons.current
+            ?.getElementsByTagName('button');
+        if (buttonTag?.length) {
+            const handlerClick = (e) => {
+                if (secure && (!certPrivate || !certPublic)) {
+                    this.setState({ toast: 'set_certificates' })
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+            buttonTag[0].onclick = handlerClick;
+            buttonTag[1].onclick = handlerClick;
+        }
+    }
+
     renderTab() {
-        switch (this.state.selectedTab) {
+        const { selectedTab, native } = this.state;
+        switch (selectedTab) {
             case 'certificates':
                 return <Certificates
                     key="certificates"
                     common={this.common}
                     socket={this.socket}
-                    native={this.state.native}
+                    native={native}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
@@ -97,7 +117,7 @@ class App extends GenericApp {
                     key="whiteList"
                     common={this.common}
                     socket={this.socket}
-                    native={this.state.native}
+                    native={native}
                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
@@ -109,24 +129,24 @@ class App extends GenericApp {
                     key="background"
                     common={this.common}
                     socket={this.socket}
-                    native={this.state.native}
+                    native={native}
                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}
-                />; 
+                />;
 
             case 'additionally':
                 return <Additionally
                     key="additionally"
                     common={this.common}
                     socket={this.socket}
-                    native={this.state.native}
+                    native={native}
                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}
-                />; 
+                />;
 
             case 'options':
             default:
@@ -134,7 +154,7 @@ class App extends GenericApp {
                     key="options"
                     common={this.common}
                     socket={this.socket}
-                    native={this.state.native}
+                    native={native}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     onChange={(attr, value) => this.updateNativeValue(attr, value)}
@@ -144,19 +164,22 @@ class App extends GenericApp {
     }
 
     checkDisabledTabs(nameTab) {
-        return (!this.state.native['auth'] && nameTab === 'background') || (!this.state.native['secure'] && nameTab === 'certificates');
+        const { native } = this.state;
+        return (!native['auth'] && nameTab === 'background') || (!native['secure'] && nameTab === 'certificates');
     }
 
     render() {
-        if (!this.state.loaded) {
-            return <MuiThemeProvider theme={this.state.theme}>
-                <Loader theme={this.state.themeType} />
+        const { loaded, theme, themeType, toast } = this.state;
+        if (!loaded) {
+            return <MuiThemeProvider theme={theme}>
+                <Loader theme={themeType} />
             </MuiThemeProvider>
         }
         const { classes } = this.props;
         return (
-            <MuiThemeProvider theme={this.state.theme}>
-                <div className="App" style={{ background: this.state.theme.palette.background.default, color: this.state.theme.palette.text.primary }}>
+            <MuiThemeProvider theme={theme}>
+                <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
+                <div className="App" style={{ background: theme.palette.background.default, color: theme.palette.text.primary }}>
                     <AppBar position="static">
                         <Tabs value={this.getSelectedTab()} onChange={(e, index) => {
                             this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
@@ -168,7 +191,9 @@ class App extends GenericApp {
                         {this.renderTab()}
                     </div>
                     {this.renderError()}
-                    {this.renderSaveCloseButtons()}
+                    <div ref={this.saveCloseButtons}>
+                        {this.renderSaveCloseButtons()}
+                    </div>
                 </div>
             </MuiThemeProvider>
         );

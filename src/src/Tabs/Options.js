@@ -134,6 +134,15 @@ class Options extends Component {
 
     componentDidUpdate(prevProps) {
         const { native: { auth, secure } } = prevProps;
+        const { native: { defaultUser, whiteListSettings }, onChange } = this.props;
+        if (!this.props.native.auth && (auth !== this.props.native.auth)) {
+            onChange('whiteListSettings.default.user', defaultUser);
+        } else if (whiteListSettings.default.user !== 'auth' && (auth !== this.props.native.auth)) {
+            onChange('whiteListSettings.default.user', 'auth');
+        }
+        if (defaultUser !== prevProps.native.defaultUser) {
+            onChange('whiteListSettings.default.user', defaultUser);
+        }
         if (!this.props.native.secure && this.props.native.auth && !this.state.openModal && ((auth !== this.props.native.auth) || (secure !== this.props.native.secure))) {
             this.setState({ openModal: true });
         }
@@ -149,7 +158,6 @@ class Options extends Component {
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
         const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions } = this.state;
-        console.log(usersOptions)
         let newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
         return <form className={classes.tab}>

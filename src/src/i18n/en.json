@@ -49,5 +49,6 @@
   "warning_incorrectly":"Warning: Incorrectly disabling functions use can cause unexpected behaviour.",
   "disable_extensions":"Disable extension handling",
   "disable_states":"Disable states and socket info",
-  "disable_files":"Do not serve web files from objectDB"
+  "disable_files":"Do not serve web files from objectDB",
+  "set_certificates":"Set certificates or load it first in the system settings (right top)."
 }

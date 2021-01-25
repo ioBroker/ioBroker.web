@@ -17,9 +17,6 @@ const styles = theme => ({
     columnSettings: {
         width: 'calc(100% - 10px)'
     },
-    logoWidth: {
-        width: 200
-    },
     fontSize: {
         '@media screen and (max-width: 460px)': {
             '& > *': {
@@ -27,7 +24,6 @@ const styles = theme => ({
             }
         }
     }
-
 });
 
 class Additionally extends Component {

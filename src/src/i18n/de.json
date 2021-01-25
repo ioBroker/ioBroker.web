@@ -3,7 +3,7 @@
   "port": "Port",
   "encryption": "Verschlüsselung (HTTPS)",
   "authentication": "Authentifikation",
-  "basic_authentication": "Basisauthentifizierung",
+  "basic_authentication": "Basic-Authentifizierung",
   "cache": "Puffer",
   "socket": "Socket.IO Instance (Optional): (Wird von Rickshaw oder Vis benutzt)",
   "public_certificate": "Öffentliches Zertifikat",
@@ -49,5 +49,6 @@
   "warning_incorrectly":"Warnung: Das falsche Deaktivieren der Verwendung von Funktionen kann zu unerwartetem Verhalten führen.",
   "disable_extensions":"Deaktivieren Sie die Erweiterungsbehandlung",
   "disable_states":"Status und Socket-Informationen deaktivieren",
-  "disable_files":"Stellen Sie keine Webdateien aus objectDB bereit"
+  "disable_files":"Stellen Sie keine Webdateien aus objectDB bereit",
+  "set_certificates":"Setze Zertificate oder lade die erst unter System/Einstellungen (oben rechts)."
 }

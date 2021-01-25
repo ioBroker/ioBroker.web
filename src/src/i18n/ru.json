@@ -3,7 +3,7 @@
   "port": "Порт",
   "encryption": "Шифрование (HTTPS)",
   "authentication": "Аутентификация",
-  "basic_authentication": "Базовая аутентификация",
+  "basic_authentication": "Basic-Аутентификация",
   "cache": "Кэш",
   "socket": "Socket.IO Instance (Optional): (Используется для Rickshaw или Vis)",
   "public_certificate": "'Public' сертификат",
@@ -49,5 +49,6 @@
   "warning_incorrectly":"Предупреждение: неправильное отключение использования функций может вызвать непредвиденное поведение.",
   "disable_extensions":"Отключить обработку расширений",
   "disable_states":"Отключить состояния и информацию о сокете",
-  "disable_files":"Не обслуживать веб-файлы из objectDB"
+  "disable_files":"Не обслуживать веб-файлы из objectDB",
+  "set_certificates":"Нужно выбрать сертификаты или сначала загрузить их в системных настройках (вверху справа)."
 }

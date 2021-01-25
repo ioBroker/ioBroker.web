@@ -49,5 +49,6 @@
   "warning_incorrectly":"Avvertenza: la disabilitazione errata dell'uso delle funzioni può causare comportamenti imprevisti.",
   "disable_extensions":"Disabilita la gestione delle estensioni",
   "disable_states":"Disabilita stati e informazioni socket",
-  "disable_files":"Non servire file web da objectDB"
+  "disable_files":"Non servire file web da objectDB",
+  "set_certificates":"Imposta i certificati o caricali prima nelle impostazioni di sistema (in alto a destra)."
 }

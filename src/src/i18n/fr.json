@@ -49,5 +49,6 @@
   "warning_incorrectly":"Avertissement: la désactivation incorrecte de l'utilisation des fonctions peut provoquer un comportement inattendu.",
   "disable_extensions":"Désactivez la gestion des extensions",
   "disable_states":"Désactivez les états et les informations de socket",
-  "disable_files":"Ne diffusez pas de fichiers Web depuis objectDB"
+  "disable_files":"Ne diffusez pas de fichiers Web depuis objectDB",
+  "set_certificates":"Définissez des certificats ou chargez-les d'abord dans les paramètres du système (en haut à droite)."
 }

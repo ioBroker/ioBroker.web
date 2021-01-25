@@ -49,5 +49,6 @@
   "warning_incorrectly":"Ostrzeżenie: Niepoprawne wyłączenie używania funkcji może spowodować nieoczekiwane zachowanie.",
   "disable_extensions":"Wyłącz obsługę rozszerzeń",
   "disable_states":"Wyłącz stany i informacje o gnieździe",
-  "disable_files":"Nie udostępniaj plików internetowych z objectDB"
+  "disable_files":"Nie udostępniaj plików internetowych z objectDB",
+  "set_certificates":"Ustaw certyfikaty lub załaduj najpierw w ustawieniach systemu (prawy górny)."
 }

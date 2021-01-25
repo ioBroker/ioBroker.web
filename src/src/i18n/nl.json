@@ -49,5 +49,6 @@
   "warning_incorrectly":"Waarschuwing: het onjuist uitschakelen van het gebruik van functies kan onverwacht gedrag veroorzaken.",
   "disable_extensions":"Verwerking van extensies uitschakelen",
   "disable_states":"Schakel statussen en socketinformatie uit",
-  "disable_files":"Serveer geen webbestanden vanuit objectDB"
+  "disable_files":"Serveer geen webbestanden vanuit objectDB",
+  "set_certificates":"Stel certificaten in of laad het eerst in de systeeminstellingen (rechtsboven)."
 }
