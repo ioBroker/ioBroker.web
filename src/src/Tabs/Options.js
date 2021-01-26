@@ -46,14 +46,14 @@ const styles = theme => ({
             width: '100%'
         }
     },
-    block_warning: {
+    blockWarning: {
         background: '#2196f3',
         color: '#fff',
         margin: '20px 2px',
         padding: 8,
         fontSize: 20
     },
-    block_warning_content: {
+    blockWarningContent: {
         marginBottom: 200,
         flexFlow: 'wrap',
         display: 'flex',
@@ -65,10 +65,7 @@ class Options extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inAction: false,
             toast: '',
-            isInstanceAlive: false,
-            errorWithPercent: false,
             ipAddressOptions: [],
             certificatesOptions: [],
             usersOptions: [],
@@ -78,13 +75,10 @@ class Options extends Component {
             ],
             openModal: false
         };
-        const { instance, socket, adapterName } = this.props;
-        socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
-            this.setState({ isInstanceAlive: state && state.val }));
     }
 
     componentDidMount() {
-        const { instance, socket, adapterName, common: { host } } = this.props;
+        const { instance, socket, common: { host } } = this.props;
         const { socketioOptions } = this.state;
         socket.getAdapterInstances('socketio').then(state => {
             this.setState({ socketioOptions: [...socketioOptions, ...state.map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] })
@@ -123,13 +117,6 @@ class Options extends Component {
         socket.getUsers()
             .then(list =>
                 this.setState({ usersOptions: list }));
-
-        socket.subscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
-    }
-
-    componentWillUnmount() {
-        const { instance, socket, adapterName } = this.props;
-        socket.unsubscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
     }
 
     componentDidUpdate(prevProps) {
@@ -148,13 +135,6 @@ class Options extends Component {
         }
     }
 
-    onAliveChanged = (id, state) => {
-        const { instance, adapterName } = this.props;
-        if (id === `system.adapter.${adapterName}.${instance}.alive`) {
-            this.setState({ isInstanceAlive: state && state.val });
-        }
-    };
-
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
         const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions } = this.state;
@@ -172,8 +152,8 @@ class Options extends Component {
                 close={() => this.setState({ openModal: !openModal })}
                 titleButton={I18n.t('button_title')}
                 titleButton2={I18n.t('button_title2')}>
-                <div className={classes.block_warning}>{I18n.t('Warning')}</div>
-                <div className={classes.block_warning_content}><Security style={{ width: 100, height: 100 }} />{I18n.t('modal_title')}</div>
+                <div className={classes.blockWarning}>{I18n.t('Warning')}</div>
+                <div className={classes.blockWarningContent}><Security style={{ width: 100, height: 100 }} />{I18n.t('modal_title')}</div>
             </CustomModal>
             <Logo
                 instance={instance}

@@ -36,9 +36,7 @@ class Certificates extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inAction: false,
             toast: '',
-            errorWithPercent: false,
             ipAddressOptions: []
         };
     }

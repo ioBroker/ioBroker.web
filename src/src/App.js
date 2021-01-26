@@ -67,7 +67,6 @@ class App extends GenericApp {
             'zh-cn': require('./i18n/zh-cn'),
         };
         super(props, extendedProps);
-        this.saveCloseButtons = React.createRef();
     }
 
     getSelectedTab() {
@@ -80,27 +79,9 @@ class App extends GenericApp {
         }
     }
 
-    componentDidUpdate() {
-        const { secure, certPublic, certPrivate } = this.state.native;
-        const buttonTag = this.saveCloseButtons.current
-            ?.getElementsByTagName('button');
-        if (buttonTag?.length) {
-            const handlerClick = (e) => {
-                if (secure && (!certPrivate || !certPublic)) {
-                    this.setState({ toast: 'set_certificates' })
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            }
-            buttonTag[0].onclick = handlerClick;
-            buttonTag[1].onclick = handlerClick;
-        }
-    }
-
     onPrepareSave(settings) {
         super.onPrepareSave(settings);
         const { secure, certPublic, certPrivate } = this.state.native;
-
         if (secure && (!certPrivate || !certPublic)) {
             this.setState({ toast: 'set_certificates' });
             return false;
@@ -182,12 +163,12 @@ class App extends GenericApp {
 
     render() {
         const { loaded, theme, themeType, toast } = this.state;
+        const { classes } = this.props;
         if (!loaded) {
             return <MuiThemeProvider theme={theme}>
                 <Loader theme={themeType} />
             </MuiThemeProvider>
         }
-        const { classes } = this.props;
         return (
             <MuiThemeProvider theme={theme}>
                 <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
@@ -203,9 +184,7 @@ class App extends GenericApp {
                         {this.renderTab()}
                     </div>
                     {this.renderError()}
-                    <div ref={this.saveCloseButtons}>
-                        {this.renderSaveCloseButtons()}
-                    </div>
+                    {this.renderSaveCloseButtons()}
                 </div>
             </MuiThemeProvider>
         );

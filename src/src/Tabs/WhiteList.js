@@ -12,7 +12,7 @@ import I18n from '@iobroker/adapter-react/i18n';
 import Toast from '../Components/Toast';
 
 const styles = ({ name }) => ({
-    background_theme: {
+    backgroundTheme: {
         background: name === 'dark' ? '#3e3838' : '#dcdcdc'
     },
     tab: {
@@ -36,14 +36,14 @@ const styles = ({ name }) => ({
             padding: 2
         }
     },
-    display_none: {
+    displayNone: {
         display: 'none'
     },
-    check_box_style: {
+    checkBoxStyle: {
         marginLeft: 0,
         marginRight: 0
     },
-    mini_table: {
+    miniTable: {
         display: 'none'
     },
     card: {
@@ -63,16 +63,16 @@ const styles = ({ name }) => ({
         }
     },
     '@media screen and (max-width: 1280px)': {
-        mini_table: {
+        miniTable: {
             display: 'block'
         },
-        max_table: {
+        maxTable: {
             display: 'none'
         },
         table: {
             minWidth: 300
         },
-        mini_table_select: {
+        miniTableSelect: {
             minWidth: 185
         }
     }
@@ -105,36 +105,17 @@ class WhiteList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            inAction: false,
             toast: '',
-            isInstanceAlive: false,
-            errorWithPercent: false,
             usersOptions: []
         };
-        const { socket, instance, adapterName } = this.props;
-        socket.getState(`system.adapter.${adapterName}.${instance}.alive`).then(state =>
-            this.setState({ isInstanceAlive: state && state.val }));
     }
 
     componentDidMount() {
-        const { socket, instance, adapterName } = this.props;
-        socket.subscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
+        const { socket } = this.props;
         socket.getUsers()
             .then(list =>
                 this.setState({ usersOptions: list }));
     }
-
-    componentWillUnmount() {
-        const { socket, instance, adapterName } = this.props;
-        socket.unsubscribeState(`system.adapter.${adapterName}.${instance}.alive`, this.onAliveChanged);
-    }
-
-    onAliveChanged = (id, state) => {
-        const { instance, adapterName } = this.props;
-        if (id === `system.adapter.${adapterName}.${instance}.alive`) {
-            this.setState({ isInstanceAlive: state && state.val });
-        }
-    };
 
     tableSelect(el, style) {
         const { classes, native, onChange } = this.props;
@@ -150,7 +131,7 @@ class WhiteList extends Component {
             options={[...optionsSelecct, ...usersOptions.map(({ common: { name } }) => ({ title: name, value: name }))]}
             native={native}
             style={style}
-            className={classes.mini_table_select}
+            className={classes.miniTableSelect}
             onChange={(e) => {
                 const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                 newObj[el].user = e;
@@ -251,9 +232,9 @@ class WhiteList extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div className={native['whiteListEnabled'] ? null : classes.display_none}>
+                <div className={native['whiteListEnabled'] ? null : classes.displayNone}>
                     <TableContainer style={{ overflowX: 'visible' }} component={Paper}>
-                        <Table className={`${classes.table} ${classes.max_table}`} aria-label="spanning table">
+                        <Table className={`${classes.table} ${classes.maxTable}`} aria-label="spanning table">
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center" rowSpan={2}>{this.buttonAdd()}</TableCell>
@@ -271,23 +252,23 @@ class WhiteList extends Component {
                             <TableBody>
                                 {Object.keys(whiteListSettings).map((el, index) => {
                                     return <TableRow key={`${index}_max`}>
-                                        <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.buttonRemove(el)}
                                         </TableCell>
-                                        <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.tableInput(el, { marginTop: -1, minWidth: 150, paddingTop: 5 })}
                                         </TableCell>
-                                        <TableCell className={classes.background_theme} style={{ borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.tableSelect(el, { marginTop: -1 })}
                                         </TableCell>
                                         {['object', 'state', 'file'].map((elProperty, indexProperty) => Object.keys(whiteListSettings[el][elProperty]).map((attr, index) =>
-                                            <TableCell className={Boolean(indexProperty % 2) ? classes.background_theme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
+                                            <TableCell className={Boolean(indexProperty % 2) ? classes.backgroundTheme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
                                                 <CustomCheckbox
                                                     table
                                                     checked={whiteListSettings[el][elProperty][attr]}
                                                     attr={attr}
                                                     native={native}
-                                                    className={classes.check_box_style}
+                                                    className={classes.checkBoxStyle}
                                                     onChange={(e) => {
                                                         const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                                                         newObj[el][elProperty][attr] = e;
@@ -299,15 +280,15 @@ class WhiteList extends Component {
                                 })}
                             </TableBody>
                         </Table>
-                        <div className={classes.mini_table}>
-                            <div className={classes.background_theme} style={{ position: 'sticky', top: -10, left: 12, zIndex: 22, borderBottom: '1px solid' }}>
+                        <div className={classes.miniTable}>
+                            <div className={classes.backgroundTheme} style={{ position: 'sticky', top: -10, left: 12, zIndex: 22, borderBottom: '1px solid' }}>
                                 {this.buttonAdd()}
                             </div>
                             <div>
                                 {Object.keys(whiteListSettings).map((el, index) => {
                                     return <div
                                         key={`${index}_wrapper`}
-                                        className={`${classes.card} ${Boolean(index % 2) ? classes.background_theme : null}`}
+                                        className={`${classes.card} ${Boolean(index % 2) ? classes.backgroundTheme : null}`}
                                     >
                                         <div style={{ width: '100%', lineHeight: '30px', textAlign: 'center' }}>
                                             <span>{this.buttonRemove(el)}</span>
@@ -336,7 +317,7 @@ class WhiteList extends Component {
                                                                     checked={whiteListSettings[el][element][attr]}
                                                                     attr={attr}
                                                                     native={native}
-                                                                    className={classes.check_box_style}
+                                                                    className={classes.checkBoxStyle}
                                                                     onChange={(e) => {
                                                                         const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                                                                         newObj[el][element][attr] = e;
