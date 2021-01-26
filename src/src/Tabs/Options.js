@@ -124,7 +124,7 @@ class Options extends Component {
         const { native: { defaultUser, whiteListSettings }, onChange } = this.props;
         if (!this.props.native.auth && (auth !== this.props.native.auth)) {
             onChange('whiteListSettings.default.user', defaultUser);
-        } else if (whiteListSettings.default.user !== 'auth' && (auth !== this.props.native.auth)) {
+        } else if (whiteListSettings && whiteListSettings.default.user !== 'auth' && (auth !== this.props.native.auth)) {
             onChange('whiteListSettings.default.user', 'auth');
         }
         if (defaultUser !== prevProps.native.defaultUser) {

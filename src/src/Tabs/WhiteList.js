@@ -232,7 +232,7 @@ class WhiteList extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div className={native['whiteListEnabled'] ? null : classes.displayNone}>
+                {whiteListSettings ? <div className={native['whiteListEnabled'] ? null : classes.displayNone}>
                     <TableContainer style={{ overflowX: 'visible' }} component={Paper}>
                         <Table className={`${classes.table} ${classes.maxTable}`} aria-label="spanning table">
                             <TableHead>
@@ -333,7 +333,7 @@ class WhiteList extends Component {
                             </div>
                         </div>
                     </TableContainer>
-                </div>
+                </div> : null}
             </div>
         </form>;
     }
