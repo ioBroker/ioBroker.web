@@ -158,7 +158,7 @@ class Background extends Component {
                         />
                     </div>
                     <Dropzone
-                        accept=".png,image/png"
+                        accept="image/*"
                         onDrop={acceptedFiles => this.uploadFile(acceptedFiles[0])}>
                         {({ getRootProps, getInputProps, isDragActive }) => (
                             <section>
