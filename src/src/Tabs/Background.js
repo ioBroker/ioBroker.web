@@ -76,10 +76,14 @@ class Background extends Component {
         socket.getRawSocket().emit('readFile', `web.${instance}`, 'login-bg.png', (err, data) => {
             if (!err && data) {
                 let arrayBufferView = new Uint8Array(data);
-                let blob = new Blob([arrayBufferView], { type: 'image/png' });
-                let urlCreator = window.URL || window.webkitURL;
-                let imgSRC = urlCreator.createObjectURL(blob);
-                this.setState({ imgSRC });
+                if (!arrayBufferView.length) {
+                    this.setState({ imgSRC: `../../files/web.${instance}/login-bg.png?ts=` + Date.now() });
+                } else {
+                    let blob = new Blob([arrayBufferView], { type: 'image/png' });
+                    let urlCreator = window.URL || window.webkitURL;
+                    let imgSRC = urlCreator.createObjectURL(blob);
+                    this.setState({ imgSRC });
+                }
             } else {
                 this.setState({ imgSRC: '' });
             }
@@ -161,7 +165,7 @@ class Background extends Component {
                                 <div
                                     className={`${classes.dropZone} ${isDragActive ? classes.dropZoneActive : null}`}
                                     {...getRootProps()}>
-                                    <input {...getInputProps()} />
+                                    <input {...getInputProps()}/>
                                     <p>{I18n.t('place_the_files_here')}</p>
                                     {imgSRC ? <img className={classes.imgStyle} src={imgSRC} alt="img" /> : null}
                                 </div>
