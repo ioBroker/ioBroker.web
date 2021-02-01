@@ -122,13 +122,13 @@ class WhiteList extends Component {
         const { usersOptions } = this.state;
         const { whiteListSettings } = native;
         if (el === 'default') {
-            return whiteListSettings[el].user
+            return whiteListSettings[el].user;
         }
-        const optionsSelecct = whiteListSettings.default.user === 'auth' ? [{ title: 'auth', value: 'auth' }] : [];
+        const optionsSelect = whiteListSettings.default.user === 'auth' ? [{ title: 'auth', value: 'auth' }] : [];
         return <CustomSelect
             table
             value={whiteListSettings[el].user}
-            options={[...optionsSelecct, ...usersOptions.map(({ common: { name } }) => ({ title: name, value: name }))]}
+            options={[...optionsSelect, ...usersOptions.map(({ _id, common: { name} }) => ({ title: name, value: _id.replace('system.user.', '') }))]}
             native={native}
             style={style}
             className={classes.miniTableSelect}
@@ -161,7 +161,7 @@ class WhiteList extends Component {
                     }
                 });
                 if (!this.validateIp(e)) {
-                    this.setState({ toast: 'incorrect_ip' })
+                    this.setState({ toast: 'incorrect_ip' });
                 } else {
                     onChange('whiteListSettings', newObj);
                 }

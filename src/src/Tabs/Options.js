@@ -96,9 +96,9 @@ class Options extends Component {
                         }
                         for (let num = 0; num < data.native.hardware.networkInterfaces[eth].length; num++) {
                             if (data.native.hardware.networkInterfaces[eth][num].family !== 'IPv6') {
-                                IPs4.push({ title: '[' + data.native.hardware.networkInterfaces[eth][num].family + '] ' + data.native.hardware.networkInterfaces[eth][num].address + ' - ' + eth, value: data.native.hardware.networkInterfaces[eth][num].address, family: 'ipv4' });
+                                IPs4.push({ title: `[${data.native.hardware.networkInterfaces[eth][num].family}] ${data.native.hardware.networkInterfaces[eth][num].address} - ${eth}`, value: data.native.hardware.networkInterfaces[eth][num].address, family: 'ipv4' });
                             } else {
-                                IPs6.push({ title: '[' + data.native.hardware.networkInterfaces[eth][num].family + '] ' + data.native.hardware.networkInterfaces[eth][num].address + ' - ' + eth, value: data.native.hardware.networkInterfaces[eth][num].address, family: 'ipv6' });
+                                IPs6.push({ title: `[${data.native.hardware.networkInterfaces[eth][num].family}] ${data.native.hardware.networkInterfaces[eth][num].address} - ${eth}`, value: data.native.hardware.networkInterfaces[eth][num].address, family: 'ipv6' });
                             }
                         }
                     }
@@ -259,7 +259,7 @@ class Options extends Component {
                             className={!native['auth'] ? null : classes.displayNone}
                             title='users'
                             attr='defaultUser'
-                            options={usersOptions.map(({ common: { name } }) => ({ title: name, value: name }))}
+                            options={usersOptions.map(({ _id, common: { name } }) => ({ title: name, value: _id.replace('system.user.', '') }))}
                             style={{ marginTop: 10, width: 300 }}
                             native={native}
                             onChange={onChange}
