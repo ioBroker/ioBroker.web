@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.2.3",
+        "version": "3.3.0",
         "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
@@ -16,6 +16,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.3.0": {
+                "en": "The admin GUI was rewritten with reactJS",
+                "de": "Die Admin-GUI wurde mit reactJS neu geschrieben",
+                "ru": "Интерфейс администратора был переписан с помощью responseJS.",
+                "pt": "A GUI do administrador foi reescrita com reactJS",
+                "nl": "De admin GUI is herschreven met reactJS",
+                "fr": "L'interface graphique d'administration a été réécrite avec reactJS",
+                "it": "La GUI di amministrazione è stata riscritta con reactJS",
+                "es": "La GUI de administración se reescribió con reactJS",
+                "pl": "Graficzny interfejs użytkownika administratora został przepisany za pomocąreakJS",
+                "zh-cn": "管理GUI用reactJS重写"
+            },
             "3.2.3": {
                 "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)\nupdate dependencies of socketio and simple-api",
                 "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).\nAktualisieren Sie die Abhängigkeiten von Socketio und Simple-API",

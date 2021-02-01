@@ -70,6 +70,8 @@ This can be used for applications like *FullyBrowser*. When entering the wrong c
 to the Login Page. 
 
 ## Changelog
+### 3.3.0 (2021-02-01)
+* (bluefox) The admin GUI was rewritten with reactJS 
 
 ### 3.2.3 (2021-01-12)
 * (Apollon77) If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)
