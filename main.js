@@ -765,14 +765,17 @@ function initAuth(server, settings) {
  * @returns {void}
  */
 function sendRange(req, res, buffer) {
-    if (req.range(buffer.length) > 1) {
+    /** @type {Record<string, number>[]} */
+    const ranges = req.range(buffer.length);
+
+    if (ranges.length > 1) {
         adapter.log.warn('Multiple ranges currently not supported, sending whole buffer');
         res.status(200).send(buffer);
         return;
     }
 
     // This is for <video> tag on iOS Safari, only one range is used by Safari, so this is enough for now
-    const range = req.range(buffer.length)[0];
+    const range = ranges[0] || {start: 0, end: buffer.length};
     res.set('Content-Range', `bytes ${range.start}-${range.end}/${buffer.length}`);
     const buf = buffer.slice(range.start, range.end + 1);
     res.set('Content-Length', buf.length);
@@ -1326,7 +1329,7 @@ async function initWebServer(settings) {
 
                             // Store file in cache
                             if (settings.cache) {
-                                cache[id + '/' + url] = {buffer, mimeType};
+                                cache[`${id}/${url}`] = {buffer, mimeType};
                             }
 
                             res.contentType(mimeType);
