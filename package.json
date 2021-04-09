@@ -23,7 +23,7 @@
     "express-session": "^1.17.1",
     "iobroker.simple-api": ">=2.5.3",
     "iobroker.socketio": ">=3.1.4",
-    "mime-types": "^2.1.29",
+    "mime-types": "^2.1.30",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
@@ -35,9 +35,9 @@
   "devDependencies": {
     "@alcalzone/release-script": "^1.8.3",
     "gulp": "^4.0.2",
-    "mocha": "^8.3.0",
+    "mocha": "^8.3.2",
     "chai": "^4.3.4",
-    "eslint": "^7.21.0",
+    "eslint": "^7.23.0",
     "del": "^6.0.0"
   },
   "bugs": {
