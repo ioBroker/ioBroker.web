@@ -280,7 +280,7 @@ function getExtensionsAndSettings(callback) {
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
 
                             // decrypt all native attributes listed in instance.encryptedNative
-                            if (instance.encryptedNative && Array.isArray(instance.encryptedNative) && instance.native) {
+                            if (Array.isArray(instance.encryptedNative) && instance.native) {
                                 instance.encryptedNative.forEach(key => {
                                     if (instance.native[key]) {
                                         instance.native[key] = tools.decrypt(secret, instance.native[key]);
