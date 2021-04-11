@@ -8,6 +8,7 @@ const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
 const LE          = require(utils.controllerDir + '/lib/letsencrypt.js');
+const tools       = require(utils.controllerDir + '/lib/tools.js');
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 
@@ -261,6 +262,7 @@ function updatePreSettings(obj) {
     }
 }
 
+
 function getExtensionsAndSettings(callback) {
     adapter.getObjectView('system', 'instance', null, (err, doc) => {
         if (err) {
@@ -276,7 +278,17 @@ function getExtensionsAndSettings(callback) {
                         if (instance.common.enabled &&
                             instance.common.webExtension &&
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
-                            res.push(doc.rows[i].value);
+
+                            // decrypt all native attributes listed in instance.encryptedNative
+                            if (instance.encryptedNative && Array.isArray(instance.encryptedNative) && instance.native) {
+                                instance.encryptedNative.forEach(key => {
+                                    if (instance.native[key]) {
+                                        instance.native[key] = tools.decrypt(secret, instance.native[key]);
+                                    }
+                                });
+                            }
+
+                            res.push(instance);
                         }
                         if (instance.common.webPreSettings) {
                             updatePreSettings(instance);

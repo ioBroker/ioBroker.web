@@ -2,7 +2,6 @@
     "common": {
         "name": "web",
         "version": "3.3.0",
-        "title": "WEB server",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -279,7 +278,7 @@
         "localLink": "%web_protocol%://%ip%:%web_port%/",
         "dependencies": [
             {
-                "js-controller": ">=2.0.0"
+                "js-controller": ">=3.1.0"
             }
         ],
         "globalDependencies": [
