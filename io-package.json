@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.3.0",
+        "version": "3.4.0",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.0": {
+                "en": "IMPORTANT: js-controller 3.1 is now needed at least\nfix a special case for requesting ranges only (Sentry IOBROKER-WEB-3M)\nautomatically decrypt secrets for web-extensions",
+                "de": "WICHTIG: js-controller 3.1 wird jetzt mindestens benötigt\nBehebung eines Sonderfalls für die Anforderung von Bereichen (Sentry IOBROKER-WEB-3M)\nGeheimnisse für Web-Erweiterungen automatisch entschlüsseln",
+                "ru": "ВАЖНО: js-controller 3.1 теперь нужен как минимум\nисправить особый случай только для запроса диапазонов (Sentry IOBROKER-WEB-3M)\nавтоматически расшифровывать секреты веб-расширений",
+                "pt": "IMPORTANTE: js-controller 3.1 agora é necessário pelo menos\nconsertar um caso especial para solicitar intervalos apenas (Sentry IOBROKER-WEB-3M)\ndescriptografar segredos automaticamente para extensões da web",
+                "nl": "BELANGRIJK: js-controller 3.1 is nu minimaal nodig\neen speciaal geval oplossen voor het opvragen van alleen bereiken (Sentry IOBROKER-WEB-3M)\nautomatisch geheimen decoderen voor web-extensies",
+                "fr": "IMPORTANT: js-controller 3.1 est maintenant nécessaire au moins\ncorrection d'un cas particulier pour la demande de gammes uniquement (Sentry IOBROKER-WEB-3M)\ndécrypter automatiquement les secrets des extensions Web",
+                "it": "IMPORTANTE: adesso è necessario almeno js-controller 3.1\nrisolvere un caso speciale solo per la richiesta di intervalli (Sentry IOBROKER-WEB-3M)\ndecrittografa automaticamente i segreti per le estensioni web",
+                "es": "IMPORTANTE: ahora se necesita js-controller 3.1 al menos\narregla un caso especial para solicitar rangos solamente (Sentry IOBROKER-WEB-3M)\ndescifrar automáticamente los secretos de las extensiones web",
+                "pl": "WAŻNE: js-controller 3.1 jest teraz potrzebny przynajmniej\nnapraw specjalny przypadek tylko dla żądań zakresów (Sentry IOBROKER-WEB-3M)\nautomatycznie odszyfrowuj sekrety dla rozszerzeń internetowych",
+                "zh-cn": "重要提示：现在至少需要js-controller 3.1\n修复仅要求范围的特殊情况（Sentry IOBROKER-WEB-3M）\n自动解密网络扩展的秘密"
+            },
             "3.3.0": {
                 "en": "The admin GUI was rewritten with reactJS",
                 "de": "Die Admin-GUI wurde mit reactJS neu geschrieben",

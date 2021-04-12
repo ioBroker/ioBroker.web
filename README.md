@@ -71,7 +71,7 @@ to the Login Page.
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.4.0 (2021-04-12)
 * IMPORTANT: js-controller 3.1 is now needed at least
 * (foxrive76) fix a special case for requesting ranges only (Sentry IOBROKER-WEB-3M)
 * (Apollon77) automatically decrypt secrets for web-extensions
