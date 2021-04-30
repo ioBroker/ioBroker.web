@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import Dropzone from 'react-dropzone';
+
+import I18n from '@iobroker/adapter-react/i18n';
+
+import Toast from '../Components/Toast';
 import CustomCheckbox from '../Components/CustomCheckbox';
 import CustomInput from '../Components/CustomInput';
 import CustomButtonUpload from '../Components/CustomButtonUpload';
-import I18n from '@iobroker/adapter-react/i18n';
-import Dropzone from 'react-dropzone';
-import Toast from '../Components/Toast';
 
 const styles = theme => ({
     tab: {

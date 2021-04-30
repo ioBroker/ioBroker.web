@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+
+import logo from '../assets/le.png';
+
 import CustomCheckbox from '../Components/CustomCheckbox';
 import CustomInput from '../Components/CustomInput';
 import HintComponent from '../Components/HintComponent';
-import logo from '../assets/le.png';
 
 const styles = theme => ({
     tab: {

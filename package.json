@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "3.4.0",
+  "version": "3.4.1",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -33,11 +33,11 @@
     "@iobroker/adapter-core": "^2.4.0"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^1.8.3",
+    "@alcalzone/release-script": "^1.10.0",
     "gulp": "^4.0.2",
     "mocha": "^8.3.2",
     "chai": "^4.3.4",
-    "eslint": "^7.24.0",
+    "eslint": "^7.25.0",
     "del": "^6.0.0"
   },
   "bugs": {

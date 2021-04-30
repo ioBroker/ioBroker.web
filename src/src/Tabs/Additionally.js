@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import CustomCheckbox from '../Components/CustomCheckbox';
+
 import I18n from '@iobroker/adapter-react/i18n';
+
+import CustomCheckbox from '../Components/CustomCheckbox';
 
 const styles = theme => ({
     tab: {

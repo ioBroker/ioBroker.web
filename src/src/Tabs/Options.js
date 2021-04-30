@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+
+import Security from '@material-ui/icons/Security';
+
 import Logo from '@iobroker/adapter-react/Components/Logo';
+import I18n from '@iobroker/adapter-react/i18n';
+
+import Toast from '../Components/Toast';
+import CustomModal from '../Components/CustomModal';
 import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
-import I18n from '@iobroker/adapter-react/i18n';
-import CustomModal from '../Components/CustomModal';
-import Security from '@material-ui/icons/Security';
-import Toast from '../Components/Toast';
+import {LinearProgress} from "@material-ui/core";
 
 const styles = theme => ({
     blockWrapper: {
@@ -54,7 +58,6 @@ const styles = theme => ({
         fontSize: 20
     },
     blockWarningContent: {
-        marginBottom: 200,
         flexFlow: 'wrap',
         display: 'flex',
         alignItems: 'flex-end'
@@ -73,17 +76,18 @@ class Options extends Component {
                 { title: I18n.t('nothing'), value: 'none' },
                 { title: I18n.t('built_in'), value: '' }
             ],
-            openModal: false
+            openModal: false,
+            loaded: 0,
         };
     }
 
     componentDidMount() {
         const { instance, socket, common: { host } } = this.props;
         const { socketioOptions } = this.state;
+        let loaded = 0;
         socket.getAdapterInstances('socketio').then(state => {
-            this.setState({ socketioOptions: [...socketioOptions, ...state.map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] })
-        }
-        );
+            this.setState({ loaded: ++loaded, socketioOptions: [...socketioOptions, ...state.map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] })
+        });
 
         socket.getRawSocket().emit('getHostByIp', host, (err, data) => {
             if (data) {
@@ -106,17 +110,17 @@ class Options extends Component {
                 for (let i = 0; i < IPs6.length; i++) {
                     IPs4.push(IPs6[i]);
                 }
-                this.setState({ ipAddressOptions: IPs4 });
+                this.setState({ loaded: ++loaded, ipAddressOptions: IPs4 });
             }
         })
 
         socket.getCertificates()
             .then(list =>
-                this.setState({ certificatesOptions: list }));
+                this.setState({ loaded: ++loaded,certificatesOptions: list }));
 
         socket.getUsers()
             .then(list =>
-                this.setState({ usersOptions: list }));
+                this.setState({ loaded: ++loaded, usersOptions: list }));
     }
 
     componentDidUpdate(prevProps) {
@@ -137,9 +141,15 @@ class Options extends Component {
 
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions } = this.state;
+        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, loaded } = this.state;
+
+        if (loaded < 4) {
+            return <LinearProgress />;
+        }
+
         let newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
+
         return <form className={classes.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <CustomModal
@@ -152,8 +162,7 @@ class Options extends Component {
                 close={() => this.setState({ openModal: !openModal })}
                 titleButton={I18n.t('button_title')}
                 titleButton2={I18n.t('button_title2')}>
-                <div className={classes.blockWarning}>{I18n.t('Warning')}</div>
-                <div className={classes.blockWarningContent}><Security style={{ width: 100, height: 100 }} />{I18n.t('modal_title')}</div>
+                <div className={classes.blockWarningContent}><Security style={{ width: 32, height: 32 }} />{I18n.t('modal_title')}</div>
             </CustomModal>
             <Logo
                 instance={instance}
@@ -166,8 +175,9 @@ class Options extends Component {
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomSelect
-                        title='ip'
+                        title='IP address'
                         attr='bind'
+                        noTranslate
                         className={classes.ipInputStyle}
                         options={ipAddressOptions}
                         native={native}
@@ -216,6 +226,7 @@ class Options extends Component {
                         <CustomSelect
                             title='socket'
                             attr='socketio'
+                            noTranslate
                             options={socketioOptions}
                             style={{ marginTop: 10 }}
                             native={native}
@@ -227,8 +238,10 @@ class Options extends Component {
                             <CustomSelect
                                 title='public_certificate'
                                 attr='certPublic'
+                                noTranslate
                                 options={[
-                                    { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'public').map(({ name }) => ({ title: name, value: name }))
+                                    { title: I18n.t('nothing'), value: '' },
+                                    ...certificatesOptions.filter(({ type }) => !type || type === 'public').map(({ name }) => ({ title: name, value: name }))
                                 ]}
                                 style={{ marginTop: 10, marginRight: 20 }}
                                 native={native}
@@ -237,8 +250,10 @@ class Options extends Component {
                             <CustomSelect
                                 title='private_certificate'
                                 attr='certPrivate'
+                                noTranslate
                                 options={[
-                                    { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'private').map(({ name }) => ({ title: name, value: name }))
+                                    { title: I18n.t('nothing'), value: '' },
+                                    ...certificatesOptions.filter(({ type }) => !type || type === 'private').map(({ name }) => ({ title: name, value: name }))
                                 ]}
                                 style={{ marginTop: 10, marginRight: 20 }}
                                 native={native}
@@ -247,8 +262,10 @@ class Options extends Component {
                             <CustomSelect
                                 title='chained_certificate'
                                 attr='certChained'
+                                noTranslate
                                 options={[
-                                    { title: I18n.t('nothing'), value: '' }, ...certificatesOptions.filter(({ type }) => type === 'chained').map(({ name }) => ({ title: name, value: name }))
+                                    { title: I18n.t('nothing'), value: '' },
+                                    ...certificatesOptions.filter(({ type }) => !type || type === 'chained').map(({ name }) => ({ title: name, value: name }))
                                 ]}
                                 style={{ marginTop: 10 }}
                                 native={native}
@@ -259,7 +276,14 @@ class Options extends Component {
                             className={!native['auth'] ? null : classes.displayNone}
                             title='users'
                             attr='defaultUser'
-                            options={usersOptions.map(({ _id, common: { name } }) => ({ title: name, value: _id.replace('system.user.', '') }))}
+                            themeType={this.props.themeType}
+                            noTranslate
+                            options={usersOptions.map(({ _id, common: { name, color, icon } }) => ({
+                                title: typeof name === 'object' ? name[this.props.lang] || name.end || _id.replace(/^system\.user\./, '') : name,
+                                value: _id.replace(/^system\.user\./, ''),
+                                color,
+                                icon
+                            }))}
                             style={{ marginTop: 10, width: 300 }}
                             native={native}
                             onChange={onChange}
@@ -305,6 +329,7 @@ Options.propTypes = {
     onChange: PropTypes.func,
     changed: PropTypes.bool,
     socket: PropTypes.object.isRequired,
+    themeType: PropTypes.string,
 };
 
 export default withStyles(styles)(Options);

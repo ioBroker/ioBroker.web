@@ -495,6 +495,72 @@ function replaceInLink(link, instanceObj, instances) {
     }
 }
 
+function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list) {
+    if (welcomeScreen) {
+        welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen));
+        if (Array.isArray(welcomeScreen)) {
+            for (let w = 0; w < welcomeScreen.length; w++) {
+                // temporary disabled for non pro
+                if (!isPro && welcomeScreen[w].name === 'vis editor') {
+                    continue;
+                }
+                if (welcomeScreen[w].localLinks && typeof welcomeScreen[w].localLinks === 'string') {
+                    welcomeScreen[w].localLink = adapterObj.common.localLinks[welcomeScreen[w].localLinks];
+                    if (typeof welcomeScreen[w].localLink === 'object') {
+                        welcomeScreen[w].localLink = welcomeScreen[w].localLink.link;
+                    }
+                } else
+                if (welcomeScreen[w].localLink && typeof welcomeScreen[w].localLink === 'boolean') {
+                    welcomeScreen[w].localLink = adapterObj.common.localLink;
+                }
+
+                welcomeScreen[w].pro = isPro;
+                if (welcomeScreen[w].localLink) {
+                    if (foundInstanceIDs.length > 1) {
+                        foundInstanceIDs.forEach(id => {
+                            const _welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen));
+                            _welcomeScreen.id = id;
+                            _welcomeScreen.instance = parseInt(id.split('.').pop(), 10);
+                            list.push(_welcomeScreen);
+                        });
+                    } else {
+                        welcomeScreen[w].id = foundInstanceIDs[0];
+                        list.push(welcomeScreen[w]);
+                    }
+                } else {
+                    list.push(welcomeScreen[w]);
+                }
+            }
+        } else {
+            if (welcomeScreen.localLinks && typeof welcomeScreen.localLinks === 'string') {
+                welcomeScreen.localLink = adapterObj.common.localLinks[welcomeScreen.localLinks];
+                if (typeof welcomeScreen.localLink === 'object') {
+                    welcomeScreen.localLink = welcomeScreen.localLink.link;
+                }
+            } else
+            if (welcomeScreen.localLink && typeof welcomeScreen.localLink === 'boolean') {
+                welcomeScreen.localLink = adapterObj.common.localLink;
+            }
+            welcomeScreen.pro = isPro;
+            if (welcomeScreen.localLink) {
+                if (foundInstanceIDs.length > 1) {
+                    foundInstanceIDs.forEach(id => {
+                        const _welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen));
+                        _welcomeScreen.id = id;
+                        _welcomeScreen.instance = parseInt(id.split('.').pop(), 10);
+                        list.push(_welcomeScreen);
+                    });
+                } else {
+                    welcomeScreen.id = foundInstanceIDs[0];
+                    list.push(welcomeScreen);
+                }
+            } else {
+                list.push(welcomeScreen);
+            }
+        }
+    }
+}
+
 function getListOfAllAdapters(callback) {
     // read all instances
     adapter.getObjectView('system', 'instance', {}, (err, instances) => {
@@ -507,9 +573,9 @@ function getListOfAllAdapters(callback) {
                 }
                 for (let a = 0; a < adapters.rows.length; a++) {
                     const obj = adapters.rows[a].value;
-                    let found = '';
+                    let found;
                     if (instances && instances.rows) {
-                        found = '';
+                        found = [];
                         // find if any instance of this adapter is exists and started
                         for (let i = 0; i < instances.rows.length; i++) {
                             let id = instances.rows[i].id;
@@ -517,14 +583,15 @@ function getListOfAllAdapters(callback) {
                             ids.pop();
                             id = ids.join('.');
                             if (id === obj._id && instances.rows[i].value.common && (true || instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)) {
-                                found = instances.rows[i].id;
-                                break;
+                                found.push(instances.rows[i].id);
                             }
                         }
                     }
 
-                    if (found) {
-                        if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
+                    if (found && found.length) {
+                        processWelcome(obj.common.welcomeScreen, false, obj, found, list);
+                        processWelcome(obj.common.welcomeScreenPro, true, obj, found, list);
+                        /*if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
                             if (obj.common.welcomeScreen) {
                                 if (obj.common.welcomeScreen instanceof Array) {
                                     for (let w = 0; w < obj.common.welcomeScreen.length; w++) {
@@ -532,22 +599,56 @@ function getListOfAllAdapters(callback) {
                                         if (obj.common.welcomeScreen[w].name === 'vis editor') {
                                             continue;
                                         }
+                                        if (obj.common.welcomeScreen[w].localLinks && typeof obj.common.welcomeScreen[w].localLinks === 'string') {
+                                            obj.common.welcomeScreen[w].localLink = obj.common.localLinks[obj.common.welcomeScreen[w].localLinks];
+                                            if (typeof obj.common.welcomeScreen[w].localLink === 'object') {
+                                                obj.common.welcomeScreen[w].localLink = obj.common.welcomeScreen[w].localLink.link;
+                                            }
+                                        } else
                                         if (obj.common.welcomeScreen[w].localLink && typeof obj.common.welcomeScreen[w].localLink === 'boolean') {
                                             obj.common.welcomeScreen[w].localLink = obj.common.localLink;
                                         }
+
                                         if (obj.common.welcomeScreen[w].localLink) {
-                                            obj.common.welcomeScreen[w].id = found;
+                                            if (found.length > 1) {
+                                                found.forEach(id => {
+                                                    const welcomeScreen = JSON.stringify(JSON.parse(obj.common.welcomeScreen[w]));
+                                                    welcomeScreen.id = id;
+                                                    list.push(welcomeScreen);
+                                                });
+                                            } else {
+                                                obj.common.welcomeScreen[w].id = found[0];
+                                                list.push(obj.common.welcomeScreen[w]);
+                                            }
+                                        } else {
+                                            list.push(obj.common.welcomeScreen[w]);
                                         }
-                                        list.push(obj.common.welcomeScreen[w]);
                                     }
                                 } else {
+                                    if (obj.common.welcomeScreen.localLinks && typeof obj.common.welcomeScreen.localLinks === 'string') {
+                                        obj.common.welcomeScreen.localLink = obj.common.localLinks[obj.common.welcomeScreen.localLinks];
+                                        if (typeof obj.common.welcomeScreen.localLink === 'object') {
+                                            obj.common.welcomeScreen.localLink = obj.common.welcomeScreen.localLink.link;
+                                        }
+                                    } else
                                     if (obj.common.welcomeScreen.localLink && typeof obj.common.welcomeScreen.localLink === 'boolean') {
                                         obj.common.welcomeScreen.localLink = obj.common.localLink;
                                     }
+
                                     if (obj.common.welcomeScreen.localLink) {
-                                        obj.common.welcomeScreen.id = found;
+                                        if (found.length > 1) {
+                                            found.forEach(id => {
+                                                const welcomeScreen = JSON.stringify(JSON.parse(obj.common.welcomeScreen));
+                                                welcomeScreen.id = id;
+                                                list.push(welcomeScreen);
+                                            });
+                                        } else {
+                                            obj.common.welcomeScreen.id = found[0];
+                                            list.push(obj.common.welcomeScreen);
+                                        }
+                                    } else {
+                                        list.push(obj.common.welcomeScreen);
                                     }
-                                    list.push(obj.common.welcomeScreen);
                                 }
                             }
                             if (obj.common.welcomeScreenPro) {
@@ -555,6 +656,12 @@ function getListOfAllAdapters(callback) {
                                     for (let ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
                                         const tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
                                         tile.pro = true;
+                                        if (tile.localLinks && typeof tile.localLinks === 'string') {
+                                            tile.localLink = obj.common.localLinks[tile.localLinks];
+                                            if (typeof tile.localLink === 'object') {
+                                                tile.localLink = tile.localLink.link;
+                                            }
+                                        } else
                                         if (tile.localLink && typeof tile.localLink === 'boolean') {
                                             tile.localLink = obj.common.localLink;
                                         }
@@ -566,16 +673,32 @@ function getListOfAllAdapters(callback) {
                                 } else {
                                     const tile_ = Object.assign({}, obj.common.welcomeScreenPro);
                                     tile_.pro = true;
+                                    if (tile_.localLinks && typeof tile_.localLinks === 'string') {
+                                        tile_.localLink = obj.common.localLinks[tile_.localLinks];
+                                        if (typeof tile_.localLink === 'object') {
+                                            tile_.localLink = tile_.localLink.link;
+                                        }
+                                    } else
                                     if (tile_.localLink && typeof tile_.localLink === 'boolean') {
                                         tile_.localLink = obj.common.localLink;
                                     }
                                     if (tile_.localLink) {
-                                        tile_.id = found;
+                                        if (found.length > 1) {
+                                            found.forEach(id => {
+                                                const welcomeScreen = JSON.stringify(JSON.parse(obj.common.tile_));
+                                                welcomeScreen.id = id;
+                                                list.push(welcomeScreen);
+                                            });
+                                        } else {
+                                            tile_.id = found[0];
+                                            list.push(obj.common.welcomeScreen);
+                                        }
+                                    } else {
+                                        list.push(tile_);
                                     }
-                                    list.push(tile_);
                                 }
                             }
-                        }
+                        }*/
                     }
                 }
 
@@ -613,6 +736,15 @@ function getListOfAllAdapters(callback) {
                         if (aName < bName) {
                             return -1;
                         }
+                        if (a.instance !== undefined && b.instance !== undefined) {
+                            if (a.instance > b.instance) {
+                                return 1;
+                            }
+                            if (a.instance < b.instance) {
+                                return -1;
+                            }
+                        }
+
                         return 0;
                     }
                 });

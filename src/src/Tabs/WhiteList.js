@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+
+import I18n from '@iobroker/adapter-react/i18n';
+
 import CustomCheckbox from '../Components/CustomCheckbox';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import CustomInput from '../Components/CustomInput';
 import CustomSelect from '../Components/CustomSelect';
-import I18n from '@iobroker/adapter-react/i18n';
 import Toast from '../Components/Toast';
 
 const styles = ({ name }) => ({

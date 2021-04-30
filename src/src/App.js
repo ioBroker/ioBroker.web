@@ -82,6 +82,7 @@ class App extends GenericApp {
     onPrepareSave(settings) {
         super.onPrepareSave(settings);
         const { secure, certPublic, certPrivate } = this.state.native;
+
         if (secure && (!certPrivate || !certPublic)) {
             this.setState({ toast: 'set_certificates' });
             return false;
@@ -93,6 +94,20 @@ class App extends GenericApp {
     renderTab() {
         const { selectedTab, native } = this.state;
         switch (selectedTab) {
+            case 'options':
+            default:
+                return <Options
+                    key="options"
+                    themeType={this.state.themeType}
+                    common={this.common}
+                    socket={this.socket}
+                    native={native}
+                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
+                    instance={this.instance}
+                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    adapterName={this.adapterName}
+                />;
+
             case 'certificates':
                 return <Certificates
                     key="certificates"
@@ -117,18 +132,6 @@ class App extends GenericApp {
                     adapterName={this.adapterName}
                 />;
 
-            case 'background':
-                return <Background
-                    key="background"
-                    common={this.common}
-                    socket={this.socket}
-                    native={native}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
-                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
-                    instance={this.instance}
-                    adapterName={this.adapterName}
-                />;
-
             case 'additionally':
                 return <Additionally
                     key="additionally"
@@ -141,18 +144,18 @@ class App extends GenericApp {
                     adapterName={this.adapterName}
                 />;
 
-            case 'options':
-            default:
-                return <Options
-                    key="options"
+            case 'background':
+                return <Background
+                    key="background"
                     common={this.common}
                     socket={this.socket}
                     native={native}
+                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
                     adapterName={this.adapterName}
                 />;
+
         }
     }
 
@@ -167,27 +170,26 @@ class App extends GenericApp {
         if (!loaded) {
             return <MuiThemeProvider theme={theme}>
                 <Loader theme={themeType} />
-            </MuiThemeProvider>
+            </MuiThemeProvider>;
         }
-        return (
-            <MuiThemeProvider theme={theme}>
-                <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
-                <div className="App" style={{ background: theme.palette.background.default, color: theme.palette.text.primary }}>
-                    <AppBar position="static">
-                        <Tabs value={this.getSelectedTab()} onChange={(e, index) => {
-                            this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
-                        }} scrollButtons="auto">
-                            {arrayTabName.map((el, index) => (<Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />))}
-                        </Tabs>
-                    </AppBar>
-                    <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>
-                        {this.renderTab()}
-                    </div>
-                    {this.renderError()}
-                    {this.renderSaveCloseButtons()}
+
+        return <MuiThemeProvider theme={theme}>
+            <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
+            <div className="App" style={{ background: theme.palette.background.default, color: theme.palette.text.primary }}>
+                <AppBar position="static">
+                    <Tabs value={this.getSelectedTab()} onChange={(e, index) => {
+                        this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
+                    }} scrollButtons="auto">
+                        {arrayTabName.map((el, index) => (<Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />))}
+                    </Tabs>
+                </AppBar>
+                <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>
+                    {this.renderTab()}
                 </div>
-            </MuiThemeProvider>
-        );
+                {this.renderError()}
+                {this.renderSaveCloseButtons()}
+            </div>
+        </MuiThemeProvider>;
     }
 }
 

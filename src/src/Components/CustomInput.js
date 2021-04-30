@@ -1,8 +1,10 @@
-import { FormControl, FormHelperText, TextField, withStyles } from '@material-ui/core';
 import React from 'react';
-import I18n from '@iobroker/adapter-react/i18n';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+
+import { FormControl, FormHelperText, TextField, withStyles } from '@material-ui/core';
+
+import I18n from '@iobroker/adapter-react/i18n';
 
 const styles = theme => ({
     input: {

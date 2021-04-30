@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.0",
+        "version": "3.4.1",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.1": {
+                "en": "Added support of admin5",
+                "de": "Unterstützung von admin5 hinzugefügt",
+                "ru": "Добавлена поддержка admin5",
+                "pt": "Adicionado suporte de admin5",
+                "nl": "Ondersteuning toegevoegd voor admin5",
+                "fr": "Ajout de la prise en charge d'admin5",
+                "it": "Aggiunto supporto di admin5",
+                "es": "Soporte agregado de admin5",
+                "pl": "Dodano obsługę admin5",
+                "zh-cn": "增加了对admin5的支持"
+            },
             "3.4.0": {
                 "en": "IMPORTANT: js-controller 3.1 is now needed at least\nfix a special case for requesting ranges only (Sentry IOBROKER-WEB-3M)\nautomatically decrypt secrets for web-extensions",
                 "de": "WICHTIG: js-controller 3.1 wird jetzt mindestens benötigt\nBehebung eines Sonderfalls für die Anforderung von Bereichen (Sentry IOBROKER-WEB-3M)\nGeheimnisse für Web-Erweiterungen automatisch entschlüsseln",
@@ -242,18 +254,6 @@
                 "es": "socket.io actualizado a la última versión. Atención: ¡Esto podría romper dispositivos más antiguos como iPad 1/2!",
                 "pl": "socket.io zaktualizowane do najnowszej wersji. Uwaga: może to uszkodzić starsze urządzenia, takie jak iPad 1/2 !!",
                 "zh-cn": "socket.io已升级到最新版本。注意：这可能会损坏旧设备，例如iPad 1/2！"
-            },
-            "2.4.10": {
-                "en": "Workaround for material was added ",
-                "de": "Problemumgehung für Material wurde hinzugefügt",
-                "ru": "Обходной материал для материала был добавлен",
-                "pt": "Solução alternativa para o material foi adicionada",
-                "nl": "Er is een tijdelijke oplossing voor materiaal toegevoegd",
-                "fr": "Contournement du matériel ajouté",
-                "it": "È stata aggiunta una soluzione alternativa per il materiale",
-                "es": "Se agregó una solución alternativa para el material",
-                "pl": "Dodano obejście dla materiału",
-                "zh-cn": "添加了物料的解决方法"
             }
         },
         "desc": {
