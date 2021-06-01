@@ -21,7 +21,7 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "iobroker.simple-api": ">=2.5.3",
+    "iobroker.simple-api": ">=2.6.1",
     "iobroker.socketio": ">=3.1.4",
     "mime-types": "^2.1.30",
     "passport": "^0.4.1",
