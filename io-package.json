@@ -287,6 +287,8 @@
         "type": "general",
         "stopBeforeUpdate": true,
         "webExtendable": true,
+        "connectionType": "local",
+        "dataSource": "push",
         "localLink": "%web_protocol%://%ip%:%web_port%/",
         "dependencies": [
             {
