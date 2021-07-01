@@ -310,7 +310,10 @@
             "sentry": {
                 "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
             }
-        }
+        },
+        "connectionType": "none",
+        "dataSource": "none",
+        "tier": 3
     },
     "native": {
         "port": 8082,
