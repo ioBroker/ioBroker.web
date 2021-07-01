@@ -176,6 +176,7 @@ class WhiteList extends Component {
     buttonAdd() {
         const { native, onChange } = this.props;
         const { whiteListSettings } = native;
+
         return <IconButton color="primary" onClick={() => {
             let newObj = JSON.parse(JSON.stringify(whiteListSettings));
             let number = 1;
@@ -192,12 +193,13 @@ class WhiteList extends Component {
             onChange('whiteListSettings', newObj);
         }}>
             <AddCircleIcon />
-        </IconButton>
+        </IconButton>;
     }
 
     buttonRemove(el) {
         const { native, onChange } = this.props;
         const { whiteListSettings } = native;
+
         return <IconButton
             color="primary"
             onClick={() => {
@@ -209,7 +211,7 @@ class WhiteList extends Component {
             aria-label="delete"
         >
             <DeleteIcon />
-        </IconButton>
+        </IconButton>;
     }
 
     validateIp(ip) {
@@ -225,6 +227,7 @@ class WhiteList extends Component {
         const { whiteListSettings } = native;
         const { toast } = this.state;
         const tableHeadArr = ['to_read', 'list', 'write', 'delete', 'to_read', 'list', 'write', 'to_create', 'delete', 'to_read', 'list', 'write', 'to_create', 'delete'];
+
         return <form className={classes.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <div style={{ position: 'relative' }} className={`${classes.column} ${classes.columnSettings}`}>

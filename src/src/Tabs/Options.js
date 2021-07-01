@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
+import { LinearProgress } from '@material-ui/core';
+
 import Security from '@material-ui/icons/Security';
 
 import Logo from '@iobroker/adapter-react/Components/Logo';
@@ -12,7 +14,6 @@ import CustomModal from '../Components/CustomModal';
 import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
-import {LinearProgress} from "@material-ui/core";
 
 const styles = theme => ({
     blockWrapper: {
@@ -85,9 +86,10 @@ class Options extends Component {
         const { instance, socket, common: { host } } = this.props;
         const { socketioOptions } = this.state;
         let loaded = 0;
-        socket.getAdapterInstances('socketio').then(state => {
-            this.setState({ loaded: ++loaded, socketioOptions: [...socketioOptions, ...state.map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] })
-        });
+        socket.getAdapterInstances('socketio')
+            .then(state =>
+                this.setState({ loaded: ++loaded, socketioOptions: [...socketioOptions, ...state
+                        .map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] }));
 
         socket.getRawSocket().emit('getHostByIp', host, (err, data) => {
             if (data) {
@@ -112,7 +114,7 @@ class Options extends Component {
                 }
                 this.setState({ loaded: ++loaded, ipAddressOptions: IPs4 });
             }
-        })
+        });
 
         socket.getCertificates()
             .then(list =>
@@ -126,6 +128,7 @@ class Options extends Component {
     componentDidUpdate(prevProps) {
         const { native: { auth, secure } } = prevProps;
         const { native: { defaultUser, whiteListSettings }, onChange } = this.props;
+
         if (!this.props.native.auth && (auth !== this.props.native.auth)) {
             onChange('whiteListSettings.default.user', defaultUser);
         } else if (whiteListSettings && whiteListSettings.default.user !== 'auth' && (auth !== this.props.native.auth)) {
@@ -153,7 +156,7 @@ class Options extends Component {
         return <form className={classes.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <CustomModal
-                open={openModal}
+                open={ openModal }
                 buttonClick={() => {
                     onChange('auth', false);
                     this.setState({ openModal: !openModal });
@@ -227,7 +230,7 @@ class Options extends Component {
                             title='socket'
                             attr='socketio'
                             noTranslate
-                            options={socketioOptions}
+                            options={ socketioOptions }
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}

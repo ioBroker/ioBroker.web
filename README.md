@@ -70,6 +70,9 @@ to the Login Page.
 -->
 
 ## Changelog
+### 3.4.2 (2021-07-01)
+* (bluefox) Update GUI
+
 ### 3.4.1 (2021-04-30)
 * (bluefox) Added support of admin5
 

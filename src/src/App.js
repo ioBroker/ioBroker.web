@@ -155,13 +155,14 @@ class App extends GenericApp {
                     instance={this.instance}
                     adapterName={this.adapterName}
                 />;
-
         }
     }
 
     checkDisabledTabs(nameTab) {
         const { native } = this.state;
-        return (!native['auth'] && nameTab === 'background') || (!native['secure'] && nameTab === 'certificates');
+        return (!native['auth'] && nameTab === 'background') ||
+            (!native['secure'] && nameTab === 'certificates') ||
+            (!native['auth'] && nameTab === 'whiteList');
     }
 
     render() {
@@ -177,10 +178,14 @@ class App extends GenericApp {
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <div className="App" style={{ background: theme.palette.background.default, color: theme.palette.text.primary }}>
                 <AppBar position="static">
-                    <Tabs value={this.getSelectedTab()} onChange={(e, index) => {
-                        this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
-                    }} scrollButtons="auto">
-                        {arrayTabName.map((el, index) => (<Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />))}
+                    <Tabs
+                        value={this.getSelectedTab()}
+                        onChange={(e, index) => {
+                            this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
+                        }} scrollButtons="auto"
+                    >
+                        {arrayTabName.map((el, index) =>
+                            <Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />)}
                     </Tabs>
                 </AppBar>
                 <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>
