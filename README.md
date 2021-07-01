@@ -72,7 +72,7 @@ to the Login Page.
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 3.4.3 (2021-07-01)
 * (Apollon77) Add tier for js-controller 3.3
 
 ### 3.4.2 (2021-07-01)

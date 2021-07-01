@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.2",
+        "version": "3.4.3",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.3": {
+                "en": "Add tier for js-controller 3.3",
+                "de": "Stufe für js-controller 3.3 . hinzufügen",
+                "ru": "Добавить уровень для js-controller 3.3",
+                "pt": "Adicionar camada para js-controller 3.3",
+                "nl": "Laag toevoegen voor js-controller 3.3",
+                "fr": "Ajouter un niveau pour js-controller 3.3",
+                "it": "Aggiungi livello per js-controller 3.3",
+                "es": "Agregar nivel para js-controller 3.3",
+                "pl": "Dodaj warstwę dla kontrolera js 3.3",
+                "zh-cn": "为 js-controller 3.3 添加层"
+            },
             "3.4.2": {
                 "en": "Update GUI",
                 "de": "GUI aktualisieren",
@@ -242,18 +254,6 @@
                 "es": "Se corrigieron las extensiones web",
                 "pl": "Rozszerzenia sieci zostały naprawione",
                 "zh-cn": "网络扩展是固定的"
-            },
-            "3.0.1": {
-                "en": "workaround for a socket.io bug added",
-                "de": "Problemumgehung für einen socket.io-Fehler hinzugefügt",
-                "ru": "добавлено обходное решение для ошибки socket.io",
-                "pt": "solução alternativa para um bug socket.io adicionado",
-                "nl": "tijdelijke oplossing voor een socket.io-bug toegevoegd",
-                "fr": "solution de contournement pour un bug socket.io ajouté",
-                "it": "soluzione alternativa per un bug socket.io aggiunto",
-                "es": "solución alternativa para un error socket.io agregado",
-                "pl": "dodano obejście błędu socket.io",
-                "zh-cn": "解决了socket.io错误的解决方法"
             }
         },
         "desc": {
@@ -287,8 +287,8 @@
         "type": "general",
         "stopBeforeUpdate": true,
         "webExtendable": true,
-        "connectionType": "local",
-        "dataSource": "push",
+        "connectionType": "none",
+        "dataSource": "none",
         "localLink": "%web_protocol%://%ip%:%web_port%/",
         "dependencies": [
             {
@@ -311,8 +311,6 @@
                 "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
             }
         },
-        "connectionType": "none",
-        "dataSource": "none",
         "tier": 3
     },
     "native": {
