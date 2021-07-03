@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.3",
+        "version": "3.4.4",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.4": {
+                "en": "Fix missing www files",
+                "de": "Fehlende WWW-Dateien beheben",
+                "ru": "Исправить отсутствующие файлы www",
+                "pt": "Corrigir arquivos www ausentes",
+                "nl": "Herstel ontbrekende www-bestanden",
+                "fr": "Correction des fichiers www manquants",
+                "it": "Correggi i file www mancanti",
+                "es": "Corregir archivos www faltantes",
+                "pl": "Napraw brakujące pliki www",
+                "zh-cn": "修复丢失的 www 文件"
+            },
             "3.4.3": {
                 "en": "Add tier for js-controller 3.3",
                 "de": "Stufe für js-controller 3.3 . hinzufügen",
@@ -242,18 +254,6 @@
                 "es": " Las advertencias de js-controller 3.0 impidieron y agregaron informes de errores de Sentry con js-controller 3.0",
                 "pl": " Zapobiegano ostrzeżeniom js-controller 3.0 i dodano raportowanie błędów Sentry w js-controller 3.0",
                 "zh-cn": " 防止js-controller 3.0警告并使用js-controller 3.0添加了Sentry错误报告"
-            },
-            "3.0.3": {
-                "en": "Web extensions were fixed",
-                "de": "Web-Erweiterungen wurden behoben",
-                "ru": "Веб-расширения были исправлены",
-                "pt": "As extensões da Web foram corrigidas",
-                "nl": "Webextensies zijn opgelost",
-                "fr": "Les extensions Web ont été corrigées",
-                "it": "Le estensioni Web sono state corrette",
-                "es": "Se corrigieron las extensiones web",
-                "pl": "Rozszerzenia sieci zostały naprawione",
-                "zh-cn": "网络扩展是固定的"
             }
         },
         "desc": {

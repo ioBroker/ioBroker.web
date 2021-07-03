@@ -73,7 +73,7 @@ to the Login Page.
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 3.4.4 (2021-07-04)
 * (Apollon77) Fix missing www files
 
 ### 3.4.3 (2021-07-01)
