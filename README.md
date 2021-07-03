@@ -72,6 +72,10 @@ to the Login Page.
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Fix missing www files
+
 ### 3.4.3 (2021-07-01)
 * (Apollon77) Add tier for js-controller 3.3
 
