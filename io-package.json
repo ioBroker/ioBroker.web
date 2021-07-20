@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.4",
+        "version": "3.4.5",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.5": {
+                "en": "fix admin dependency because since 3.4.2 Admin 5.1 is required",
+                "de": "Admin-Abhängigkeit behoben, da seit 3.4.2 Admin 5.1 erforderlich ist",
+                "ru": "исправить зависимость администратора, потому что с версии 3.4.2 требуется Admin 5.1",
+                "pt": "consertar a dependência do administrador porque desde 3.4.2 Admin 5.1 é necessário",
+                "nl": "fix admin afhankelijkheid omdat sinds 3.4.2 Admin 5.1 is vereist",
+                "fr": "correction de la dépendance de l'administrateur car depuis 3.4.2 Admin 5.1 est requis",
+                "it": "correggere la dipendenza dell'amministratore perché da 3.4.2 Admin 5.1 è richiesto",
+                "es": "corregir la dependencia del administrador porque desde 3.4.2 se requiere Admin 5.1",
+                "pl": "napraw zależność administratora, ponieważ od 3.4.2 wymagany jest Admin 5.1 5.1",
+                "zh-cn": "修复管理员依赖，因为 3.4.2 Admin 5.1 是必需的"
+            },
             "3.4.4": {
                 "en": "Fix missing www files",
                 "de": "Fehlende WWW-Dateien beheben",
@@ -242,18 +254,6 @@
                 "es": "arreglado las advertencias centinela",
                 "pl": "naprawiono ostrzeżenia wartowników",
                 "zh-cn": "修复了哨兵警告"
-            },
-            "3.0.4": {
-                "en": " js-controller 3.0 warnings prevented and added Sentry error reporting with js-controller 3.0",
-                "de": " Warnungen zu js-controller 3.0 wurden verhindert und Sentry-Fehlerberichte mit js-controller 3.0 hinzugefügt",
-                "ru": " Предупреждения js-controller 3.0 предотвращены и добавлены отчеты об ошибках Sentry с помощью js-controller 3.0",
-                "pt": " Avisos do js-controller 3.0 impedidos e adicionados relatórios de erros do Sentry com o js-controller 3.0",
-                "nl": " js-controller 3.0-waarschuwingen voorkomen en toegevoegd Sentry-foutrapportage met js-controller 3.0",
-                "fr": " avertissements js-controller 3.0 empêchés et ajout de rapports d'erreurs Sentry avec js-controller 3.0",
-                "it": " Gli avvisi di js-controller 3.0 hanno impedito e aggiunto la segnalazione degli errori di Sentry con js-controller 3.0",
-                "es": " Las advertencias de js-controller 3.0 impidieron y agregaron informes de errores de Sentry con js-controller 3.0",
-                "pl": " Zapobiegano ostrzeżeniom js-controller 3.0 i dodano raportowanie błędów Sentry w js-controller 3.0",
-                "zh-cn": " 防止js-controller 3.0警告并使用js-controller 3.0添加了Sentry错误报告"
             }
         },
         "desc": {
@@ -297,7 +297,7 @@
         ],
         "globalDependencies": [
             {
-                "admin": ">=3.0.0"
+                "admin": ">=5.1.0"
             }
         ],
         "authors": [
