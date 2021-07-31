@@ -75,7 +75,7 @@ class Options extends Component {
             usersOptions: [],
             socketioOptions: [
                 { title: I18n.t('nothing'), value: 'none' },
-                { title: I18n.t('built_in'), value: '' }
+                { title: I18n.t('built_in'), value: '_' }
             ],
             openModal: false,
             loaded: 0,

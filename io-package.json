@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.5",
+        "version": "3.4.6",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.6": {
+                "en": "Corrected the small config GUI error",
+                "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
+                "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
+                "pt": "Corrigido o pequeno erro de configuração da GUI",
+                "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
+                "fr": "Correction de la petite erreur de l'interface graphique de configuration",
+                "it": "Corretto il piccolo errore della GUI di configurazione",
+                "es": "Se corrigió el pequeño error de la GUI de configuración.",
+                "pl": "Poprawiono mały błąd GUI konfiguracji",
+                "zh-cn": "更正了小的配置 GUI 错误"
+            },
             "3.4.5": {
                 "en": "fix admin dependency because since 3.4.2 Admin 5.1 is required",
                 "de": "Admin-Abhängigkeit behoben, da seit 3.4.2 Admin 5.1 erforderlich ist",
@@ -242,18 +254,6 @@
                 "es": "los errores en la inicialización del servidor web se manejan correctamente",
                 "pl": "błędy przy inicjalizacji serwera są obsługiwane poprawnie",
                 "zh-cn": "网站服务器初始化错误得到正确处理"
-            },
-            "3.0.5": {
-                "en": "fixed the sentry warnings",
-                "de": "Die Sentry-Warnungen wurden behoben",
-                "ru": "исправлены sentry предупреждения",
-                "pt": "corrigido os avisos de sentinela",
-                "nl": "de schildwachtwaarschuwingen opgelost",
-                "fr": "correction des avertissements de sentinelle",
-                "it": "risolti gli avvisi di sentinella",
-                "es": "arreglado las advertencias centinela",
-                "pl": "naprawiono ostrzeżenia wartowników",
-                "zh-cn": "修复了哨兵警告"
             }
         },
         "desc": {
