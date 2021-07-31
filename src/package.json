@@ -1,6 +1,6 @@
 {
     "name": "web-admin",
-    "version": "3.4.6",
+    "version": "3.4.7",
     "private": true,
     "dependencies": {
         "@iobroker/adapter-react": "^2.0.8",

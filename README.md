@@ -72,7 +72,7 @@ to the Login Page.
 -->
 
 ## Changelog
-### 3.4.6 (2021-07-31)
+### 3.4.7 (2021-07-31)
 * (bluefox) Corrected the small config GUI error
  
 ### 3.4.5 (2021-07-20)

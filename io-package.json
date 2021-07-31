@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.6",
+        "version": "3.4.7",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.7": {
+                "en": "Corrected the small config GUI error",
+                "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
+                "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
+                "pt": "Corrigido o pequeno erro de configuração da GUI",
+                "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
+                "fr": "Correction de la petite erreur de l'interface graphique de configuration",
+                "it": "Corretto il piccolo errore della GUI di configurazione",
+                "es": "Se corrigió el pequeño error de la GUI de configuración.",
+                "pl": "Poprawiono mały błąd GUI konfiguracji",
+                "zh-cn": "更正了小的配置 GUI 错误"
+            },
             "3.4.6": {
                 "en": "Corrected the small config GUI error",
                 "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
@@ -242,18 +254,6 @@
                 "es": "La inicialización del servidor web se optimizó nuevamente para evitar errores con certificados no válidos",
                 "pl": "inicjalizacja serwera WWW została ponownie zoptymalizowana, aby zapobiec błędom z nieprawidłowymi certyfikatami",
                 "zh-cn": "再次优化了Web服务器的初始化，以防止证书无效而出错"
-            },
-            "3.0.7": {
-                "en": "errors on webserver initialization are handled properly",
-                "de": "Fehler bei der Webserver-Initialisierung werden ordnungsgemäß behandelt",
-                "ru": "ошибки при инициализации веб-сервера обрабатываются правильно",
-                "pt": "erros na inicialização do servidor da web são tratados adequadamente",
-                "nl": "fouten bij het initialiseren van de webserver worden correct afgehandeld",
-                "fr": "les erreurs lors de l'initialisation du serveur Web sont gérées correctement",
-                "it": "gli errori sull'inizializzazione del server web sono gestiti correttamente",
-                "es": "los errores en la inicialización del servidor web se manejan correctamente",
-                "pl": "błędy przy inicjalizacji serwera są obsługiwane poprawnie",
-                "zh-cn": "网站服务器初始化错误得到正确处理"
             }
         },
         "desc": {

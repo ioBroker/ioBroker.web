@@ -1051,7 +1051,7 @@ async function initWebServer(settings) {
 
                 // if whitelist is used
                 const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                const whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                const whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
                 adapter.log.silly(`whiteListIp ${whiteListIp}`);
                 if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') {
                     if (/\.css(\?.*)?$/.test(req.originalUrl)) {
@@ -1154,7 +1154,7 @@ async function initWebServer(settings) {
                 initAuth(server, settings);
                 server.app.use((req, res, next) => {
                     const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                    const whiteListIp = server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                    const whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
                     adapter.log.silly('whiteListIp ' + whiteListIp);
                     if (whiteListIp) {
                         req.logIn(settings.whiteListSettings[whiteListIp].user, err =>
