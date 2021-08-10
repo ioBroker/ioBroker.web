@@ -1361,16 +1361,20 @@ async function initWebServer(settings) {
             }
 
             if (url === '/' || url === '/index.html') {
-                return getListOfAllAdapters((err, data) => {
-                    if (err) {
-                        res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
-                    } else {
-                        res
-                            .set('Content-Type', 'text/html')
-                            .status(200)
-                            .send(data);
-                    }
-                });
+                if (adapter.config.defaultRedirect) {
+                    return res.redirect(301, adapter.config.defaultRedirect);
+                } else {
+                    return getListOfAllAdapters((err, data) => {
+                        if (err) {
+                            res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
+                        } else {
+                            res
+                                .set('Content-Type', 'text/html')
+                                .status(200)
+                                .send(data);
+                        }
+                    });
+                }
             }
 
             // add index.html

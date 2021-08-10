@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.7",
+        "version": "3.4.8",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.8": {
+                "en": "added the default redirect option",
+                "de": "die Standardumleitungsoption hinzugefügt",
+                "ru": "добавлена опция перенаправления по умолчанию",
+                "pt": "adicionou a opção de redirecionamento padrão",
+                "nl": "de standaard omleidingsoptie toegevoegd",
+                "fr": "ajouté l'option de redirection par défaut",
+                "it": "aggiunta l'opzione di reindirizzamento predefinita",
+                "es": "agregó la opción de redirección predeterminada",
+                "pl": "dodano domyślną opcję przekierowania",
+                "zh-cn": "添加了默认重定向选项"
+            },
             "3.4.7": {
                 "en": "Corrected the small config GUI error",
                 "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
@@ -242,18 +254,6 @@
                 "es": "Actualizar la versión del adaptador socketio\nOptimizar el manejo de errores para la inicialización del servidor web nuevamente",
                 "pl": "Zaktualizuj wersję adaptera socketio\nPonownie zoptymalizuj obsługę błędów w celu inicjalizacji serwera WWW",
                 "zh-cn": "升级socketio适配器版本\n再次优化错误处理以进行Web服务器初始化"
-            },
-            "3.0.8": {
-                "en": "webserver initialization optimized again to prevent errors with invalid certificates",
-                "de": "Die Webserver-Initialisierung wurde erneut optimiert, um Fehler mit ungültigen Zertifikaten zu vermeiden",
-                "ru": "Инициализация веб-сервера снова оптимизирована для предотвращения ошибок с недействительными сертификатами",
-                "pt": "inicialização do servidor da web otimizada novamente para evitar erros com certificados inválidos",
-                "nl": "de initialisatie van de webserver is opnieuw geoptimaliseerd om fouten met ongeldige certificaten te voorkomen",
-                "fr": "initialisation du serveur Web optimisée à nouveau pour éviter les erreurs avec des certificats invalides",
-                "it": "inizializzazione del server web nuovamente ottimizzata per prevenire errori con certificati non validi",
-                "es": "La inicialización del servidor web se optimizó nuevamente para evitar errores con certificados no válidos",
-                "pl": "inicjalizacja serwera WWW została ponownie zoptymalizowana, aby zapobiec błędom z nieprawidłowymi certyfikatami",
-                "zh-cn": "再次优化了Web服务器的初始化，以防止证书无效而出错"
             }
         },
         "desc": {
@@ -337,7 +337,8 @@
         "basicAuth": false,
         "disableExtensions": false,
         "disableStates": false,
-        "disableFilesObjects": false
+        "disableFilesObjects": false,
+        "defaultRedirect": ""
     },
     "objects": [
         {

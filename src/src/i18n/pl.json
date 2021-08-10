@@ -51,5 +51,8 @@
   "disable_states": "Wyłącz stany i informacje o gnieździe",
   "disable_files": "Nie udostępniaj plików internetowych z objectDB",
   "set_certificates": "Ustaw certyfikaty lub załaduj najpierw w ustawieniach systemu (prawy górny).",
-  "IP address": "Powiązany adres IP"
+  "IP address": "Powiązany adres IP",
+  "Redirect options": "Opcje przekierowania",
+  "defaultRedirect": "Domyślna ścieżka przekierowania",
+  "This path will be opened if no path specified": "Ta ścieżka zostanie otwarta, jeśli nie określono ścieżki URL"
 }

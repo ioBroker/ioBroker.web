@@ -51,5 +51,8 @@
   "disable_states": "Schakel statussen en socketinformatie uit",
   "disable_files": "Serveer geen webbestanden vanuit objectDB",
   "set_certificates": "Stel certificaten in of laad het eerst in de systeeminstellingen (rechtsboven).",
-  "IP address": "Gebonden IP-adres"
+  "IP address": "Gebonden IP-adres",
+  "Redirect options": "Omleidingsopties",
+  "defaultRedirect": "Standaard omleidingspad",
+  "This path will be opened if no path specified": "Dit pad wordt geopend als er geen URL-pad is opgegeven"
 }

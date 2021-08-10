@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
+import {TextField} from "@material-ui/core";
 
 const styles = theme => ({
     tab: {
@@ -72,6 +73,17 @@ class Additionally extends Component {
                         className={classes.fontSize}
                         native={native}
                         onChange={onChange}
+                    />
+                </div>
+                <h4>
+                    {I18n.t('Redirect options')}
+                </h4>
+                <div>
+                    <TextField
+                        value={native.defaultRedirect || ''}
+                        onChange={async e => await onChange('defaultRedirect', e.target.value)}
+                        label={I18n.t('defaultRedirect')}
+                        helperText={I18n.t('This path will be opened if no path specified')}
                     />
                 </div>
             </div>

@@ -51,5 +51,8 @@
   "disable_states": "Disabilita stati e informazioni socket",
   "disable_files": "Non servire file web da objectDB",
   "set_certificates": "Imposta i certificati o caricali prima nelle impostazioni di sistema (in alto a destra).",
-  "IP address": "Indirizzo IP associato"
+  "IP address": "Indirizzo IP associato",
+  "Redirect options": "Opzioni di reindirizzamento",
+  "defaultRedirect": "Percorso di reindirizzamento predefinito",
+  "This path will be opened if no path specified": "Questo percorso verrà aperto se non viene specificato alcun percorso URL"
 }

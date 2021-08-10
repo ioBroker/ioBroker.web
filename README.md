@@ -66,12 +66,20 @@ Allows Login via Basic Authentication by sending `401` Unauthorized with a `WWW-
 This can be used for applications like *FullyBrowser*. When entering the wrong credentials once, you will be redirected 
 to the Login Page. 
 
+## Advanced options
+### Default redirect
+If by opening of web port im browser no APP selection should be shown, but some specific application, 
+the path could be provided here (e.g. `/vis/`) so this path will be opened automatically.
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
 
 ## Changelog
+### 3.4.8 (2021-08-10)
+* (bluefox) added the default redirect option
+ 
 ### 3.4.7 (2021-07-31)
 * (bluefox) Corrected the small config GUI error
  

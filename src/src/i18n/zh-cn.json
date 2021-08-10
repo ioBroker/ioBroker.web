@@ -51,5 +51,8 @@
   "disable_states": "禁用状态和套接字信息",
   "disable_files": "不要提供来自objectDB的Web文件",
   "set_certificates": "首先在系统设置中（右上角）设置或加载证书。",
-  "IP address": "绑定IP地址"
+  "IP address": "绑定IP地址",
+  "Redirect options": "重定向选项",
+  "defaultRedirect": "默认重定向路径",
+  "This path will be opened if no path specified": "如果未指定 URL 路径，将打开此路径"
 }
