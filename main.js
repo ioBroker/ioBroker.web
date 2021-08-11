@@ -152,15 +152,15 @@ function startAdapter(options) {
             }
 
             // inform extensions
-            for (let e = 0; e < extensions.length; e++) {
+            Object.keys(extensions).forEach(instance => {
                 try {
-                    if (extensions[e].obj && extensions[e].obj.objectChange) {
-                        extensions[e].obj.objectChange(id, obj);
+                    if (extensions[instance].obj && typeof extensions[instance].obj.objectChange === 'function') {
+                        extensions[instance].obj.objectChange(id, obj);
                     }
                 } catch (err) {
-                    adapter.log.error(`Cannot call objectChange for "${e}": ${err}`);
+                    adapter.log.error(`Cannot call objectChange for "${instance}": ${err}`);
                 }
-            }
+            });
         },
         stateChange: (id, state) => {
             if (webServer && webServer.io) {
@@ -169,10 +169,46 @@ function startAdapter(options) {
         },
         unload: callback => {
             try {
-                adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                webServer.server.close();
-                adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                callback();
+                const promises = [];
+                Object.keys(extensions).forEach(instance => {
+                    try {
+                        if (extensions[instance] && extensions[instance].obj && extensions[instance].obj.unload) {
+                            const promise = extensions[instance].obj.unload();
+                            if (promise && typeof promise === 'object' && typeof promise.then === 'function') {
+                                promises.push(promise
+                                    .catch(e =>
+                                        adapter.log.error(`Cannot unload web extension "${instance}": ${e}`)));
+                            }
+                        }
+                    } catch (e) {
+                        adapter.log.error(`Cannot unload web extension "${instance}": ${e}`);
+                    }
+                });
+
+                let timeout;
+                if (promises.length) {
+                    timeout = setTimeout(() => {
+                        timeout = null;
+                        adapter.log.warn(`Timeout by termination of web-extensions!`);
+                        adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        webServer.server.close();
+                        adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        callback();
+                    });
+                }
+
+                Promise.all(promises)
+                    .catch(e => adapter.log.error('Cannot unload web extensions: ' + e))
+                    .then(() => {
+                        if (!promises.length || timeout) {
+                            clearTimeout(timeout);
+                            timeout = null;
+                            adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer.server.close();
+                            adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            callback && callback();
+                        }
+                    });
             } catch (e) {
                 callback();
             }
@@ -324,12 +360,12 @@ function main() {
         }
 
         // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
-        initWebServer(adapter.config).then(returnedServer => {
-            webServer = returnedServer;
-        }).catch(err => {
-            adapter.log.error(`Failed to initWebServer: ${err}`);
-            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
-        });
+        initWebServer(adapter.config)
+            .then(returnedServer => webServer = returnedServer)
+            .catch(err => {
+                adapter.log.error(`Failed to initWebServer: ${err}`);
+                adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            });
         // monitor extensions and pro keys
         adapter.subscribeForeignObjects('system.adapter.*');
     });
@@ -1303,22 +1339,22 @@ async function initWebServer(settings) {
     if (!settings.disableExtensions) {
         adapter.log.debug('Activating extensions');
         // activate extensions
-        Object.keys(extensions).forEach(e => {
+        Object.keys(extensions).forEach(instance => {
             try {
                 // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
-                const parts = extensions[e].path.split('/');
+                const parts = extensions[instance].path.split('/');
                 parts.shift();
                 let extAPI;
-                if (fs.existsSync(__dirname + '/' + parts.join('/'))) {
-                    extAPI = require(__dirname + '/' + parts.join('/'));
+                if (fs.existsSync('./' + parts.join('/'))) {
+                    extAPI = require('./' + parts.join('/'));
                 } else {
-                    extAPI = require(utils.appName + '.' + extensions[e].path);
+                    extAPI = require(`${utils.appName}.${extensions[instance].path}`);
                 }
 
-                extensions[e].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[e].config, server.app);
-                adapter.log.info(`Connect extension "${extensions[e].path}"`);
+                extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
+                adapter.log.info(`Connect extension "${extensions[instance].path}"`);
             } catch (err) {
-                adapter.log.error(`Cannot start extension "${e}": ${err}`);
+                adapter.log.error(`Cannot start extension "${instance}": ${err}`);
             }
         });
     }

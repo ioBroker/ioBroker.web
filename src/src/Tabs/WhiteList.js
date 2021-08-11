@@ -236,7 +236,38 @@ class WhiteList extends Component {
                         title='included'
                         attr='whiteListEnabled'
                         native={native}
-                        onChange={onChange}
+                        onChange={(attr, value) => {
+                            console.log(attr,  value)
+                            onChange(attr, value, () => {
+                                if (value && !native.whiteListSettings) {
+                                    onChange('whiteListSettings', {
+                                        default: {
+                                            user: "admin",
+                                            object: {
+                                                read: true,
+                                                list: true,
+                                                write: true,
+                                                delete: true
+                                            },
+                                            state: {
+                                                read: true,
+                                                list: true,
+                                                write: true,
+                                                create: true,
+                                                delete: true
+                                            },
+                                            file: {
+                                                read: true,
+                                                list: true,
+                                                write: true,
+                                                create: true,
+                                                delete: true
+                                            }
+                                        }
+                                    });
+                                }
+                            })
+                        }}
                     />
                 </div>
                 {whiteListSettings ? <div className={native['whiteListEnabled'] ? null : classes.displayNone}>

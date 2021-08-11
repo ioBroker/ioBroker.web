@@ -24,11 +24,17 @@ You can set option *Force Web-Sockets* to force using only web-sockets transport
 Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
 
 ## Extensions
-Web driver supports extensions. The extension is URL handler, that will be called if such URL request appears.
-The extensions look like the normal adapter, but they have no running process and will be called by web server.
+Web driver supports extensions. 
+The extension is URL handler, that will be called if such URL request appears.
+The extensions look like the normal adapter, but they have no running process 
+and will be called by web server.
 
 E.g. the user can activate special proxy adapter and reach other devices (like webcams) in the same web server.
 It is required to let all services be available under one web server.
+
+Web-extension could and should support `unload` function, that could return `promise` if the unload action will take some time. 
+
+You can read more about web-extensions [here](WEB-EXTENSIONS-HOWTO.md).
 
 ## Brute-force protection
 If authentication is enabled and the user enters 5 times invalid password during one minute, he must wait at least one minute till next attempt.

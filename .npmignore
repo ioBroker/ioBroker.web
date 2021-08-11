@@ -8,6 +8,7 @@ gulpfile.js
 !/LICENSE
 !/main.js
 !/README.md
+!/WEB-EXTENSIONS-HOWTO.md
 !/www/**/*
 !/www/*
 www/lib/css/fancytree/*.pdn
