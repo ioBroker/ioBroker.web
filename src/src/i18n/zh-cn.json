@@ -21,7 +21,7 @@
   "renew_certificates": "自动更新Let's Encrypt证书",
   "domain_name": "自动更新证书使用的端口",
   "link": "单击获取帮助",
-  "whiteList": "白名单",
+  "whiteList": "访问列表",
   "user": "用户",
   "object": "对象",
   "status": "状态",

@@ -21,7 +21,7 @@
   "renew_certificates": "Użyj tej instancji do automatycznej aktualizacji",
   "domain_name": "Port do sprawdzenia domeny",
   "link": "Kliknij, aby uzyskać pomoc",
-  "whiteList": "Biała lista",
+  "whiteList": "Lista dostępu",
   "user": "Użytkownik",
   "object": "obiekt",
   "status": "stan",

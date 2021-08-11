@@ -21,7 +21,7 @@
   "renew_certificates": "Gebruik deze instantie voor automatische update",
   "domain_name": "Poort om het domein te controleren",
   "link": "Klik voor hulp",
-  "whiteList": "Witte lijst",
+  "whiteList": "Toegangslijst",
   "user": "Gebruiker",
   "object": "voorwerp",
   "status": "staat",

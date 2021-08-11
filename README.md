@@ -83,6 +83,11 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### 3.4.9 (2021-08-11)
+* (bluefox) Fixed error with access list
+* (bluefox) Added support of the unload function for web-extensions 
+* (bluefox) Added readme for the web-extensions development 
+ 
 ### 3.4.8 (2021-08-10)
 * (bluefox) added the default redirect option
  

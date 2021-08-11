@@ -1,14 +1,12 @@
 # Web extensions
 If some adapter want to be available under same port as web adapter, it should implement the web extension functionality.
 
-First it must have a `common.webExtension` flag that points to web extension file. Like `"webExtension": "lib/web.js"`.
+First, it must have a `common.webExtension` flag in `io-package.json` file that points to thw web extension file. Like `"webExtension": "lib/web.js"`.
 
-Second the file `lib/web.js` must exist, and it must export a class.
+Second, the file `lib/web.js` (or whatever) must exist, and it must export a class.
 ```
 /**
- * Proxy class
- *
- * Web extension examle
+ * Web extension example
  *
  * @class
  * @param {object} server http or https node.js object
@@ -49,7 +47,7 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
         
         that.app.use('/' + that.config.demoParam, (req, res) => {
             res.setHeader('Content-type', 'text/html');
-            res.status(200).send('You called web extension with path "' + req.url + '");
+            res.status(200).send('You called a demo web extension with path "' + req.url + '");
         });
     })();
 }
@@ -57,9 +55,8 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
 module.exports = ExtensionExample;
 ```
 
-
 ## Examples
 Following adapters support web-extensions:
 - Cameras: https://github.com/ioBroker/ioBroker.cameras/blob/master/lib/web.js
 - Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/lib/simpleapi.js#L73
-- 
+- Proxy: https://github.com/ioBroker/ioBroker.proxy/blob/master/lib/proxy.js#L20

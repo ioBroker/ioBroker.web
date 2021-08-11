@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "web",
-        "version": "3.4.8",
+        "version": "3.4.9",
         "titleLang": {
             "en": "WEB server",
             "de": "WEB-Server",
@@ -15,6 +15,18 @@
             "zh-cn": "Web服务器"
         },
         "news": {
+            "3.4.9": {
+                "en": "Fixed error with access list\nAdded support of the unload function for web-extensions \nAdded readme for the web-extensions development",
+                "de": "Fehler mit Zugangsliste behoben\nUnterstützung der Entladefunktion für Web-Erweiterungen hinzugefügt\nReadme für die Entwicklung von Web-Erweiterungen hinzugefügt",
+                "ru": "Исправлена ошибка со списком доступа\nДобавлена поддержка функции выгрузки для веб-расширений.\nДобавлен ридми для разработки веб-расширений",
+                "pt": "Erro corrigido com lista de acesso\nAdicionado suporte da função de descarregamento para extensões da web\nAdicionado readme para o desenvolvimento de extensões da web",
+                "nl": "Vaste fout met toegangslijst\nOndersteuning toegevoegd van de unload-functie voor webextensies\nLeesmij toegevoegd voor de ontwikkeling van webextensies",
+                "fr": "Correction d'une erreur avec la liste d'accès\nAjout du support de la fonction de déchargement pour les extensions Web\nAjout du readme pour le développement des extensions web",
+                "it": "Risolto errore con l'elenco di accesso\nAggiunto il supporto della funzione di scaricamento per le estensioni web\nAggiunto readme per lo sviluppo delle estensioni web",
+                "es": "Error solucionado con lista de acceso\nSoporte agregado de la función de descarga para extensiones web\nLéame agregado para el desarrollo de extensiones web",
+                "pl": "Naprawiono błąd z listą dostępu\nDodano obsługę funkcji rozładowywania rozszerzeń internetowych\nDodano plik readme do opracowywania rozszerzeń internetowych",
+                "zh-cn": "修复了访问列表的错误\n添加了对 Web 扩展的卸载功能的支持\n添加了 Web 扩展开发的自述文件"
+            },
             "3.4.8": {
                 "en": "added the default redirect option",
                 "de": "die Standardumleitungsoption hinzugefügt",
@@ -242,18 +254,6 @@
                 "es": "socketio pingTimeout y pinInterval aumentaron para evitar reconexiones demasiado rápidas y visualizaciones más grandes",
                 "pl": "Zwiększono wartość socketio pingTimeout i pinInterval, aby zapobiec zbyt szybkim ponownym połączeniom i większym wizualizacjom",
                 "zh-cn": "增加了socketio pingTimeout和pinInterval，以防止重新连接速度过快和较大的可视化效果"
-            },
-            "3.0.9": {
-                "en": "Upgrade socketio adapter version\nOptimize error handling for webserver initialization again",
-                "de": "Aktualisieren Sie die Version des Socketio-Adapters\nOptimieren Sie die Fehlerbehandlung für die Webserver-Initialisierung erneut",
-                "ru": "Обновите версию адаптера socketio\nОптимизируйте обработку ошибок для инициализации веб-сервера снова",
-                "pt": "Atualizar a versão do adaptador socketio\nOtimize o tratamento de erros para a inicialização do servidor da web novamente",
-                "nl": "Upgrade socketio adapterversie\nOptimaliseer de foutafhandeling voor het opnieuw initialiseren van de webserver",
-                "fr": "Mettre à niveau la version de l'adaptateur socketio\nOptimiser à nouveau la gestion des erreurs pour l'initialisation du serveur Web",
-                "it": "Aggiorna la versione dell'adattatore socketio\nOttimizza nuovamente la gestione degli errori per l'inizializzazione del server web",
-                "es": "Actualizar la versión del adaptador socketio\nOptimizar el manejo de errores para la inicialización del servidor web nuevamente",
-                "pl": "Zaktualizuj wersję adaptera socketio\nPonownie zoptymalizuj obsługę błędów w celu inicjalizacji serwera WWW",
-                "zh-cn": "升级socketio适配器版本\n再次优化错误处理以进行Web服务器初始化"
             }
         },
         "desc": {

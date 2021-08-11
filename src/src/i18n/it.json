@@ -21,7 +21,7 @@
   "renew_certificates": "Utilizza questa istanza per l'aggiornamento automatico",
   "domain_name": "Porta per controllare il dominio",
   "link": "Fai clic per chiedere aiuto",
-  "whiteList": "Lista bianca",
+  "whiteList": "Elenco di accesso",
   "user": "Utente",
   "object": "oggetto",
   "status": "stato",

@@ -21,7 +21,7 @@
   "renew_certificates": "Use esta instancia para la actualización automática",
   "domain_name": "Puerto para verificar el dominio",
   "link": "Haz clic para obtener ayuda",
-  "whiteList": "Lista blanca",
+  "whiteList": "Lista de acceso",
   "user": "Usuario",
   "object": "objeto",
   "status": "estado",

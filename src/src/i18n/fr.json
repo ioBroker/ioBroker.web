@@ -21,7 +21,7 @@
   "renew_certificates": "Utilisez cette instance pour la mise à jour automatique",
   "domain_name": "Port pour vérifier le domaine",
   "link": "Cliquez pour obtenir de l'aide",
-  "whiteList": "Liste blanche",
+  "whiteList": "Liste d'accès",
   "user": "Utilisateur",
   "object": "objet",
   "status": "Etat",
