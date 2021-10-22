@@ -1153,7 +1153,7 @@ async function initWebServer(settings) {
             // route middleware to make sure a user is logged in
             server.app.use((req, res, next) => {
                 // return favicon always
-                if (req.originalUrl.startsWith('/login/favicon.ico')) {
+                if (req.originalUrl.endsWith('favicon.ico')) {
                     res.set('Content-Type', 'image/x-icon');
                     return res.send(fs.readFileSync(__dirname + '/www/login/favicon.ico'));
                 }
@@ -1193,7 +1193,10 @@ async function initWebServer(settings) {
                 initAuth(server, settings);
                 server.app.use((req, res, next) => {
                     const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                    const whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                    let whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                    if (!whiteListIp && server.io && remoteIp === '::1') {
+                        whiteListIp = server.io.getWhiteListIpForAddress('localhost', settings.whiteListSettings);
+                    }
                     adapter.log.silly('whiteListIp ' + whiteListIp);
                     if (whiteListIp) {
                         req.logIn(settings.whiteListSettings[whiteListIp].user, err =>
