@@ -54,5 +54,9 @@
   "IP address": "Gebonden IP-adres",
   "Redirect options": "Omleidingsopties",
   "defaultRedirect": "Standaard omleidingspad",
-  "This path will be opened if no path specified": "Dit pad wordt geopend als er geen URL-pad is opgegeven"
+  "This path will be opened if no path specified": "Dit pad wordt geopend als er geen URL-pad is opgegeven",
+  "whitelist_only_with_integrated_socket": "Witte lijst werkt alleen met geïntegreerde socket-io-interface",
+  "White list will be disabled. Please confirm.": "Witte lijst wordt uitgeschakeld. Bevestig alstublieft.",
+  "Ok": "OK",
+  "Cancel": "Annuleren"
 }

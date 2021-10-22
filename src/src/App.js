@@ -104,7 +104,7 @@ class App extends GenericApp {
                     native={native}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     adapterName={this.adapterName}
                 />;
 
@@ -116,7 +116,7 @@ class App extends GenericApp {
                     native={native}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     adapterName={this.adapterName}
                 />;
 
@@ -138,7 +138,7 @@ class App extends GenericApp {
                     common={this.common}
                     socket={this.socket}
                     native={native}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}
@@ -150,7 +150,7 @@ class App extends GenericApp {
                     common={this.common}
                     socket={this.socket}
                     native={native}
-                    onChange={(attr, value) => this.updateNativeValue(attr, value)}
+                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
                     instance={this.instance}
                     adapterName={this.adapterName}

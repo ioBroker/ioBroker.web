@@ -54,5 +54,9 @@
   "IP address": "Связанный IP-адрес",
   "Redirect options": "Варианты перенаправления",
   "defaultRedirect": "Путь перенаправления по умолчанию",
-  "This path will be opened if no path specified": "Этот путь будет открыт, если не указан URL-путь"
+  "This path will be opened if no path specified": "Этот путь будет открыт, если не указан URL-путь",
+  "whitelist_only_with_integrated_socket": "Белый список работает только со встроенным интерфейсом socket-io",
+  "White list will be disabled. Please confirm.": "Белый список будет отключен. Пожалуйста подтвердите.",
+  "Ok": "Ok",
+  "Cancel": "Отмена"
 }

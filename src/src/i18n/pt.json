@@ -54,5 +54,9 @@
   "IP address": "Endereço IP vinculado",
   "Redirect options": "Opções de redirecionamento",
   "defaultRedirect": "Caminho de redirecionamento padrão",
-  "This path will be opened if no path specified": "Este caminho será aberto se nenhum caminho de URL for especificado"
+  "This path will be opened if no path specified": "Este caminho será aberto se nenhum caminho de URL for especificado",
+  "whitelist_only_with_integrated_socket": "A lista branca funciona apenas com interface socket-io integrada",
+  "White list will be disabled. Please confirm.": "A lista branca será desativada. Por favor confirme.",
+  "Ok": "OK",
+  "Cancel": "Cancelar"
 }

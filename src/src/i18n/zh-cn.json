@@ -54,5 +54,9 @@
   "IP address": "绑定IP地址",
   "Redirect options": "重定向选项",
   "defaultRedirect": "默认重定向路径",
-  "This path will be opened if no path specified": "如果未指定 URL 路径，将打开此路径"
+  "This path will be opened if no path specified": "如果未指定 URL 路径，将打开此路径",
+  "whitelist_only_with_integrated_socket": "白名单仅适用于集成的 socket-io 接口",
+  "White list will be disabled. Please confirm.": "白名单将被禁用。请确认。",
+  "Ok": "好的",
+  "Cancel": "取消"
 }

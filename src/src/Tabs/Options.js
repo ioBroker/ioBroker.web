@@ -14,6 +14,11 @@ import CustomModal from '../Components/CustomModal';
 import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Button from "@material-ui/core/Button";
 
 const styles = theme => ({
     blockWrapper: {
@@ -79,6 +84,7 @@ class Options extends Component {
             ],
             openModal: false,
             loaded: 0,
+            confirmSocketIO: false,
         };
     }
 
@@ -142,6 +148,38 @@ class Options extends Component {
         }
     }
 
+    renderConfirmDialog() {
+        return <Dialog
+            open={this.state.confirmSocketIO}
+            maxWidth="md"
+            onClose={() => this.setState({confirmSocketIO: false})}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">{I18n.t('Warning')}</DialogTitle>
+            <DialogContent>
+                {I18n.t('whitelist_only_with_integrated_socket')}<br/>
+                {I18n.t('White list will be disabled. Please confirm.')}
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    autoFocus
+                    onClick={() => {
+                        this.props.onChange('whiteListEnabled', false, () =>
+                            this.props.onChange('socketio', this.state.confirmValue, () => this.setState({confirmSocketIO: false})))
+                    }}
+                >
+                    {I18n.t('Ok')}
+                </Button>
+                <Button variant="contained" onClick={() => this.setState({confirmSocketIO: false})}>
+                    {I18n.t('Cancel')}
+                </Button>
+            </DialogActions>
+        </Dialog>;
+    }
+
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
         const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, loaded } = this.state;
@@ -155,6 +193,7 @@ class Options extends Component {
 
         return <form className={classes.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
+            {this.renderConfirmDialog()}
             <CustomModal
                 open={ openModal }
                 buttonClick={() => {
@@ -233,7 +272,13 @@ class Options extends Component {
                             options={ socketioOptions }
                             style={{ marginTop: 10 }}
                             native={native}
-                            onChange={onChange}
+                            onChange={(attr, value, cb) => {
+                                if (value && native.whiteListEnabled) {
+                                    this.setState({confirmSocketIO: true, confirmValue: value});
+                                } else {
+                                    onChange(attr, value, cb);
+                                }
+                            }}
                         />
                     </div>
                     <div className={classes.blockWrapper}>

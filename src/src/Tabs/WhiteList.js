@@ -79,6 +79,11 @@ const styles = ({ name }) => ({
         miniTableSelect: {
             minWidth: 185
         }
+    },
+    warning: {
+        color: '#FF4040',
+        fontSize: 18,
+        display: 'inline-block'
     }
 });
 
@@ -121,7 +126,7 @@ class WhiteList extends Component {
                 this.setState({ usersOptions: list }));
     }
 
-    tableSelect(el, style) {
+    userSelect(el, style) {
         const { classes, native, onChange } = this.props;
         const { usersOptions } = this.state;
         const { whiteListSettings } = native;
@@ -135,8 +140,9 @@ class WhiteList extends Component {
             options={[...optionsSelect, ...usersOptions.map(({ _id, common: { name} }) => ({ title: name, value: _id.replace('system.user.', '') }))]}
             native={native}
             style={style}
+            noTranslate
             className={classes.miniTableSelect}
-            onChange={(e) => {
+            onChange={e => {
                 const newObj = JSON.parse(JSON.stringify(whiteListSettings));
                 newObj[el].user = e;
                 onChange('whiteListSettings', newObj);
@@ -231,46 +237,43 @@ class WhiteList extends Component {
         return <form className={classes.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             <div style={{ position: 'relative' }} className={`${classes.column} ${classes.columnSettings}`}>
-                <div>
-                    <CustomCheckbox
-                        title='included'
-                        attr='whiteListEnabled'
-                        native={native}
-                        onChange={(attr, value) => {
-                            console.log(attr,  value)
-                            onChange(attr, value, () => {
-                                if (value && !native.whiteListSettings) {
-                                    onChange('whiteListSettings', {
-                                        default: {
-                                            user: "admin",
-                                            object: {
-                                                read: true,
-                                                list: true,
-                                                write: true,
-                                                delete: true
-                                            },
-                                            state: {
-                                                read: true,
-                                                list: true,
-                                                write: true,
-                                                create: true,
-                                                delete: true
-                                            },
-                                            file: {
-                                                read: true,
-                                                list: true,
-                                                write: true,
-                                                create: true,
-                                                delete: true
-                                            }
-                                        }
-                                    });
+                <CustomCheckbox
+                    title="included"
+                    attr="whiteListEnabled"
+                    disabled={this.props.native.socketio}
+                    native={native}
+                    onChange={(attr, value) => onChange(attr, value, () => {
+                        if (value && !native.whiteListSettings) {
+                            onChange('whiteListSettings', {
+                                default: {
+                                    user: 'admin',
+                                    object: {
+                                        read: true,
+                                        list: true,
+                                        write: true,
+                                        delete: true
+                                    },
+                                    state: {
+                                        read: true,
+                                        list: true,
+                                        write: true,
+                                        create: true,
+                                        delete: true
+                                    },
+                                    file: {
+                                        read: true,
+                                        list: true,
+                                        write: true,
+                                        create: true,
+                                        delete: true
+                                    }
                                 }
-                            })
-                        }}
-                    />
-                </div>
-                {whiteListSettings ? <div className={native['whiteListEnabled'] ? null : classes.displayNone}>
+                            });
+                        }
+                    })}
+                />
+                {this.props.native.socketio ? <span className={this.props.classes.warning}>{I18n.t('whitelist_only_with_integrated_socket')}</span> : null}
+                {!this.props.native.socketio && whiteListSettings ? <div className={native['whiteListEnabled'] ? null : classes.displayNone}>
                     <TableContainer style={{ overflowX: 'visible' }} component={Paper}>
                         <Table className={`${classes.table} ${classes.maxTable}`} aria-label="spanning table">
                             <TableHead>
@@ -288,8 +291,8 @@ class WhiteList extends Component {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {Object.keys(whiteListSettings).map((el, index) => {
-                                    return <TableRow key={`${index}_max`}>
+                                {Object.keys(whiteListSettings).map((el, index) =>
+                                    <TableRow key={`${index}_max`}>
                                         <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.buttonRemove(el)}
                                         </TableCell>
@@ -297,7 +300,7 @@ class WhiteList extends Component {
                                             {this.tableInput(el, { marginTop: -1, minWidth: 150, paddingTop: 5 })}
                                         </TableCell>
                                         <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
-                                            {this.tableSelect(el, { marginTop: -1 })}
+                                            {this.userSelect(el, { marginTop: -1 })}
                                         </TableCell>
                                         {['object', 'state', 'file'].map((elProperty, indexProperty) => Object.keys(whiteListSettings[el][elProperty]).map((attr, index) =>
                                             <TableCell className={Boolean(indexProperty % 2) ? classes.backgroundTheme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
@@ -315,7 +318,7 @@ class WhiteList extends Component {
                                                 />
                                             </TableCell>))}
                                     </TableRow>
-                                })}
+                                )}
                             </TableBody>
                         </Table>
                         <div className={classes.miniTable}>
@@ -331,7 +334,7 @@ class WhiteList extends Component {
                                         <div style={{ width: '100%', lineHeight: '30px', textAlign: 'center' }}>
                                             <span>{this.buttonRemove(el)}</span>
                                             <span style={{ marginLeft: 10 }}>IP: {this.tableInput(el, { marginTop: -5, minWidth: 150, marginLeft: 5, verticalAlign: 'middle' })}</span>
-                                            <span style={{ marginLeft: 20 }}>{I18n.t('user')}: {this.tableSelect(el, { marginTop: -10, marginLeft: 5, verticalAlign: 'middle' })}</span>
+                                            <span style={{ marginLeft: 20 }}>{I18n.t('user')}: {this.userSelect(el, { marginTop: -10, marginLeft: 5, verticalAlign: 'middle' })}</span>
                                         </div>
                                         {['object', 'state', 'file'].map((element, indexEl) => {
                                             let newTableHeadArr = [...tableHeadArr].splice(indexEl === 0 ? 0 : 4, indexEl === 0 ? 4 : 5)
@@ -342,8 +345,8 @@ class WhiteList extends Component {
                                                             {I18n.t(['object', 'status', 'file'][indexEl])}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
-                                                        {newTableHeadArr.map((elhed, ind) => (<TableCell key={`${elhed}_${ind}_mini`} align="center">
-                                                            {I18n.t(elhed)}</TableCell>))}
+                                                        {newTableHeadArr.map((elhed, ind) => <TableCell key={`${elhed}_${ind}_mini`} align="center">
+                                                            {I18n.t(elhed)}</TableCell>)}
                                                     </TableRow>
                                                 </TableHead>
                                                 <TableBody>

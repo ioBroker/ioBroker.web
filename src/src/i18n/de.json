@@ -54,5 +54,9 @@
   "IP address": "Gebundene IP-Adresse",
   "Redirect options": "Weiterleitungsoptionen",
   "defaultRedirect": "Standardweiterleitungspfad",
-  "This path will be opened if no path specified": "Dieser Pfad wird geöffnet, wenn kein URL-Pfad angegeben ist"
+  "This path will be opened if no path specified": "Dieser Pfad wird geöffnet, wenn kein URL-Pfad angegeben ist",
+  "whitelist_only_with_integrated_socket": "Whitelist funktioniert nur mit integrierter Socket-io-Schnittstelle",
+  "White list will be disabled. Please confirm.": "Weiße Liste wird deaktiviert. Bitte bestätigen.",
+  "Ok": "Ok",
+  "Cancel": "Abbrechen"
 }

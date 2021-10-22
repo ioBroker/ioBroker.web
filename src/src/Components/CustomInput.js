@@ -43,7 +43,7 @@ const CustomInput = ({ styleComponentBlock, component, size, variant, table, val
             size={size}
         />
         <div style={styleComponentBlock}>
-            <FormHelperText style={{ marginTop: -3 }}>{I18n.t(title)}</FormHelperText>
+            <FormHelperText style={{ marginTop: -3 }}>{title ? I18n.t(title) : ''}</FormHelperText>
             {component}
         </div>
     </FormControl>;

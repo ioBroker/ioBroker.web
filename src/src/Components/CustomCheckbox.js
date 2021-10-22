@@ -12,14 +12,20 @@ const styles = theme => ({
     }
 });
 
-const CustomCheckbox = ({ title, attr, style, classes, native, onChange, className, table, checked }) => {
+const CustomCheckbox = ({ title, attr, style, classes, native, onChange, className, table, checked, disabled }) => {
+    let value = table ? checked : native[attr];
+    if (attr === 'whiteListEnabled' && native.socketio) {
+        value = false;
+    }
+
     return <FormControlLabel
         key={attr}
         style={Object.assign({ paddingTop: 5 }, style)}
         className={clsx(classes.controlElement, className)}
         control={
             <Checkbox
-                checked={table ? checked : native[attr]}
+                disabled={!!disabled}
+                checked={value}
                 onChange={el => {
                     if (table) {
                         onChange(el.target.checked);
@@ -30,7 +36,7 @@ const CustomCheckbox = ({ title, attr, style, classes, native, onChange, classNa
                 color="primary"
             />
         }
-        label={I18n.t(title)}
+        label={title ? I18n.t(title) : ''}
     />;
 }
 

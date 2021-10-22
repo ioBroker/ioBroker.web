@@ -51,7 +51,7 @@ const CustomSelect = ({ table, value, title, attr, options, style, classes, nati
                     {noTranslate ? item.title : I18n.t(item.title)}
                 </MenuItem>)}
         </Select>
-        <FormHelperText>{I18n.t(title)}</FormHelperText>
+        <FormHelperText>{title ? I18n.t(title) : ''}</FormHelperText>
     </FormControl>;
 }
 
@@ -69,7 +69,7 @@ CustomSelect.propTypes = {
     native: PropTypes.object.isRequired,
     onChange: PropTypes.func,
     noTranslate: PropTypes.bool,
-    themeType: PropTypes.string
+    themeType: PropTypes.string,
 };
 
 export default withStyles(styles)(CustomSelect);

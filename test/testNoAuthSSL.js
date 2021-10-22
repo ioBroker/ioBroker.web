@@ -1,7 +1,6 @@
 'use strict';
 //const expect  = require('chai').expect;
 const setup   = require(__dirname + '/lib/setup');
-const request = require('request');
 const tests   = require(__dirname + '/lib/tests');
 
 let objects = null;

@@ -54,5 +54,9 @@
   "IP address": "Powiązany adres IP",
   "Redirect options": "Opcje przekierowania",
   "defaultRedirect": "Domyślna ścieżka przekierowania",
-  "This path will be opened if no path specified": "Ta ścieżka zostanie otwarta, jeśli nie określono ścieżki URL"
+  "This path will be opened if no path specified": "Ta ścieżka zostanie otwarta, jeśli nie określono ścieżki URL",
+  "whitelist_only_with_integrated_socket": "Biała lista działa tylko ze zintegrowanym interfejsem socket-io",
+  "White list will be disabled. Please confirm.": "Biała lista zostanie wyłączona. Proszę potwierdzić.",
+  "Ok": "Ok",
+  "Cancel": "Anulować"
 }

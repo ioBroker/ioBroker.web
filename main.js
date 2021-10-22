@@ -865,29 +865,29 @@ function initAuth(server, settings) {
             username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
 
             if (bruteForce[username] && bruteForce[username].errors > 4) {
-                let minutes = (new Date().getTime() - bruteForce[username].time);
+                let minutes = Date.now() - bruteForce[username].time;
                 if (bruteForce[username].errors < 7) {
-                    if ((new Date().getTime() - bruteForce[username].time) < 60000) {
+                    if (Date.now() - bruteForce[username].time < 60000) {
                         minutes = 1;
                     } else {
                         minutes = 0;
                     }
                 } else
                 if (bruteForce[username].errors < 10) {
-                    if ((new Date().getTime() - bruteForce[username].time) < 180000) {
+                    if (Date.now() - bruteForce[username].time < 180000) {
                         minutes = Math.ceil((180000 - minutes) / 60000);
                     } else {
                         minutes = 0;
                     }
                 } else
                 if (bruteForce[username].errors < 15) {
-                    if ((new Date().getTime() - bruteForce[username].time) < 600000) {
+                    if (Date.now() - bruteForce[username].time < 600000) {
                         minutes = Math.ceil((600000 - minutes) / 60000);
                     } else {
                         minutes = 0;
                     }
                 } else
-                if ((new Date().getTime() - bruteForce[username].time) < 3600000) {
+                if (Date.now() - bruteForce[username].time < 3600000) {
                     minutes = Math.ceil((3600000 - minutes) / 60000);
                 } else {
                     minutes = 0;
@@ -900,7 +900,7 @@ function initAuth(server, settings) {
             adapter.checkPassword(username, password, res => {
                 if (!res) {
                     bruteForce[username] = bruteForce[username] || {errors: 0};
-                    bruteForce[username].time = new Date().getTime();
+                    bruteForce[username].time = Date.now();
                     bruteForce[username].errors++;
                 } else if (bruteForce[username]) {
                     delete bruteForce[username];
@@ -1087,7 +1087,10 @@ async function initWebServer(settings) {
 
                 // if whitelist is used
                 const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                const whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                let whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                if (!whiteListIp && server.io && remoteIp === '::1') {
+                    whiteListIp = server.io.getWhiteListIpForAddress('localhost', settings.whiteListSettings);
+                }
                 adapter.log.silly(`whiteListIp ${whiteListIp}`);
                 if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') {
                     if (/\.css(\?.*)?$/.test(req.originalUrl)) {
