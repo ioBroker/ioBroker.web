@@ -1,378 +1,222 @@
 {
-    "common": {
-        "name": "web",
-        "version": "3.4.9",
-        "titleLang": {
-            "en": "WEB server",
-            "de": "WEB-Server",
-            "ru": "Веб сервер",
-            "pt": "Servidor web",
-            "nl": "Web Server",
-            "fr": "Serveur Web",
-            "it": "Server web",
-            "es": "Servidor web",
-            "pl": "Serwer internetowy",
-            "zh-cn": "Web服务器"
-        },
-        "news": {
-            "3.4.9": {
-                "en": "Fixed error with access list\nAdded support of the unload function for web-extensions \nAdded readme for the web-extensions development",
-                "de": "Fehler mit Zugangsliste behoben\nUnterstützung der Entladefunktion für Web-Erweiterungen hinzugefügt\nReadme für die Entwicklung von Web-Erweiterungen hinzugefügt",
-                "ru": "Исправлена ошибка со списком доступа\nДобавлена поддержка функции выгрузки для веб-расширений.\nДобавлен ридми для разработки веб-расширений",
-                "pt": "Erro corrigido com lista de acesso\nAdicionado suporte da função de descarregamento para extensões da web\nAdicionado readme para o desenvolvimento de extensões da web",
-                "nl": "Vaste fout met toegangslijst\nOndersteuning toegevoegd van de unload-functie voor webextensies\nLeesmij toegevoegd voor de ontwikkeling van webextensies",
-                "fr": "Correction d'une erreur avec la liste d'accès\nAjout du support de la fonction de déchargement pour les extensions Web\nAjout du readme pour le développement des extensions web",
-                "it": "Risolto errore con l'elenco di accesso\nAggiunto il supporto della funzione di scaricamento per le estensioni web\nAggiunto readme per lo sviluppo delle estensioni web",
-                "es": "Error solucionado con lista de acceso\nSoporte agregado de la función de descarga para extensiones web\nLéame agregado para el desarrollo de extensiones web",
-                "pl": "Naprawiono błąd z listą dostępu\nDodano obsługę funkcji rozładowywania rozszerzeń internetowych\nDodano plik readme do opracowywania rozszerzeń internetowych",
-                "zh-cn": "修复了访问列表的错误\n添加了对 Web 扩展的卸载功能的支持\n添加了 Web 扩展开发的自述文件"
-            },
-            "3.4.8": {
-                "en": "added the default redirect option",
-                "de": "die Standardumleitungsoption hinzugefügt",
-                "ru": "добавлена опция перенаправления по умолчанию",
-                "pt": "adicionou a opção de redirecionamento padrão",
-                "nl": "de standaard omleidingsoptie toegevoegd",
-                "fr": "ajouté l'option de redirection par défaut",
-                "it": "aggiunta l'opzione di reindirizzamento predefinita",
-                "es": "agregó la opción de redirección predeterminada",
-                "pl": "dodano domyślną opcję przekierowania",
-                "zh-cn": "添加了默认重定向选项"
-            },
-            "3.4.7": {
-                "en": "Corrected the small config GUI error",
-                "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
-                "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
-                "pt": "Corrigido o pequeno erro de configuração da GUI",
-                "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
-                "fr": "Correction de la petite erreur de l'interface graphique de configuration",
-                "it": "Corretto il piccolo errore della GUI di configurazione",
-                "es": "Se corrigió el pequeño error de la GUI de configuración.",
-                "pl": "Poprawiono mały błąd GUI konfiguracji",
-                "zh-cn": "更正了小的配置 GUI 错误"
-            },
-            "3.4.6": {
-                "en": "Corrected the small config GUI error",
-                "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
-                "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
-                "pt": "Corrigido o pequeno erro de configuração da GUI",
-                "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
-                "fr": "Correction de la petite erreur de l'interface graphique de configuration",
-                "it": "Corretto il piccolo errore della GUI di configurazione",
-                "es": "Se corrigió el pequeño error de la GUI de configuración.",
-                "pl": "Poprawiono mały błąd GUI konfiguracji",
-                "zh-cn": "更正了小的配置 GUI 错误"
-            },
-            "3.4.5": {
-                "en": "fix admin dependency because since 3.4.2 Admin 5.1 is required",
-                "de": "Admin-Abhängigkeit behoben, da seit 3.4.2 Admin 5.1 erforderlich ist",
-                "ru": "исправить зависимость администратора, потому что с версии 3.4.2 требуется Admin 5.1",
-                "pt": "consertar a dependência do administrador porque desde 3.4.2 Admin 5.1 é necessário",
-                "nl": "fix admin afhankelijkheid omdat sinds 3.4.2 Admin 5.1 is vereist",
-                "fr": "correction de la dépendance de l'administrateur car depuis 3.4.2 Admin 5.1 est requis",
-                "it": "correggere la dipendenza dell'amministratore perché da 3.4.2 Admin 5.1 è richiesto",
-                "es": "corregir la dependencia del administrador porque desde 3.4.2 se requiere Admin 5.1",
-                "pl": "napraw zależność administratora, ponieważ od 3.4.2 wymagany jest Admin 5.1 5.1",
-                "zh-cn": "修复管理员依赖，因为 3.4.2 Admin 5.1 是必需的"
-            },
-            "3.4.4": {
-                "en": "Fix missing www files",
-                "de": "Fehlende WWW-Dateien beheben",
-                "ru": "Исправить отсутствующие файлы www",
-                "pt": "Corrigir arquivos www ausentes",
-                "nl": "Herstel ontbrekende www-bestanden",
-                "fr": "Correction des fichiers www manquants",
-                "it": "Correggi i file www mancanti",
-                "es": "Corregir archivos www faltantes",
-                "pl": "Napraw brakujące pliki www",
-                "zh-cn": "修复丢失的 www 文件"
-            },
-            "3.4.3": {
-                "en": "Add tier for js-controller 3.3",
-                "de": "Stufe für js-controller 3.3 . hinzufügen",
-                "ru": "Добавить уровень для js-controller 3.3",
-                "pt": "Adicionar camada para js-controller 3.3",
-                "nl": "Laag toevoegen voor js-controller 3.3",
-                "fr": "Ajouter un niveau pour js-controller 3.3",
-                "it": "Aggiungi livello per js-controller 3.3",
-                "es": "Agregar nivel para js-controller 3.3",
-                "pl": "Dodaj warstwę dla kontrolera js 3.3",
-                "zh-cn": "为 js-controller 3.3 添加层"
-            },
-            "3.4.2": {
-                "en": "Update GUI",
-                "de": "GUI aktualisieren",
-                "ru": "Обновить графический интерфейс",
-                "pt": "Atualizar GUI",
-                "nl": "GUI bijwerken",
-                "fr": "Mettre à jour l'interface graphique",
-                "it": "Aggiorna GUI",
-                "es": "Actualizar GUI",
-                "pl": "Zaktualizuj GUI",
-                "zh-cn": "更新图形用户界面"
-            },
-            "3.4.1": {
-                "en": "Added support of admin5",
-                "de": "Unterstützung von admin5 hinzugefügt",
-                "ru": "Добавлена поддержка admin5",
-                "pt": "Adicionado suporte de admin5",
-                "nl": "Ondersteuning toegevoegd voor admin5",
-                "fr": "Ajout de la prise en charge d'admin5",
-                "it": "Aggiunto supporto di admin5",
-                "es": "Soporte agregado de admin5",
-                "pl": "Dodano obsługę admin5",
-                "zh-cn": "增加了对admin5的支持"
-            },
-            "3.4.0": {
-                "en": "IMPORTANT: js-controller 3.1 is now needed at least\nfix a special case for requesting ranges only (Sentry IOBROKER-WEB-3M)\nautomatically decrypt secrets for web-extensions",
-                "de": "WICHTIG: js-controller 3.1 wird jetzt mindestens benötigt\nBehebung eines Sonderfalls für die Anforderung von Bereichen (Sentry IOBROKER-WEB-3M)\nGeheimnisse für Web-Erweiterungen automatisch entschlüsseln",
-                "ru": "ВАЖНО: js-controller 3.1 теперь нужен как минимум\nисправить особый случай только для запроса диапазонов (Sentry IOBROKER-WEB-3M)\nавтоматически расшифровывать секреты веб-расширений",
-                "pt": "IMPORTANTE: js-controller 3.1 agora é necessário pelo menos\nconsertar um caso especial para solicitar intervalos apenas (Sentry IOBROKER-WEB-3M)\ndescriptografar segredos automaticamente para extensões da web",
-                "nl": "BELANGRIJK: js-controller 3.1 is nu minimaal nodig\neen speciaal geval oplossen voor het opvragen van alleen bereiken (Sentry IOBROKER-WEB-3M)\nautomatisch geheimen decoderen voor web-extensies",
-                "fr": "IMPORTANT: js-controller 3.1 est maintenant nécessaire au moins\ncorrection d'un cas particulier pour la demande de gammes uniquement (Sentry IOBROKER-WEB-3M)\ndécrypter automatiquement les secrets des extensions Web",
-                "it": "IMPORTANTE: adesso è necessario almeno js-controller 3.1\nrisolvere un caso speciale solo per la richiesta di intervalli (Sentry IOBROKER-WEB-3M)\ndecrittografa automaticamente i segreti per le estensioni web",
-                "es": "IMPORTANTE: ahora se necesita js-controller 3.1 al menos\narregla un caso especial para solicitar rangos solamente (Sentry IOBROKER-WEB-3M)\ndescifrar automáticamente los secretos de las extensiones web",
-                "pl": "WAŻNE: js-controller 3.1 jest teraz potrzebny przynajmniej\nnapraw specjalny przypadek tylko dla żądań zakresów (Sentry IOBROKER-WEB-3M)\nautomatycznie odszyfrowuj sekrety dla rozszerzeń internetowych",
-                "zh-cn": "重要提示：现在至少需要js-controller 3.1\n修复仅要求范围的特殊情况（Sentry IOBROKER-WEB-3M）\n自动解密网络扩展的秘密"
-            },
-            "3.3.0": {
-                "en": "The admin GUI was rewritten with reactJS",
-                "de": "Die Admin-GUI wurde mit reactJS neu geschrieben",
-                "ru": "Интерфейс администратора был переписан с помощью responseJS.",
-                "pt": "A GUI do administrador foi reescrita com reactJS",
-                "nl": "De admin GUI is herschreven met reactJS",
-                "fr": "L'interface graphique d'administration a été réécrite avec reactJS",
-                "it": "La GUI di amministrazione è stata riscritta con reactJS",
-                "es": "La GUI de administración se reescribió con reactJS",
-                "pl": "Graficzny interfejs użytkownika administratora został przepisany za pomocąreakJS",
-                "zh-cn": "管理GUI用reactJS重写"
-            },
-            "3.2.3": {
-                "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)\nupdate dependencies of socketio and simple-api",
-                "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).\nAktualisieren Sie die Abhängigkeiten von Socketio und Simple-API",
-                "ru": "Если порт не указан, используйте 8082 по умолчанию (Sentry IOBROKER-WEB-2S)\nобновить зависимости socketio и simple-api",
-                "pt": "Se nenhuma porta for fornecida, use o padrão 8082 (Sentry IOBROKER-WEB-2S)\natualizar dependências de socketio e simple-api",
-                "nl": "Als er geen poort is opgegeven, gebruik dan standaard 8082 (Sentry IOBROKER-WEB-2S)\nupdate afhankelijkheden van socketio en simple-api",
-                "fr": "Si aucun port n'est fourni, utilisez la valeur par défaut 8082 (Sentry IOBROKER-WEB-2S)\nmettre à jour les dépendances de socketio et simple-api",
-                "it": "Se non viene fornita alcuna porta, utilizzare l'impostazione predefinita 8082 (Sentry IOBROKER-WEB-2S)\naggiorna le dipendenze di socketio e simple-api",
-                "es": "Si no se proporciona ningún puerto, utilice el 8082 predeterminado (Sentry IOBROKER-WEB-2S)\nactualizar las dependencias de socketio y simple-api",
-                "pl": "Jeśli nie podano portu, użyj domyślnego 8082 (Sentry IOBROKER-WEB-2S)\naktualizuj zależności socketio i simple-api",
-                "zh-cn": "如果未提供任何端口，请使用默认的8082（Sentry IOBROKER-WEB-2S）\n更新socketio和simple-api的依赖关系"
-            },
-            "3.2.2": {
-                "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)\nupdate dependencies of socketio and simple-api",
-                "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).\nAktualisieren Sie die Abhängigkeiten von Socketio und Simple-API",
-                "ru": "Если порт не указан, используйте 8082 по умолчанию (Sentry IOBROKER-WEB-2S)\nобновить зависимости socketio и simple-api",
-                "pt": "Se nenhuma porta for fornecida, use o padrão 8082 (Sentry IOBROKER-WEB-2S)\natualizar dependências de socketio e simple-api",
-                "nl": "Als er geen poort is opgegeven, gebruik dan standaard 8082 (Sentry IOBROKER-WEB-2S)\nupdate afhankelijkheden van socketio en simple-api",
-                "fr": "Si aucun port n'est fourni, utilisez la valeur par défaut 8082 (Sentry IOBROKER-WEB-2S)\nmettre à jour les dépendances de socketio et simple-api",
-                "it": "Se non viene fornita alcuna porta, utilizzare l'impostazione predefinita 8082 (Sentry IOBROKER-WEB-2S)\naggiorna le dipendenze di socketio e simple-api",
-                "es": "Si no se proporciona ningún puerto, utilice el 8082 predeterminado (Sentry IOBROKER-WEB-2S)\nactualizar las dependencias de socketio y simple-api",
-                "pl": "Jeśli nie podano portu, użyj domyślnego 8082 (Sentry IOBROKER-WEB-2S)\naktualizuj zależności socketio i simple-api",
-                "zh-cn": "如果未提供任何端口，请使用默认的8082（Sentry IOBROKER-WEB-2S）\n更新socketio和simple-api的依赖关系"
-            },
-            "3.2.1": {
-                "en": "If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)",
-                "de": "Wenn kein Port angegeben ist, verwenden Sie die Standardeinstellung 8082 (Sentry IOBROKER-WEB-2S).",
-                "ru": "Если порт не указан, используйте 8082 по умолчанию (Sentry IOBROKER-WEB-2S)",
-                "pt": "Se nenhuma porta for fornecida, use o padrão 8082 (Sentry IOBROKER-WEB-2S)",
-                "nl": "Als er geen poort is opgegeven, gebruik dan standaard 8082 (Sentry IOBROKER-WEB-2S)",
-                "fr": "Si aucun port n'est fourni, utilisez la valeur par défaut 8082 (Sentry IOBROKER-WEB-2S)",
-                "it": "Se non viene fornita alcuna porta, utilizzare l'impostazione predefinita 8082 (Sentry IOBROKER-WEB-2S)",
-                "es": "Si no se proporciona ningún puerto, utilice el 8082 predeterminado (Sentry IOBROKER-WEB-2S)",
-                "pl": "Jeśli nie podano portu, użyj domyślnego 8082 (Sentry IOBROKER-WEB-2S)",
-                "zh-cn": "如果未提供任何端口，请使用默认的8082（Sentry IOBROKER-WEB-2S）"
-            },
-            "3.2.0": {
-                "en": "Support of new Let's Encrypt (only with js-controller 3.2.x)\nAllow to disable to serve files or states from DB",
-                "de": "Unterstützung des neuen Let's Encrypt (nur mit js-controller 3.2.x)\nDeaktivieren Sie diese Option, um Dateien oder Status aus der Datenbank bereitzustellen",
-                "ru": "Поддержка нового Let's Encrypt (только с js-controller 3.2.x)\nРазрешить отключение обслуживания файлов или состояний из БД",
-                "pt": "Suporte do novo Let's Encrypt (apenas com js-controller 3.2.x)\nPermitir desabilitar para servir arquivos ou estados do banco de dados",
-                "nl": "Ondersteuning van nieuwe Let's Encrypt (alleen met js-controller 3.2.x)\nSta toe om bestanden of toestanden van DB uit te schakelen",
-                "fr": "Prise en charge du nouveau Let's Encrypt (uniquement avec js-controller 3.2.x)\nAutoriser à désactiver pour servir des fichiers ou des états de la base de données",
-                "it": "Supporto del nuovo Let's Encrypt (solo con js-controller 3.2.x)\nConsenti di disabilitare per servire file o stati dal DB",
-                "es": "Soporte del nuevo Let's Encrypt (solo con js-controller 3.2.x)\nPermitir deshabilitar para servir archivos o estados desde DB",
-                "pl": "Obsługa nowego Let's Encrypt (tylko z js-controller 3.2.x)\nZezwól na wyłączenie obsługi plików lub stanów z bazy danych",
-                "zh-cn": "支持新的Let's Encrypt（仅适用于js-controller 3.2.x）\n允许禁用以从数据库提供文件或状态"
-            },
-            "3.1.0": {
-                "en": "Add option for Basic Auth",
-                "de": "Option für Basic Auth hinzufügen",
-                "ru": "Добавить опцию для базовой аутентификации",
-                "pt": "Adicionar opção para autenticação básica",
-                "nl": "Optie toevoegen voor Basic Auth",
-                "fr": "Ajouter une option pour l'authentification de base",
-                "it": "Aggiungi l'opzione per l'autenticazione di base",
-                "es": "Agregar opción para autenticación básica",
-                "pl": "Dodaj opcję dla Basic Auth",
-                "zh-cn": "添加基本身份验证选项"
-            },
-            "3.0.14": {
-                "en": "Prevent crash case (Sentry IOBROKER-WEB-1D)\nSupport html <video> tag on Safari (iOS)",
-                "de": "Absturz verhindern (Sentry IOBROKER-WEB-1D)\nUnterstützt HTML<video> Tag auf Safari (iOS)",
-                "ru": "Предотвращение сбоя (Sentry IOBROKER-WEB-1D)\nПоддержка html<video> тег в Safari (iOS)",
-                "pt": "Prevenir caso de travamento (Sentry IOBROKER-WEB-1D)\nSuporte html<video> tag no Safari (iOS)",
-                "nl": "Voorkom crash case (Sentry IOBROKER-WEB-1D)\nOndersteuning van html<video> tag op Safari (iOS)",
-                "fr": "Prévenir les cas de crash (Sentry IOBROKER-WEB-1D)\nSupport html<video> tag sur Safari (iOS)",
-                "it": "Prevenire il crash case (Sentry IOBROKER-WEB-1D)\nSupporto HTML<video> tag su Safari (iOS)",
-                "es": "Caso de prevención de accidentes (Sentry IOBROKER-WEB-1D)\nSoporte html<video> etiqueta en Safari (iOS)",
-                "pl": "Zapobiegaj awariom (Sentry IOBROKER-WEB-1D)\nWsparcie html<video> tag w Safari (iOS)",
-                "zh-cn": "防止崩溃情况（Sentry IOBROKER-WEB-1D）\n支持HTML<video>在Safari（iOS）上标记"
-            },
-            "3.0.13": {
-                "en": "Added the support of multi-language names for the welcome screen.",
-                "de": "Unterstützung für mehrsprachige Namen für den Begrüßungsbildschirm hinzugefügt.",
-                "ru": "Добавлена поддержка многоязычных имен для экрана приветствия.",
-                "pt": "Adicionado o suporte de nomes em vários idiomas para a tela de boas-vindas.",
-                "nl": "Ondersteuning toegevoegd voor meertalige namen voor het welkomstscherm.",
-                "fr": "Ajout de la prise en charge des noms multilingues pour l'écran d'accueil.",
-                "it": "Aggiunto il supporto di nomi multilingue per la schermata di benvenuto.",
-                "es": "Se agregó la compatibilidad con nombres en varios idiomas para la pantalla de bienvenida.",
-                "pl": "Dodano obsługę wielojęzycznych nazw na ekranie powitalnym.",
-                "zh-cn": "在欢迎屏幕中增加了对多语言名称的支持。"
-            },
-            "3.0.12": {
-                "en": "Updated used npm libraries",
-                "de": "Aktualisierte gebrauchte npm-Bibliotheken",
-                "ru": "Обновлены используемые библиотеки npm",
-                "pt": "Bibliotecas npm usadas atualizadas",
-                "nl": "Bijgewerkte gebruikte npm-bibliotheken",
-                "fr": "Bibliothèques npm utilisées mises à jour",
-                "it": "Librerie npm usate aggiornate",
-                "es": "Bibliotecas npm usadas actualizadas",
-                "pl": "Zaktualizowano używane biblioteki npm",
-                "zh-cn": "更新了使用过的npm库"
-            },
-            "3.0.10": {
-                "en": "socketio pingTimeout and pinInterval increased to prevent too fast reconnections and bigger visualizations",
-                "de": "Socketio PingTimeout und PinInterval wurden erhöht, um zu schnelle Wiederverbindungen und größere Visualisierungen zu vermeiden",
-                "ru": "socketio pingTimeout и pinInterval увеличены, чтобы предотвратить слишком быстрое переподключение и большую визуализацию",
-                "pt": "socketio pingTimeout e pinInterval aumentados para evitar reconexões muito rápidas e visualizações maiores",
-                "nl": "socketio pingTimeout en pinInterval verhoogd om te snelle herverbindingen en grotere visualisaties te voorkomen",
-                "fr": "socketio pingTimeout et pinInterval augmentés pour éviter des reconnexions trop rapides et des visualisations plus importantes",
-                "it": "socketio pingTimeout e pinInterval aumentati per impedire riconnessioni troppo veloci e visualizzazioni più grandi",
-                "es": "socketio pingTimeout y pinInterval aumentaron para evitar reconexiones demasiado rápidas y visualizaciones más grandes",
-                "pl": "Zwiększono wartość socketio pingTimeout i pinInterval, aby zapobiec zbyt szybkim ponownym połączeniom i większym wizualizacjom",
-                "zh-cn": "增加了socketio pingTimeout和pinInterval，以防止重新连接速度过快和较大的可视化效果"
-            }
-        },
-        "desc": {
-            "en": "opens a webserver for other adapters",
-            "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
-            "ru": "Запускает веб сервер для 'ioBroker драйверов'",
-            "pt": "abre um servidor web para outros adaptadores",
-            "nl": "opent een webserver voor andere adapters",
-            "fr": "ouvre un serveur web pour d'autres adaptateurs",
-            "it": "apre un server web per altri adattatori",
-            "es": "abre un servidor web para otros adaptadores",
-            "pl": "otwiera serwer internetowy dla innych kart",
-            "zh-cn": "为其他适配器服务的web服务器"
-        },
-        "license": "MIT",
-        "mode": "daemon",
-        "platform": "Javascript/Node.js",
-        "loglevel": "info",
-        "icon": "web.png",
-        "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
-        "enabled": true,
-        "materialize": true,
-        "compact": true,
-        "keywords": [
-            "web",
-            "server",
-            "www",
-            "express"
-        ],
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
-        "type": "general",
-        "stopBeforeUpdate": true,
-        "webExtendable": true,
-        "connectionType": "none",
-        "dataSource": "none",
-        "localLink": "%web_protocol%://%ip%:%web_port%/",
-        "dependencies": [
-            {
-                "js-controller": ">=3.1.0"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.0"
-            }
-        ],
-        "authors": [
-            {
-                "name": "bluefox",
-                "email": "dogafox@gmail.com"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
-            }
-        },
-        "tier": 3
+  "common": {
+    "name": "web",
+    "version": "3.4.10",
+    "titleLang": {
+      "en": "WEB server",
+      "de": "WEB-Server",
+      "ru": "Веб сервер",
+      "pt": "Servidor web",
+      "nl": "Web Server",
+      "fr": "Serveur Web",
+      "it": "Server web",
+      "es": "Servidor web",
+      "pl": "Serwer internetowy",
+      "zh-cn": "Web服务器"
     },
-    "native": {
-        "port": 8082,
-        "auth": false,
-        "secure": false,
-        "bind": "0.0.0.0",
-        "cache": false,
-        "socketio": "",
-        "simpleapi": false,
-        "defaultUser": "admin",
-        "ttl": 3600,
-        "certPublic": "",
-        "certPrivate": "",
-        "certChained": "",
-        "addUserName": false,
-        "forceWebSockets": false,
-        "whiteListEnabled": false,
-        "leEnabled": false,
-        "leUpdate": false,
-        "leCheckPort": 80,
-        "loginBackgroundColor": "",
-        "loginBackgroundImage": false,
-        "basicAuth": false,
-        "disableExtensions": false,
-        "disableStates": false,
-        "disableFilesObjects": false,
-        "defaultRedirect": ""
+    "news": {
+      "3.4.10": {
+        "en": "Added warning, that the white list works only with the integrated socket-io interface",
+        "de": "Warnung hinzugefügt, dass die Whitelist nur mit der integrierten Socket-io-Schnittstelle funktioniert",
+        "ru": "Добавлено предупреждение, что белый список работает только со встроенным интерфейсом socket-io",
+        "pt": "Adicionado o aviso de que a lista branca funciona apenas com a interface socket-io integrada",
+        "nl": "Waarschuwing toegevoegd, dat de witte lijst alleen werkt met de geïntegreerde socket-io-interface",
+        "fr": "Ajout d'un avertissement, que la liste blanche ne fonctionne qu'avec l'interface socket-io intégrée",
+        "it": "Aggiunto avviso, che la lista bianca funziona solo con l'interfaccia socket-io integrata",
+        "es": "Advertencia agregada, que la lista blanca solo funciona con la interfaz integrada socket-io",
+        "pl": "Dodano ostrzeżenie, że biała lista działa tylko ze zintegrowanym interfejsem socket-io",
+        "zh-cn": "添加警告，白名单仅适用于集成的 socket-io 接口"
+      },
+      "3.4.9": {
+        "en": "Fixed error with access list\nAdded support of the unload function for web-extensions \nAdded readme for the web-extensions development",
+        "de": "Fehler mit Zugangsliste behoben\nUnterstützung der Entladefunktion für Web-Erweiterungen hinzugefügt\nReadme für die Entwicklung von Web-Erweiterungen hinzugefügt",
+        "ru": "Исправлена ошибка со списком доступа\nДобавлена поддержка функции выгрузки для веб-расширений.\nДобавлен ридми для разработки веб-расширений",
+        "pt": "Erro corrigido com lista de acesso\nAdicionado suporte da função de descarregamento para extensões da web\nAdicionado readme para o desenvolvimento de extensões da web",
+        "nl": "Vaste fout met toegangslijst\nOndersteuning toegevoegd van de unload-functie voor webextensies\nLeesmij toegevoegd voor de ontwikkeling van webextensies",
+        "fr": "Correction d'une erreur avec la liste d'accès\nAjout du support de la fonction de déchargement pour les extensions Web\nAjout du readme pour le développement des extensions web",
+        "it": "Risolto errore con l'elenco di accesso\nAggiunto il supporto della funzione di scaricamento per le estensioni web\nAggiunto readme per lo sviluppo delle estensioni web",
+        "es": "Error solucionado con lista de acceso\nSoporte agregado de la función de descarga para extensiones web\nLéame agregado para el desarrollo de extensiones web",
+        "pl": "Naprawiono błąd z listą dostępu\nDodano obsługę funkcji rozładowywania rozszerzeń internetowych\nDodano plik readme do opracowywania rozszerzeń internetowych",
+        "zh-cn": "修复了访问列表的错误\n添加了对 Web 扩展的卸载功能的支持\n添加了 Web 扩展开发的自述文件"
+      },
+      "3.4.8": {
+        "en": "added the default redirect option",
+        "de": "die Standardumleitungsoption hinzugefügt",
+        "ru": "добавлена опция перенаправления по умолчанию",
+        "pt": "adicionou a opção de redirecionamento padrão",
+        "nl": "de standaard omleidingsoptie toegevoegd",
+        "fr": "ajouté l'option de redirection par défaut",
+        "it": "aggiunta l'opzione di reindirizzamento predefinita",
+        "es": "agregó la opción de redirección predeterminada",
+        "pl": "dodano domyślną opcję przekierowania",
+        "zh-cn": "添加了默认重定向选项"
+      },
+      "3.4.7": {
+        "en": "Corrected the small config GUI error",
+        "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
+        "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
+        "pt": "Corrigido o pequeno erro de configuração da GUI",
+        "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
+        "fr": "Correction de la petite erreur de l'interface graphique de configuration",
+        "it": "Corretto il piccolo errore della GUI di configurazione",
+        "es": "Se corrigió el pequeño error de la GUI de configuración.",
+        "pl": "Poprawiono mały błąd GUI konfiguracji",
+        "zh-cn": "更正了小的配置 GUI 错误"
+      },
+      "3.4.6": {
+        "en": "Corrected the small config GUI error",
+        "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
+        "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
+        "pt": "Corrigido o pequeno erro de configuração da GUI",
+        "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
+        "fr": "Correction de la petite erreur de l'interface graphique de configuration",
+        "it": "Corretto il piccolo errore della GUI di configurazione",
+        "es": "Se corrigió el pequeño error de la GUI de configuración.",
+        "pl": "Poprawiono mały błąd GUI konfiguracji",
+        "zh-cn": "更正了小的配置 GUI 错误"
+      },
+      "3.4.5": {
+        "en": "fix admin dependency because since 3.4.2 Admin 5.1 is required",
+        "de": "Admin-Abhängigkeit behoben, da seit 3.4.2 Admin 5.1 erforderlich ist",
+        "ru": "исправить зависимость администратора, потому что с версии 3.4.2 требуется Admin 5.1",
+        "pt": "consertar a dependência do administrador porque desde 3.4.2 Admin 5.1 é necessário",
+        "nl": "fix admin afhankelijkheid omdat sinds 3.4.2 Admin 5.1 is vereist",
+        "fr": "correction de la dépendance de l'administrateur car depuis 3.4.2 Admin 5.1 est requis",
+        "it": "correggere la dipendenza dell'amministratore perché da 3.4.2 Admin 5.1 è richiesto",
+        "es": "corregir la dependencia del administrador porque desde 3.4.2 se requiere Admin 5.1",
+        "pl": "napraw zależność administratora, ponieważ od 3.4.2 wymagany jest Admin 5.1 5.1",
+        "zh-cn": "修复管理员依赖，因为 3.4.2 Admin 5.1 是必需的"
+      },
+      "3.4.4": {
+        "en": "Fix missing www files",
+        "de": "Fehlende WWW-Dateien beheben",
+        "ru": "Исправить отсутствующие файлы www",
+        "pt": "Corrigir arquivos www ausentes",
+        "nl": "Herstel ontbrekende www-bestanden",
+        "fr": "Correction des fichiers www manquants",
+        "it": "Correggi i file www mancanti",
+        "es": "Corregir archivos www faltantes",
+        "pl": "Napraw brakujące pliki www",
+        "zh-cn": "修复丢失的 www 文件"
+      }
     },
-    "objects": [
-        {
-            "_id": "connected",
-            "type": "info",
-            "common": {
-                "name": "Info about connected socket clients",
-                "type": "string",
-                "read": true,
-                "write": false
-            }
-        }
+    "desc": {
+      "en": "opens a webserver for other adapters",
+      "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
+      "ru": "Запускает веб сервер для 'ioBroker драйверов'",
+      "pt": "abre um servidor web para outros adaptadores",
+      "nl": "opent een webserver voor andere adapters",
+      "fr": "ouvre un serveur web pour d'autres adaptateurs",
+      "it": "apre un server web per altri adattatori",
+      "es": "abre un servidor web para otros adaptadores",
+      "pl": "otwiera serwer internetowy dla innych kart",
+      "zh-cn": "为其他适配器服务的web服务器"
+    },
+    "license": "MIT",
+    "mode": "daemon",
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "web.png",
+    "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
+    "enabled": true,
+    "materialize": true,
+    "compact": true,
+    "keywords": [
+      "web",
+      "server",
+      "www",
+      "express"
     ],
-    "instanceObjects": [
-        {
-            "_id": "",
-            "type": "meta",
-            "common": {
-                "name": "user files and images for background image",
-                "type": "meta.user"
-            },
-            "native": {}
-        },
-        {
-            "_id": "connected",
-            "type": "state",
-            "common": {
-                "role": "text",
-                "name": "Active instances",
-                "type": "string",
-                "read": true,
-                "write": false
-            },
-            "native": {}
-        }
-    ]
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
+    "type": "general",
+    "stopBeforeUpdate": true,
+    "webExtendable": true,
+    "connectionType": "none",
+    "dataSource": "none",
+    "localLink": "%web_protocol%://%ip%:%web_port%/",
+    "dependencies": [
+      {
+        "js-controller": ">=3.1.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.0"
+      }
+    ],
+    "authors": [
+      {
+        "name": "bluefox",
+        "email": "dogafox@gmail.com"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
+      }
+    },
+    "tier": 3
+  },
+  "native": {
+    "port": 8082,
+    "auth": false,
+    "secure": false,
+    "bind": "0.0.0.0",
+    "cache": false,
+    "socketio": "",
+    "simpleapi": false,
+    "defaultUser": "admin",
+    "ttl": 3600,
+    "certPublic": "",
+    "certPrivate": "",
+    "certChained": "",
+    "addUserName": false,
+    "forceWebSockets": false,
+    "whiteListEnabled": false,
+    "leEnabled": false,
+    "leUpdate": false,
+    "leCheckPort": 80,
+    "loginBackgroundColor": "",
+    "loginBackgroundImage": false,
+    "basicAuth": false,
+    "disableExtensions": false,
+    "disableStates": false,
+    "disableFilesObjects": false,
+    "defaultRedirect": ""
+  },
+  "objects": [
+    {
+      "_id": "connected",
+      "type": "info",
+      "common": {
+        "name": "Info about connected socket clients",
+        "type": "string",
+        "read": true,
+        "write": false
+      }
+    }
+  ],
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for background image",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "connected",
+      "type": "state",
+      "common": {
+        "role": "text",
+        "name": "Active instances",
+        "type": "string",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    }
+  ]
 }
