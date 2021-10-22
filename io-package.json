@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "3.4.10",
+    "version": "3.4.11",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -15,7 +15,7 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-      "3.4.10": {
+      "3.4.11": {
         "en": "Added warning, that the white list works only with the integrated socket-io interface",
         "de": "Warnung hinzugefügt, dass die Whitelist nur mit der integrierten Socket-io-Schnittstelle funktioniert",
         "ru": "Добавлено предупреждение, что белый список работает только со встроенным интерфейсом socket-io",

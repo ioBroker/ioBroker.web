@@ -203,9 +203,9 @@ function startAdapter(options) {
                         if (!promises.length || timeout) {
                             clearTimeout(timeout);
                             timeout = null;
-                            adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             webServer.server.close();
-                            adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             callback && callback();
                         }
                     });
