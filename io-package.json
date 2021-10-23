@@ -184,18 +184,6 @@
     "disableFilesObjects": false,
     "defaultRedirect": ""
   },
-  "objects": [
-    {
-      "_id": "connected",
-      "type": "info",
-      "common": {
-        "name": "Info about connected socket clients",
-        "type": "string",
-        "read": true,
-        "write": false
-      }
-    }
-  ],
   "instanceObjects": [
     {
       "_id": "",
@@ -207,14 +195,23 @@
       "native": {}
     },
     {
-      "_id": "connected",
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
       "type": "state",
       "common": {
-        "role": "text",
-        "name": "Active instances",
+        "role": "indicator.connected",
+        "name": "Info about connected socket clients",
         "type": "string",
         "read": true,
-        "write": false
+        "write": false,
+        "def": ""
       },
       "native": {}
     }

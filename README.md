@@ -83,6 +83,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Fixed the warning about non existing object
+ 
 ### 3.4.11 (2021-10-22)
 * (bluefox) Added warning, that the white list works only with the integrated socket-io interface
 
