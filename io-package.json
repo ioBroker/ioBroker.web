@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "3.4.11",
+    "version": "3.4.12",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -15,6 +15,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "3.4.12": {
+        "en": "Fixed the warning about non existing object",
+        "de": "Die Warnung über nicht vorhandenes Objekt wurde behoben",
+        "ru": "Исправлено предупреждение о несуществующем объекте",
+        "pt": "Corrigido o aviso sobre objeto não existente",
+        "nl": "De waarschuwing over een niet-bestaand object opgelost",
+        "fr": "Correction de l'avertissement concernant l'objet non existant",
+        "it": "Risolto l'avviso relativo all'oggetto non esistente",
+        "es": "Se corrigió la advertencia sobre un objeto no existente.",
+        "pl": "Naprawiono ostrzeżenie o nieistniejącym obiekcie",
+        "zh-cn": "修复了关于不存在对象的警告"
+      },
       "3.4.11": {
         "en": "Added warning, that the white list works only with the integrated socket-io interface",
         "de": "Warnung hinzugefügt, dass die Whitelist nur mit der integrierten Socket-io-Schnittstelle funktioniert",
@@ -86,18 +98,6 @@
         "es": "corregir la dependencia del administrador porque desde 3.4.2 se requiere Admin 5.1",
         "pl": "napraw zależność administratora, ponieważ od 3.4.2 wymagany jest Admin 5.1 5.1",
         "zh-cn": "修复管理员依赖，因为 3.4.2 Admin 5.1 是必需的"
-      },
-      "3.4.4": {
-        "en": "Fix missing www files",
-        "de": "Fehlende WWW-Dateien beheben",
-        "ru": "Исправить отсутствующие файлы www",
-        "pt": "Corrigir arquivos www ausentes",
-        "nl": "Herstel ontbrekende www-bestanden",
-        "fr": "Correction des fichiers www manquants",
-        "it": "Correggi i file www mancanti",
-        "es": "Corregir archivos www faltantes",
-        "pl": "Napraw brakujące pliki www",
-        "zh-cn": "修复丢失的 www 文件"
       }
     },
     "desc": {
