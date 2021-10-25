@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "3.4.12",
+    "version": "3.4.13",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -15,6 +15,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "3.4.13": {
+        "en": "Fixed the connection indication",
+        "de": "Verbindungsanzeige behoben",
+        "ru": "Исправлена индикация подключения",
+        "pt": "Corrigida a indicação de conexão",
+        "nl": "De verbindingsindicatie gerepareerd",
+        "fr": "Correction de l'indication de connexion",
+        "it": "Risolto il problema con l'indicazione di connessione",
+        "es": "Se corrigió la indicación de conexión.",
+        "pl": "Naprawiono wskazanie połączenia",
+        "zh-cn": "修复了连接指示"
+      },
       "3.4.12": {
         "en": "Fixed the warning about non existing object",
         "de": "Die Warnung über nicht vorhandenes Objekt wurde behoben",
@@ -86,18 +98,6 @@
         "es": "Se corrigió el pequeño error de la GUI de configuración.",
         "pl": "Poprawiono mały błąd GUI konfiguracji",
         "zh-cn": "更正了小的配置 GUI 错误"
-      },
-      "3.4.5": {
-        "en": "fix admin dependency because since 3.4.2 Admin 5.1 is required",
-        "de": "Admin-Abhängigkeit behoben, da seit 3.4.2 Admin 5.1 erforderlich ist",
-        "ru": "исправить зависимость администратора, потому что с версии 3.4.2 требуется Admin 5.1",
-        "pt": "consertar a dependência do administrador porque desde 3.4.2 Admin 5.1 é necessário",
-        "nl": "fix admin afhankelijkheid omdat sinds 3.4.2 Admin 5.1 is vereist",
-        "fr": "correction de la dépendance de l'administrateur car depuis 3.4.2 Admin 5.1 est requis",
-        "it": "correggere la dipendenza dell'amministratore perché da 3.4.2 Admin 5.1 è richiesto",
-        "es": "corregir la dependencia del administrador porque desde 3.4.2 se requiere Admin 5.1",
-        "pl": "napraw zależność administratora, ponieważ od 3.4.2 wymagany jest Admin 5.1 5.1",
-        "zh-cn": "修复管理员依赖，因为 3.4.2 Admin 5.1 是必需的"
       }
     },
     "desc": {
