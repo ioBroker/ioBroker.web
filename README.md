@@ -83,7 +83,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### 3.4.14 (2021-11-15)
+### __WORK IN PROGRESS__
 * (bluefox) Fixed error with unload of web extentions
 
 ### 3.4.13 (2021-10-25)
