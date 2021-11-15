@@ -194,7 +194,7 @@ function startAdapter(options) {
                         webServer.server.close();
                         adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                         callback();
-                    });
+                    }, 200);
                 }
 
                 Promise.all(promises)
