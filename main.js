@@ -190,10 +190,10 @@ function startAdapter(options) {
                     timeout = setTimeout(() => {
                         timeout = null;
                         adapter.log.warn(`Timeout by termination of web-extensions!`);
-                        adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                        webServer.server.close();
-                        adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                        callback();
+                        webServer && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        webServer && webServer.server && webServer.server.close();
+                        webServer && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        callback && callback();
                     }, 500);
                 }
 
@@ -203,9 +203,9 @@ function startAdapter(options) {
                         if (!promises.length || timeout) {
                             clearTimeout(timeout);
                             timeout = null;
-                            webServer && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                            webServer.server.close();
-                            webServer && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && webServer.server && webServer.server.close();
+                            webServer && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             callback && callback();
                         }
                     });
