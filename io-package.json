@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "3.4.14",
+    "version": "3.4.15",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -15,6 +15,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "3.4.15": {
+        "en": "Fixed error with unload of web extentions",
+        "de": "Fehler beim Entladen von Weberweiterungen behoben",
+        "ru": "Исправлена ошибка с выгрузкой веб-расширений",
+        "pt": "Erro corrigido com descarregamento de extensões da web",
+        "nl": "Fout opgelost bij het verwijderen van webextensies",
+        "fr": "Correction d'une erreur lors du déchargement des extensions Web",
+        "it": "Risolto errore con lo scaricamento delle estensioni web",
+        "es": "Se corrigió el error con la descarga de extensiones web.",
+        "pl": "Naprawiono błąd z wyładowaniem rozszerzeń sieci",
+        "zh-cn": "修复了卸载 web 扩展的错误"
+      },
       "3.4.14": {
         "en": "Fixed error with unload of web extentions",
         "de": "Fehler beim Entladen von Weberweiterungen behoben",
@@ -86,18 +98,6 @@
         "es": "agregó la opción de redirección predeterminada",
         "pl": "dodano domyślną opcję przekierowania",
         "zh-cn": "添加了默认重定向选项"
-      },
-      "3.4.7": {
-        "en": "Corrected the small config GUI error",
-        "de": "Der kleine Fehler in der Konfigurations-GUI wurde behoben",
-        "ru": "Исправлена небольшая ошибка графического интерфейса конфигурации.",
-        "pt": "Corrigido o pequeno erro de configuração da GUI",
-        "nl": "De kleine GUI-fout in de configuratie gecorrigeerd",
-        "fr": "Correction de la petite erreur de l'interface graphique de configuration",
-        "it": "Corretto il piccolo errore della GUI di configurazione",
-        "es": "Se corrigió el pequeño error de la GUI de configuración.",
-        "pl": "Poprawiono mały błąd GUI konfiguracji",
-        "zh-cn": "更正了小的配置 GUI 错误"
       }
     },
     "desc": {
