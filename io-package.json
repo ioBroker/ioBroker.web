@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "3.4.15",
+    "version": "3.4.16",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -15,6 +15,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "3.4.16": {
+        "en": "(bluefox/Apollon77) Fixed error with unload of web extensions",
+        "de": "(bluefox/Apollon77) Fehler beim Entladen von Web-Erweiterungen behoben",
+        "ru": "(bluefox / Apollon77) Исправлена ошибка с выгрузкой веб-расширений",
+        "pt": "(bluefox / Apollon77) Corrigido erro com descarregamento de extensões da web",
+        "nl": "(bluefox/Apollon77) Fout opgelost bij het verwijderen van webextensies",
+        "fr": "(bluefox/Apollon77) Correction d'une erreur lors du déchargement des extensions Web",
+        "it": "(bluefox/Apollon77) Risolto errore con lo scaricamento delle estensioni web",
+        "es": "(bluefox / Apollon77) Se corrigió el error con la descarga de extensiones web",
+        "pl": "(bluefox/Apollon77) Naprawiono błąd z wyładowaniem rozszerzeń internetowych",
+        "zh-cn": "(bluefox/Apollon77) 修复了卸载 web 扩展的错误"
+      },
       "3.4.13": {
         "en": "Fixed the connection indication",
         "de": "Verbindungsanzeige behoben",
