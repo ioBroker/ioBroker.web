@@ -2,6 +2,7 @@
   "common": {
     "name": "web",
     "version": "3.4.16",
+    "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
