@@ -3,7 +3,9 @@ If some adapter want to be available under same port as web adapter, it should i
 
 First, it must have a `common.webExtension` flag in `io-package.json` file that points to thw web extension file. Like `"webExtension": "lib/web.js"`.
 
-Second, the file `lib/web.js` (or whatever) must exist, and it must export a class.
+Second, `common.native.webInstance` flag in `io-package.json` has to point to the instance name of the web-adapter for which the extension should be loaded. Or simply load it for all instances via `"webInstance": "*"`.
+
+Third, the file `lib/web.js` (or whatever) must exist, and it must export a class.
 ```
 /**
  * Web extension example
@@ -60,3 +62,4 @@ Following adapters support web-extensions:
 - Cameras: https://github.com/ioBroker/ioBroker.cameras/blob/master/lib/web.js
 - Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/lib/simpleapi.js#L73
 - Proxy: https://github.com/ioBroker/ioBroker.proxy/blob/master/lib/proxy.js#L20
+- Eufy-Security: https://github.com/bropat/ioBroker.eufy-security/blob/master/src/lib/web.ts (Typescript-implementation)
