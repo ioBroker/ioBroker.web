@@ -11,6 +11,7 @@ const LE          = require(utils.controllerDir + '/lib/letsencrypt.js');
 const tools       = require(utils.controllerDir + '/lib/tools.js');
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
+const compression = require('compression');
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 
@@ -1001,6 +1002,7 @@ async function initWebServer(settings) {
             return null;
         }
         server.app = express();
+        server.app.use(compression());
 
         server.app.disable('x-powered-by');
         // enable use of i-frames together with HTTPS
