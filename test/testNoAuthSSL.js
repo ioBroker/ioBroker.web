@@ -42,8 +42,8 @@ describe('Test WEB(' + ((process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SS
         this.timeout(600000); // because of first install from npm
         setup.adapterStarted = false;
 
-        setup.setupController(function () {
-            const config = setup.getAdapterConfig();
+        setup.setupController(async function () {
+            const config = await setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
@@ -54,7 +54,7 @@ describe('Test WEB(' + ((process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SS
             config.native.certPublic  = config.native.secure ? 'defaultPublic' : '';
             config.native.certPrivate = config.native.secure ? 'defaultPrivate' : '';
 
-            setup.setAdapterConfig(config.common, config.native);
+            await setup.setAdapterConfig(config.common, config.native);
 
             setup.startController(true, null, null, (_objects, _states) => {
                 objects = _objects;

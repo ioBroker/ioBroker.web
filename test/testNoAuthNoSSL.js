@@ -42,7 +42,7 @@ describe('Test WEB', function() {
         setup.adapterStarted = false;
 
         setup.setupController(() => {
-            const config = setup.getAdapterConfig();
+            const config = await setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
@@ -53,7 +53,7 @@ describe('Test WEB', function() {
             config.native.certPublic  = 'defaultPublic';
             config.native.certPrivate = 'defaultPrivate';
 
-            setup.setAdapterConfig(config.common, config.native);
+            await setup.setAdapterConfig(config.common, config.native);
 
             setup.startController(true, null, null, (_objects, _states) => {
                 objects = _objects;
