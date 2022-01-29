@@ -73,7 +73,7 @@ function npmInstall() {
         child.on('exit', (code /* , signal */) => {
             // code 1 is strange error that cannot be explained. Everything is installed but error :(
             if (code && code !== 1) {
-                reject('Cannot install: ' + code);
+                reject(new Error('Cannot install: ' + code));
             } else {
                 console.log(`"${cmd} in ${cwd} finished.`);
                 // command succeeded
@@ -113,14 +113,14 @@ function build() {
         }
         if (!fs.existsSync(script)) {
             console.error('Cannot find execution file: ' + script);
-            reject('Cannot find execution file: ' + script);
+            reject(new Error('Cannot find execution file: ' + script));
         } else {
             const child = cp.fork(script, [], options);
             child.stdout.on('data', data => console.log(data.toString()));
             child.stderr.on('data', data => console.log(data.toString()));
             child.on('close', code => {
                 console.log(`child process exited with code ${code}`);
-                code ? reject('Exit code: ' + code) : resolve();
+                code ? reject(new Error('Exit code: ' + code)) : resolve();
             });
         }
     });

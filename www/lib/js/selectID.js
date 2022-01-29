@@ -3637,7 +3637,7 @@ function filterChanged(e) {
                     });
 
                     data.socket.on('connect', function () {
-                        if (connectTimeout) clearTimeout(connectTimeout);
+                        connectTimeout && clearTimeout(connectTimeout);
                         this.emit('name', data.connCfg.socketName || 'selectId');
                         this.emit('getObjects', function (err, res) {
                             data.objects = res;

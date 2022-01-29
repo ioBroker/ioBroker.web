@@ -19,8 +19,6 @@ let session;// =           require('express-session');
 let cookieParser;// =      require('cookie-parser');
 let bodyParser;// =        require('body-parser');
 let AdapterStore;// =      require(__dirname + '/../../lib/session.js')(session);
-//let passportSocketIo;// =  require(__dirname + "/lib/passport.socketio.js");
-//let password;// =          require(__dirname + '/../../lib/password.js');
 let passport;// =          require('passport');
 let LocalStrategy;// =     require('passport-local').Strategy;
 let flash;// =             require('connect-flash'); // TODO report error to user
@@ -39,6 +37,9 @@ const webPreSettings = {};
 const webByVersion = {};
 let loginPage    = null;
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\\s?]/g; // with space
+
+const LOGIN_PAGE = '/login/index.html';
+const wwwDir = 'www';
 
 function getAppName() {
     const parts = __dirname.replace(/\\/g, '/').split('/');
@@ -299,7 +300,6 @@ function updatePreSettings(obj) {
     }
 }
 
-
 function getExtensionsAndSettings(callback) {
     adapter.getObjectView('system', 'instance', null, (err, doc) => {
         if (err) {
@@ -485,11 +485,11 @@ function resolveLink(link, instanceObj, instancesMap) {
             if (!instances) {
                 instances = [];
                 // TODO !
-                for (let inst = 0; inst < 10; inst++) {
-                    if (that.main.objects['system.adapter.' + adptr + '.' + inst]) {
+                /*for (let inst = 0; inst < 10; inst++) {
+                    if (that.main.objects[`system.adapter.${adptr}.${inst}`]) {
                         instances.push(inst);
                     }
-                }
+                }*/
             }
 
             for (let i = 0; i < instances.length; i++) {
@@ -517,7 +517,7 @@ function resolveLink(link, instanceObj, instancesMap) {
     return result || link;
 }
 
-function replaceInLink(link, instanceObj, instances) {
+/*function replaceInLink(link, instanceObj, instances) {
     if (typeof link === 'object') {
         const links = JSON.parse(JSON.stringify(link));
         let first = '';
@@ -530,14 +530,14 @@ function replaceInLink(link, instanceObj, instances) {
     } else {
         return resolveLink(link, instanceObj, instances);
     }
-}
+}*/
 
 function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list) {
     if (welcomeScreen) {
         welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen));
         if (Array.isArray(welcomeScreen)) {
             for (let w = 0; w < welcomeScreen.length; w++) {
-                // temporary disabled for non pro
+                // temporary disabled for non-pro
                 if (!isPro && welcomeScreen[w].name === 'vis editor') {
                     continue;
                 }
@@ -739,11 +739,11 @@ function getListOfAllAdapters(callback) {
                     }
                 }
 
-                if (!indexHtml && !fs.existsSync(__dirname + '/www/index.html')) {
-                    return callback(null, `${__dirname}/www/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`);
+                if (!indexHtml && !fs.existsSync(`${__dirname}/${wwwDir}/index.html`)) {
+                    return callback(null, `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`);
                 }
 
-                indexHtml = indexHtml || fs.readFileSync(`${__dirname}/www/index.html`).toString();
+                indexHtml = indexHtml || fs.readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
 
                 list.sort((a, b) => {
                     const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
@@ -838,7 +838,7 @@ function prepareLoginTemplate() {
         '            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
         '            background-size: 50px 50px;\n'
     ;
-    const template = fs.readFileSync(__dirname + '/www/login/index.html').toString('utf8');
+    const template = fs.readFileSync(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8');
     if (adapter.config.loginBackgroundColor) {
         def = `background-color: ${adapter.config.loginBackgroundColor};\n`;
     }
@@ -853,13 +853,12 @@ function initAuth(server, settings) {
     cookieParser =     require('cookie-parser');
     bodyParser =       require('body-parser');
     AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
-    // passportSocketIo = require('passport.socketio');
     // password =         require(utils.controllerDir + '/lib/password.js');
     passport =         require('passport');
     LocalStrategy =    require('passport-local').Strategy;
     flash =            require('connect-flash'); // TODO report error to user
 
-    store = new AdapterStore({adapter: adapter});
+    store = new AdapterStore({adapter});
 
     passport.use(new LocalStrategy(
         function (username, password, done) {
@@ -915,6 +914,7 @@ function initAuth(server, settings) {
             });
         }
     ));
+
     passport.serializeUser((user, done) => done(null, user));
 
     passport.deserializeUser((user, done) => done(null, user));
@@ -926,11 +926,11 @@ function initAuth(server, settings) {
     server.app.use(bodyParser.json());
     server.app.use(bodyParser.text());
     server.app.use(session({
-        secret:            secret,
+        secret,
         saveUninitialized: true,
         resave:            true,
-        cookie:            {maxAge: settings.ttl * 1000},
-        store:             store
+        cookie:            {maxAge: settings.ttl * 1000}, // default TTL
+        store
     }));
     server.app.use(passport.initialize());
     server.app.use(passport.session());
@@ -988,7 +988,10 @@ async function initWebServer(settings) {
     adapter.subscribeForeignObjects('system.config');
 
     settings.ttl = parseInt(settings.ttl, 10) || 3600;
-    if (!settings.whiteListEnabled && settings.whiteListSettings) {
+
+    if (settings.ttl < 30) {
+        settings.ttl = 30;
+    }    if (!settings.whiteListEnabled && settings.whiteListSettings) {
         delete settings.whiteListSettings;
     }
 
@@ -1014,6 +1017,26 @@ async function initWebServer(settings) {
             next(); // http://expressjs.com/guide.html#passing-route control
         });
         */
+
+        // replace socket.io
+        server.app.use((req, res, next) => {
+            if (socketIoFile !== false && (req.url.startsWith('socket.io.js') || req.url.match(/\/socket\.io\.js(\?.*)?$/))) {
+                if (socketIoFile) {
+                    res.contentType('text/javascript');
+                    return res.status(200).send(socketIoFile);
+                } else {
+                    socketIoFile = fs.readFileSync(path.join(__dirname, './www/lib/js/socket.io.js'));
+                    if (socketIoFile) {
+                        res.contentType('text/javascript');
+                        return res.status(200).send(socketIoFile);
+                    } else {
+                        socketIoFile = false;
+                        return res.status(404).end();
+                    }
+                }
+            }
+            next();
+        });
 
         if (settings.auth) {
             initAuth(server, settings);
@@ -1076,7 +1099,7 @@ async function initWebServer(settings) {
                         if (parts[0] === 'lib') {
                             return res.status(200).send('');
                         } else {
-                            return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                            return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
                         }
                     } else if (adapter.config.basicAuth) {
                         // if basic auth active, we tell it by sending header with 401 status
@@ -1103,9 +1126,9 @@ async function initWebServer(settings) {
                         parts.shift();
                         // const ref = parts.join('/');
                         if (parts[0] === 'lib') {
-						    return res.status(200).send('');
+                            return res.status(200).send('');
                         } else {
-                            return res.status(200).send('document.location="/login/index.html?href=" + encodeURI(location.href.replace(location.origin, ""));');
+                            return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
                         }
                     } else if (adapter.config.basicAuth) {
                         // if basic auth active, we tell it by sending header with 401 status
@@ -1122,7 +1145,10 @@ async function initWebServer(settings) {
                 let redirect = '../';
                 let parts;
                 req.body = req.body || {};
+                // const isDev = req.url.includes('?dev&');
+
                 const origin = req.body.origin || '?href=%2F';
+
                 if (origin) {
                     parts = origin.split('=');
                     if (parts.length > 1 && parts[1]) {
@@ -1138,7 +1164,7 @@ async function initWebServer(settings) {
                 req.body.username = (req.body.username || '').toString();
                 req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
 
-                if (req.body.username && settings.addUserName && redirect.indexOf('?') === -1) {
+                if (req.body.username && settings.addUserName && !redirect.includes('?')) {
                     parts = redirect.split('#');
                     parts[0] += '?' + req.body.username;
                     redirect = parts.join('#');
@@ -1148,8 +1174,13 @@ async function initWebServer(settings) {
             });
 
             server.app.get('/logout', (req, res) => {
+                const isDev = req.url.includes('?dev');
                 req.logout();
-                res.redirect('/login/index.html');
+                if (isDev) {
+                    res.redirect('http://localhost:3000/index.html?login');
+                } else {
+                    res.redirect(LOGIN_PAGE);
+                }
             });
 
             // route middleware to make sure a user is logged in
@@ -1157,7 +1188,7 @@ async function initWebServer(settings) {
                 // return favicon always
                 if (req.originalUrl.endsWith('favicon.ico')) {
                     res.set('Content-Type', 'image/x-icon');
-                    return res.send(fs.readFileSync(__dirname + '/www/login/favicon.ico'));
+                    return res.send(fs.readFileSync(`${__dirname}/${wwwDir}/login/favicon.ico`));
                 }
                 // if cache.manifest got back not 200 it makes an error
                 if (req.isAuthenticated() ||
@@ -1184,7 +1215,43 @@ async function initWebServer(settings) {
                     authenticate(req, res, next, redirect, origin);
                 } else {
                     // not logged in yet, redirect, auto login or send 401 if basicAuth activated
-                    autoLogonOrRedirectToLogin(req, res, next, `/login/index.html?href=${encodeURIComponent(req.originalUrl)}`);
+                    autoLogonOrRedirectToLogin(req, res, next, `${LOGIN_PAGE}?href=${encodeURIComponent(req.originalUrl)}`);
+                }
+            });
+
+            // todo
+            server.app.get('/prolongSession', (req, res, next) => {
+                if (req.isAuthenticated()) {
+                    req.session.touch();
+                    const parts = req.headers.cookie.split(';');
+                    const cookie = {};
+                    parts.forEach(item => {
+                        const [name, value] = item.split('=');
+                        cookie[name.trim()] = value;
+                    });
+
+                    if (cookie['connect.sid']) {
+                        store && store.get(req.session.id, (err, obj) => {
+                            // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
+                            if (obj) {
+                                const expires = new Date();
+                                //expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
+
+                                obj.cookie.expires = expires.toISOString();
+                                console.log('Session ' + req.session.id + ' expires on ' + obj.cookie.expires);
+
+                                store.set(req.session.id, obj);
+                                //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
+                                res.send(obj.cookie.expires);
+                            } else {
+                                res.status(501).send('cannot prolong');
+                            }
+                        });
+                    } else {
+                        res.status(501).send('cannot prolong');
+                    }
+                } else {
+                    autoLogonOrRedirectToLogin(req, res, next, LOGIN_PAGE + '?href=' + encodeURIComponent(req.originalUrl));
                 }
             });
         } else {
@@ -1274,12 +1341,12 @@ async function initWebServer(settings) {
                 server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
             }
         } catch (err) {
-            adapter.log.error(`Cannot create webserver: ${err}`);
+            adapter.log.error(`Cannot create web-server: ${err}`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
         if (!server.server) {
-            adapter.log.error(`Cannot create webserver`);
+            adapter.log.error(`Cannot create web-server`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
@@ -1337,8 +1404,9 @@ async function initWebServer(settings) {
         socketSettings.forceWebSockets = settings.forceWebSockets || false;
 
         try {
-            const IOSocket = require(`${utils.appName}.socketio/lib/socket.js`);
-            server.io = new IOSocket(server.server, socketSettings, adapter);
+            const IOSocket = require(utils.appName + '.socketio/lib/socket.js');
+            // const IOSocket = require('./lib/socket.js'); // DEBUG
+            server.io = new IOSocket(server.server, socketSettings, adapter, null, store);
         } catch (err) {
             adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');
         }
@@ -1499,7 +1567,7 @@ async function initWebServer(settings) {
                                 }
                             } catch (e) {
                                 try {
-                                    socketIoFile = fs.readFileSync(`${__dirname}/www/lib/js/socket.io.js`);
+                                    socketIoFile = fs.readFileSync(`${__dirname}/${wwwDir}/lib/js/socket.io.js`);
                                 } catch (e) {
                                     adapter.log.error(`Cannot read socket.io.js: ${e}`);
                                     socketIoFile = false;

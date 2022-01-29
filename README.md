@@ -9,7 +9,6 @@
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/web/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
 
-
 Web server on the base of Node.js and express to read the files from ioBroker DB
 
 **This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** 
@@ -85,6 +84,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 ## Changelog
 ### __WORK IN PROGRESS__
 * (jogibear9988) Add http compression support
+* (bluefox) Used new socketio adapter with only web sockets 
 
 ### 3.4.16 (2021-11-15)
 * (bluefox/Apollon77) Fixed error with unload of web extensions
@@ -93,7 +93,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 * (bluefox) Fixed the connection indication
 
 ### 3.4.12 (2021-10-23)
-* (bluefox) Fixed the warning about non existing object
+* (bluefox) Fixed the warning about non-existing object
 
 ### 3.4.11 (2021-10-22)
 * (bluefox) Added warning, that the white list works only with the integrated socket-io interface
