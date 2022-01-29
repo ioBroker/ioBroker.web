@@ -6,3 +6,5 @@ admin/i18n/flat.txt
 admin/i18n/*/translations.json
 iob_npm.done
 package-lock.json
+/lib/socket.js
+/lib/ws.js
