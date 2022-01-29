@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "3.4.16",
+    "version": "4.0.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.0.0": {
+        "en": "Add http compression support\nUsed new socketio adapter with only web sockets",
+        "de": "Unterstützung für HTTP-Komprimierung hinzufügen\nGebrauchter neuer Socketio-Adapter mit nur Web-Sockets",
+        "ru": "Добавить поддержку сжатия http\nИспользуется новый адаптер сокетио только с веб-сокетами",
+        "pt": "Adicionar suporte à compactação http\nUsado novo adaptador socketio com apenas soquetes web",
+        "nl": "Ondersteuning voor http-compressie toevoegen\nGebruikte nieuwe socketio adapter met alleen web sockets",
+        "fr": "Ajouter la prise en charge de la compression http\nNouvel adaptateur socketio utilisé avec uniquement des prises Web",
+        "it": "Aggiungi il supporto per la compressione http\nAdattatore socketio nuovo usato con solo prese web",
+        "es": "Agregar soporte de compresión http\nAdaptador socketio nuevo usado con solo enchufes web",
+        "pl": "Dodaj obsługę kompresji http\nUżywany nowy adapter socketio tylko z gniazdami sieciowymi",
+        "zh-cn": "添加http压缩支持\n使用了新的 socketio 适配器，只有网络套接字"
+      },
       "3.4.16": {
         "en": "(bluefox/Apollon77) Fixed error with unload of web extensions",
         "de": "(bluefox/Apollon77) Fehler beim Entladen von Web-Erweiterungen behoben",
