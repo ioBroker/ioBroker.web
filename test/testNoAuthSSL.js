@@ -1,7 +1,6 @@
 'use strict';
 //const expect  = require('chai').expect;
 const setup   = require(__dirname + '/lib/setup');
-const request = require('request');
 const tests   = require(__dirname + '/lib/tests');
 
 let objects = null;
@@ -76,7 +75,7 @@ describe('Test WEB(' + ((process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SS
 
         setup.stopController(function (normalTerminated) {
             console.log('Adapter normal terminated: ' + normalTerminated);
-            done();
+            setTimeout(done, 3000);
         });
     });
 });

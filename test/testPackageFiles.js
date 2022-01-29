@@ -55,16 +55,6 @@ describe('Test package.json and io-package.json', () => {
             console.log('WARNING: titleLang is not existing in io-package.json. Please add');
             console.log();
         }
-        if (
-            ioPackage.common.title.indexOf('iobroker') !== -1 ||
-            ioPackage.common.title.indexOf('ioBroker') !== -1 ||
-            ioPackage.common.title.indexOf('adapter') !== -1 ||
-            ioPackage.common.title.indexOf('Adapter') !== -1
-        ) {
-            console.log('WARNING: title contains Adapter or ioBroker. It is clear anyway, that it is adapter for ioBroker.');
-            console.log();
-        }
-
         if (!ioPackage.common.controller && !ioPackage.common.onlyWWW && !ioPackage.common.noConfig) {
             if (!ioPackage.common.materialize || !fs.existsSync(__dirname + '/../admin/index_m.html') || !fs.existsSync(__dirname + '/../gulpfile.js')) {
                 console.log('WARNING: Admin3 support is missing! Please add it');

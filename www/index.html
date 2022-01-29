@@ -137,14 +137,14 @@
 
                     text +=
                         '<div class="adapter-tile" onclick="location.href = \'' + list[i].link + '\'">' +
-                            '<div class="adapter-link" >' +
-                                '<div class="adapter-main" style="background-image: url(\'' + list[i].img + '\')">' +
-                                    '<div class="adapter-overlay"></div>' +
-                                '</div>' +
-                                '<div class="adapter-footer">' +
-                                    '<p>' + name + '</p>' +
-                                '</div>' +
-                            '</div>' +
+                        '<div class="adapter-link" >' +
+                        '<div class="adapter-main" style="background-image: url(\'' + list[i].img + '\')">' +
+                        '<div class="adapter-overlay"></div>' +
+                        '</div>' +
+                        '<div class="adapter-footer">' +
+                        '<p>' + name + (list[i].instance !== undefined ? '.' + list[i].instance : '') + '</p>' +
+                        '</div>' +
+                        '</div>' +
                         '</div>';
                 }
             }

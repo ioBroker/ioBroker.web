@@ -1,7 +1,6 @@
 'use strict';
 const expect  = require('chai').expect;
 const setup   = require(__dirname + '/lib/setup');
-const request = require('request');
 const tests   = require(__dirname + '/lib/tests');
 
 let objects = null;
@@ -71,11 +70,11 @@ describe('Test WEB', function() {
     initTests();
 
     after('Test WEB: Stop js-controller', function (done) {
-        this.timeout(6000);
+        this.timeout(9000);
 
         setup.stopController((normalTerminated) => {
             console.log('Adapter normal terminated: ' + normalTerminated);
-            done();
+            setTimeout(done, 3000);
         });
     });
 });

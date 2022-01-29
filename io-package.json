@@ -1,244 +1,208 @@
 {
-    "common": {
-        "name": "web",
-        "version": "3.0.12",
-        "title": "WEB server",
-        "titleLang": {
-            "en": "WEB server",
-            "de": "WEB-Server",
-            "ru": "Веб сервер",
-            "pt": "Servidor web",
-            "nl": "Web Server",
-            "fr": "Serveur Web",
-            "it": "Server web",
-            "es": "Servidor web",
-            "pl": "Serwer internetowy",
-            "zh-cn": "Web服务器"
-        },
-        "news": {
-            "3.0.12": {
-                "en": "Updated used npm libraries",
-                "de": "Aktualisierte gebrauchte npm-Bibliotheken",
-                "ru": "Обновлены используемые библиотеки npm",
-                "pt": "Bibliotecas npm usadas atualizadas",
-                "nl": "Bijgewerkte gebruikte npm-bibliotheken",
-                "fr": "Bibliothèques npm utilisées mises à jour",
-                "it": "Librerie npm usate aggiornate",
-                "es": "Bibliotecas npm usadas actualizadas",
-                "pl": "Zaktualizowano używane biblioteki npm",
-                "zh-cn": "更新了使用过的npm库"
-            },
-            "3.0.10": {
-                "en": "socketio pingTimeout and pinInterval increased to prevent too fast reconnections and bigger visualizations",
-                "de": "Socketio PingTimeout und PinInterval wurden erhöht, um zu schnelle Wiederverbindungen und größere Visualisierungen zu vermeiden",
-                "ru": "socketio pingTimeout и pinInterval увеличены, чтобы предотвратить слишком быстрое переподключение и большую визуализацию",
-                "pt": "socketio pingTimeout e pinInterval aumentados para evitar reconexões muito rápidas e visualizações maiores",
-                "nl": "socketio pingTimeout en pinInterval verhoogd om te snelle herverbindingen en grotere visualisaties te voorkomen",
-                "fr": "socketio pingTimeout et pinInterval augmentés pour éviter des reconnexions trop rapides et des visualisations plus importantes",
-                "it": "socketio pingTimeout e pinInterval aumentati per impedire riconnessioni troppo veloci e visualizzazioni più grandi",
-                "es": "socketio pingTimeout y pinInterval aumentaron para evitar reconexiones demasiado rápidas y visualizaciones más grandes",
-                "pl": "Zwiększono wartość socketio pingTimeout i pinInterval, aby zapobiec zbyt szybkim ponownym połączeniom i większym wizualizacjom",
-                "zh-cn": "增加了socketio pingTimeout和pinInterval，以防止重新连接速度过快和较大的可视化效果"
-            },
-            "3.0.9": {
-                "en": "Upgrade socketio adapter version\nOptimize error handling for webserver initialization again",
-                "de": "Aktualisieren Sie die Version des Socketio-Adapters\nOptimieren Sie die Fehlerbehandlung für die Webserver-Initialisierung erneut",
-                "ru": "Обновите версию адаптера socketio\nОптимизируйте обработку ошибок для инициализации веб-сервера снова",
-                "pt": "Atualizar a versão do adaptador socketio\nOtimize o tratamento de erros para a inicialização do servidor da web novamente",
-                "nl": "Upgrade socketio adapterversie\nOptimaliseer de foutafhandeling voor het opnieuw initialiseren van de webserver",
-                "fr": "Mettre à niveau la version de l'adaptateur socketio\nOptimiser à nouveau la gestion des erreurs pour l'initialisation du serveur Web",
-                "it": "Aggiorna la versione dell'adattatore socketio\nOttimizza nuovamente la gestione degli errori per l'inizializzazione del server web",
-                "es": "Actualizar la versión del adaptador socketio\nOptimizar el manejo de errores para la inicialización del servidor web nuevamente",
-                "pl": "Zaktualizuj wersję adaptera socketio\nPonownie zoptymalizuj obsługę błędów w celu inicjalizacji serwera WWW",
-                "zh-cn": "升级socketio适配器版本\n再次优化错误处理以进行Web服务器初始化"
-            },
-            "3.0.8": {
-                "en": "webserver initialization optimized again to prevent errors with invalid certificates",
-                "de": "Die Webserver-Initialisierung wurde erneut optimiert, um Fehler mit ungültigen Zertifikaten zu vermeiden",
-                "ru": "Инициализация веб-сервера снова оптимизирована для предотвращения ошибок с недействительными сертификатами",
-                "pt": "inicialização do servidor da web otimizada novamente para evitar erros com certificados inválidos",
-                "nl": "de initialisatie van de webserver is opnieuw geoptimaliseerd om fouten met ongeldige certificaten te voorkomen",
-                "fr": "initialisation du serveur Web optimisée à nouveau pour éviter les erreurs avec des certificats invalides",
-                "it": "inizializzazione del server web nuovamente ottimizzata per prevenire errori con certificati non validi",
-                "es": "La inicialización del servidor web se optimizó nuevamente para evitar errores con certificados no válidos",
-                "pl": "inicjalizacja serwera WWW została ponownie zoptymalizowana, aby zapobiec błędom z nieprawidłowymi certyfikatami",
-                "zh-cn": "再次优化了Web服务器的初始化，以防止证书无效而出错"
-            },
-            "3.0.7": {
-                "en": "errors on webserver initialization are handled properly",
-                "de": "Fehler bei der Webserver-Initialisierung werden ordnungsgemäß behandelt",
-                "ru": "ошибки при инициализации веб-сервера обрабатываются правильно",
-                "pt": "erros na inicialização do servidor da web são tratados adequadamente",
-                "nl": "fouten bij het initialiseren van de webserver worden correct afgehandeld",
-                "fr": "les erreurs lors de l'initialisation du serveur Web sont gérées correctement",
-                "it": "gli errori sull'inizializzazione del server web sono gestiti correttamente",
-                "es": "los errores en la inicialización del servidor web se manejan correctamente",
-                "pl": "błędy przy inicjalizacji serwera są obsługiwane poprawnie",
-                "zh-cn": "网站服务器初始化错误得到正确处理"
-            },
-            "3.0.5": {
-                "en": "fixed the sentry warnings",
-                "de": "Die Sentry-Warnungen wurden behoben",
-                "ru": "исправлены sentry предупреждения",
-                "pt": "corrigido os avisos de sentinela",
-                "nl": "de schildwachtwaarschuwingen opgelost",
-                "fr": "correction des avertissements de sentinelle",
-                "it": "risolti gli avvisi di sentinella",
-                "es": "arreglado las advertencias centinela",
-                "pl": "naprawiono ostrzeżenia wartowników",
-                "zh-cn": "修复了哨兵警告"
-            },
-            "3.0.4": {
-                "en": " js-controller 3.0 warnings prevented and added Sentry error reporting with js-controller 3.0",
-                "de": " Warnungen zu js-controller 3.0 wurden verhindert und Sentry-Fehlerberichte mit js-controller 3.0 hinzugefügt",
-                "ru": " Предупреждения js-controller 3.0 предотвращены и добавлены отчеты об ошибках Sentry с помощью js-controller 3.0",
-                "pt": " Avisos do js-controller 3.0 impedidos e adicionados relatórios de erros do Sentry com o js-controller 3.0",
-                "nl": " js-controller 3.0-waarschuwingen voorkomen en toegevoegd Sentry-foutrapportage met js-controller 3.0",
-                "fr": " avertissements js-controller 3.0 empêchés et ajout de rapports d'erreurs Sentry avec js-controller 3.0",
-                "it": " Gli avvisi di js-controller 3.0 hanno impedito e aggiunto la segnalazione degli errori di Sentry con js-controller 3.0",
-                "es": " Las advertencias de js-controller 3.0 impidieron y agregaron informes de errores de Sentry con js-controller 3.0",
-                "pl": " Zapobiegano ostrzeżeniom js-controller 3.0 i dodano raportowanie błędów Sentry w js-controller 3.0",
-                "zh-cn": " 防止js-controller 3.0警告并使用js-controller 3.0添加了Sentry错误报告"
-            },
-            "3.0.3": {
-                "en": "Web extensions were fixed",
-                "de": "Web-Erweiterungen wurden behoben",
-                "ru": "Веб-расширения были исправлены",
-                "pt": "As extensões da Web foram corrigidas",
-                "nl": "Webextensies zijn opgelost",
-                "fr": "Les extensions Web ont été corrigées",
-                "it": "Le estensioni Web sono state corrette",
-                "es": "Se corrigieron las extensiones web",
-                "pl": "Rozszerzenia sieci zostały naprawione",
-                "zh-cn": "网络扩展是固定的"
-            },
-            "3.0.1": {
-                "en": "workaround for a socket.io bug added",
-                "de": "Problemumgehung für einen socket.io-Fehler hinzugefügt",
-                "ru": "добавлено обходное решение для ошибки socket.io",
-                "pt": "solução alternativa para um bug socket.io adicionado",
-                "nl": "tijdelijke oplossing voor een socket.io-bug toegevoegd",
-                "fr": "solution de contournement pour un bug socket.io ajouté",
-                "it": "soluzione alternativa per un bug socket.io aggiunto",
-                "es": "solución alternativa para un error socket.io agregado",
-                "pl": "dodano obejście błędu socket.io",
-                "zh-cn": "解决了socket.io错误的解决方法"
-            },
-            "3.0.0": {
-                "en": "socket.io upgraded to latest version. Attention: This might break older devices like iPad 1/2!!",
-                "de": "socket.io wurde auf die neueste Version aktualisiert. Achtung: Dies unterstützt ältere Geräte wie das iPad 1/2 nicht mehr !!",
-                "ru": "socket.io обновлен до последней версии. Внимание: это может сломать старые устройства, такие как iPad 1/2!",
-                "pt": "socket.io atualizado para a versão mais recente. Atenção: Isso pode quebrar dispositivos mais antigos como o iPad 1/2 !!",
-                "nl": "socket.io opgewaardeerd naar de nieuwste versie. Let op: dit kan oudere apparaten zoals iPad 1/2 kapot maken !!",
-                "fr": "socket.io mis à niveau vers la dernière version. Attention: cela pourrait casser des appareils plus anciens comme l'iPad 1/2 !!",
-                "it": "socket.io aggiornato all'ultima versione. Attenzione: questo potrebbe rompere i dispositivi più vecchi come iPad 1/2 !!",
-                "es": "socket.io actualizado a la última versión. Atención: ¡Esto podría romper dispositivos más antiguos como iPad 1/2!",
-                "pl": "socket.io zaktualizowane do najnowszej wersji. Uwaga: może to uszkodzić starsze urządzenia, takie jak iPad 1/2 !!",
-                "zh-cn": "socket.io已升级到最新版本。注意：这可能会损坏旧设备，例如iPad 1/2！"
-            },
-            "2.4.10": {
-                "en": "Workaround for material was added ",
-                "de": "Problemumgehung für Material wurde hinzugefügt",
-                "ru": "Обходной материал для материала был добавлен",
-                "pt": "Solução alternativa para o material foi adicionada",
-                "nl": "Er is een tijdelijke oplossing voor materiaal toegevoegd",
-                "fr": "Contournement du matériel ajouté",
-                "it": "È stata aggiunta una soluzione alternativa per il materiale",
-                "es": "Se agregó una solución alternativa para el material",
-                "pl": "Dodano obejście dla materiału",
-                "zh-cn": "添加了物料的解决方法"
-            }
-        },
-        "desc": {
-            "en": "opens a webserver for other adapters",
-            "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
-            "ru": "Запускает веб сервер для 'ioBroker драйверов'",
-            "pt": "abre um servidor web para outros adaptadores",
-            "nl": "opent een webserver voor andere adapters",
-            "fr": "ouvre un serveur web pour d'autres adaptateurs",
-            "it": "apre un server web per altri adattatori",
-            "es": "abre un servidor web para otros adaptadores",
-            "pl": "otwiera serwer internetowy dla innych kart",
-            "zh-cn": "为其他适配器服务的web服务器"
-        },
-        "license": "MIT",
-        "mode": "daemon",
-        "platform": "Javascript/Node.js",
-        "loglevel": "info",
-        "icon": "web.png",
-        "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
-        "enabled": true,
-        "materialize": true,
-        "compact": true,
-        "keywords": [
-            "web",
-            "server",
-            "www",
-            "express"
-        ],
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
-        "type": "general",
-        "stopBeforeUpdate": true,
-        "webExtendable": true,
-        "localLink": "%web_protocol%://%ip%:%web_port%/",
-        "dependencies": [
-            {
-                "js-controller": ">=2.0.0"
-            }
-        ],
-        "authors": [
-            {
-                "name": "bluefox",
-                "email": "dogafox@gmail.com"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
-            }
-        }
+  "common": {
+    "name": "web",
+    "version": "3.4.16",
+    "title": "WEB server",
+    "titleLang": {
+      "en": "WEB server",
+      "de": "WEB-Server",
+      "ru": "Веб сервер",
+      "pt": "Servidor web",
+      "nl": "Web Server",
+      "fr": "Serveur Web",
+      "it": "Server web",
+      "es": "Servidor web",
+      "pl": "Serwer internetowy",
+      "zh-cn": "Web服务器"
     },
-    "native": {
-        "port": 8082,
-        "auth": false,
-        "secure": false,
-        "bind": "0.0.0.0",
-        "cache": false,
-        "socketio": "",
-        "simpleapi": false,
-        "defaultUser": "admin",
-        "ttl": 3600,
-        "certPublic": "",
-        "certPrivate": "",
-        "certChained": "",
-        "addUserName": false,
-        "forceWebSockets": false,
-        "whiteListEnabled": false,
-        "leEnabled": false,
-        "leUpdate": false,
-        "leCheckPort": 80,
-        "loginBackgroundColor": "",
-        "loginBackgroundImage": false
+    "news": {
+      "3.4.16": {
+        "en": "(bluefox/Apollon77) Fixed error with unload of web extensions",
+        "de": "(bluefox/Apollon77) Fehler beim Entladen von Web-Erweiterungen behoben",
+        "ru": "(bluefox / Apollon77) Исправлена ошибка с выгрузкой веб-расширений",
+        "pt": "(bluefox / Apollon77) Corrigido erro com descarregamento de extensões da web",
+        "nl": "(bluefox/Apollon77) Fout opgelost bij het verwijderen van webextensies",
+        "fr": "(bluefox/Apollon77) Correction d'une erreur lors du déchargement des extensions Web",
+        "it": "(bluefox/Apollon77) Risolto errore con lo scaricamento delle estensioni web",
+        "es": "(bluefox / Apollon77) Se corrigió el error con la descarga de extensiones web",
+        "pl": "(bluefox/Apollon77) Naprawiono błąd z wyładowaniem rozszerzeń internetowych",
+        "zh-cn": "(bluefox/Apollon77) 修复了卸载 web 扩展的错误"
+      },
+      "3.4.13": {
+        "en": "Fixed the connection indication",
+        "de": "Verbindungsanzeige behoben",
+        "ru": "Исправлена индикация подключения",
+        "pt": "Corrigida a indicação de conexão",
+        "nl": "De verbindingsindicatie gerepareerd",
+        "fr": "Correction de l'indication de connexion",
+        "it": "Risolto il problema con l'indicazione di connessione",
+        "es": "Se corrigió la indicación de conexión.",
+        "pl": "Naprawiono wskazanie połączenia",
+        "zh-cn": "修复了连接指示"
+      },
+      "3.4.12": {
+        "en": "Fixed the warning about non existing object",
+        "de": "Die Warnung über nicht vorhandenes Objekt wurde behoben",
+        "ru": "Исправлено предупреждение о несуществующем объекте",
+        "pt": "Corrigido o aviso sobre objeto não existente",
+        "nl": "De waarschuwing over een niet-bestaand object opgelost",
+        "fr": "Correction de l'avertissement concernant l'objet non existant",
+        "it": "Risolto l'avviso relativo all'oggetto non esistente",
+        "es": "Se corrigió la advertencia sobre un objeto no existente.",
+        "pl": "Naprawiono ostrzeżenie o nieistniejącym obiekcie",
+        "zh-cn": "修复了关于不存在对象的警告"
+      },
+      "3.4.11": {
+        "en": "Added warning, that the white list works only with the integrated socket-io interface",
+        "de": "Warnung hinzugefügt, dass die Whitelist nur mit der integrierten Socket-io-Schnittstelle funktioniert",
+        "ru": "Добавлено предупреждение, что белый список работает только со встроенным интерфейсом socket-io",
+        "pt": "Adicionado o aviso de que a lista branca funciona apenas com a interface socket-io integrada",
+        "nl": "Waarschuwing toegevoegd, dat de witte lijst alleen werkt met de geïntegreerde socket-io-interface",
+        "fr": "Ajout d'un avertissement, que la liste blanche ne fonctionne qu'avec l'interface socket-io intégrée",
+        "it": "Aggiunto avviso, che la lista bianca funziona solo con l'interfaccia socket-io integrata",
+        "es": "Advertencia agregada, que la lista blanca solo funciona con la interfaz integrada socket-io",
+        "pl": "Dodano ostrzeżenie, że biała lista działa tylko ze zintegrowanym interfejsem socket-io",
+        "zh-cn": "添加警告，白名单仅适用于集成的 socket-io 接口"
+      },
+      "3.4.9": {
+        "en": "Fixed error with access list\nAdded support of the unload function for web-extensions \nAdded readme for the web-extensions development",
+        "de": "Fehler mit Zugangsliste behoben\nUnterstützung der Entladefunktion für Web-Erweiterungen hinzugefügt\nReadme für die Entwicklung von Web-Erweiterungen hinzugefügt",
+        "ru": "Исправлена ошибка со списком доступа\nДобавлена поддержка функции выгрузки для веб-расширений.\nДобавлен ридми для разработки веб-расширений",
+        "pt": "Erro corrigido com lista de acesso\nAdicionado suporte da função de descarregamento para extensões da web\nAdicionado readme para o desenvolvimento de extensões da web",
+        "nl": "Vaste fout met toegangslijst\nOndersteuning toegevoegd van de unload-functie voor webextensies\nLeesmij toegevoegd voor de ontwikkeling van webextensies",
+        "fr": "Correction d'une erreur avec la liste d'accès\nAjout du support de la fonction de déchargement pour les extensions Web\nAjout du readme pour le développement des extensions web",
+        "it": "Risolto errore con l'elenco di accesso\nAggiunto il supporto della funzione di scaricamento per le estensioni web\nAggiunto readme per lo sviluppo delle estensioni web",
+        "es": "Error solucionado con lista de acceso\nSoporte agregado de la función de descarga para extensiones web\nLéame agregado para el desarrollo de extensiones web",
+        "pl": "Naprawiono błąd z listą dostępu\nDodano obsługę funkcji rozładowywania rozszerzeń internetowych\nDodano plik readme do opracowywania rozszerzeń internetowych",
+        "zh-cn": "修复了访问列表的错误\n添加了对 Web 扩展的卸载功能的支持\n添加了 Web 扩展开发的自述文件"
+      },
+      "3.4.8": {
+        "en": "added the default redirect option",
+        "de": "die Standardumleitungsoption hinzugefügt",
+        "ru": "добавлена опция перенаправления по умолчанию",
+        "pt": "adicionou a opção de redirecionamento padrão",
+        "nl": "de standaard omleidingsoptie toegevoegd",
+        "fr": "ajouté l'option de redirection par défaut",
+        "it": "aggiunta l'opzione di reindirizzamento predefinita",
+        "es": "agregó la opción de redirección predeterminada",
+        "pl": "dodano domyślną opcję przekierowania",
+        "zh-cn": "添加了默认重定向选项"
+      }
     },
-    "instanceObjects": [
-        {
-            "_id": "",
-            "type": "meta",
-            "common": {
-                "name": "user files and images for background image",
-                "type": "meta.user"
-            },
-            "native": {}
-        },
-        {
-            "_id": "connected",
-            "type": "state",
-            "common": {
-                "name": "Info about connected socket clients",
-                "type": "string",
-                "read": true,
-                "write": false
-            }
-        }
-    ]
+    "desc": {
+      "en": "opens a webserver for other adapters",
+      "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
+      "ru": "Запускает веб сервер для 'ioBroker драйверов'",
+      "pt": "abre um servidor web para outros adaptadores",
+      "nl": "opent een webserver voor andere adapters",
+      "fr": "ouvre un serveur web pour d'autres adaptateurs",
+      "it": "apre un server web per altri adattatori",
+      "es": "abre un servidor web para otros adaptadores",
+      "pl": "otwiera serwer internetowy dla innych kart",
+      "zh-cn": "为其他适配器服务的web服务器"
+    },
+    "license": "MIT",
+    "mode": "daemon",
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "web.png",
+    "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
+    "enabled": true,
+    "materialize": true,
+    "compact": true,
+    "keywords": [
+      "web",
+      "server",
+      "www",
+      "express"
+    ],
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
+    "type": "general",
+    "stopBeforeUpdate": true,
+    "webExtendable": true,
+    "connectionType": "none",
+    "dataSource": "none",
+    "localLink": "%web_protocol%://%ip%:%web_port%/",
+    "dependencies": [
+      {
+        "js-controller": ">=3.1.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.0"
+      }
+    ],
+    "authors": [
+      {
+        "name": "bluefox",
+        "email": "dogafox@gmail.com"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
+      }
+    },
+    "tier": 3
+  },
+  "native": {
+    "port": 8082,
+    "auth": false,
+    "secure": false,
+    "bind": "0.0.0.0",
+    "cache": false,
+    "socketio": "",
+    "simpleapi": false,
+    "defaultUser": "admin",
+    "ttl": 3600,
+    "certPublic": "",
+    "certPrivate": "",
+    "certChained": "",
+    "addUserName": false,
+    "forceWebSockets": false,
+    "whiteListEnabled": false,
+    "leEnabled": false,
+    "leUpdate": false,
+    "leCheckPort": 80,
+    "loginBackgroundColor": "",
+    "loginBackgroundImage": false,
+    "basicAuth": false,
+    "disableExtensions": false,
+    "disableStates": false,
+    "disableFilesObjects": false,
+    "defaultRedirect": ""
+  },
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for background image",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Info about connected socket clients",
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    }
+  ]
 }

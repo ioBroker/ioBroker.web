@@ -1,30 +1,39 @@
 ![Logo](admin/web.png)
 # ioBroker.web
 
-![Number of Installations](http://iobroker.live/badges/web-installed.svg) ![Number of Installations](http://iobroker.live/badges/web-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
+![Number of Installations](http://iobroker.live/badges/web-installed.svg)
+![Number of Installations](http://iobroker.live/badges/web-stable.svg)
+[![NPM version](http://img.shields.io/npm/v/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
+
+![Test and Release](https://github.com/ioBroker/ioBroker.web/workflows/Test%20and%20Release/badge.svg)
+[![Translation status](https://weblate.iobroker.net/widgets/adapters/-/web/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.web.svg)](https://www.npmjs.com/package/iobroker.web)
-[![Tests](https://travis-ci.org/ioBroker/ioBroker.web.svg?branch=master)](https://travis-ci.org/ioBroker/ioBroker.web)
-
-[![NPM](https://nodei.co/npm/iobroker.web.png?downloads=true)](https://nodei.co/npm/iobroker.web/)
-
 
 Web server on the base of Node.js and express to read the files from ioBroker DB
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** 
+For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
 
 ## Tuning Web-Sockets
-On some web-sockets clients there is performance problem with communication. Sometimes this problem is due to fallback of socket.io communication on long polling mechanism.
+On some web-sockets clients there is performance problem with communication. 
+Sometimes this problem is due to fallback of socket.io communication on long polling mechanism.
 You can set option *Force Web-Sockets* to force using only web-sockets transport.
 
 ## Let's Encrypt Certificates
 Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
 
 ## Extensions
-Web driver supports extensions. The extension is URL handler, that will be called if such URL request appears.
-The extensions look like normal adapter, but they have no running process and will be called by web server.
+Web driver supports extensions. 
+The extension is URL handler, that will be called if such URL request appears.
+The extensions look like the normal adapter, but they have no running process 
+and will be called by web server.
 
-E.g. the user can activate special proxy adapter and reach other devices (like web cams) in the same web server.
+E.g. the user can activate special proxy adapter and reach other devices (like webcams) in the same web server.
 It is required to let all services be available under one web server.
+
+Web-extension could and should support `unload` function, that could return `promise` if the unload action will take some time. 
+
+You can read more about web-extensions [here](WEB-EXTENSIONS-HOWTO.md).
 
 ## Brute-force protection
 If authentication is enabled and the user enters 5 times invalid password during one minute, he must wait at least one minute till next attempt.
@@ -34,8 +43,8 @@ After 15th wrong attempt the user must wait 1 hour.
 If this options is selected the user stays logged in for one month.
 If not, the user will stay logged in for the configured "login timeout".
 
-## Access state's values 
-You can access the normal and binary state values via the HTTP get request. 
+## Access state's values
+You can access the normal and binary state values via the HTTP get request.
 
 ```
 http://IP:8082/state/system.adapter.web.0.alive =>
@@ -57,27 +66,105 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 });
 ```
 
+## "Basic Authentication" option
+Allows Login via Basic Authentication by sending `401` Unauthorized with a `WWW-Authenticate` header.
+This can be used for applications like *FullyBrowser*. When entering the wrong credentials once, you will be redirected 
+to the Login Page. 
+
+## Advanced options
+### Default redirect
+If by opening of web port im browser no APP selection should be shown, but some specific application, 
+the path could be provided here (e.g. `/vis/`) so this path will be opened automatically.
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (jogibear9988) Add http compression support
+* (bluefox) Used new socketio adapter with only web sockets 
+
+### 3.4.16 (2021-11-15)
+* (bluefox/Apollon77) Fixed error with unload of web extensions
+
+### 3.4.13 (2021-10-25)
+* (bluefox) Fixed the connection indication
+
+### 3.4.12 (2021-10-23)
+* (bluefox) Fixed the warning about non-existing object
+
+### 3.4.11 (2021-10-22)
+* (bluefox) Added warning, that the white list works only with the integrated socket-io interface
+
+### 3.4.9 (2021-08-11)
+* (bluefox) Fixed error with access list
+* (bluefox) Added support of the unload function for web-extensions 
+* (bluefox) Added readme for the web-extensions development
+
+### 3.4.8 (2021-08-10)
+* (bluefox) added the default redirect option
+
+### 3.4.7 (2021-07-31)
+* (bluefox) Corrected the small config GUI error
+
+### 3.4.5 (2021-07-20)
+* (Apollon77) fix admin dependency because since 3.4.2 Admin 5.1 is required
+
+### 3.4.4 (2021-07-04)
+* (Apollon77) Fix missing www files
+
+### 3.4.3 (2021-07-01)
+* (Apollon77) Add tier for js-controller 3.3
+
+### 3.4.2 (2021-07-01)
+* (bluefox) Update GUI
+
+### 3.4.1 (2021-04-30)
+* (bluefox) Added support of admin5
+
+### 3.4.0 (2021-04-12)
+* IMPORTANT: js-controller 3.1 is now needed at least
+* (foxrive76) fix a special case for requesting ranges only (Sentry IOBROKER-WEB-3M)
+* (Apollon77) automatically decrypt secrets for web-extensions
+
+### 3.3.0 (2021-02-01)
+* (bluefox) The admin GUI was rewritten with reactJS
+
+### 3.2.3 (2021-01-12)
+* (Apollon77) If no port is provided use default 8082 (Sentry IOBROKER-WEB-2S)
+* (Apollon77) update dependencies of socketio and simple-api
+
+### 3.2.0 (2021-01-08)
+* (raintonr) Support of new Let's Encrypt (only with js-controller 3.2.x)
+* (raintonr) Allow disabling to serve files or states from DB
+
+### 3.1.0 (2020-11-26)
+* (foxriver76) Add option for Basic Auth
+
+### 3.0.14 (2020-10-30)
+* (Apollon77) Prevent crash case (Sentry IOBROKER-WEB-1D)
+* (foxriver76) Support html \<video\> tag on Safari (iOS)
+
+### 3.0.13 (2020-09-06)
+* (bluefox) Added the support of multi-language names for the welcome screen.
+
 ### 3.0.12 (2020-08-22)
-* (bluefox) Updated used npm libraries 
+* (bluefox) Updated used npm libraries
 
 ### 3.0.10 (2020-07-28)
-* (Apollon77) socketio pingTimeout and pinInterval increased to prevent too fast reconnections and bigger visualizations
+* (Apollon77) socketio pingTimeout and pinInterval increased to prevent too fast re-connections and bigger visualizations
 
 ### 3.0.9 (2020-06-11)
-* (Apollon77) Upgrade socketio adapter version
-* (Apollon77) Optimize error handling for webserver initialization again
+* (Apollon77) Upgrade socket-io adapter version
+* (Apollon77) Optimize error handling for web-server initialization again
 
 ### 3.0.8 (2020-05-04)
-* (Apollon77) webserver initialization optimized again to prevent errors with invalid certificates 
+* (Apollon77) web-server initialization optimized again to prevent errors with invalid certificates
 
 ### 3.0.7 (2020-04-30)
-* (Apollon77) errors on webserver initialization are handled properly
+* (Apollon77) errors on web-server initialization are handled properly
 
 ### 3.0.5 (2020-04-23)
 * (bluefox) fixed the sentry warnings
@@ -93,7 +180,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (Apollon77) Workaround for socket.io bug #3555 added to make sure always the correct client files are delivered
 
 ### 3.0.0 (2020-01-15)
-* (Apollon77) upgrade all dependencies, especially socketio to current version! This might break ipad 1/2 devices
+* (Apollon77) upgrade all dependencies, especially socket-io to current version! This might break iPad 1/2 devices
 
 ### 2.4.10 (2019-11-07)
 * (bluefox) Workaround for material was added
@@ -128,7 +215,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) URLs were sanitized
 
 ### 2.3.5 (2018-06-09)
-* (bluefox) Used iobroker.socket.io version 2.1.1
+* (bluefox) Used ioBroker.socket.io version 2.1.1
 * (bluefox) Authentication problem was fixed
 
 ### 2.3.4 (2018-04-27)
@@ -156,13 +243,13 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) Fix link to local admin on welcome screen
 
 ### 2.1.4 (2017-10-02)
-* (bluefox) Support of iobroker.pro
+* (bluefox) Support of ioBroker.pro
 
 ### 2.0.6 (2017-08-05)
 * (bluefox) Fix welcome screen
 
 ### 2.0.5 (2017-05-24)
-* (bluefox) Update socketio lib
+* (bluefox) Update socket-io lib
 
 ### 2.0.4 (2017-04-25)
 * (bluefox) show logout button if connected over cloud
@@ -193,7 +280,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) Fix unsubscribe of states
 
 ### 1.7.3 (2016-10-11)
-* (bluefox) use new socketio
+* (bluefox) use new socket-io
 * (bluefox) fix config dialog
 
 ### 1.7.2 (2016-09-25)
@@ -203,13 +290,13 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) update selectID dialog
 
 ### 1.7.0 (2016-08-30)
-* (bluefox) сompatible only with new admin
+* (bluefox) Compatible only with new admin
 
 ### 1.6.2 (2016-08-30)
 * (bluefox) updated SelectID Dialog
 
 ### 1.6.1 (2016-08-27)
-* (bluefox) support of letsencrypt
+* (bluefox) support of letsEncrypt
 
 ### 1.5.4 (2016-08-14)
 * (bluefox) support of web-sockets force
@@ -228,7 +315,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) update version of socket.io
 
 ### 1.4.8 (2016-06-19)
-* (bluefox) bind socket to specifed IP
+* (bluefox) bind socket to specified IP
 
 ### 1.4.7 (2016-05-24)
 * (bluefox) add version dependency
@@ -253,11 +340,11 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 
 ### 1.3.5 (2016-03-11)
 * (bluefox) update selectId dialog
-* (bluefox) enable get files from disk and not from cache, just request http://ip:8082/vis/file.png?something
+* (bluefox) enable get files from disk and not from the cache, just request http://ip:8082/vis/file.png?something
 * (bluefox) update packages
 
 ### 1.3.4 (2015-12-25)
-* (bluefox) update socketio
+* (bluefox) update socket-io
 
 ### 1.3.3 (2015-12-14)
 * (bluefox) add themes
@@ -267,7 +354,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 
 ### 1.3.2 (2015-12-14)
 * (bluefox) fix selectID.js
-* (bluefox) update socketio
+* (bluefox) update socket-io
 
 ### 1.3.0 (2015-11-15)
 * (bluefox) add version compatibility check
@@ -284,6 +371,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 ### 1.1.1 (2015-11-01)
 * (bluefox) some files were missed on npm
 *
+
 ### 1.1.0 (2015-11-01)
 * (bluefox) update jquery UI libs
 
@@ -318,7 +406,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) add permissions support
 
 ### 0.3.2 (2015-05-20)
-* (bluefox) support of subscribeObjects in socketio
+* (bluefox) support of subscribeObjects in socket-io
 
 ### 0.3.1 (2015-04-24)
 * (bluefox) make "_socket/info.js" available from every directory
@@ -327,7 +415,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) enable https connection and improve login dialog
 
 ### 0.2.6 (2015-03-07)
-* (bluefox) update socketio
+* (bluefox) update socket-io
 
 ### 0.2.5 (2015-03-04)
 * (bluefox) add sysLang variable to info.js (e.g. for Rickshaw)
@@ -346,7 +434,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 * (bluefox) update select ID dialog
 
 ### 0.2.0 (2015-01-16)
-* (bluefox) support of integrated socket (from iobroker.socketio)
+* (bluefox) support of integrated socket (from ioBroker.socketio)
 
 ### 0.1.12 (2015-01-08)
 * (bluefox) update selectId dialog
@@ -396,7 +484,7 @@ createState('javascript.0.picture.png', {type: 'file', name: 'Picture'}, () => {
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2014-2020 bluefox <dogafox@gmail.com>
+Copyright (c) 2014-2021 Bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
