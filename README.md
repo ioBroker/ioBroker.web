@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Added the update warning
+
 ### 4.0.0 (2022-01-29)
 * (jogibear9988) Add http compression support
 * (bluefox) Used new socketio adapter with only web sockets
