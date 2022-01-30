@@ -8,3 +8,4 @@ iob_npm.done
 package-lock.json
 /lib/socket.js
 /lib/ws.js
+/lib/passportSocket.js

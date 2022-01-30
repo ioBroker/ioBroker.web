@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.0.1": {
+        "en": "Added the update warning",
+        "de": "Update-Warnung hinzugefügt",
+        "ru": "Добавлено предупреждение об обновлении",
+        "pt": "Adicionado o aviso de atualização",
+        "nl": "De updatewaarschuwing toegevoegd",
+        "fr": "Ajout de l'avertissement de mise à jour",
+        "it": "Aggiunto l'avviso di aggiornamento",
+        "es": "Se agregó la advertencia de actualización.",
+        "pl": "Dodano ostrzeżenie o aktualizacji",
+        "zh-cn": "添加了更新警告"
+      },
       "4.0.0": {
         "en": "Add http compression support\nUsed new socketio adapter with only web sockets",
         "de": "Unterstützung für HTTP-Komprimierung hinzufügen\nGebrauchter neuer Socketio-Adapter mit nur Web-Sockets",
@@ -87,18 +99,6 @@
         "es": "Error solucionado con lista de acceso\nSoporte agregado de la función de descarga para extensiones web\nLéame agregado para el desarrollo de extensiones web",
         "pl": "Naprawiono błąd z listą dostępu\nDodano obsługę funkcji rozładowywania rozszerzeń internetowych\nDodano plik readme do opracowywania rozszerzeń internetowych",
         "zh-cn": "修复了访问列表的错误\n添加了对 Web 扩展的卸载功能的支持\n添加了 Web 扩展开发的自述文件"
-      },
-      "3.4.8": {
-        "en": "added the default redirect option",
-        "de": "die Standardumleitungsoption hinzugefügt",
-        "ru": "добавлена опция перенаправления по умолчанию",
-        "pt": "adicionou a opção de redirecionamento padrão",
-        "nl": "de standaard omleidingsoptie toegevoegd",
-        "fr": "ajouté l'option de redirection par défaut",
-        "it": "aggiunta l'opzione di reindirizzamento predefinita",
-        "es": "agregó la opción de redirección predeterminada",
-        "pl": "dodano domyślną opcję przekierowania",
-        "zh-cn": "添加了默认重定向选项"
       }
     },
     "desc": {

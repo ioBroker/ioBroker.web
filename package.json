@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -24,7 +24,7 @@
     "express": "^4.17.2",
     "express-session": "^1.17.2",
     "iobroker.simple-api": ">=2.6.2",
-    "iobroker.socketio": ">=4.0.2",
+    "iobroker.socketio": ">=4.0.3",
     "mime-types": "^2.1.34",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
