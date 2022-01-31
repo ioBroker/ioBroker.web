@@ -43,7 +43,7 @@ const wwwDir = 'www';
 
 function getAppName() {
     const parts = __dirname.replace(/\\/g, '/').split('/');
-    return parts[parts.length - 1].split('.')[0];
+    return parts[parts.length - 1].split('.')[0].toLowerCase();
 }
 utils.appName = getAppName();
 
@@ -96,6 +96,22 @@ function escapeHtml (string) {
         : html;
 }
 
+async function getSocketUrl(obj) {
+    if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
+        obj = obj || (await adapter.getForeignObjectAsync(adapter.config.socketio));
+        if (obj && obj.common && !obj.common.enabled) {
+            const state = await adapter.getForeignStateAsync(adapter.config.socketio + '.alive');
+            if (state && state.val) {
+                return ':' + obj.native.port;
+            }
+        } else if (obj && obj.common && obj.common.enabled && obj.native) {
+            return ':' + obj.native.port;
+        }
+    }
+
+    return '';
+}
+
 let adapter;
 function startAdapter(options) {
     options = options || {};
@@ -126,11 +142,11 @@ function startAdapter(options) {
             }
 
             if (!ownSocket && id === adapter.config.socketio) {
-                if (obj && obj.common && obj.common.enabled && obj.native) {
-                    socketUrl = ':' + obj.native.port;
-                } else {
-                    socketUrl = '';
-                }
+                getSocketUrl(obj)
+                    .then(_socketUrl => {
+                        socketUrl = _socketUrl;
+                        adapter.log.info(`SocketURL now "${socketUrl}"`);
+                    });
             }
 
             if (webServer && webServer.io) {
@@ -215,46 +231,39 @@ function startAdapter(options) {
                 callback();
             }
         },
-        ready: () => {
+        ready: async () => {
             // Generate secret for session manager
-            adapter.getForeignObject('system.config', (err, obj) => {
-                if (!err && obj) {
-                    if (!obj.native || !obj.native.secret) {
-                        obj.native = obj.native || {};
-                        require('crypto').randomBytes(24, (ex, buf) => {
-                            secret = buf.toString('hex');
-                            adapter.extendForeignObject('system.config', {native: {secret: secret}});
-                            main();
-                        });
-                    } else {
-                        secret = obj.native.secret;
-                        main();
-                    }
+            const systemConfig = await adapter.getForeignObjectAsync('system.config');
+
+            if (systemConfig) {
+                if (!systemConfig.native || !systemConfig.native.secret) {
+                    systemConfig.native = systemConfig.native || {};
+                    const buf = await new Promise(resolve => require('crypto').randomBytes(24, (ex, buf) => resolve(buf)));
+                    secret = buf.toString('hex');
+                    await adapter.extendForeignObjectAsync('system.config', {native: {secret: secret}});
                 } else {
-                    adapter.log.error('Cannot find object system.config');
+                    secret = systemConfig.native.secret;
                 }
-            });
+            } else {
+                adapter.log.error('Cannot find object system.config');
+            }
 
             // information about connected socket.io adapter
             if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
-                adapter.getForeignObject(adapter.config.socketio, (err, obj) => {
-                    if (obj && obj.common && obj.common.enabled && obj.native) {
-                        socketUrl = ':' + obj.native.port;
-                    }
-                });
+                socketUrl = await getSocketUrl();
                 // Listen for changes
-                adapter.subscribeForeignObjects(adapter.config.socketio);
+                await adapter.subscribeForeignObjectsAsync(adapter.config.socketio);
             } else {
                 socketUrl = adapter.config.socketio;
                 ownSocket = socketUrl !== 'none';
             }
 
             // Read language
-            adapter.getForeignObject('system.config', (err, data) => {
-                if (data && data.common) {
-                    lang = data.common.language || 'en';
-                }
-            });
+            if (systemConfig && systemConfig.common) {
+                lang = systemConfig.common.language || 'en';
+            }
+
+            main();
         }
     });
 
@@ -848,81 +857,79 @@ function prepareLoginTemplate() {
     return template.replace('background: black;', def);
 }
 
+function checkUser(username, password, cb) {
+    username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
+
+    if (bruteForce[username] && bruteForce[username].errors > 4) {
+        let minutes = Date.now() - bruteForce[username].time;
+        if (bruteForce[username].errors < 7) {
+            if (Date.now() - bruteForce[username].time < 60000) {
+                minutes = 1;
+            } else {
+                minutes = 0;
+            }
+        } else
+        if (bruteForce[username].errors < 10) {
+            if (Date.now() - bruteForce[username].time < 180000) {
+                minutes = Math.ceil((180000 - minutes) / 60000);
+            } else {
+                minutes = 0;
+            }
+        } else
+        if (bruteForce[username].errors < 15) {
+            if (Date.now() - bruteForce[username].time < 600000) {
+                minutes = Math.ceil((600000 - minutes) / 60000);
+            } else {
+                minutes = 0;
+            }
+        } else
+        if (Date.now() - bruteForce[username].time < 3600000) {
+            minutes = Math.ceil((3600000 - minutes) / 60000);
+        } else {
+            minutes = 0;
+        }
+
+        if (minutes) {
+            return cb(`Too many errors. Try again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`, false);
+        }
+    }
+
+    adapter.checkPassword(username, password, res => {
+        if (!res) {
+            bruteForce[username] = bruteForce[username] || {errors: 0};
+            bruteForce[username].time = Date.now();
+            bruteForce[username].errors++;
+        } else if (bruteForce[username]) {
+            delete bruteForce[username];
+        }
+
+        if (res) {
+            return cb(null, username);
+        } else {
+            return cb(null, false);
+        }
+    });
+}
+
 function initAuth(server, settings) {
     session =          require('express-session');
     cookieParser =     require('cookie-parser');
     bodyParser =       require('body-parser');
     AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
-    // password =         require(utils.controllerDir + '/lib/password.js');
     passport =         require('passport');
     LocalStrategy =    require('passport-local').Strategy;
     flash =            require('connect-flash'); // TODO report error to user
 
     store = new AdapterStore({adapter});
 
-    passport.use(new LocalStrategy(
-        function (username, password, done) {
-            username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
-
-            if (bruteForce[username] && bruteForce[username].errors > 4) {
-                let minutes = Date.now() - bruteForce[username].time;
-                if (bruteForce[username].errors < 7) {
-                    if (Date.now() - bruteForce[username].time < 60000) {
-                        minutes = 1;
-                    } else {
-                        minutes = 0;
-                    }
-                } else
-                if (bruteForce[username].errors < 10) {
-                    if (Date.now() - bruteForce[username].time < 180000) {
-                        minutes = Math.ceil((180000 - minutes) / 60000);
-                    } else {
-                        minutes = 0;
-                    }
-                } else
-                if (bruteForce[username].errors < 15) {
-                    if (Date.now() - bruteForce[username].time < 600000) {
-                        minutes = Math.ceil((600000 - minutes) / 60000);
-                    } else {
-                        minutes = 0;
-                    }
-                } else
-                if (Date.now() - bruteForce[username].time < 3600000) {
-                    minutes = Math.ceil((3600000 - minutes) / 60000);
-                } else {
-                    minutes = 0;
-                }
-
-                if (minutes) {
-                    return done(`Too many errors. Try again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`, false);
-                }
-            }
-            adapter.checkPassword(username, password, res => {
-                if (!res) {
-                    bruteForce[username] = bruteForce[username] || {errors: 0};
-                    bruteForce[username].time = Date.now();
-                    bruteForce[username].errors++;
-                } else if (bruteForce[username]) {
-                    delete bruteForce[username];
-                }
-
-                if (res) {
-                    return done(null, username);
-                } else {
-                    return done(null, false);
-                }
-            });
-        }
-    ));
+    passport.use(new LocalStrategy(checkUser));
 
     passport.serializeUser((user, done) => done(null, user));
 
     passport.deserializeUser((user, done) => done(null, user));
 
     server.app.use(cookieParser());
-    server.app.use(bodyParser.urlencoded({
-        extended: true
-    }));
+    server.app.use(bodyParser.urlencoded({extended: true}));
     server.app.use(bodyParser.json());
     server.app.use(bodyParser.text());
     server.app.use(session({
@@ -963,6 +970,64 @@ function sendRange(req, res, buffer) {
     res.status(206).send(buf);
 }
 
+function getSocketIoFile(req, res, next) {
+    if (next === true || req.url.endsWith('socket.io.js') || req.url.match(/\/socket\.io\.js(\?.*)?$/)) {
+        if (socketIoFile) {
+            res.contentType('text/javascript');
+            return res.status(200).send(socketIoFile);
+        } else {
+            // if used internal socket io, so deliver @iobroker/ws
+            if ((!adapter.config.socketio && adapter.config.usePureWebSockets) || adapter.config.socketio.startsWith('system.adapter.ws.')) {
+                const pathToFile = require.resolve(utils.appName + '.ws');
+                const file = path.join(path.dirname(pathToFile), '/lib/socket.io.js');
+                socketIoFile = fs.readFileSync(file);
+            } else {
+                // try to get file from iobroker.socketio adapter
+                let file;
+                try {
+                    const dir = require.resolve(utils.appName + '.socketio');
+                    file = path.join(path.dirname(dir), '/lib/socket.io.js');
+                } catch (e) {
+                    // ignore
+                }
+
+                if (file && fs.existsSync(file)) {
+                    socketIoFile = fs.readFileSync(file);
+                } else {
+                    try {
+                        // try to get socket.io-client
+                        const dir = require.resolve('socket.io-client');
+                        const fileDir = path.join(path.dirname(dir), '../dist/');
+                        if (fs.existsSync(fileDir + 'socket.io.min.js')) {
+                            socketIoFile = fs.readFileSync(fileDir + 'socket.io.min.js');
+                        } else {
+                            socketIoFile = fs.readFileSync(fileDir + 'socket.io.js');
+                        }
+                    } catch (e) {
+                        try {
+                            // if nothing works, read stored in web file
+                            socketIoFile = fs.readFileSync(`${__dirname}/${wwwDir}/lib/js/socket.io.js`);
+                        } catch (e) {
+                            adapter.log.error(`Cannot read socket.io.js: ${e}`);
+                            socketIoFile = false;
+                        }
+                    }
+                }
+            }
+
+            if (socketIoFile) {
+                res.contentType('text/javascript');
+                return res.status(200).send(socketIoFile);
+            } else {
+                socketIoFile = false;
+                return res.status(404).end();
+            }
+        }
+    } else {
+        next();
+    }
+}
+
 //settings: {
 //    "port":   8080,
 //    "auth":   false,
@@ -971,7 +1036,6 @@ function sendRange(req, res, buffer) {
 //    "cache":  false
 //}
 async function initWebServer(settings) {
-
     if (settings.secure) {
         // Load certificates and/or get Lets Encrypt config.
         const certObj = await adapter.getCertificatesAsync();
@@ -1019,24 +1083,7 @@ async function initWebServer(settings) {
         */
 
         // replace socket.io
-        server.app.use((req, res, next) => {
-            if (socketIoFile !== false && (req.url.startsWith('socket.io.js') || req.url.match(/\/socket\.io\.js(\?.*)?$/))) {
-                if (socketIoFile) {
-                    res.contentType('text/javascript');
-                    return res.status(200).send(socketIoFile);
-                } else {
-                    socketIoFile = fs.readFileSync(path.join(__dirname, './www/lib/js/socket.io.js'));
-                    if (socketIoFile) {
-                        res.contentType('text/javascript');
-                        return res.status(200).send(socketIoFile);
-                    } else {
-                        socketIoFile = false;
-                        return res.status(404).end();
-                    }
-                }
-            }
-            next();
-        });
+        server.app.use((req, res, next) => getSocketIoFile(req, res, next));
 
         if (settings.auth) {
             initAuth(server, settings);
@@ -1404,9 +1451,9 @@ async function initWebServer(settings) {
         socketSettings.forceWebSockets = settings.forceWebSockets || false;
 
         try {
-            const IOSocket = require(utils.appName + '.socketio/lib/socket.js');
+            const IOSocket = settings.usePureWebSockets ? require(utils.appName + '.ws/lib/socket.js') : require(utils.appName + '.socketio/lib/socket.js');
             // const IOSocket = require('./lib/socket.js'); // DEBUG
-            server.io = new IOSocket(server.server, socketSettings, adapter, null, store);
+            server.io = new IOSocket(server.server, socketSettings, adapter, null, store, checkUser);
         } catch (err) {
             adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');
         }
@@ -1541,7 +1588,7 @@ async function initWebServer(settings) {
 
                     if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');
-                        res.status(200).send('File ' + escapeHtml(url) + ' not found', 404);
+                        res.status(200).send(`File ${escapeHtml(url)} not found`, 404);
                     } else {
                         // Store file in cache
                         if (settings.cache) {
@@ -1552,32 +1599,8 @@ async function initWebServer(settings) {
                     }
                 } else {
                     // special solution for socket.io
-                    if (socketIoFile !== false && (url.startsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/))) {
-                        if (socketIoFile) {
-                            res.contentType('text/javascript');
-                            return res.status(200).send(socketIoFile);
-                        } else {
-                            try {
-                                const dir = require.resolve('socket.io-client');
-                                const fileDir = path.join(path.dirname(dir), '../dist/');
-                                if (fs.existsSync(fileDir + 'socket.io.min.js')) {
-                                    socketIoFile = fs.readFileSync(fileDir + 'socket.io.min.js');
-                                } else {
-                                    socketIoFile = fs.readFileSync(fileDir + 'socket.io.js');
-                                }
-                            } catch (e) {
-                                try {
-                                    socketIoFile = fs.readFileSync(`${__dirname}/${wwwDir}/lib/js/socket.io.js`);
-                                } catch (e) {
-                                    adapter.log.error(`Cannot read socket.io.js: ${e}`);
-                                    socketIoFile = false;
-                                }
-                            }
-                            if (socketIoFile) {
-                                res.contentType('text/javascript');
-                                return res.status(200).send(socketIoFile);
-                            }
-                        }
+                    if (url.endsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/)) {
+                        return getSocketIoFile(req, res, true);
                     }
 
                     adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {

@@ -58,5 +58,6 @@
   "whitelist_only_with_integrated_socket": "La lista bianca funziona solo con l'interfaccia socket-io integrata",
   "White list will be disabled. Please confirm.": "La lista bianca sarà disabilitata. Si prega di confermare.",
   "Ok": "Ok",
-  "Cancel": "Annulla"
+  "Cancel": "Annulla",
+  "usePureWebSockets": "Usa socket web puri (iobroker.ws)"
 }

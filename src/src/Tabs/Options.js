@@ -93,9 +93,20 @@ class Options extends Component {
         const { socketioOptions } = this.state;
         let loaded = 0;
         socket.getAdapterInstances('socketio')
-            .then(state =>
-                this.setState({ loaded: ++loaded, socketioOptions: [...socketioOptions, ...state
-                        .map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${instance}]`, value: _id }))] }));
+            .then(state => socket.getAdapterInstances('ws')
+                .then(wsInstances => {
+                    if (wsInstances) {
+                        state = state.concat(wsInstances);
+                    }
+
+                    this.setState({
+                        loaded: ++loaded,
+                        socketioOptions: [
+                            ...socketioOptions,
+                            ...state
+                                .map(({_id, common: {name}}) => ({title: `${name} [${name}.${instance}]`, value: _id}))]
+                    })
+                }));
 
         socket.getRawSocket().emit('getHostByIp', host, (err, data) => {
             if (data) {
@@ -280,6 +291,14 @@ class Options extends Component {
                                 }
                             }}
                         />
+                        <CustomCheckbox
+                            className={native['socketio'] === '' ? null : classes.displayNone}
+                            title='usePureWebSockets'
+                            attr='usePureWebSockets'
+                            style={{ marginTop: 10 }}
+                            native={native}
+                            onChange={onChange}
+                        />
                     </div>
                     <div className={classes.blockWrapper}>
                         <div className={`${classes.blockWrapperCheckbox} ${native['secure'] ? null : classes.displayNone}`} >
@@ -353,7 +372,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            className={native['socketio'] === '' ? null : classes.displayNone}
+                            className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
                             title='web_sockets'
                             attr='forceWebSockets'
                             style={{ marginTop: 10 }}

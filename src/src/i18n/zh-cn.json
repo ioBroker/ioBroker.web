@@ -58,5 +58,6 @@
   "whitelist_only_with_integrated_socket": "白名单仅适用于集成的 socket-io 接口",
   "White list will be disabled. Please confirm.": "白名单将被禁用。请确认。",
   "Ok": "好的",
-  "Cancel": "取消"
+  "Cancel": "取消",
+  "usePureWebSockets": "使用纯网络套接字 (iobroker.ws)"
 }

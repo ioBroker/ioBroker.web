@@ -25,7 +25,7 @@ const CustomCheckbox = ({ title, attr, style, classes, native, onChange, classNa
         control={
             <Checkbox
                 disabled={!!disabled}
-                checked={value}
+                checked={!!value}
                 onChange={el => {
                     if (table) {
                         onChange(el.target.checked);
