@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.0.1",
+    "version": "4.1.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.1.0": {
+        "en": "Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets",
+        "de": "Ermöglicht den Wechsel zwischen iobroker.socketio und iobroker.ws für interne Web-Sockets",
+        "ru": "Разрешено переключение между iobroker.socketio и iobroker.ws для внутренних веб-сокетов.",
+        "pt": "Permitiu a alternância entre iobroker.socketio e iobroker.ws para soquetes da web internos",
+        "nl": "Schakelen tussen iobroker.socketio en iobroker.ws voor interne websockets toegestaan",
+        "fr": "Autorisé le basculement entre iobroker.socketio et iobroker.ws pour les sockets web internes",
+        "it": "Consentito il passaggio tra iobroker.socketio e iobroker.ws per i socket Web interni",
+        "es": "Permitió el cambio entre iobroker.socketio e iobroker.ws para sockets web internos",
+        "pl": "Dozwolone przełączanie między iobroker.socketio i iobroker.ws dla wewnętrznych gniazd sieciowych",
+        "zh-cn": "允许内部网络套接字在 iobroker.socketio 和 iobroker.ws 之间切换"
+      },
       "4.0.1": {
         "en": "Added the update warning",
         "de": "Update-Warnung hinzugefügt",
@@ -87,18 +99,6 @@
         "es": "Advertencia agregada, que la lista blanca solo funciona con la interfaz integrada socket-io",
         "pl": "Dodano ostrzeżenie, że biała lista działa tylko ze zintegrowanym interfejsem socket-io",
         "zh-cn": "添加警告，白名单仅适用于集成的 socket-io 接口"
-      },
-      "3.4.9": {
-        "en": "Fixed error with access list\nAdded support of the unload function for web-extensions \nAdded readme for the web-extensions development",
-        "de": "Fehler mit Zugangsliste behoben\nUnterstützung der Entladefunktion für Web-Erweiterungen hinzugefügt\nReadme für die Entwicklung von Web-Erweiterungen hinzugefügt",
-        "ru": "Исправлена ошибка со списком доступа\nДобавлена поддержка функции выгрузки для веб-расширений.\nДобавлен ридми для разработки веб-расширений",
-        "pt": "Erro corrigido com lista de acesso\nAdicionado suporte da função de descarregamento para extensões da web\nAdicionado readme para o desenvolvimento de extensões da web",
-        "nl": "Vaste fout met toegangslijst\nOndersteuning toegevoegd van de unload-functie voor webextensies\nLeesmij toegevoegd voor de ontwikkeling van webextensies",
-        "fr": "Correction d'une erreur avec la liste d'accès\nAjout du support de la fonction de déchargement pour les extensions Web\nAjout du readme pour le développement des extensions web",
-        "it": "Risolto errore con l'elenco di accesso\nAggiunto il supporto della funzione di scaricamento per le estensioni web\nAggiunto readme per lo sviluppo delle estensioni web",
-        "es": "Error solucionado con lista de acceso\nSoporte agregado de la función de descarga para extensiones web\nLéame agregado para el desarrollo de extensiones web",
-        "pl": "Naprawiono błąd z listą dostępu\nDodano obsługę funkcji rozładowywania rozszerzeń internetowych\nDodano plik readme do opracowywania rozszerzeń internetowych",
-        "zh-cn": "修复了访问列表的错误\n添加了对 Web 扩展的卸载功能的支持\n添加了 Web 扩展开发的自述文件"
       }
     },
     "desc": {
