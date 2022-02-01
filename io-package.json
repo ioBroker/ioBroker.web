@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.1.0",
+    "version": "4.1.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.1.1": {
+        "en": "Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets",
+        "de": "Ermöglicht den Wechsel zwischen iobroker.socketio und iobroker.ws für interne Web-Sockets",
+        "ru": "Разрешено переключение между iobroker.socketio и iobroker.ws для внутренних веб-сокетов.",
+        "pt": "Permitiu a alternância entre iobroker.socketio e iobroker.ws para soquetes da web internos",
+        "nl": "Schakelen tussen iobroker.socketio en iobroker.ws voor interne websockets toegestaan",
+        "fr": "Autorisé le basculement entre iobroker.socketio et iobroker.ws pour les sockets web internes",
+        "it": "Consentito il passaggio tra iobroker.socketio e iobroker.ws per i socket Web interni",
+        "es": "Permitió el cambio entre iobroker.socketio e iobroker.ws para sockets web internos",
+        "pl": "Dozwolone przełączanie między iobroker.socketio i iobroker.ws dla wewnętrznych gniazd sieciowych",
+        "zh-cn": "允许内部网络套接字在 iobroker.socketio 和 iobroker.ws 之间切换"
+      },
       "4.1.0": {
         "en": "Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets",
         "de": "Ermöglicht den Wechsel zwischen iobroker.socketio und iobroker.ws für interne Web-Sockets",
@@ -87,18 +99,6 @@
         "es": "Se corrigió la advertencia sobre un objeto no existente.",
         "pl": "Naprawiono ostrzeżenie o nieistniejącym obiekcie",
         "zh-cn": "修复了关于不存在对象的警告"
-      },
-      "3.4.11": {
-        "en": "Added warning, that the white list works only with the integrated socket-io interface",
-        "de": "Warnung hinzugefügt, dass die Whitelist nur mit der integrierten Socket-io-Schnittstelle funktioniert",
-        "ru": "Добавлено предупреждение, что белый список работает только со встроенным интерфейсом socket-io",
-        "pt": "Adicionado o aviso de que a lista branca funciona apenas com a interface socket-io integrada",
-        "nl": "Waarschuwing toegevoegd, dat de witte lijst alleen werkt met de geïntegreerde socket-io-interface",
-        "fr": "Ajout d'un avertissement, que la liste blanche ne fonctionne qu'avec l'interface socket-io intégrée",
-        "it": "Aggiunto avviso, che la lista bianca funziona solo con l'interfaccia socket-io integrata",
-        "es": "Advertencia agregada, que la lista blanca solo funciona con la interfaz integrada socket-io",
-        "pl": "Dodano ostrzeżenie, że biała lista działa tylko ze zintegrowanym interfejsem socket-io",
-        "zh-cn": "添加警告，白名单仅适用于集成的 socket-io 接口"
       }
     },
     "desc": {
