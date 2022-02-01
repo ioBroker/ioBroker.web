@@ -205,7 +205,7 @@
     "bind": "0.0.0.0",
     "cache": false,
     "socketio": "",
-    "usePureWebSockets": true,
+    "usePureWebSockets": false,
     "simpleapi": false,
     "defaultUser": "admin",
     "ttl": 3600,
