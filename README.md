@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Updated ws adapter to fix problem with URLs containing '#'
+
 ### 4.1.1 (2022-02-01)
 * (bluefox) Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets
 
