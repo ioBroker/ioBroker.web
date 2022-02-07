@@ -156,47 +156,7 @@
         "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
       }
     },
-    "tier": 3,
-    "messages": [
-      {
-        "condition": {
-          "operand": "and",
-          "rules": [
-            "oldVersion<4.0.0",
-            "newVersion>=4.0.0"
-          ]
-        },
-        "title": {
-          "en": "Important notice!",
-          "de": "Wichtiger Hinweis!",
-          "ru": "Важное замечание!",
-          "pt": "Notícia importante!",
-          "nl": "Belangrijke mededeling!",
-          "fr": "Avis important!",
-          "it": "Avviso IMPORTANTE!",
-          "es": "Noticia importante!",
-          "pl": "Ważna uwaga!",
-          "zh-cn": "重要通知!"
-        },
-        "text": {
-          "en": "Do not update to this version if you use ioBroker.vis android app or some applications, that works only with old socket.io library, like Minuvis",
-          "de": "Aktualisieren Sie nicht auf diese Version, wenn Sie die Android-App ioBroker.vis oder einige Anwendungen verwenden, die nur mit der alten socket.io-Bibliothek funktionieren, wie Minuvis",
-          "ru": "Не обновляйтесь до этой версии, если вы используете приложение ioBroker.vis для Android или некоторые приложения, которые работают только со старой библиотекой socket.io, например Minuvis.",
-          "pt": "Não atualize para esta versão se você usa o aplicativo Android ioBroker.vis ou alguns aplicativos que funcionam apenas com a biblioteca socket.io antiga, como Minuvis",
-          "nl": "Werk niet bij naar deze versie als u de Android-app ioBroker.vis of sommige toepassingen gebruikt, die alleen werken met de oude socket.io-bibliotheek, zoals Minuvis",
-          "fr": "Ne mettez pas à jour cette version si vous utilisez l'application Android ioBroker.vis ou certaines applications, qui ne fonctionnent qu'avec l'ancienne bibliothèque socket.io, comme Minuvis",
-          "it": "Non aggiornare a questa versione se usi l'app ioBroker.vis per Android o alcune applicazioni, che funzionano solo con la vecchia libreria socket.io, come Minuvis",
-          "es": "No actualice a esta versión si usa la aplicación de Android ioBroker.vis o algunas aplicaciones, que solo funcionan con la antigua biblioteca socket.io, como Minuvis",
-          "pl": "Nie aktualizuj do tej wersji, jeśli używasz aplikacji na Androida ioBroker.vis lub niektórych aplikacji, które działają tylko ze starą biblioteką socket.io, taką jak Minuvis",
-          "zh-cn": "如果您使用 ioBroker.vis android 应用程序或某些仅适用于旧 socket.io 库的应用程序，请不要更新到此版本，例如 Minuvis"
-        },
-        "level": "warn",
-        "buttons": [
-          "ok",
-          "cancel"
-        ]
-      }
-    ]
+    "tier": 3
   },
   "native": {
     "port": 8082,
