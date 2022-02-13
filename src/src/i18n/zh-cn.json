@@ -59,5 +59,6 @@
   "White list will be disabled. Please confirm.": "白名单将被禁用。请确认。",
   "Ok": "好的",
   "Cancel": "取消",
-  "usePureWebSockets": "使用纯网络套接字 (iobroker.ws)"
+  "usePureWebSockets": "使用纯网络套接字 (iobroker.ws)",
+  "If no IP address matches, show authentication dialog": "如果没有 IP 地址匹配，则显示身份验证对话框"
 }

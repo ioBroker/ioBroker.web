@@ -83,6 +83,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 
 ## Changelog
 ### __WORK IN PROGRESS__
+* (bluefox) Corrected the white list GUI
+
+### 4.1.2 (2022-02-02)
 * (bluefox) Updated ws adapter to fix problem with URLs containing '#'
 
 ### 4.1.1 (2022-02-01)

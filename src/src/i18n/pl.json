@@ -59,5 +59,6 @@
   "White list will be disabled. Please confirm.": "Biała lista zostanie wyłączona. Proszę potwierdzić.",
   "Ok": "Ok",
   "Cancel": "Anuluj",
-  "usePureWebSockets": "Używaj czystych gniazd sieciowych (iobroker.ws)"
+  "usePureWebSockets": "Używaj czystych gniazd sieciowych (iobroker.ws)",
+  "If no IP address matches, show authentication dialog": "Jeśli żaden adres IP nie pasuje, pokaż okno uwierzytelniania"
 }

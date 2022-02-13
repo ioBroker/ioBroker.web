@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.1.1",
+    "version": "4.1.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.1.2": {
+        "en": "Updated ws adapter to fix problem with URLs containing '#'",
+        "de": "WS-Adapter aktualisiert, um das Problem mit URLs zu beheben, die „#“ enthalten",
+        "ru": "Обновлен адаптер ws для устранения проблемы с URL-адресами, содержащими «#».",
+        "pt": "Adaptador ws atualizado para corrigir problema com URLs contendo '#'",
+        "nl": "Ws-adapter bijgewerkt om het probleem op te lossen met URL's die '#' bevatten",
+        "fr": "Adaptateur ws mis à jour pour résoudre le problème avec les URL contenant '#'",
+        "it": "Adattatore ws aggiornato per risolvere il problema con gli URL contenenti '#'",
+        "es": "Adaptador ws actualizado para solucionar el problema con las URL que contienen '#'",
+        "pl": "Zaktualizowano adapter ws, aby rozwiązać problem z adresami URL zawierającymi „#”",
+        "zh-cn": "更新了 ws 适配器以修复包含“#”的 URL 的问题"
+      },
       "4.1.1": {
         "en": "Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets",
         "de": "Ermöglicht den Wechsel zwischen iobroker.socketio und iobroker.ws für interne Web-Sockets",
@@ -87,18 +99,6 @@
         "es": "Se corrigió la indicación de conexión.",
         "pl": "Naprawiono wskazanie połączenia",
         "zh-cn": "修复了连接指示"
-      },
-      "3.4.12": {
-        "en": "Fixed the warning about non existing object",
-        "de": "Die Warnung über nicht vorhandenes Objekt wurde behoben",
-        "ru": "Исправлено предупреждение о несуществующем объекте",
-        "pt": "Corrigido o aviso sobre objeto não existente",
-        "nl": "De waarschuwing over een niet-bestaand object opgelost",
-        "fr": "Correction de l'avertissement concernant l'objet non existant",
-        "it": "Risolto l'avviso relativo all'oggetto non esistente",
-        "es": "Se corrigió la advertencia sobre un objeto no existente.",
-        "pl": "Naprawiono ostrzeżenie o nieistniejącym obiekcie",
-        "zh-cn": "修复了关于不存在对象的警告"
       }
     },
     "desc": {
@@ -132,8 +132,8 @@
     "type": "general",
     "stopBeforeUpdate": true,
     "webExtendable": true,
-    "connectionType": "none",
-    "dataSource": "none",
+    "connectionType": "local",
+    "dataSource": "push",
     "localLink": "%web_protocol%://%ip%:%web_port%/",
     "dependencies": [
       {
@@ -205,15 +205,28 @@
       "native": {}
     },
     {
-      "_id": "info.connection",
+      "_id": "info.connected",
       "type": "state",
       "common": {
-        "role": "indicator.connected",
+        "role": "state",
         "name": "Info about connected socket clients",
         "type": "string",
         "read": true,
         "write": false,
         "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If web server started",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
       },
       "native": {}
     }

@@ -117,13 +117,37 @@ class WhiteList extends Component {
             toast: '',
             usersOptions: []
         };
+
+        if (props.native.bind && props.native.bind !== 'localhost' && props.native.bind !== '0.0.0.0') {
+            const numbers = props.native.bind.split('.');
+            numbers.pop();
+            this.ipPrefix = numbers.join('.');
+        }
     }
 
     componentDidMount() {
-        const { socket } = this.props;
-        socket.getUsers()
-            .then(list =>
-                this.setState({ usersOptions: list }));
+        this.props.socket.getUsers()
+            .then(list => {
+                // try to find out IP prefix
+                if (!this.ipPrefix) {
+                    this.props.socket.getObject('system.adapter.' + this.props.adapterName + '.' + this.props.instance)
+                        .then(obj => {
+                            this.props.socket.getIpAddresses(obj.common.host)
+                                .then(interfaces => {
+                                    interfaces = interfaces.filter(ip => ip.includes('.'));
+                                    if (interfaces.length) {
+                                        const numbers = interfaces[0].split('.');
+                                        numbers.pop();
+                                        this.ipPrefix = numbers.join('.');
+                                    } else {
+                                        this.ipPrefix = '192.168.0';
+                                    }
+                                });
+                        })
+                }
+
+                this.setState({ usersOptions: list });
+            });
     }
 
     userSelect(el, style) {
@@ -134,6 +158,7 @@ class WhiteList extends Component {
             return whiteListSettings[el].user;
         }
         const optionsSelect = whiteListSettings.default.user === 'auth' ? [{ title: 'auth', value: 'auth' }] : [];
+
         return <CustomSelect
             table
             value={whiteListSettings[el].user}
@@ -186,10 +211,10 @@ class WhiteList extends Component {
         return <IconButton color="primary" onClick={() => {
             let newObj = JSON.parse(JSON.stringify(whiteListSettings));
             let number = 1;
-            let newKey = '192.168.0.1';
+            let newKey = this.ipPrefix + '.1';
             const addProperty = () => {
                 if (Object.keys(newObj).find(keySearch => keySearch === newKey)) {
-                    newKey = `192.168.0.${number}`;
+                    newKey = `${this.ipPrefix}.${number}`;
                     number = number + 1;
                     addProperty();
                 }
@@ -296,27 +321,32 @@ class WhiteList extends Component {
                                         <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.buttonRemove(el)}
                                         </TableCell>
-                                        <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
+                                        <TableCell
+                                            className={classes.backgroundTheme}
+                                            style={{ borderBottom: '1px solid #afafaf', color: el === 'default' ? '#006ccd' : undefined}}
+                                            title={el === 'default' ? I18n.t('If no IP address matches, show authentication dialog') : ''}
+                                        >
                                             {this.tableInput(el, { marginTop: -1, minWidth: 150, paddingTop: 5 })}
                                         </TableCell>
                                         <TableCell className={classes.backgroundTheme} style={{ borderBottom: '1px solid #afafaf' }}>
                                             {this.userSelect(el, { marginTop: -1 })}
                                         </TableCell>
-                                        {['object', 'state', 'file'].map((elProperty, indexProperty) => Object.keys(whiteListSettings[el][elProperty]).map((attr, index) =>
-                                            <TableCell className={Boolean(indexProperty % 2) ? classes.backgroundTheme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
-                                                <CustomCheckbox
-                                                    table
-                                                    checked={whiteListSettings[el][elProperty][attr]}
-                                                    attr={attr}
-                                                    native={native}
-                                                    className={classes.checkBoxStyle}
-                                                    onChange={(e) => {
-                                                        const newObj = JSON.parse(JSON.stringify(whiteListSettings));
-                                                        newObj[el][elProperty][attr] = e;
-                                                        onChange('whiteListSettings', newObj);
-                                                    }}
-                                                />
-                                            </TableCell>))}
+                                        {['object', 'state', 'file'].map((elProperty, indexProperty) =>
+                                            Object.keys(whiteListSettings[el][elProperty] || {}).map((attr, index) =>
+                                                <TableCell className={Boolean(indexProperty % 2) ? classes.backgroundTheme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
+                                                    <CustomCheckbox
+                                                        table
+                                                        checked={whiteListSettings[el][elProperty][attr]}
+                                                        attr={attr}
+                                                        native={native}
+                                                        className={classes.checkBoxStyle}
+                                                        onChange={e => {
+                                                            const newObj = JSON.parse(JSON.stringify(whiteListSettings));
+                                                            newObj[el][elProperty][attr] = e;
+                                                            onChange('whiteListSettings', newObj);
+                                                        }}
+                                                    />
+                                                </TableCell>))}
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -341,7 +371,7 @@ class WhiteList extends Component {
                                             return <Table key={`${indexEl}_mini`} className={classes.table} style={{ width: 'inherit' }} aria-label="spanning table">
                                                 <TableHead>
                                                     <TableRow>
-                                                        <TableCell style={{ background: '#bbbbbb' }} align="center" colSpan={Object.keys(whiteListSettings[el][element]).length}>
+                                                        <TableCell style={{ background: '#bbbbbb' }} align="center" colSpan={Object.keys(whiteListSettings[el][element] || {}).length}>
                                                             {I18n.t(['object', 'status', 'file'][indexEl])}</TableCell>
                                                     </TableRow>
                                                     <TableRow>
@@ -351,7 +381,7 @@ class WhiteList extends Component {
                                                 </TableHead>
                                                 <TableBody>
                                                     <TableRow>
-                                                        {Object.keys(whiteListSettings[el][element]).map((attr) =>
+                                                        {Object.keys(whiteListSettings[el][element] || {}).map((attr) =>
                                                             <TableCell key={`${element}_${attr}_mini_check`} align="center">
                                                                 <CustomCheckbox
                                                                     table

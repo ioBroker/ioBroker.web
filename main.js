@@ -188,6 +188,12 @@ function startAdapter(options) {
         unload: callback => {
             try {
                 const promises = [];
+
+                if (adapter.setStateAsync) {
+                    promises.push(adapter.setStateAsync('indicator.connected', '', true));
+                    promises.push(adapter.setStateAsync('indicator.connection', false, true));
+                }
+
                 Object.keys(extensions).forEach(instance => {
                     try {
                         if (extensions[instance] && extensions[instance].obj && extensions[instance].obj.unload) {
@@ -1055,7 +1061,9 @@ async function initWebServer(settings) {
 
     if (settings.ttl < 30) {
         settings.ttl = 30;
-    }    if (!settings.whiteListEnabled && settings.whiteListSettings) {
+    }
+
+    if (!settings.whiteListEnabled && settings.whiteListSettings) {
         delete settings.whiteListSettings;
     }
 
@@ -1433,6 +1441,7 @@ async function initWebServer(settings) {
             serverPort = port;
             server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, () => {
                 serverListening = true;
+                adapter.setStateAsync('indicator.connection', true, true);
             });
 
             adapter.log.info(`http${settings.secure ? 's' : ''} server listening on port ${port}`);

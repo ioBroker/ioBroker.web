@@ -59,5 +59,6 @@
   "White list will be disabled. Please confirm.": "La liste blanche sera désactivée. Veuillez confirmer.",
   "Ok": "D'accord",
   "Cancel": "Annuler",
-  "usePureWebSockets": "Utilisez des sockets Web purs (iobroker.ws)"
+  "usePureWebSockets": "Utilisez des sockets Web purs (iobroker.ws)",
+  "If no IP address matches, show authentication dialog": "Si aucune adresse IP ne correspond, affichez la boîte de dialogue d'authentification"
 }
