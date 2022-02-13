@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.1.2",
+    "version": "4.1.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.1.3": {
+        "en": "Corrected the white list GUI",
+        "de": "Die Whitelist-GUI wurde korrigiert",
+        "ru": "Исправлен графический интерфейс белого списка.",
+        "pt": "Corrigida a GUI da lista branca",
+        "nl": "De witte lijst GUI gecorrigeerd",
+        "fr": "Correction de l'interface graphique de la liste blanche",
+        "it": "Corretta la GUI della white list",
+        "es": "Se corrigió la GUI de la lista blanca.",
+        "pl": "Poprawiono GUI białej listy",
+        "zh-cn": "更正了白名单界面"
+      },
       "4.1.2": {
         "en": "Updated ws adapter to fix problem with URLs containing '#'",
         "de": "WS-Adapter aktualisiert, um das Problem mit URLs zu beheben, die „#“ enthalten",
@@ -87,18 +99,6 @@
         "es": "(bluefox / Apollon77) Se corrigió el error con la descarga de extensiones web",
         "pl": "(bluefox/Apollon77) Naprawiono błąd z wyładowaniem rozszerzeń internetowych",
         "zh-cn": "(bluefox/Apollon77) 修复了卸载 web 扩展的错误"
-      },
-      "3.4.13": {
-        "en": "Fixed the connection indication",
-        "de": "Verbindungsanzeige behoben",
-        "ru": "Исправлена индикация подключения",
-        "pt": "Corrigida a indicação de conexão",
-        "nl": "De verbindingsindicatie gerepareerd",
-        "fr": "Correction de l'indication de connexion",
-        "it": "Risolto il problema con l'indicazione di connessione",
-        "es": "Se corrigió la indicación de conexión.",
-        "pl": "Naprawiono wskazanie połączenia",
-        "zh-cn": "修复了连接指示"
       }
     },
     "desc": {
