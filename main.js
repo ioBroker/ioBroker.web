@@ -190,8 +190,8 @@ function startAdapter(options) {
                 const promises = [];
 
                 if (adapter.setStateAsync) {
-                    promises.push(adapter.setStateAsync('indicator.connected', '', true));
-                    promises.push(adapter.setStateAsync('indicator.connection', false, true));
+                    promises.push(adapter.setStateAsync('info.connected', '', true));
+                    promises.push(adapter.setStateAsync('info.connection', false, true));
                 }
 
                 Object.keys(extensions).forEach(instance => {
@@ -1441,7 +1441,7 @@ async function initWebServer(settings) {
             serverPort = port;
             server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, () => {
                 serverListening = true;
-                adapter.setStateAsync('indicator.connection', true, true);
+                adapter.setState('info.connection', true, true);
             });
 
             adapter.log.info(`http${settings.secure ? 's' : ''} server listening on port ${port}`);
