@@ -613,7 +613,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
     }
 }
 
-function getListOfAllAdapters(callback) {
+function getListOfAllAdapters(settings, server, req, callback) {
     // read all instances
     adapter.getObjectView('system', 'instance', {}, (err, instances) => {
         adapter.getObjectView('system', 'adapter', {}, (err, adapters) => {
@@ -811,8 +811,10 @@ function getListOfAllAdapters(callback) {
                 let text = `systemLang = "${lang}";\n`;
                 text += `list = ${JSON.stringify(list, null, 2)};\n`;
 
+                const whiteListIp = isInWhiteList(settings, server, req);
+
                 // if login
-                text += `let authEnabled = ${adapter.config.auth};\n`;
+                text += `let authEnabled = ${adapter.config.auth && !adapter.config.basicAuth && !whiteListIp};\n`;
 
                 callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
             } catch (e) {
@@ -1034,6 +1036,52 @@ function getSocketIoFile(req, res, next) {
     }
 }
 
+function getRedirectPage(req) {
+    let redirect = '../';
+    let parts;
+    req.body = req.body || {};
+    // const isDev = req.url.includes('?dev&');
+
+    const origin = req.body.origin || '?href=%2F';
+
+    if (origin) {
+        parts = origin.split('=');
+        if (parts.length > 1 && parts[1]) {
+            redirect = decodeURIComponent(parts[1]);
+            // if some invalid characters in redirect
+            if (redirect.match(/[^-_a-zA-Z0-9&%?./]/)) {
+                redirect = '../';
+            }
+        }
+    }
+
+    return redirect;
+}
+
+function isInWhiteList(settings, server, req) {
+    const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+    if (!adapter.config.auth) {
+        return remoteIp;
+    } else
+    if (settings.whiteListSettings) {
+        // if whitelist is used
+        let whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+        if (!whiteListIp && server.io && remoteIp === '::1') {
+            whiteListIp = server.io.getWhiteListIpForAddress('localhost', settings.whiteListSettings);
+        }
+
+        if (whiteListIp && settings.whiteListSettings[whiteListIp].user !== 'auth') {
+            adapter.log.silly(`whiteListIp ${whiteListIp}`);
+            return whiteListIp;
+        } else {
+            adapter.log.debug(`Request from "${remoteIp}". Must authenticate, as IP not found in the white list`);
+        }
+    }
+
+    return '';
+}
+
 //settings: {
 //    "port":   8080,
 //    "auth":   false,
@@ -1139,23 +1187,27 @@ async function initWebServer(settings) {
              * @returns {void|*|Response}
              */
             const autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
-                if (!settings.whiteListSettings) {
-                    if (/\.css(\?.*)?$/.test(req.originalUrl)) {
+                let isJs;
+                if (/\.css(\?.*)?$/.test(req.originalUrl)) {
+                    return res.status(200).send('');
+                } else
+                if ((isJs = /\.js(\?.*)?$/.test(req.originalUrl))) {
+                    // return always valid js file for js, because if cache is active it leads to errors
+                    const parts = req.originalUrl.split('/');
+                    parts.shift();
+
+                    // if request for web/lib, ignore it, because no redirect information
+                    if (parts[0] === 'lib') {
                         return res.status(200).send('');
-                    } else
-                    if (/\.js(\?.*)?$/.test(req.originalUrl)) {
-                        // return always valid js file for js, because if cache is active it leads to errors
-                        const parts = req.originalUrl.split('/');
-                        parts.shift();
+                    }
+                }
 
-                        // const ref = parts.join('/');
+                const whiteListIp = isInWhiteList(settings, server, req);
 
-                        // if request for web/lib, ignore it, because no redirect information
-                        if (parts[0] === 'lib') {
-                            return res.status(200).send('');
-                        } else {
-                            return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
-                        }
+                // if not authenticated
+                if (!whiteListIp) {
+                    if (isJs) {
+                        return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
                     } else if (adapter.config.basicAuth) {
                         // if basic auth active, we tell it by sending header with 401 status
                         res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
@@ -1165,67 +1217,23 @@ async function initWebServer(settings) {
                     }
                 }
 
-                // if whitelist is used
-                const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                let whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
-                if (!whiteListIp && server.io && remoteIp === '::1') {
-                    whiteListIp = server.io.getWhiteListIpForAddress('localhost', settings.whiteListSettings);
-                }
-                adapter.log.silly(`whiteListIp ${whiteListIp}`);
-                if (!whiteListIp || settings.whiteListSettings[whiteListIp].user === 'auth') {
-                    if (/\.css(\?.*)?$/.test(req.originalUrl)) {
-                        return res.status(200).send('');
-                    } else if (/\.js(\?.*)?$/.test(req.originalUrl)) {
-                        // return always valid js file for js, because if cache is active it leads to errors
-                        const parts = req.originalUrl.split('/');
-                        parts.shift();
-                        // const ref = parts.join('/');
-                        if (parts[0] === 'lib') {
-                            return res.status(200).send('');
-                        } else {
-                            return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
-                        }
-                    } else if (adapter.config.basicAuth) {
-                        // if basic auth active, we tell it by sending header with 401 status
-                        res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
-                        return res.status(401).send('Basic Authentication has been aborted. You have to reload the page.');
-                    } else {
-                        return res.redirect(redirect);
-                    }
-                }
                 req.logIn(settings.whiteListSettings[whiteListIp].user, err => next(err));
             };
 
             server.app.post('/login', (req, res, next) => {
-                let redirect = '../';
-                let parts;
-                req.body = req.body || {};
-                // const isDev = req.url.includes('?dev&');
-
-                const origin = req.body.origin || '?href=%2F';
-
-                if (origin) {
-                    parts = origin.split('=');
-                    if (parts.length > 1 && parts[1]) {
-                        redirect = decodeURIComponent(parts[1]);
-                        // if some invalid characters in redirect
-                        if (redirect.match(/[^-_a-zA-Z0-9&%?./]/)) {
-                            redirect = '../';
-                        }
-                    }
-                }
+                let redirect = getRedirectPage(req);
 
                 req.body.password = (req.body.password || '').toString();
                 req.body.username = (req.body.username || '').toString();
                 req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
 
                 if (req.body.username && settings.addUserName && !redirect.includes('?')) {
-                    parts = redirect.split('#');
+                    const parts = redirect.split('#');
                     parts[0] += '?' + req.body.username;
                     redirect = parts.join('#');
                 }
 
-                authenticate(req, res, next, redirect, origin);
+                authenticate(req, res, next, redirect, req.body.origin || '?href=%2F');
             });
 
             server.app.get('/logout', (req, res) => {
@@ -1507,7 +1515,6 @@ async function initWebServer(settings) {
         adapter.log.debug('Activating web files from objectDB');
         // deliver web files from objectDB
         server.app.use('/', (req, res) => {
-
             let url = decodeURI(req.url);
             // remove all ../
             // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
@@ -1532,7 +1539,7 @@ async function initWebServer(settings) {
                 if (adapter.config.defaultRedirect) {
                     return res.redirect(301, adapter.config.defaultRedirect);
                 } else {
-                    return getListOfAllAdapters((err, data) => {
+                    return getListOfAllAdapters(settings, server, req, (err, data) => {
                         if (err) {
                             res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
                         } else {
@@ -1594,6 +1601,10 @@ async function initWebServer(settings) {
                 if (id === 'login' && url === 'index.html') {
                     loginPage = loginPage || prepareLoginTemplate();
                     const buffer = loginPage;
+
+                    if (req.isAuthenticated() || isInWhiteList(settings, server, req)) {
+                        return res.redirect(getRedirectPage(req));
+                    }
 
                     if (buffer === null || buffer === undefined) {
                         res.contentType('text/html');
