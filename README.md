@@ -82,9 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 4.1.4 (2022-02-14)
 * (bluefox) Added debug output for white list
-* (bluefox) Logout button will be hidden if basic authentication enabled. As logout not possible with basic authentication. 
+* (bluefox) Logout button will be hidden if basic authentication enabled. As logout not possible with basic authentication.
 
 ### 4.1.3 (2022-02-13)
 * (bluefox) Corrected the white list GUI
