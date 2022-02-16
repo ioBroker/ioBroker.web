@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.1.4",
+    "version": "4.1.5",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.1.5": {
+        "en": "Updated ws and socket-io",
+        "de": "ws und socket-io aktualisiert",
+        "ru": "Обновлены ws и socket-io",
+        "pt": "ws e socket-io atualizados",
+        "nl": "Bijgewerkt ws en socket-io",
+        "fr": "Mise à jour de ws et socket-io",
+        "it": "ws e socket-io aggiornati",
+        "es": "ws actualizado y socket-io",
+        "pl": "Zaktualizowano ws i socket-io",
+        "zh-cn": "更新了 ws 和 socket-io"
+      },
       "4.1.4": {
         "en": "Added debug output for white list\nLogout button will be hidden if basic authentication enabled. As logout not possible with basic authentication.",
         "de": "Debug-Ausgabe für Whitelist hinzugefügt\nDie Abmeldeschaltfläche wird ausgeblendet, wenn die Basisauthentifizierung aktiviert ist. Da Logout mit Basisauthentifizierung nicht möglich ist.",
@@ -87,18 +99,6 @@
         "es": "Se agregó la advertencia de actualización.",
         "pl": "Dodano ostrzeżenie o aktualizacji",
         "zh-cn": "添加了更新警告"
-      },
-      "4.0.0": {
-        "en": "Add http compression support\nUsed new socketio adapter with only web sockets",
-        "de": "Unterstützung für HTTP-Komprimierung hinzufügen\nGebrauchter neuer Socketio-Adapter mit nur Web-Sockets",
-        "ru": "Добавить поддержку сжатия http\nИспользуется новый адаптер сокетио только с веб-сокетами",
-        "pt": "Adicionar suporte à compactação http\nUsado novo adaptador socketio com apenas soquetes web",
-        "nl": "Ondersteuning voor http-compressie toevoegen\nGebruikte nieuwe socketio adapter met alleen web sockets",
-        "fr": "Ajouter la prise en charge de la compression http\nNouvel adaptateur socketio utilisé avec uniquement des prises Web",
-        "it": "Aggiungi il supporto per la compressione http\nAdattatore socketio nuovo usato con solo prese web",
-        "es": "Agregar soporte de compresión http\nAdaptador socketio nuevo usado con solo enchufes web",
-        "pl": "Dodaj obsługę kompresji http\nUżywany nowy adapter socketio tylko z gniazdami sieciowymi",
-        "zh-cn": "添加http压缩支持\n使用了新的 socketio 适配器，只有网络套接字"
       }
     },
     "desc": {
