@@ -82,6 +82,10 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Prevent some potential crash cases on adapter stop
+
 ### 4.1.5 (2022-02-16)
 * (bluefox) Updated ws and socket-io
 

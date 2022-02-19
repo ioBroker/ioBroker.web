@@ -201,11 +201,11 @@ function startAdapter(options) {
                             if (promise && typeof promise === 'object' && typeof promise.then === 'function') {
                                 promises.push(promise
                                     .catch(e =>
-                                        adapter.log.error(`Cannot unload web extension "${instance}": ${e}`)));
+                                        adapter && adapter.log && adapter.log.error(`Cannot unload web extension "${instance}": ${e}`)));
                             }
                         }
                     } catch (e) {
-                        adapter.log.error(`Cannot unload web extension "${instance}": ${e}`);
+                        adapter && adapter.log && adapter.log.error(`Cannot unload web extension "${instance}": ${e}`);
                     }
                 });
 
@@ -213,23 +213,23 @@ function startAdapter(options) {
                 if (promises.length) {
                     timeout = setTimeout(() => {
                         timeout = null;
-                        adapter.log.warn(`Timeout by termination of web-extensions!`);
-                        webServer && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        adapter && adapter.log && adapter.log.warn(`Timeout by termination of web-extensions!`);
+                        webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                         webServer && webServer.server && webServer.server.close();
-                        webServer && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        webServer && webServer.settings && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                         callback && callback();
                     }, 500);
                 }
 
                 Promise.all(promises)
-                    .catch(e => adapter.log.error('Cannot unload web extensions: ' + e))
+                    .catch(e => adapter && adapter.log && adapter.log.error('Cannot unload web extensions: ' + e))
                     .then(() => {
                         if (!promises.length || timeout) {
                             clearTimeout(timeout);
                             timeout = null;
-                            webServer && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             webServer && webServer.server && webServer.server.close();
-                            webServer && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && webServer.settings && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             callback && callback();
                         }
                     });
