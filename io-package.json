@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.1.5",
+    "version": "4.1.6",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.1.6": {
+        "en": "Prevent some potential crash cases on adapter stop",
+        "de": "Verhindern Sie einige potenzielle Absturzfälle beim Stoppen des Adapters",
+        "ru": "Предотвращение некоторых возможных случаев сбоя при остановке адаптера",
+        "pt": "Evite alguns casos de travamento em potencial na parada do adaptador",
+        "nl": "Voorkom mogelijke crashgevallen bij het stoppen van de adapter",
+        "fr": "Prévenir certains cas de plantage potentiels à l'arrêt de l'adaptateur",
+        "it": "Prevenire alcuni potenziali casi di arresto anomalo all'arresto dell'adattatore",
+        "es": "Evite algunos posibles casos de bloqueo en la detención del adaptador",
+        "pl": "Zapobiegaj potencjalnym przypadkom awarii podczas zatrzymania adaptera",
+        "zh-cn": "在适配器停止时防止一些潜在的崩溃情况"
+      },
       "4.1.5": {
         "en": "Updated ws and socket-io",
         "de": "ws und socket-io aktualisiert",
@@ -87,18 +99,6 @@
         "es": "Permitió el cambio entre iobroker.socketio e iobroker.ws para sockets web internos",
         "pl": "Dozwolone przełączanie między iobroker.socketio i iobroker.ws dla wewnętrznych gniazd sieciowych",
         "zh-cn": "允许内部网络套接字在 iobroker.socketio 和 iobroker.ws 之间切换"
-      },
-      "4.0.1": {
-        "en": "Added the update warning",
-        "de": "Update-Warnung hinzugefügt",
-        "ru": "Добавлено предупреждение об обновлении",
-        "pt": "Adicionado o aviso de atualização",
-        "nl": "De updatewaarschuwing toegevoegd",
-        "fr": "Ajout de l'avertissement de mise à jour",
-        "it": "Aggiunto l'avviso di aggiornamento",
-        "es": "Se agregó la advertencia de actualización.",
-        "pl": "Dodano ostrzeżenie o aktualizacji",
-        "zh-cn": "添加了更新警告"
       }
     },
     "desc": {
