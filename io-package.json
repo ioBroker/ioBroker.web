@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.1.5",
+    "version": "4.2.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.2.0": {
+        "en": "Updated ws to fix the flot editor",
+        "de": "WS aktualisiert, um den Flot-Editor zu reparieren",
+        "ru": "Обновлен ws, чтобы исправить редактор флота.",
+        "pt": "Atualizado ws para corrigir o editor de flot",
+        "nl": "Ws bijgewerkt om de flot-editor te repareren",
+        "fr": "Mise à jour de ws pour corriger l'éditeur de flot",
+        "it": "WS aggiornato per correggere l'editor flot",
+        "es": "Se actualizó ws para arreglar el editor de flot",
+        "pl": "Zaktualizowano ws, aby naprawić edytor flot",
+        "zh-cn": "更新了 ws 以修复浮动编辑器"
+      },
       "4.1.5": {
         "en": "Updated ws and socket-io",
         "de": "ws und socket-io aktualisiert",
@@ -87,18 +99,6 @@
         "es": "Permitió el cambio entre iobroker.socketio e iobroker.ws para sockets web internos",
         "pl": "Dozwolone przełączanie między iobroker.socketio i iobroker.ws dla wewnętrznych gniazd sieciowych",
         "zh-cn": "允许内部网络套接字在 iobroker.socketio 和 iobroker.ws 之间切换"
-      },
-      "4.0.1": {
-        "en": "Added the update warning",
-        "de": "Update-Warnung hinzugefügt",
-        "ru": "Добавлено предупреждение об обновлении",
-        "pt": "Adicionado o aviso de atualização",
-        "nl": "De updatewaarschuwing toegevoegd",
-        "fr": "Ajout de l'avertissement de mise à jour",
-        "it": "Aggiunto l'avviso di aggiornamento",
-        "es": "Se agregó la advertencia de actualización.",
-        "pl": "Dodano ostrzeżenie o aktualizacji",
-        "zh-cn": "添加了更新警告"
       }
     },
     "desc": {
