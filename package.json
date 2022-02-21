@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.0",
-    "body-parser": "^1.19.1",
+    "body-parser": "^1.19.2",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "express-session": "^1.17.2",
     "iobroker.simple-api": ">=2.6.2",
     "iobroker.ws": ">=1.2.0",
@@ -40,7 +40,7 @@
     "del": "^6.0.0",
     "eslint": "^7.32.0",
     "gulp": "^4.0.2",
-    "mocha": "^9.2.0"
+    "mocha": "^9.2.1"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
