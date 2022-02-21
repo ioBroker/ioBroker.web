@@ -3628,12 +3628,13 @@ function filterChanged(e) {
                     }, 5000);
 
                     data.socket = io.connect(data.socketURL, {
-                        query:                          'key=' + data.socketSESSION,
-                        'reconnection limit':           10000,
-                        'max reconnection attempts':    Infinity,
-                        upgrade:                        data.socketUPGRADE,
-                        rememberUpgrade:                data.socketRememberUpgrade,
-                        transports:                     data.socketTransports
+                        query:                       'key=' + data.socketSESSION,
+                        'reconnection limit':        10000,
+                        'max reconnection attempts': Infinity,
+                        upgrade:                     data.socketUPGRADE,
+                        rememberUpgrade:             data.socketRememberUpgrade,
+                        transports:                  data.socketTransports,
+                        name:                        'selectID'
                     });
 
                     data.socket.on('connect', function () {

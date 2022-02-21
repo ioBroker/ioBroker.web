@@ -986,8 +986,14 @@ function getSocketIoFile(req, res, next) {
         } else {
             // if used internal socket io, so deliver @iobroker/ws
             if ((!adapter.config.socketio && adapter.config.usePureWebSockets) || adapter.config.socketio.startsWith('system.adapter.ws.')) {
-                const pathToFile = require.resolve(utils.appName + '.ws');
-                const file = path.join(path.dirname(pathToFile), '/lib/socket.io.js');
+                let file;
+                // If debug version stored
+                if (fs.existsSync(__dirname + '/www/lib/js/ws.js')) {
+                    file =__dirname + '/www/lib/js/ws.js';
+                } else {
+                    const pathToFile = require.resolve(utils.appName + '.ws');
+                    file = path.join(path.dirname(pathToFile), '/lib/socket.io.js');
+                }
                 socketIoFile = fs.readFileSync(file);
             } else {
                 // try to get file from iobroker.socketio adapter
