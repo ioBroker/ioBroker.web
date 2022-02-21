@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.4.1",
+    "version": "5.4.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.4.2": {
+        "en": "Corrected error with `publishFileAll` (for future use)",
+        "de": "Fehler behoben mit Veröffentlichung FileAll (für zukünftige Nutzung)",
+        "ru": "Исправлена ошибка с публикацией FileAll (для будущего использования)",
+        "pt": "Erro corrigido com publicação FileAll (para uso futuro)",
+        "nl": "Gecorrigeerde fout. Vertaling:",
+        "fr": "Erreur corrigée avec publication FileAll (pour utilisation future)",
+        "it": "Errore corretto con pubblicazione FileAll (per uso futuro)",
+        "es": "Error corregido con publicación FileAll (para uso futuro)",
+        "pl": "Okazuje się, że błąd z opublikowaniem publikacji FileAll (ang.)",
+        "uk": "Виправлена помилка з опублікуванням ФайлВсі (для майбутнього використання)",
+        "zh-cn": "编辑错误 File All(今后使用)"
+      },
       "5.4.1": {
         "en": "Corrected GUI error",
         "de": "Korrigierter GUI-Fehler",
@@ -93,18 +106,6 @@
         "pl": "Funkcjonalne zapotrzebowania zostały przedłużone przez urządzenia, kanały i enum",
         "uk": "Функція getObjects була розширена за допомогою пристроїв, каналів та оманів",
         "zh-cn": "使用装置、渠道和配件,扩展了操作工具。"
-      },
-      "5.2.10": {
-        "en": "Corrected the certificate and IP selection\nPrepare for future js-controller versions",
-        "de": "Das Zertifikat und die IP-Auswahl korrigiert\nBereiten Sie sich auf zukünftige js-Controller-Versionen",
-        "ru": "Исправлен сертификат и выбор IP\nПодготовьтесь к будущим версиям js-controller",
-        "pt": "Corrigido o certificado e a seleção IP\nPrepare-se para futuras versões js-controller",
-        "nl": "Vertaling:\nBereid je voor op toekomstige Js-controller versie",
-        "fr": "Correction du certificat et de la sélection IP\nPréparez-vous pour les versions futures de js-controller",
-        "it": "Corretto il certificato e la selezione IP\nPrepararsi per le future versioni js-controller",
-        "es": "Corregido el certificado y selección IP\nPrepararse para futuras versiones js-controller",
-        "pl": "Wykwalifikowany certyfikat i wybór IP\nPrepare for future js-controller version",
-        "zh-cn": "修改证书和IP选择\n今后防污版本的编制"
       }
     },
     "desc": {
