@@ -143,6 +143,7 @@
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
     "type": "general",
     "stopBeforeUpdate": true,
+    "eraseOnUpload": true,
     "webExtendable": true,
     "connectionType": "local",
     "dataSource": "push",
