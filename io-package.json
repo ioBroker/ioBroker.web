@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.2.0",
+    "version": "4.2.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.2.1": {
+        "en": "Provide state and object changes for simple-api",
+        "de": "Bereitstellen von Zustands- und Objektänderungen für simple-api",
+        "ru": "Обеспечьте изменения состояния и объекта для простого API",
+        "pt": "Fornecer alterações de estado e objeto para api simples",
+        "nl": "Geef status- en objectwijzigingen op voor simple-api",
+        "fr": "Fournir des changements d'état et d'objet pour simple-api",
+        "it": "Fornire modifiche allo stato e agli oggetti per simple-api",
+        "es": "Proporcione cambios de estado y objetos para simple-api",
+        "pl": "Zapewnij zmiany stanu i obiektów dla simple-api",
+        "zh-cn": "为 simple-api 提供状态和对象更改"
+      },
       "4.2.0": {
         "en": "Updated ws to fix the flot editor",
         "de": "WS aktualisiert, um den Flot-Editor zu reparieren",
@@ -87,30 +99,6 @@
         "es": "Adaptador ws actualizado para solucionar el problema con las URL que contienen '#'",
         "pl": "Zaktualizowano adapter ws, aby rozwiązać problem z adresami URL zawierającymi „#”",
         "zh-cn": "更新了 ws 适配器以修复包含“#”的 URL 的问题"
-      },
-      "4.1.1": {
-        "en": "Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets",
-        "de": "Ermöglicht den Wechsel zwischen iobroker.socketio und iobroker.ws für interne Web-Sockets",
-        "ru": "Разрешено переключение между iobroker.socketio и iobroker.ws для внутренних веб-сокетов.",
-        "pt": "Permitiu a alternância entre iobroker.socketio e iobroker.ws para soquetes da web internos",
-        "nl": "Schakelen tussen iobroker.socketio en iobroker.ws voor interne websockets toegestaan",
-        "fr": "Autorisé le basculement entre iobroker.socketio et iobroker.ws pour les sockets web internes",
-        "it": "Consentito il passaggio tra iobroker.socketio e iobroker.ws per i socket Web interni",
-        "es": "Permitió el cambio entre iobroker.socketio e iobroker.ws para sockets web internos",
-        "pl": "Dozwolone przełączanie między iobroker.socketio i iobroker.ws dla wewnętrznych gniazd sieciowych",
-        "zh-cn": "允许内部网络套接字在 iobroker.socketio 和 iobroker.ws 之间切换"
-      },
-      "4.1.0": {
-        "en": "Allowed the switch between iobroker.socketio and iobroker.ws for internal web sockets",
-        "de": "Ermöglicht den Wechsel zwischen iobroker.socketio und iobroker.ws für interne Web-Sockets",
-        "ru": "Разрешено переключение между iobroker.socketio и iobroker.ws для внутренних веб-сокетов.",
-        "pt": "Permitiu a alternância entre iobroker.socketio e iobroker.ws para soquetes da web internos",
-        "nl": "Schakelen tussen iobroker.socketio en iobroker.ws voor interne websockets toegestaan",
-        "fr": "Autorisé le basculement entre iobroker.socketio et iobroker.ws pour les sockets web internes",
-        "it": "Consentito il passaggio tra iobroker.socketio e iobroker.ws per i socket Web interni",
-        "es": "Permitió el cambio entre iobroker.socketio e iobroker.ws para sockets web internos",
-        "pl": "Dozwolone przełączanie między iobroker.socketio i iobroker.ws dla wewnętrznych gniazd sieciowych",
-        "zh-cn": "允许内部网络套接字在 iobroker.socketio 和 iobroker.ws 之间切换"
       }
     },
     "desc": {
