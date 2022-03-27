@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Updated ws and socketio to have `log` method in sockets
+
 ### 4.2.0 (2022-02-21)
 * (bluefox) Updated ws to fix the flot editor
 
