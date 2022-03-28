@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.2.1",
+    "version": "4.2.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.2.2": {
+        "en": "Updated ws and socketio to have `log` method in sockets",
+        "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
+        "ru": "Обновлены ws и socketio, чтобы иметь метод `log` в сокетах.",
+        "pt": "Atualizado ws e socketio para ter o método `log` nos soquetes",
+        "nl": "Ws en socketio bijgewerkt om de `log`-methode in sockets te hebben",
+        "fr": "Mise à jour de ws et socketio pour avoir la méthode `log` dans les sockets",
+        "it": "ws e socketio aggiornati per avere il metodo `log` nei socket",
+        "es": "Se actualizó ws y socketio para tener el método `log` en los sockets",
+        "pl": "Zaktualizowano ws i socketio, aby mieć metodę `log` w gniazdach",
+        "zh-cn": "更新了 ws 和 socketio 以在套接字中有 `log` 方法"
+      },
       "4.2.1": {
         "en": "Provide state and object changes for simple-api",
         "de": "Bereitstellen von Zustands- und Objektänderungen für simple-api",
@@ -87,18 +99,6 @@
         "es": "Se corrigió la GUI de la lista blanca.",
         "pl": "Poprawiono GUI białej listy",
         "zh-cn": "更正了白名单界面"
-      },
-      "4.1.2": {
-        "en": "Updated ws adapter to fix problem with URLs containing '#'",
-        "de": "WS-Adapter aktualisiert, um das Problem mit URLs zu beheben, die „#“ enthalten",
-        "ru": "Обновлен адаптер ws для устранения проблемы с URL-адресами, содержащими «#».",
-        "pt": "Adaptador ws atualizado para corrigir problema com URLs contendo '#'",
-        "nl": "Ws-adapter bijgewerkt om het probleem op te lossen met URL's die '#' bevatten",
-        "fr": "Adaptateur ws mis à jour pour résoudre le problème avec les URL contenant '#'",
-        "it": "Adattatore ws aggiornato per risolvere il problema con gli URL contenenti '#'",
-        "es": "Adaptador ws actualizado para solucionar el problema con las URL que contienen '#'",
-        "pl": "Zaktualizowano adapter ws, aby rozwiązać problem z adresami URL zawierającymi „#”",
-        "zh-cn": "更新了 ws 适配器以修复包含“#”的 URL 的问题"
       }
     },
     "desc": {
