@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### 4.2.2 (2022-03-28)
+### **WORK IN PROGRESS**
 * (bluefox) Updated ws and socketio to have `log` method in sockets
 
 ### 4.2.1 (2022-03-18)
