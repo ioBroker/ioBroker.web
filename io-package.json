@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.2.2",
+    "version": "4.2.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.2.3": {
+        "en": "Updated ws and socketio to have `log` method in sockets",
+        "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
+        "ru": "Обновлены ws и socketio, чтобы иметь метод `log` в сокетах.",
+        "pt": "Atualizado ws e socketio para ter o método `log` nos soquetes",
+        "nl": "Ws en socketio bijgewerkt om de `log`-methode in sockets te hebben",
+        "fr": "Mise à jour de ws et socketio pour avoir la méthode `log` dans les sockets",
+        "it": "ws e socketio aggiornati per avere il metodo `log` nei socket",
+        "es": "Se actualizó ws y socketio para tener el método `log` en los sockets",
+        "pl": "Zaktualizowano ws i socketio, aby mieć metodę `log` w gniazdach",
+        "zh-cn": "更新了 ws 和 socketio 以在套接字中有 `log` 方法"
+      },
       "4.2.2": {
         "en": "Updated ws and socketio to have `log` method in sockets",
         "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
@@ -87,18 +99,6 @@
         "es": "Salida de depuración agregada para la lista blanca\nEl botón de cierre de sesión estará oculto si la autenticación básica está habilitada. Como el cierre de sesión no es posible con la autenticación básica.",
         "pl": "Dodano wyjście debugowania dla białej listy\nPrzycisk Wyloguj będzie ukryty, jeśli włączone jest uwierzytelnianie podstawowe. Ponieważ wylogowanie nie jest możliwe przy podstawowym uwierzytelnianiu.",
         "zh-cn": "为白名单添加了调试输出\n如果启用基本身份验证，注销按钮将被隐藏。由于基本身份验证无法注销。"
-      },
-      "4.1.3": {
-        "en": "Corrected the white list GUI",
-        "de": "Die Whitelist-GUI wurde korrigiert",
-        "ru": "Исправлен графический интерфейс белого списка.",
-        "pt": "Corrigida a GUI da lista branca",
-        "nl": "De witte lijst GUI gecorrigeerd",
-        "fr": "Correction de l'interface graphique de la liste blanche",
-        "it": "Corretta la GUI della white list",
-        "es": "Se corrigió la GUI de la lista blanca.",
-        "pl": "Poprawiono GUI białej listy",
-        "zh-cn": "更正了白名单界面"
       }
     },
     "desc": {
