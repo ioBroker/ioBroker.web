@@ -119,26 +119,28 @@ function startAdapter(options) {
     Object.assign(options, {
         name: adapterName,
         objectChange: (id, obj) => {
-            if (obj && obj.common && obj.common.webExtension && obj.native &&
-                (extensions[id.substring('system.adapter.'.length)] ||
-                    obj.native.webInstance === '*' ||
-                    obj.native.webInstance === adapter.namespace
-                )
-            ) {
-                return adapter.setForeignState(`system.adapter.${adapter.namespace}.alive`, false, true, () =>
-                    adapter.terminate ? adapter.terminate(-100): process.exit(-100));
+            if (id.startsWith('system.adapter')) {
+                if (obj && obj.common && obj.common.webExtension && obj.native &&
+                    (extensions[id.substring('system.adapter.'.length)] ||
+                        obj.native.webInstance === '*' ||
+                        obj.native.webInstance === adapter.namespace
+                    )
+                ) {
+                    return adapter.setForeignState(`system.adapter.${adapter.namespace}.alive`, false, true, () =>
+                        adapter.terminate ? adapter.terminate(-100) : process.exit(-100));
+                }
+
+                // 'system.adapter.'.length = 15
+                const _id = id.substring(15).replace(/\.\d+$/, '');
+                if (obj && obj.common && obj.common.webByVersion) {
+                    webByVersion[_id] = obj.common.version;
+                } else if (webByVersion[_id]) {
+                    delete webByVersion[_id];
+                }
             }
 
             if (obj && obj.common && obj.common.webPreSettings) {
                 updatePreSettings(obj);
-            }
-
-            // 'system.adapter.'.length = 15
-            const _id = id.substring(15).replace(/\.\d+$/, '');
-            if (obj && obj.common && obj.common.webByVersion) {
-                webByVersion[_id] = obj.common.version;
-            } else if (webByVersion[_id]) {
-                delete webByVersion[_id];
             }
 
             if (!ownSocket && id === adapter.config.socketio) {
@@ -149,6 +151,10 @@ function startAdapter(options) {
                     });
             }
 
+            if (id === 'system.config') {
+                lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
+            }
+
             if (webServer && webServer.io) {
                 try {
                     webServer.io.publishAll('objectChange', id, obj);
@@ -157,16 +163,12 @@ function startAdapter(options) {
                 }
             }
 
-            if (webServer && webServer.api && adapter.config.auth) {
+            if (webServer && webServer.api) {
                 try {
                     webServer.api.objectChange && webServer.api.objectChange(id, obj);
                 } catch (e) {
-                    adapter.log.error('Cannot call simple api: ' + e);
+                    adapter.log.error('Cannot call objectChange for simple api: ' + e.message);
                 }
-            }
-
-            if (id === 'system.config') {
-                lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
             }
 
             // inform extensions
@@ -176,13 +178,21 @@ function startAdapter(options) {
                         extensions[instance].obj.objectChange(id, obj);
                     }
                 } catch (err) {
-                    adapter.log.error(`Cannot call objectChange for "${instance}": ${err}`);
+                    adapter.log.error(`Cannot call objectChange for "${instance}": ${err.message}`);
                 }
             });
         },
         stateChange: (id, state) => {
             if (webServer && webServer.io) {
                 webServer.io.publishAll('stateChange', id, state);
+            }
+
+            if (webServer && webServer.api) {
+                try {
+                    webServer.api.stateChange && webServer.api.stateChange(id, state);
+                } catch (e) {
+                    adapter.log.error('Cannot call stateChange for simple api: ' + e.message);
+                }
             }
         },
         unload: callback => {

@@ -78,12 +78,15 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
-	### __WORK IN PROGRESS__
+	### **WORK IN PROGRESS**
 -->
 
 ## Changelog
-### 4.2.1 (2022-03-27)
+**WORK IN PROGRESS**
 * (bluefox) Updated ws and socketio to have `log` method in sockets
+
+### 4.2.1 (2022-03-18)
+* (Apollon77) Provide state and object changes for simple-api
 
 ### 4.2.0 (2022-02-21)
 * (bluefox) Updated ws to fix the flot editor

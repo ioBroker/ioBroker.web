@@ -17,16 +17,16 @@
     },
     "news": {
       "4.2.1": {
-        "en": "Updated ws and socketio to have `log` method in sockets",
-        "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
-        "ru": "Обновлены ws и socketio, чтобы иметь метод `log` в сокетах.",
-        "pt": "Atualizado ws e socketio para ter o método `log` nos soquetes",
-        "nl": "Ws en socketio bijgewerkt om de `log`-methode in sockets te hebben",
-        "fr": "Mise à jour de ws et socketio pour avoir la méthode `log` dans les sockets",
-        "it": "ws e socketio aggiornati per avere il metodo `log` nei socket",
-        "es": "Se actualizó ws y socketio para tener el método `log` en los sockets",
-        "pl": "Zaktualizowano ws i socketio, aby mieć metodę `log` w gniazdach",
-        "zh-cn": "更新了 ws 和 socketio 以在套接字中有 `log` 方法"
+        "en": "Provide state and object changes for simple-api",
+        "de": "Bereitstellen von Zustands- und Objektänderungen für simple-api",
+        "ru": "Обеспечьте изменения состояния и объекта для простого API",
+        "pt": "Fornecer alterações de estado e objeto para api simples",
+        "nl": "Geef status- en objectwijzigingen op voor simple-api",
+        "fr": "Fournir des changements d'état et d'objet pour simple-api",
+        "it": "Fornire modifiche allo stato e agli oggetti per simple-api",
+        "es": "Proporcione cambios de estado y objetos para simple-api",
+        "pl": "Zapewnij zmiany stanu i obiektów dla simple-api",
+        "zh-cn": "为 simple-api 提供状态和对象更改"
       },
       "4.2.0": {
         "en": "Updated ws to fix the flot editor",
@@ -131,6 +131,7 @@
     "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.png",
     "type": "general",
     "stopBeforeUpdate": true,
+    "eraseOnUpload": true,
     "webExtendable": true,
     "connectionType": "local",
     "dataSource": "push",
