@@ -194,6 +194,17 @@ function startAdapter(options) {
                     adapter.log.error('Cannot call stateChange for simple api: ' + e.message);
                 }
             }
+
+            // inform extensions
+            Object.keys(extensions).forEach(instance => {
+                try {
+                    if (extensions[instance].obj && typeof extensions[instance].obj.stateChange === 'function') {
+                        extensions[instance].obj.stateChange(id, state);
+                    }
+                } catch (err) {
+                    adapter.log.error(`Cannot call stateChange for "${instance}": ${err.message}`);
+                }
+            });
         },
         unload: callback => {
             try {
@@ -770,6 +781,25 @@ function getListOfAllAdapters(settings, server, req, callback) {
 
                 indexHtml = indexHtml || fs.readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
 
+                // calculate localLinks
+                for (let t = 0; t < list.length; t++) {
+                    if (list[t].localLink) {
+                        list[t].localLink = resolveLink(list[t].localLink, mapInstance[list[t].id], mapInstance);
+                    }
+                }
+
+                // try to find swagger web-extension
+                // inform extensions
+                Object.keys(extensions).forEach(instance => {
+                    try {
+                        if (extensions[instance].obj && typeof extensions[instance].obj.welcomePage === 'function') {
+                            list.push(extensions[instance].obj.welcomePage());
+                        }
+                    } catch (err) {
+                        adapter.log.error(`Cannot call welcomePage for "${instance}": ${err.message}`);
+                    }
+                });
+
                 list.sort((a, b) => {
                     const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
                     const bName = (typeof b.name === 'object' ? b.name[lang] || b.name.en : b.name).toLowerCase();
@@ -810,13 +840,6 @@ function getListOfAllAdapters(settings, server, req, callback) {
                         return 0;
                     }
                 });
-
-                // calculate localLinks
-                for (let t = 0; t < list.length; t++) {
-                    if (list[t].localLink) {
-                        list[t].localLink = resolveLink(list[t].localLink, mapInstance[list[t].id], mapInstance);
-                    }
-                }
 
                 let text = `systemLang = "${lang}";\n`;
                 text += `list = ${JSON.stringify(list, null, 2)};\n`;
@@ -1492,6 +1515,8 @@ async function initWebServer(settings) {
         }
     }
 
+    const extensionPromises = [];
+
     if (!settings.disableExtensions) {
         adapter.log.debug('Activating extensions');
         // activate extensions
@@ -1508,6 +1533,9 @@ async function initWebServer(settings) {
                 }
 
                 extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
+                if (extensions[instance].obj.waitForReady) {
+                    extensionPromises.push(new Promise(resolve => extensions[instance].obj.waitForReady(resolve)));
+                }
                 adapter.log.info(`Connect extension "${extensions[instance].path}"`);
             } catch (err) {
                 adapter.log.error(`Cannot start extension "${instance}": ${err}`);
@@ -1515,155 +1543,158 @@ async function initWebServer(settings) {
         });
     }
 
-    // Activate integrated simple API
-    if (settings.simpleapi) {
-        adapter.log.debug('Activating simple API');
-        try {
-            const SimpleAPI = require(`${utils.appName}.simple-api/lib/simpleapi.js`);
+    Promise.all(extensionPromises)
+        .then(() => {
+            // Activate integrated simple API
+            if (settings.simpleapi) {
+                adapter.log.debug('Activating simple API');
+                try {
+                    const SimpleAPI = require(`${utils.appName}.simple-api/lib/simpleapi.js`);
 
-            server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
-        } catch (e) {
-            adapter.log.error(`Cannot find simple api module! ${e}`);
-        }
-    }
-
-    if (server.app && !settings.disableFilesObjects) {
-        adapter.log.debug('Activating web files from objectDB');
-        // deliver web files from objectDB
-        server.app.use('/', (req, res) => {
-            let url = decodeURI(req.url);
-            // remove all ../
-            // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
-            url = path.normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
-            // remove '////' at start and let only one
-            if (url[0] === '/' && url[1] === '/') {
-                let i = 2;
-                while (url[i] === '/') {
-                    i++;
+                    server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
+                } catch (e) {
+                    adapter.log.error(`Cannot find simple api module! ${e}`);
                 }
-                url = url.substring(i - 1);
-            }
-            if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                return res.status(404).send('Not found');
             }
 
-            if (server.api && server.api.checkRequest(url)) {
-                return server.api.restApi(req, res);
-            }
-
-            if (url === '/' || url === '/index.html') {
-                if (adapter.config.defaultRedirect) {
-                    return res.redirect(301, adapter.config.defaultRedirect);
-                } else {
-                    return getListOfAllAdapters(settings, server, req, (err, data) => {
-                        if (err) {
-                            res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
-                        } else {
-                            res
-                                .set('Content-Type', 'text/html')
-                                .status(200)
-                                .send(data);
+            if (server.app && !settings.disableFilesObjects) {
+                adapter.log.debug('Activating web files from objectDB');
+                // deliver web files from objectDB
+                server.app.use('/', (req, res) => {
+                    let url = decodeURI(req.url);
+                    // remove all ../
+                    // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
+                    url = path.normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
+                    // remove '////' at start and let only one
+                    if (url[0] === '/' && url[1] === '/') {
+                        let i = 2;
+                        while (url[i] === '/') {
+                            i++;
                         }
-                    });
-                }
-            }
-
-            // add index.html
-            url = url.replace(/\/($|\?|#)/, '/index.html$1');
-
-            if (url.match(/^\/adapter\//)) {
-                // add .admin to adapter name
-                url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
-            }
-
-            if (url.match(/^\/lib\//)) {
-                url = '/' + adapter.name + url;
-            }
-            if (url.match(/^\/admin\//)) {
-                url = '/' + adapter.name + url;
-            }
-            url = url.split('/');
-            // Skip first /
-            url.shift();
-            // Get ID
-            const id = url.shift();
-            const versionPrefix = url[0];
-            url = url.join('/');
-            const pos = url.indexOf('?');
-            let noFileCache;
-            if (pos !== -1) {
-                url = url.substring(0, pos);
-                // disable file cache if request like /vis/files/picture.png?noCache
-                noFileCache = true;
-            }
-
-            // get adapter name
-            if (webByVersion[id]) {
-                if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
-                    // redirect to version
-                    res.set('location', `/${id}/${webByVersion[id]}/${url}`);
-                    return res.status(301).send();
-                }
-            }
-
-            if (settings.cache && cache[`${id}/${url}`] && !noFileCache) {
-                res.contentType(cache[`${id}/${url}`].mimeType);
-                if (req.headers.range) {
-                    sendRange(req, res, cache[`${id}/${url}`].buffer);
-                } else {
-                    res.status(200).send(cache[`${id}/${url}`].buffer);
-                }
-            } else {
-                if (id === 'login' && url === 'index.html') {
-                    loginPage = loginPage || prepareLoginTemplate();
-                    const buffer = loginPage;
-
-                    if (req.isAuthenticated() || isInWhiteList(settings, server, req)) {
-                        return res.redirect(getRedirectPage(req));
+                        url = url.substring(i - 1);
+                    }
+                    if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
+                        return res.status(404).send('Not found');
                     }
 
-                    if (buffer === null || buffer === undefined) {
-                        res.contentType('text/html');
-                        res.status(200).send(`File ${escapeHtml(url)} not found`, 404);
+                    if (server.api && server.api.checkRequest(url)) {
+                        return server.api.restApi(req, res);
+                    }
+
+                    if (url === '/' || url === '/index.html') {
+                        if (adapter.config.defaultRedirect) {
+                            return res.redirect(301, adapter.config.defaultRedirect);
+                        } else {
+                            return getListOfAllAdapters(settings, server, req, (err, data) => {
+                                if (err) {
+                                    res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
+                                } else {
+                                    res
+                                        .set('Content-Type', 'text/html')
+                                        .status(200)
+                                        .send(data);
+                                }
+                            });
+                        }
+                    }
+
+                    // add index.html
+                    url = url.replace(/\/($|\?|#)/, '/index.html$1');
+
+                    if (url.match(/^\/adapter\//)) {
+                        // add .admin to adapter name
+                        url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
+                    }
+
+                    if (url.match(/^\/lib\//)) {
+                        url = '/' + adapter.name + url;
+                    }
+                    if (url.match(/^\/admin\//)) {
+                        url = '/' + adapter.name + url;
+                    }
+                    url = url.split('/');
+                    // Skip first /
+                    url.shift();
+                    // Get ID
+                    const id = url.shift();
+                    const versionPrefix = url[0];
+                    url = url.join('/');
+                    const pos = url.indexOf('?');
+                    let noFileCache;
+                    if (pos !== -1) {
+                        url = url.substring(0, pos);
+                        // disable file cache if request like /vis/files/picture.png?noCache
+                        noFileCache = true;
+                    }
+
+                    // get adapter name
+                    if (webByVersion[id]) {
+                        if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
+                            // redirect to version
+                            res.set('location', `/${id}/${webByVersion[id]}/${url}`);
+                            return res.status(301).send();
+                        }
+                    }
+
+                    if (settings.cache && cache[`${id}/${url}`] && !noFileCache) {
+                        res.contentType(cache[`${id}/${url}`].mimeType);
+                        if (req.headers.range) {
+                            sendRange(req, res, cache[`${id}/${url}`].buffer);
+                        } else {
+                            res.status(200).send(cache[`${id}/${url}`].buffer);
+                        }
                     } else {
-                        // Store file in cache
-                        if (settings.cache) {
-                            cache[id + '/' + url] = {buffer: buffer.toString(), mimeType: 'text/html'};
-                        }
-                        res.contentType('text/html');
-                        res.status(200).send(buffer.toString());
-                    }
-                } else {
-                    // special solution for socket.io
-                    if (url.endsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/)) {
-                        return getSocketIoFile(req, res, true);
-                    }
+                        if (id === 'login' && url === 'index.html') {
+                            loginPage = loginPage || prepareLoginTemplate();
+                            const buffer = loginPage;
 
-                    adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
-                        if (buffer === null || buffer === undefined || err) {
-                            res.contentType('text/html');
-                            res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
-                        } else {
-                            mimeType = mimeType || mime.lookup(url) || 'text/javascript';
-
-                            // Store file in cache
-                            if (settings.cache) {
-                                cache[`${id}/${url}`] = {buffer, mimeType};
+                            if (req.isAuthenticated() || isInWhiteList(settings, server, req)) {
+                                return res.redirect(getRedirectPage(req));
                             }
 
-                            res.contentType(mimeType);
-
-                            if (req.headers.range) {
-                                sendRange(req, res, buffer);
+                            if (buffer === null || buffer === undefined) {
+                                res.contentType('text/html');
+                                res.status(200).send(`File ${escapeHtml(url)} not found`, 404);
                             } else {
-                                res.status(200).send(buffer);
+                                // Store file in cache
+                                if (settings.cache) {
+                                    cache[id + '/' + url] = {buffer: buffer.toString(), mimeType: 'text/html'};
+                                }
+                                res.contentType('text/html');
+                                res.status(200).send(buffer.toString());
                             }
+                        } else {
+                            // special solution for socket.io
+                            if (url.endsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/)) {
+                                return getSocketIoFile(req, res, true);
+                            }
+
+                            adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
+                                if (buffer === null || buffer === undefined || err) {
+                                    res.contentType('text/html');
+                                    res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
+                                } else {
+                                    mimeType = mimeType || mime.lookup(url) || 'text/javascript';
+
+                                    // Store file in cache
+                                    if (settings.cache) {
+                                        cache[`${id}/${url}`] = {buffer, mimeType};
+                                    }
+
+                                    res.contentType(mimeType);
+
+                                    if (req.headers.range) {
+                                        sendRange(req, res, buffer);
+                                    } else {
+                                        res.status(200).send(buffer);
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                });
             }
         });
-    }
 
     if (server.server) {
         return server;
