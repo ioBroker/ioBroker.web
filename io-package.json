@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.2.3",
+    "version": "4.3.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "4.3.0": {
+        "en": "Added support of rest-api",
+        "de": "Unterstützung von rest-api hinzugefügt",
+        "ru": "Добавлена поддержка rest-api",
+        "pt": "Adicionado suporte para rest-api",
+        "nl": "Ondersteuning van rest-api . toegevoegd",
+        "fr": "Ajout du support de rest-api",
+        "it": "Aggiunto il supporto di rest-api",
+        "es": "Soporte agregado de rest-api",
+        "pl": "Dodano obsługę rest-api",
+        "zh-cn": "增加了对 rest-api 的支持"
+      },
       "4.2.3": {
         "en": "Updated ws and socketio to have `log` method in sockets",
         "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
@@ -87,18 +99,6 @@
         "es": "ws actualizado y socket-io",
         "pl": "Zaktualizowano ws i socket-io",
         "zh-cn": "更新了 ws 和 socket-io"
-      },
-      "4.1.4": {
-        "en": "Added debug output for white list\nLogout button will be hidden if basic authentication enabled. As logout not possible with basic authentication.",
-        "de": "Debug-Ausgabe für Whitelist hinzugefügt\nDie Abmeldeschaltfläche wird ausgeblendet, wenn die Basisauthentifizierung aktiviert ist. Da Logout mit Basisauthentifizierung nicht möglich ist.",
-        "ru": "Добавлен отладочный вывод для белого списка\nКнопка выхода будет скрыта, если включена базовая аутентификация. Поскольку выход из системы невозможен при базовой аутентификации.",
-        "pt": "Saída de depuração adicionada para lista branca\nO botão Sair ficará oculto se a autenticação básica estiver habilitada. Como logout não é possível com autenticação básica.",
-        "nl": "Foutopsporingsuitvoer toegevoegd voor witte lijst\nDe knop Afmelden wordt verborgen als basisverificatie is ingeschakeld. Omdat uitloggen niet mogelijk is met basisauthenticatie.",
-        "fr": "Ajout de la sortie de débogage pour la liste blanche\nLe bouton de déconnexion sera masqué si l'authentification de base est activée. Comme la déconnexion n'est pas possible avec l'authentification de base.",
-        "it": "Aggiunto output di debug per la white list\nIl pulsante di disconnessione sarà nascosto se l'autenticazione di base è abilitata. Poiché il logout non è possibile con l'autenticazione di base.",
-        "es": "Salida de depuración agregada para la lista blanca\nEl botón de cierre de sesión estará oculto si la autenticación básica está habilitada. Como el cierre de sesión no es posible con la autenticación básica.",
-        "pl": "Dodano wyjście debugowania dla białej listy\nPrzycisk Wyloguj będzie ukryty, jeśli włączone jest uwierzytelnianie podstawowe. Ponieważ wylogowanie nie jest możliwe przy podstawowym uwierzytelnianiu.",
-        "zh-cn": "为白名单添加了调试输出\n如果启用基本身份验证，注销按钮将被隐藏。由于基本身份验证无法注销。"
       }
     },
     "desc": {
