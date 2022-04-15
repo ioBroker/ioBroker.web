@@ -3,7 +3,8 @@ If some adapter want to be available under same port as web adapter, it should i
 
 First, it must have a `common.webExtension` flag in `io-package.json` file that points to thw web extension file. Like `"webExtension": "lib/web.js"`.
 
-Second, `common.native.webInstance` flag in `io-package.json` has to point to the instance name of the web-adapter for which the extension should be loaded. Or simply load it for all instances via `"webInstance": "*"`.
+Second, `common.native.webInstance` flag in `io-package.json` has to point to the instance name of the web-adapter for which the extension should be loaded. 
+Or simply load it for all instances via `"webInstance": "*"`.
 
 Third, the file `lib/web.js` (or whatever) must exist, and it must export a class.
 ```
@@ -43,6 +44,25 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
         });
     };
 
+    // Optional: deliver to web the link to Web interface
+    this.welcomePage = () => {
+        return {
+            link: 'example/',
+            name: 'Example',
+            img: 'adapter/example/example.png',
+            color: '#157c00',
+            order: 10,
+            pro: false
+        };
+    }
+
+    // Optional. Say to web instance to wait till this instance is initialized
+    // Used if initalisation lasts some time
+    this.readyCallback = null; 
+    this.waitForReady = cb => {
+        this.readyCallback = cb;
+    }
+
     // self invoke constructor
     (function __constructor () {
         adapter.log.info('Install extension on /' + that.config.demoParam);
@@ -51,11 +71,19 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
             res.setHeader('Content-type', 'text/html');
             res.status(200).send('You called a demo web extension with path "' + req.url + '");
         });
+        
+        // inform web about that all routes are installed
+        this.readyCallback && this.readyCallback(that);
     })();
 }
 
 module.exports = ExtensionExample;
 ```
+
+`common.mode` could be:
+- `daemon` - the instance will be started, but if `common.stoppedWhenWebExtension: true`, the instance will be started only if `native.webInstance` is empty.
+- `extension` - the instance will never be started, as it runs only as part of web instance
+
 
 ## Examples
 Following adapters support web-extensions:
@@ -63,3 +91,4 @@ Following adapters support web-extensions:
 - Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/lib/simpleapi.js#L73
 - Proxy: https://github.com/ioBroker/ioBroker.proxy/blob/master/lib/proxy.js#L20
 - Eufy-Security: https://github.com/bropat/ioBroker.eufy-security/blob/master/src/lib/web.ts (Typescript-implementation)
+- REST-API: https://github.com/ioBroker/ioBroker.rest-api/blob/master/src/lib/rest-api.js#L67
