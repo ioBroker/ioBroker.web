@@ -236,6 +236,7 @@ function startAdapter(options) {
                         timeout = null;
                         adapter && adapter.log && adapter.log.warn(`Timeout by termination of web-extensions!`);
                         webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        webServer && webServer.io && webServer.io.close();
                         webServer && webServer.server && webServer.server.close();
                         webServer && webServer.settings && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                         callback && callback();
@@ -249,6 +250,7 @@ function startAdapter(options) {
                             clearTimeout(timeout);
                             timeout = null;
                             webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                            webServer && webServer.io && webServer.io.close();
                             webServer && webServer.server && webServer.server.close();
                             webServer && webServer.settings && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             callback && callback();
