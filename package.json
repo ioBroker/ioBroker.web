@@ -34,7 +34,7 @@
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.6",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.7",
-    "@alcalzone/release-script-plugin-license": "^3.5.3",
+    "@alcalzone/release-script-plugin-license": "^3.5.8",
     "axios": "^0.26.1",
     "chai": "^4.3.6",
     "del": "^6.0.0",
