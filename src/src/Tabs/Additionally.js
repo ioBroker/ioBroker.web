@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
-import {TextField} from "@material-ui/core";
+import {TextField} from "@mui/material";
 
 const styles = theme => ({
     tab: {
@@ -80,6 +80,7 @@ class Additionally extends Component {
                 </h4>
                 <div>
                     <TextField
+                        variant="standard"
                         value={native.defaultRedirect || ''}
                         onChange={async e => await onChange('defaultRedirect', e.target.value)}
                         label={I18n.t('defaultRedirect')}

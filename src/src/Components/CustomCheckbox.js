@@ -2,9 +2,10 @@ import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
-import { Checkbox, FormControlLabel, withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const styles = theme => ({
     input: {

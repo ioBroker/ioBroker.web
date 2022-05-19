@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 
-import Button from '@material-ui/core/Button';
-import { TextField } from '@material-ui/core';
+import Button from '@mui/material/Button';
+import { TextField } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -36,7 +36,7 @@ const CustomButtonUpload = ({ title, onChange }) => {
             <Button variant="contained" color="primary" component="span">
                 {I18n.t(title)}
             </Button>
-            <TextField style={{ marginLeft: 20 }} value={valueFileUpload} />
+            <TextField variant="standard" style={{ marginLeft: 20 }} value={valueFileUpload} />
         </label>
     </div>;
 }

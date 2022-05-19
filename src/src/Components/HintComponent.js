@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { ClickAwayListener, Fab, makeStyles, Tooltip } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
+import { ClickAwayListener, Fab, Tooltip } from '@mui/material';
 
-import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const useStyles = makeStyles(({ name }) => ({
     colorTheme: {

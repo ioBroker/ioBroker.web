@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import Toast from '../Components/Toast';
 import CustomCheckbox from '../Components/CustomCheckbox';

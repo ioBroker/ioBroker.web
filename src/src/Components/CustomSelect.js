@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import { FormControl, FormHelperText, Input, MenuItem, Select, withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { FormControl, FormHelperText, Input, MenuItem, Select } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
-import Icon from '@iobroker/adapter-react/Components/Icon';
-import Utils from '@iobroker/adapter-react/Components/Utils';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import Icon from '@iobroker/adapter-react-v5/Components/Icon';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 const styles = theme => ({
     input: {
@@ -28,6 +29,7 @@ const CustomSelect = ({ table, value, title, attr, options, style, classes, nati
         style={Object.assign({ paddingTop: 5 }, style)}
     >
         <Select
+            variant="standard"
             value={table ? value : native[attr] || '_'}
             onChange={e => {
                 if (table) {

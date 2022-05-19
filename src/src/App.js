@@ -1,12 +1,12 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { MuiThemeProvider } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import GenericApp from '@iobroker/adapter-react/GenericApp';
-import Loader from '@iobroker/adapter-react/Components/Loader'
-import I18n from '@iobroker/adapter-react/i18n';
+import { withStyles } from '@mui/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
+import Loader from '@iobroker/adapter-react-v5/Components/Loader'
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import Options from './Tabs/Options';
 import Certificates from './Tabs/Certificates';
 import WhiteList from './Tabs/WhiteList';
@@ -66,6 +66,7 @@ class App extends GenericApp {
             'pl': require('./i18n/pl'),
             'zh-cn': require('./i18n/zh-cn'),
         };
+        extendedProps.sentryDSN = window.sentryDSN;
         super(props, extendedProps);
     }
 
@@ -169,32 +170,36 @@ class App extends GenericApp {
         const { loaded, theme, themeType, toast } = this.state;
         const { classes } = this.props;
         if (!loaded) {
-            return <MuiThemeProvider theme={theme}>
-                <Loader theme={themeType} />
-            </MuiThemeProvider>;
+            return <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.state.theme}>
+                    <Loader theme={themeType} />
+                </ThemeProvider>
+            </StyledEngineProvider>;
         }
 
-        return <MuiThemeProvider theme={theme}>
-            <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
-            <div className="App" style={{ background: theme.palette.background.default, color: theme.palette.text.primary }}>
-                <AppBar position="static">
-                    <Tabs
-                        value={this.getSelectedTab()}
-                        onChange={(e, index) => {
-                            this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
-                        }} scrollButtons="auto"
-                    >
-                        {arrayTabName.map((el, index) =>
-                            <Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />)}
-                    </Tabs>
-                </AppBar>
-                <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>
-                    {this.renderTab()}
+        return <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={this.state.theme}>
+                <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
+                <div className="App" style={{ background: theme.palette.background.default, color: theme.palette.text.primary }}>
+                    <AppBar position="static">
+                        <Tabs
+                            value={this.getSelectedTab()}
+                            onChange={(e, index) => {
+                                this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
+                            }} scrollButtons="auto"
+                        >
+                            {arrayTabName.map((el, index) =>
+                                <Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />)}
+                        </Tabs>
+                    </AppBar>
+                    <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>
+                        {this.renderTab()}
+                    </div>
+                    {this.renderError()}
+                    {this.renderSaveCloseButtons()}
                 </div>
-                {this.renderError()}
-                {this.renderSaveCloseButtons()}
-            </div>
-        </MuiThemeProvider>;
+            </ThemeProvider>
+        </StyledEngineProvider>;
     }
 }
 

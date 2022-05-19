@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@mui/material';
 
-import Security from '@material-ui/icons/Security';
+import Security from '@mui/icons-material/Security';
 
-import Logo from '@iobroker/adapter-react/Components/Logo';
-import I18n from '@iobroker/adapter-react/i18n';
+import Logo from '@iobroker/adapter-react-v5/Components/Logo';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import Toast from '../Components/Toast';
 import CustomModal from '../Components/CustomModal';
 import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 const styles = theme => ({
     blockWrapper: {
@@ -184,7 +184,7 @@ class Options extends Component {
                 >
                     {I18n.t('Ok')}
                 </Button>
-                <Button variant="contained" onClick={() => this.setState({confirmSocketIO: false})}>
+                <Button color="grey" variant="contained" onClick={() => this.setState({confirmSocketIO: false})}>
                     {I18n.t('Cancel')}
                 </Button>
             </DialogActions>

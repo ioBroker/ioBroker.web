@@ -1,12 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import { IconButton, Snackbar } from '@material-ui/core';
+import { IconButton, Snackbar } from '@mui/material';
 
 import { MdClose as IconClose } from 'react-icons/md';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const useStyles = makeStyles((theme) => ({
     close: {

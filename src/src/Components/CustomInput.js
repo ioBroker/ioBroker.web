@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
-import { FormControl, FormHelperText, TextField, withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { FormControl, FormHelperText, TextField } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const styles = theme => ({
     input: {
@@ -26,7 +27,7 @@ const CustomInput = ({ styleComponentBlock, component, size, variant, table, val
     >
         <TextField
             error={!!error}
-            variant={variant}
+            variant={variant || 'standard'}
             value={table ? value : native[attr]}
             type={type}
             helperText={error || ''}
