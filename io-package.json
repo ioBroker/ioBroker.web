@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "4.3.0",
+    "version": "5.0.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.0.0": {
+        "en": "Socket.io updated to 4.5.1",
+        "de": "Socket.io auf 4.5.1 aktualisiert",
+        "ru": "Socket.io обновлен до 4.5.1",
+        "pt": "Socket.io atualizado para 4.5.1",
+        "nl": "Socket.io bijgewerkt naar 4.5.1",
+        "fr": "Socket.io mis à jour vers 4.5.1",
+        "it": "Socket.io aggiornato alla 4.5.1",
+        "es": "Socket.io actualizado a 4.5.1",
+        "pl": "Socket.io zaktualizowano do 4.5.1",
+        "zh-cn": "Socket.io 更新到 4.5.1"
+      },
       "4.3.0": {
         "en": "Added support of rest-api",
         "de": "Unterstützung von rest-api hinzugefügt",
@@ -87,18 +99,6 @@
         "es": "Evite algunos posibles casos de bloqueo en la detención del adaptador",
         "pl": "Zapobiegaj potencjalnym przypadkom awarii podczas zatrzymania adaptera",
         "zh-cn": "在适配器停止时防止一些潜在的崩溃情况"
-      },
-      "4.1.5": {
-        "en": "Updated ws and socket-io",
-        "de": "ws und socket-io aktualisiert",
-        "ru": "Обновлены ws и socket-io",
-        "pt": "ws e socket-io atualizados",
-        "nl": "Bijgewerkt ws en socket-io",
-        "fr": "Mise à jour de ws et socket-io",
-        "it": "ws e socket-io aggiornati",
-        "es": "ws actualizado y socket-io",
-        "pl": "Zaktualizowano ws i socket-io",
-        "zh-cn": "更新了 ws 和 socket-io"
       }
     },
     "desc": {
