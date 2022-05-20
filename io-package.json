@@ -16,43 +16,7 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-      "5.0.3": {
-        "en": "Added error log",
-        "de": "Fehlerprotokoll hinzugefügt",
-        "ru": "Добавлен журнал ошибок",
-        "pt": "Log de erros adicionado",
-        "nl": "Foutenlogboek toegevoegd",
-        "fr": "Ajout du journal des erreurs",
-        "it": "Aggiunto registro errori",
-        "es": "Registro de errores agregado",
-        "pl": "Dodano dziennik błędów",
-        "zh-cn": "添加了错误日志"
-      },
-      "5.0.1": {
-        "en": "Added compatibility with socket.io@2.x\nGUI updated to adapter-react-v5",
-        "de": "Kompatibilität mit socket.io@2.x hinzugefügt\nGUI auf adapter-react-v5 aktualisiert",
-        "ru": "Добавлена совместимость с socket.io@2.x\nГрафический интерфейс обновлен до adapter-react-v5.",
-        "pt": "Adicionada compatibilidade com socket.io@2.x\nGUI atualizada para adapter-react-v5",
-        "nl": "Compatibiliteit toegevoegd met socket.io@2.x\nGUI bijgewerkt naar adapter-react-v5",
-        "fr": "Compatibilité ajoutée avec socket.io@2.x\nInterface graphique mise à jour vers adapter-react-v5",
-        "it": "Aggiunta compatibilità con socket.io@2.x\nGUI aggiornata a adapter-react-v5",
-        "es": "Compatibilidad añadida con socket.io@2.x\nInterfaz gráfica de usuario actualizada a adaptador-reaccionar-v5",
-        "pl": "Dodano kompatybilność z socket.io@2.x\nGUI zaktualizowane do adaptera-react-v5",
-        "zh-cn": "添加了与 socket.io@2.x 的兼容性\nGUI 更新为 adapter-react-v5"
-      },
-      "5.0.0": {
-        "en": "Socket.io updated to 4.5.1",
-        "de": "Socket.io auf 4.5.1 aktualisiert",
-        "ru": "Socket.io обновлен до 4.5.1",
-        "pt": "Socket.io atualizado para 4.5.1",
-        "nl": "Socket.io bijgewerkt naar 4.5.1",
-        "fr": "Socket.io mis à jour vers 4.5.1",
-        "it": "Socket.io aggiornato alla 4.5.1",
-        "es": "Socket.io actualizado a 4.5.1",
-        "pl": "Socket.io zaktualizowano do 4.5.1",
-        "zh-cn": "Socket.io 更新到 4.5.1"
-      },
-      "4.3.0": {
+       "4.3.0": {
         "en": "Added support of rest-api",
         "de": "Unterstützung von rest-api hinzugefügt",
         "ru": "Добавлена поддержка rest-api",
