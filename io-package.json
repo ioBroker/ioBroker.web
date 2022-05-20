@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.0.2",
+    "version": "5.0.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.0.3": {
+        "en": "Added error log",
+        "de": "Fehlerprotokoll hinzugefügt",
+        "ru": "Добавлен журнал ошибок",
+        "pt": "Log de erros adicionado",
+        "nl": "Foutenlogboek toegevoegd",
+        "fr": "Ajout du journal des erreurs",
+        "it": "Aggiunto registro errori",
+        "es": "Registro de errores agregado",
+        "pl": "Dodano dziennik błędów",
+        "zh-cn": "添加了错误日志"
+      },
       "5.0.1": {
         "en": "Added compatibility with socket.io@2.x\nGUI updated to adapter-react-v5",
         "de": "Kompatibilität mit socket.io@2.x hinzugefügt\nGUI auf adapter-react-v5 aktualisiert",
