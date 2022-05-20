@@ -60,5 +60,6 @@
   "Ok": "OK",
   "Cancel": "Annuleren",
   "usePureWebSockets": "Gebruik pure web-sockets (iobroker.ws)",
-  "If no IP address matches, show authentication dialog": "Als geen IP-adres overeenkomt, verificatiedialoogvenster weergeven"
+  "If no IP address matches, show authentication dialog": "Als geen IP-adres overeenkomt, verificatiedialoogvenster weergeven",
+  "Compatibility mode with socket.io@2.x": "Compatibiliteitsmodus met socket.io@2.x"
 }

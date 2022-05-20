@@ -228,8 +228,8 @@ class Options extends Component {
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomSelect
-                        title='IP address'
-                        attr='bind'
+                        title="IP address"
+                        attr="bind"
                         noTranslate
                         className={classes.ipInputStyle}
                         options={ipAddressOptions}
@@ -237,9 +237,9 @@ class Options extends Component {
                         onChange={onChange}
                     />
                     <CustomInput
-                        title='port'
-                        attr='port'
-                        type='number'
+                        title="port"
+                        attr="port"
+                        type="number"
                         style={{ marginTop: 5 }}
                         native={native}
                         onChange={onChange}
@@ -248,37 +248,37 @@ class Options extends Component {
                 <div className={classes.blockWrapperCheckbox}>
                     <div className={classes.blockWrapper}>
                         <CustomCheckbox
-                            title='encryption'
-                            attr='secure'
+                            title="encryption"
+                            attr="secure"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            title='authentication'
-                            attr='auth'
+                            title="authentication"
+                            attr="auth"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomCheckbox
                             className={native['auth'] ? null : classes.displayNone}
-                            title='basic_authentication'
-                            attr='basicAuth'
+                            title="basic_authentication"
+                            attr="basicAuth"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            title='cache'
-                            attr='cache'
+                            title="cache"
+                            attr="cache"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomSelect
-                            title='socket'
-                            attr='socketio'
+                            title="socket"
+                            attr="socketio"
                             noTranslate
                             options={ socketioOptions }
                             style={{ marginTop: 10 }}
@@ -293,8 +293,24 @@ class Options extends Component {
                         />
                         <CustomCheckbox
                             className={native['socketio'] === '' ? null : classes.displayNone}
-                            title='usePureWebSockets'
-                            attr='usePureWebSockets'
+                            title="usePureWebSockets"
+                            attr="usePureWebSockets"
+                            style={{ marginTop: 10 }}
+                            native={native}
+                            onChange={onChange}
+                        />
+                        <CustomCheckbox
+                            className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
+                            title="web_sockets"
+                            attr="forceWebSockets"
+                            style={{ marginTop: 10 }}
+                            native={native}
+                            onChange={onChange}
+                        />
+                        <CustomCheckbox
+                            className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
+                            title="Compatibility mode with socket.io@2.x"
+                            attr="compatibilityV2"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
@@ -303,8 +319,8 @@ class Options extends Component {
                     <div className={classes.blockWrapper}>
                         <div className={`${classes.blockWrapperCheckbox} ${native['secure'] ? null : classes.displayNone}`} >
                             <CustomSelect
-                                title='public_certificate'
-                                attr='certPublic'
+                                title="public_certificate"
+                                attr="certPublic"
                                 noTranslate
                                 options={[
                                     { title: I18n.t('nothing'), value: '' },
@@ -315,8 +331,8 @@ class Options extends Component {
                                 onChange={onChange}
                             />
                             <CustomSelect
-                                title='private_certificate'
-                                attr='certPrivate'
+                                title="private_certificate"
+                                attr="certPrivate"
                                 noTranslate
                                 options={[
                                     { title: I18n.t('nothing'), value: '' },
@@ -327,8 +343,8 @@ class Options extends Component {
                                 onChange={onChange}
                             />
                             <CustomSelect
-                                title='chained_certificate'
-                                attr='certChained'
+                                title="chained_certificate"
+                                attr="certChained"
                                 noTranslate
                                 options={[
                                     { title: I18n.t('nothing'), value: '' },
@@ -340,9 +356,9 @@ class Options extends Component {
                             />
                         </div>
                         <CustomSelect
-                            className={!native['auth'] ? null : classes.displayNone}
-                            title='users'
-                            attr='defaultUser'
+                            className={!native.auth ? null : classes.displayNone}
+                            title="users"
+                            attr="defaultUser"
                             themeType={this.props.themeType}
                             noTranslate
                             options={usersOptions.map(({ _id, common: { name, color, icon } }) => ({
@@ -357,24 +373,16 @@ class Options extends Component {
                         />
                         <CustomInput
                             className={native['auth'] ? null : classes.displayNone}
-                            title='time_out'
-                            attr='ttl'
-                            type='number'
+                            title="time_out"
+                            attr="ttl"
+                            type="number"
                             style={{ marginTop: -1, width: 300 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            title='simple_api'
-                            attr='simpleapi'
-                            style={{ marginTop: 10 }}
-                            native={native}
-                            onChange={onChange}
-                        />
-                        <CustomCheckbox
-                            className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
-                            title='web_sockets'
-                            attr='forceWebSockets'
+                            title="simple_api"
+                            attr="simpleapi"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}

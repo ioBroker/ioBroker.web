@@ -175,6 +175,7 @@
     "certChained": "",
     "addUserName": false,
     "forceWebSockets": false,
+    "compatibilityV2": true,
     "whiteListEnabled": false,
     "leEnabled": false,
     "leUpdate": false,

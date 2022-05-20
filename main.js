@@ -1507,6 +1507,7 @@ async function initWebServer(settings) {
         socketSettings.store = store;
         socketSettings.ttl = settings.ttl || 3600;
         socketSettings.forceWebSockets = settings.forceWebSockets || false;
+        socketSettings.compatibilityV2 = settings.compatibilityV2 !== false;
 
         try {
             const IOSocket = settings.usePureWebSockets ? require(utils.appName + '.ws/lib/socket.js') : require(utils.appName + '.socketio/lib/socket.js');

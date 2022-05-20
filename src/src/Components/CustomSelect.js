@@ -41,7 +41,7 @@ const CustomSelect = ({ table, value, title, attr, options, style, classes, nati
             renderValue={_item => {
                 const item = options.find(it => it.value === _item);
                 return item ? <>
-                    <Icon src={item.icon} className={classes.icon}/>
+                    <Icon src={item.icon || ''} className={classes.icon}/>
                     {noTranslate ? item.title : I18n.t(item.title)}
                 </> : _item
             }}
@@ -49,7 +49,7 @@ const CustomSelect = ({ table, value, title, attr, options, style, classes, nati
         >
             {options.map(item =>
                 <MenuItem key={'key-' + item.value} value={item.value || '_'} style={item.color ? {color: item.color, backgroundColor: Utils.getInvertedColor ? Utils.getInvertedColor(item.color, themeType) : undefined} : {}}>
-                    <Icon src={item.icon} className={classes.icon}/>
+                    <Icon src={item.icon || ''} className={classes.icon}/>
                     {noTranslate ? item.title : I18n.t(item.title)}
                 </MenuItem>)}
         </Select>

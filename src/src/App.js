@@ -107,6 +107,7 @@ class App extends GenericApp {
                     instance={this.instance}
                     onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     adapterName={this.adapterName}
+                    onLoad={native => this.setState({native})}
                 />;
 
             case 'certificates':

@@ -60,5 +60,6 @@
   "Ok": "Ok",
   "Cancel": "Anuluj",
   "usePureWebSockets": "Używaj czystych gniazd sieciowych (iobroker.ws)",
-  "If no IP address matches, show authentication dialog": "Jeśli żaden adres IP nie pasuje, pokaż okno uwierzytelniania"
+  "If no IP address matches, show authentication dialog": "Jeśli żaden adres IP nie pasuje, pokaż okno uwierzytelniania",
+  "Compatibility mode with socket.io@2.x": "Tryb zgodności z socket.io@2.x"
 }

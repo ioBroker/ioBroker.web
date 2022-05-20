@@ -83,6 +83,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 
 ## Changelog
 ### **WORK IN PROGRESS**
+* (bluefox) Added compatibility with socket.io@2.x
 * (bluefox) GUI updated to adapter-react-v5
 
 ### 5.0.0 (2022-05-19)

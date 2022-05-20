@@ -60,5 +60,6 @@
   "Ok": "Ok",
   "Cancel": "Abbrechen",
   "usePureWebSockets": "Reine Web-Sockets (iobroker.ws) verwenden",
-  "If no IP address matches, show authentication dialog": "Wenn keine IP-Adresse übereinstimmt, Authentifizierungsdialog anzeigen"
+  "If no IP address matches, show authentication dialog": "Wenn keine IP-Adresse übereinstimmt, Authentifizierungsdialog anzeigen",
+  "Compatibility mode with socket.io@2.x": "Kompatibilitätsmodus mit socket.io@2.x"
 }

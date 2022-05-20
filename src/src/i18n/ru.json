@@ -60,5 +60,6 @@
   "Ok": "Ok",
   "Cancel": "Отмена",
   "usePureWebSockets": "Использовать чистые веб-сокеты (iobroker.ws)",
-  "If no IP address matches, show authentication dialog": "Если нет совпадений IP-адресов, показать диалоговое окно аутентификации"
+  "If no IP address matches, show authentication dialog": "Если нет совпадений IP-адресов, показать диалоговое окно аутентификации",
+  "Compatibility mode with socket.io@2.x": "Режим совместимости с socket.io@2.x"
 }

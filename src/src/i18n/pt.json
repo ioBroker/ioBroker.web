@@ -60,5 +60,6 @@
   "Ok": "OK",
   "Cancel": "Cancelar",
   "usePureWebSockets": "Use web-sockets puros (iobroker.ws)",
-  "If no IP address matches, show authentication dialog": "Se nenhum endereço IP corresponder, mostre a caixa de diálogo de autenticação"
+  "If no IP address matches, show authentication dialog": "Se nenhum endereço IP corresponder, mostre a caixa de diálogo de autenticação",
+  "Compatibility mode with socket.io@2.x": "Modo de compatibilidade com socket.io@2.x"
 }
