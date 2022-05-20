@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.0.0",
+    "version": "5.0.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.0.1": {
+        "en": "Added compatibility with socket.io@2.x\nGUI updated to adapter-react-v5",
+        "de": "Kompatibilität mit socket.io@2.x hinzugefügt\nGUI auf adapter-react-v5 aktualisiert",
+        "ru": "Добавлена совместимость с socket.io@2.x\nГрафический интерфейс обновлен до adapter-react-v5.",
+        "pt": "Adicionada compatibilidade com socket.io@2.x\nGUI atualizada para adapter-react-v5",
+        "nl": "Compatibiliteit toegevoegd met socket.io@2.x\nGUI bijgewerkt naar adapter-react-v5",
+        "fr": "Compatibilité ajoutée avec socket.io@2.x\nInterface graphique mise à jour vers adapter-react-v5",
+        "it": "Aggiunta compatibilità con socket.io@2.x\nGUI aggiornata a adapter-react-v5",
+        "es": "Compatibilidad añadida con socket.io@2.x\nInterfaz gráfica de usuario actualizada a adaptador-reaccionar-v5",
+        "pl": "Dodano kompatybilność z socket.io@2.x\nGUI zaktualizowane do adaptera-react-v5",
+        "zh-cn": "添加了与 socket.io@2.x 的兼容性\nGUI 更新为 adapter-react-v5"
+      },
       "5.0.0": {
         "en": "Socket.io updated to 4.5.1",
         "de": "Socket.io auf 4.5.1 aktualisiert",
@@ -87,18 +99,6 @@
         "es": "Se actualizó ws para arreglar el editor de flot",
         "pl": "Zaktualizowano ws, aby naprawić edytor flot",
         "zh-cn": "更新了 ws 以修复浮动编辑器"
-      },
-      "4.1.6": {
-        "en": "Prevent some potential crash cases on adapter stop",
-        "de": "Verhindern Sie einige potenzielle Absturzfälle beim Stoppen des Adapters",
-        "ru": "Предотвращение некоторых возможных случаев сбоя при остановке адаптера",
-        "pt": "Evite alguns casos de travamento em potencial na parada do adaptador",
-        "nl": "Voorkom mogelijke crashgevallen bij het stoppen van de adapter",
-        "fr": "Prévenir certains cas de plantage potentiels à l'arrêt de l'adaptateur",
-        "it": "Prevenire alcuni potenziali casi di arresto anomalo all'arresto dell'adattatore",
-        "es": "Evite algunos posibles casos de bloqueo en la detención del adaptador",
-        "pl": "Zapobiegaj potencjalnym przypadkom awarii podczas zatrzymania adaptera",
-        "zh-cn": "在适配器停止时防止一些潜在的崩溃情况"
       }
     },
     "desc": {
