@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### 5.1.1 (2022-05-20)
+### **WORK IN PROGRESS**
 * (bluefox) Fixed "Force web-sockets" mode
 
 ### 5.1.0 (2022-05-20)
