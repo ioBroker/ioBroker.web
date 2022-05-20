@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Reverted socket.io to V2
+
 ### 5.0.3 (2022-05-20)
 * (bluefox) Added error log
 

@@ -307,14 +307,14 @@ class Options extends Component {
                             native={native}
                             onChange={onChange}
                         />
-                        <CustomCheckbox
+                        {/*<CustomCheckbox
                             className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
                             title="Compatibility mode with socket.io@2.x"
                             attr="compatibilityV2"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
-                        />
+                        />*/}
                     </div>
                     <div className={classes.blockWrapper}>
                         <div className={`${classes.blockWrapperCheckbox} ${native['secure'] ? null : classes.displayNone}`} >
