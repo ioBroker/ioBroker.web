@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.0.2": {
+        "en": "Added error log",
+        "de": "Fehlerprotokoll hinzugefügt",
+        "ru": "Добавлен журнал ошибок",
+        "pt": "Log de erros adicionado",
+        "nl": "Foutenlogboek toegevoegd",
+        "fr": "Ajout du journal des erreurs",
+        "it": "Aggiunto registro errori",
+        "es": "Registro de errores agregado",
+        "pl": "Dodano dziennik błędów",
+        "zh-cn": "添加了错误日志"
+      },
       "5.0.1": {
         "en": "Added compatibility with socket.io@2.x\nGUI updated to adapter-react-v5",
         "de": "Kompatibilität mit socket.io@2.x hinzugefügt\nGUI auf adapter-react-v5 aktualisiert",
@@ -87,18 +99,6 @@
         "es": "Proporcione cambios de estado y objetos para simple-api",
         "pl": "Zapewnij zmiany stanu i obiektów dla simple-api",
         "zh-cn": "为 simple-api 提供状态和对象更改"
-      },
-      "4.2.0": {
-        "en": "Updated ws to fix the flot editor",
-        "de": "WS aktualisiert, um den Flot-Editor zu reparieren",
-        "ru": "Обновлен ws, чтобы исправить редактор флота.",
-        "pt": "Atualizado ws para corrigir o editor de flot",
-        "nl": "Ws bijgewerkt om de flot-editor te repareren",
-        "fr": "Mise à jour de ws pour corriger l'éditeur de flot",
-        "it": "WS aggiornato per correggere l'editor flot",
-        "es": "Se actualizó ws para arreglar el editor de flot",
-        "pl": "Zaktualizowano ws, aby naprawić edytor flot",
-        "zh-cn": "更新了 ws 以修复浮动编辑器"
       }
     },
     "desc": {
