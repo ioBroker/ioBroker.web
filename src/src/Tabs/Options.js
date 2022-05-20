@@ -292,7 +292,7 @@ class Options extends Component {
                             }}
                         />
                         <CustomCheckbox
-                            className={native['socketio'] === '' ? null : classes.displayNone}
+                            className={!native.socketio ? null : classes.displayNone}
                             title="usePureWebSockets"
                             attr="usePureWebSockets"
                             style={{ marginTop: 10 }}
@@ -300,8 +300,9 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
+                            className={(!native.socketio || native.socketio.startsWith('system.adapter.socket')) && !native.usePureWebSockets ? null : classes.displayNone}
                             title="web_sockets"
+                            help={native.socketio && native.socketio.startsWith('system.adapter.socket') ? I18n.t('Same settings must be set in socketio instance') : ''}
                             attr="forceWebSockets"
                             style={{ marginTop: 10 }}
                             native={native}

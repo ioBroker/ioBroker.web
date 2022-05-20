@@ -61,5 +61,6 @@
   "Cancel": "取消",
   "usePureWebSockets": "使用纯网络套接字 (iobroker.ws)",
   "If no IP address matches, show authentication dialog": "如果没有 IP 地址匹配，则显示身份验证对话框",
-  "Compatibility mode with socket.io@2.x": "与 socket.io@2.x 的兼容模式"
+  "Compatibility mode with socket.io@2.x": "与 socket.io@2.x 的兼容模式",
+  "Same settings must be set in socketio instance": "必须在 socketio 实例中设置相同的设置"
 }
