@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.0.3",
+    "version": "5.1.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,7 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-       "4.3.0": {
+      "5.1.0": {
+        "en": "Reverted socket.io to V2",
+        "de": "Socket.io auf V2 zurückgesetzt",
+        "ru": "Восстановлен socket.io до V2",
+        "pt": "Socket.io revertido para V2",
+        "nl": "Socket.io teruggezet naar V2",
+        "fr": "Retour de socket.io en V2",
+        "it": "Socket.io ripristinato a V2",
+        "es": "Socket.io revertido a V2",
+        "pl": "Przywrócono socket.io do V2",
+        "zh-cn": "将 socket.io 恢复到 V2"
+      },
+      "4.3.0": {
         "en": "Added support of rest-api",
         "de": "Unterstützung von rest-api hinzugefügt",
         "ru": "Добавлена поддержка rest-api",
