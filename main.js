@@ -1515,6 +1515,7 @@ async function initWebServer(settings) {
             server.io = new IOSocket(server.server, socketSettings, adapter, null, store, checkUser);
         } catch (err) {
             adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');
+            adapter.log.error(JSON.stringify(err));
         }
     }
 
