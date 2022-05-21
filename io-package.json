@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.1.2",
+    "version": "5.2.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.0": {
+        "en": "Corrected the load of `iobroker.ws` as integrated socket",
+        "de": "Das Laden von `iobroker.ws` als integrierter Socket wurde korrigiert",
+        "ru": "Исправлена загрузка iobroker.ws как встроенного сокета.",
+        "pt": "Corrigido o carregamento de `iobroker.ws` como soquete integrado",
+        "nl": "De belasting van `iobroker.ws` gecorrigeerd als geïntegreerde socket",
+        "fr": "Correction du chargement de `iobroker.ws` en tant que socket intégré",
+        "it": "Corretto il carico di `iobroker.ws` come socket integrato",
+        "es": "Se corrigió la carga de `iobroker.ws` como socket integrado",
+        "pl": "Poprawiono obciążenie `iobroker.ws` jako zintegrowane gniazdo",
+        "zh-cn": "更正了“iobroker.ws”作为集成套接字的负载"
+      },
       "5.1.2": {
         "en": "Fixed \"Force web-sockets\" mode",
         "de": "Modus \"Web-Sockets erzwingen\" behoben",
@@ -87,18 +99,6 @@
         "es": "Se actualizó ws y socketio para tener el método `log` en los sockets",
         "pl": "Zaktualizowano ws i socketio, aby mieć metodę `log` w gniazdach",
         "zh-cn": "更新了 ws 和 socketio 以在套接字中有 `log` 方法"
-      },
-      "4.2.1": {
-        "en": "Provide state and object changes for simple-api",
-        "de": "Bereitstellen von Zustands- und Objektänderungen für simple-api",
-        "ru": "Обеспечьте изменения состояния и объекта для простого API",
-        "pt": "Fornecer alterações de estado e objeto para api simples",
-        "nl": "Geef status- en objectwijzigingen op voor simple-api",
-        "fr": "Fournir des changements d'état et d'objet pour simple-api",
-        "it": "Fornire modifiche allo stato e agli oggetti per simple-api",
-        "es": "Proporcione cambios de estado y objetos para simple-api",
-        "pl": "Zapewnij zmiany stanu i obiektów dla simple-api",
-        "zh-cn": "为 simple-api 提供状态和对象更改"
       }
     },
     "desc": {
