@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected the load of `iobroker.ws` as integrated socket
+
 ### 5.1.2 (2022-05-20)
 * (bluefox) Fixed "Force web-sockets" mode
 

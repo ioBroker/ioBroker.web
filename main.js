@@ -1510,7 +1510,13 @@ async function initWebServer(settings) {
         socketSettings.compatibilityV2 = settings.compatibilityV2 !== false;
 
         try {
-            const IOSocket = settings.usePureWebSockets ? require(utils.appName + '.ws/lib/socket.js') : require(utils.appName + '.socketio/lib/socket.js');
+            let filePath = settings.usePureWebSockets ? require.resolve(utils.appName + '.ws') : require.resolve(utils.appName + '.socketio');
+            filePath = filePath.replace(/\\/g, '/');
+            const parts = filePath.split('/');
+            parts.pop(); // main.js
+            parts.push('lib');
+            parts.push('socket.js');
+            const IOSocket = require(parts.join('/'));
             // const IOSocket = require('./lib/socket.js'); // DEBUG
             server.io = new IOSocket(server.server, socketSettings, adapter, null, store, checkUser);
         } catch (err) {
