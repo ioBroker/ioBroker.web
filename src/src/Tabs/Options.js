@@ -83,7 +83,7 @@ class Options extends Component {
                 { title: I18n.t('built_in'), value: '_' }
             ],
             openModal: false,
-            loaded: 0,
+            ready: false,
             confirmSocketIO: false,
         };
     }
@@ -91,55 +91,32 @@ class Options extends Component {
     componentDidMount() {
         const { instance, socket, common: { host } } = this.props;
         const { socketioOptions } = this.state;
-        let loaded = 0;
         socket.getAdapterInstances('socketio')
-            .then(state => socket.getAdapterInstances('ws')
-                .then(wsInstances => {
-                    if (wsInstances) {
-                        state = state.concat(wsInstances);
-                    }
-
-                    this.setState({
-                        loaded: ++loaded,
-                        socketioOptions: [
-                            ...socketioOptions,
-                            ...state
-                                .map(({_id, common: {name}}) => ({title: `${name} [${name}.${instance}]`, value: _id}))]
-                    })
-                }));
-
-        socket.getRawSocket().emit('getHostByIp', host, (err, data) => {
-            if (data) {
-                let IPs4 = [{ title: `[IPv4] 0.0.0.0 - ${I18n.t('open_ip')}`, value: '0.0.0.0', family: 'ipv4' }];
-                let IPs6 = [{ title: '[IPv6] ::', value: '::', family: 'ipv6' }];
-                if (data.native.hardware && data.native.hardware.networkInterfaces) {
-                    for (let eth in data.native.hardware.networkInterfaces) {
-                        if (!data.native.hardware.networkInterfaces.hasOwnProperty(eth)) {
-                            continue;
-                        }
-                        for (let num = 0; num < data.native.hardware.networkInterfaces[eth].length; num++) {
-                            if (data.native.hardware.networkInterfaces[eth][num].family !== 'IPv6') {
-                                IPs4.push({ title: `[${data.native.hardware.networkInterfaces[eth][num].family}] ${data.native.hardware.networkInterfaces[eth][num].address} - ${eth}`, value: data.native.hardware.networkInterfaces[eth][num].address, family: 'ipv4' });
-                            } else {
-                                IPs6.push({ title: `[${data.native.hardware.networkInterfaces[eth][num].family}] ${data.native.hardware.networkInterfaces[eth][num].address} - ${eth}`, value: data.native.hardware.networkInterfaces[eth][num].address, family: 'ipv6' });
-                            }
-                        }
-                    }
+            .then(async state => {
+                const wsInstances = await socket.getAdapterInstances('ws');
+                if (wsInstances) {
+                    state = state.concat(wsInstances);
                 }
-                for (let i = 0; i < IPs6.length; i++) {
-                    IPs4.push(IPs6[i]);
-                }
-                this.setState({ loaded: ++loaded, ipAddressOptions: IPs4 });
-            }
-        });
 
-        socket.getCertificates()
-            .then(list =>
-                this.setState({ loaded: ++loaded,certificatesOptions: list }));
+                const newState = {
+                    ready: true,
+                    socketioOptions: [
+                        ...socketioOptions,
+                        ...state
+                            .map(({_id, common: {name}}) => ({title: `${name} [${name}.${_id.split('.').pop()}]`, value: _id}))]
+                };
+                const IPs4 = await socket.getHostByIp(host);
+                IPs4.forEach(ip => {
+                    if (ip.name.includes('Listen on all IPs')) {
+                        ip.name = ip.name.replace('Listen on all IPs', I18n.t('open_ip'));
+                    }
+                });
+                newState.ipAddressOptions = IPs4;
 
-        socket.getUsers()
-            .then(list =>
-                this.setState({ loaded: ++loaded, usersOptions: list }));
+                newState.list = await socket.getCertificates();
+                newState.usersOptions = await socket.getUsers();
+                this.setState(newState);
+            });
     }
 
     componentDidUpdate(prevProps) {
@@ -193,9 +170,9 @@ class Options extends Component {
 
     render() {
         const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, loaded } = this.state;
+        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, ready } = this.state;
 
-        if (loaded < 4) {
+        if (!ready) {
             return <LinearProgress />;
         }
 
