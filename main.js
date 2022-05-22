@@ -864,6 +864,7 @@ function getInfoJs(settings) {
     const result = [
         `var socketUrl = "${socketUrl}";`,
         `var socketSession = "";`,
+        `window._authIoBroker = ${settings.auth};`,
         `window.sysLang = "${lang}";`,
         `window.socketForceWebSockets = ${settings.forceWebSockets ? 'true' : 'false'};`
     ];
@@ -979,7 +980,7 @@ function initAuth(server, settings) {
         secret,
         saveUninitialized: true,
         resave:            true,
-        cookie:            {maxAge: settings.ttl * 1000}, // default TTL
+        cookie:            {maxAge: settings.ttl * 1000, httpOnly: false}, // default TTL
         store
     }));
     server.app.use(passport.initialize());
