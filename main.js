@@ -1018,6 +1018,7 @@ function getSocketIoFile(req, res, next) {
     if (next === true || req.url.endsWith('socket.io.js') || req.url.match(/\/socket\.io\.js(\?.*)?$/)) {
         if (socketIoFile) {
             res.contentType('text/javascript');
+            res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
             return res.status(200).send(socketIoFile);
         } else {
             // if used internal socket io, so deliver @iobroker/ws
@@ -1067,6 +1068,7 @@ function getSocketIoFile(req, res, next) {
 
             if (socketIoFile) {
                 res.contentType('text/javascript');
+                res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
                 return res.status(200).send(socketIoFile);
             } else {
                 socketIoFile = false;
@@ -1231,6 +1233,7 @@ async function initWebServer(settings) {
             const autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
                 let isJs;
                 if (/\.css(\?.*)?$/.test(req.originalUrl)) {
+                    res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
                     return res.status(200).send('');
                 } else
                 if ((isJs = /\.js(\?.*)?$/.test(req.originalUrl))) {
@@ -1240,6 +1243,7 @@ async function initWebServer(settings) {
 
                     // if request for web/lib, ignore it, because no redirect information
                     if (parts[0] === 'lib') {
+                        res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
                         return res.status(200).send('');
                     }
                 }
@@ -1401,6 +1405,7 @@ async function initWebServer(settings) {
                                 } else {
                                     res.set('Content-Type', contentType || 'text/plain');
                                 }
+                                res.set('Cache-Control', 'no-cache');
                                 res.status(200).send(obj);
                             } else {
                                 res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
@@ -1414,6 +1419,7 @@ async function initWebServer(settings) {
 
             server.app.get('*/_socket/info.js', (req, res) => {
                 res.set('Content-Type', 'application/javascript');
+                res.set('Cache-Control', 'no-cache');
                 res.status(200).send(getInfoJs(settings));
             });
         }
@@ -1602,6 +1608,7 @@ async function initWebServer(settings) {
                                 } else {
                                     res
                                         .set('Content-Type', 'text/html')
+                                        .set('Cache-Control', 'no-cache')
                                         .status(200)
                                         .send(data);
                                 }
@@ -1652,6 +1659,7 @@ async function initWebServer(settings) {
                         if (req.headers.range) {
                             sendRange(req, res, cache[`${id}/${url}`].buffer);
                         } else {
+                            res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
                             res.status(200).send(cache[`${id}/${url}`].buffer);
                         }
                     } else {
@@ -1665,12 +1673,14 @@ async function initWebServer(settings) {
 
                             if (buffer === null || buffer === undefined) {
                                 res.contentType('text/html');
+                                res.set('Cache-Control', 'no-cache');
                                 res.status(200).send(`File ${escapeHtml(url)} not found`, 404);
                             } else {
                                 // Store file in cache
                                 if (settings.cache) {
                                     cache[id + '/' + url] = {buffer: buffer.toString(), mimeType: 'text/html'};
                                 }
+                                res.set('Cache-Control', 'no-cache');
                                 res.contentType('text/html');
                                 res.status(200).send(buffer.toString());
                             }
@@ -1697,6 +1707,7 @@ async function initWebServer(settings) {
                                     if (req.headers.range) {
                                         sendRange(req, res, buffer);
                                     } else {
+                                        res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
                                         res.status(200).send(buffer);
                                     }
                                 }

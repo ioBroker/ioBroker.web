@@ -82,6 +82,10 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) Add Cache headers to all static with configurable cache time (default 60s)
+
 ### 5.2.0 (2022-05-21)
 * (bluefox) Corrected the load of `iobroker.ws` as integrated socket
 

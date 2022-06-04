@@ -186,7 +186,8 @@
     "disableExtensions": false,
     "disableStates": false,
     "disableFilesObjects": false,
-    "defaultRedirect": ""
+    "defaultRedirect": "",
+    "staticAssetCacheMaxAge": 60
   },
   "instanceObjects": [
     {
