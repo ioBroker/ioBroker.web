@@ -1284,12 +1284,13 @@ async function initWebServer(settings) {
 
             server.app.get('/logout', (req, res) => {
                 const isDev = req.url.includes('?dev');
-                req.logout();
-                if (isDev) {
-                    res.redirect('http://localhost:3000/index.html?login');
-                } else {
-                    res.redirect(LOGIN_PAGE);
-                }
+                req.logout(() => {
+                    if (isDev) {
+                        res.redirect('http://localhost:3000/index.html?login');
+                    } else {
+                        res.redirect(LOGIN_PAGE);
+                    }
+                });
             });
 
             // route middleware to make sure a user is logged in
