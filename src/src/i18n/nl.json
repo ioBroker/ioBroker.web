@@ -62,5 +62,8 @@
   "usePureWebSockets": "Gebruik pure web-sockets (iobroker.ws)",
   "If no IP address matches, show authentication dialog": "Als geen IP-adres overeenkomt, verificatiedialoogvenster weergeven",
   "Compatibility mode with socket.io@2.x": "Compatibiliteitsmodus met socket.io@2.x",
-  "Same settings must be set in socketio instance": "Dezelfde instellingen moeten worden ingesteld in de socketio-instantie"
+  "Same settings must be set in socketio instance": "Dezelfde instellingen moeten worden ingesteld in de socketio-instantie",
+  "staticAssetCacheMaxAge": "Cache max leeftijd voor bestanden",
+  "in seconds": "in seconden",
+  "Cache options": "Cache-opties"
 }

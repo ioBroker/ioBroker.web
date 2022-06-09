@@ -87,6 +87,18 @@ class Additionally extends Component {
                         helperText={I18n.t('This path will be opened if no path specified')}
                     />
                 </div>
+                <h4>
+                    {I18n.t('Cache options')}
+                </h4>
+                <div>
+                    <TextField
+                        variant="standard"
+                        value={native.staticAssetCacheMaxAge}
+                        onChange={async e => await onChange('staticAssetCacheMaxAge', e.target.value)}
+                        label={I18n.t('staticAssetCacheMaxAge')}
+                        helperText={I18n.t('in seconds')}
+                    />
+                </div>
             </div>
         </form>;
     }
