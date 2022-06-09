@@ -27,7 +27,7 @@
     "iobroker.ws": ">=2.1.1",
     "iobroker.socketio": ">=6.1.5",
     "mime-types": "^2.1.35",
-    "passport": "^0.5.2",
+    "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "xtend": "^4.0.2"
   },
