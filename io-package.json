@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.1",
+    "version": "5.2.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.2": {
+        "en": "Added Cache headers to all static with configurable cache time (default 60s)",
+        "de": "Cache-Header zu allen statischen mit konfigurierbaren Cache-Zeit (Standard 60s) hinzugefügt",
+        "ru": "Добавлены заголовки Cache ко всем статическим с конфигурируемым временем кэша (по умолчанию 60s)",
+        "pt": "Cabeçalhos Cache adicionados a todos estáticos com tempo de cache configurável (padrão 60s)",
+        "nl": "Voegde Cache kopers toe aan alle statistieken met configurable cache time (default 60s)",
+        "fr": "Ajout des en-têtes de Cache à tous les statiques avec le temps de cache configurable (par défaut 60s)",
+        "it": "Aggiunta di intestazioni Cache a tutte le statiche con tempo di cache configurabile (default 60s)",
+        "es": "Cabeceras de caché agregadas a todas las estáticas con tiempo de caché configurable (por defecto 60s)",
+        "pl": "Added Cache kieruje wszystkimi statycznymi konfigurowalnym czasem pamięci (default 60s)",
+        "zh-cn": "增加所有静态的头寸,时间暗淡(60人)"
+      },
       "5.2.1": {
         "en": "Do not show requireLog message",
         "de": "Nicht zeigen Log-Nachricht",
@@ -87,18 +99,6 @@
         "es": "Soporte agregado de rest-api",
         "pl": "Dodano obsługę rest-api",
         "zh-cn": "增加了对 rest-api 的支持"
-      },
-      "4.2.3": {
-        "en": "Updated ws and socketio to have `log` method in sockets",
-        "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
-        "ru": "Обновлены ws и socketio, чтобы иметь метод `log` в сокетах.",
-        "pt": "Atualizado ws e socketio para ter o método `log` nos soquetes",
-        "nl": "Ws en socketio bijgewerkt om de `log`-methode in sockets te hebben",
-        "fr": "Mise à jour de ws et socketio pour avoir la méthode `log` dans les sockets",
-        "it": "ws e socketio aggiornati per avere il metodo `log` nei socket",
-        "es": "Se actualizó ws y socketio para tener el método `log` en los sockets",
-        "pl": "Zaktualizowano ws i socketio, aby mieć metodę `log` w gniazdach",
-        "zh-cn": "更新了 ws 和 socketio 以在套接字中有 `log` 方法"
       }
     },
     "desc": {
