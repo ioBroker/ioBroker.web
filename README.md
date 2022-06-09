@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### 5.2.1 (2022-06-09)
+* (bluefox) Do not show requireLog message
+
 ### 5.2.0 (2022-05-21)
 * (bluefox) Corrected the load of `iobroker.ws` as integrated socket
 
