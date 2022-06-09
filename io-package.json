@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.0",
+    "version": "5.2.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.1": {
+        "en": "Do not show requireLog message",
+        "de": "Nicht zeigen Log-Nachricht",
+        "ru": "Не показывать требуйте Войти сообщение",
+        "pt": "Não mostrar necessidade Mensagem de registo",
+        "nl": "Toon niet Logisch bericht",
+        "fr": "Ne pas montrer besoin Message d ' ouverture",
+        "it": "Non mostrare richiesta Messaggio di log",
+        "es": "No mostrar necesidad Mensaje de registro",
+        "pl": "Nie wymagać wiadomość",
+        "zh-cn": "不需要说明 后勤信息"
+      },
       "5.2.0": {
         "en": "Corrected the load of `iobroker.ws` as integrated socket",
         "de": "Das Laden von `iobroker.ws` als integrierter Socket wurde korrigiert",
@@ -77,18 +89,6 @@
         "zh-cn": "增加了对 rest-api 的支持"
       },
       "4.2.3": {
-        "en": "Updated ws and socketio to have `log` method in sockets",
-        "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
-        "ru": "Обновлены ws и socketio, чтобы иметь метод `log` в сокетах.",
-        "pt": "Atualizado ws e socketio para ter o método `log` nos soquetes",
-        "nl": "Ws en socketio bijgewerkt om de `log`-methode in sockets te hebben",
-        "fr": "Mise à jour de ws et socketio pour avoir la méthode `log` dans les sockets",
-        "it": "ws e socketio aggiornati per avere il metodo `log` nei socket",
-        "es": "Se actualizó ws y socketio para tener el método `log` en los sockets",
-        "pl": "Zaktualizowano ws i socketio, aby mieć metodę `log` w gniazdach",
-        "zh-cn": "更新了 ws 和 socketio 以在套接字中有 `log` 方法"
-      },
-      "4.2.2": {
         "en": "Updated ws and socketio to have `log` method in sockets",
         "de": "ws und socketio wurden aktualisiert, um die `log`-Methode in Sockets zu haben",
         "ru": "Обновлены ws и socketio, чтобы иметь метод `log` в сокетах.",
