@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.2",
+    "version": "5.2.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.3": {
+        "en": "Allowed to overload the system language",
+        "de": "Erlaubt, die Systemsprache zu überlasten",
+        "ru": "Разрешено перегрузить язык системы",
+        "pt": "Permitido sobrecarregar a linguagem do sistema",
+        "nl": "Genoemd om de systeemtaal te overbelasten",
+        "fr": "Permet de surcharger la langue du système",
+        "it": "Consentito di sovraccaricare la lingua di sistema",
+        "es": "Permitido sobrecargar el lenguaje del sistema",
+        "pl": "Wszystko to było przeciążenie języka systemowego",
+        "zh-cn": "允许使用系统语文"
+      },
       "5.2.2": {
         "en": "Added Cache headers to all static with configurable cache time (default 60s)",
         "de": "Cache-Header zu allen statischen mit konfigurierbaren Cache-Zeit (Standard 60s) hinzugefügt",
@@ -87,18 +99,6 @@
         "es": "Socket.io revertido a V2",
         "pl": "Przywrócono socket.io do V2",
         "zh-cn": "将 socket.io 恢复到 V2"
-      },
-      "4.3.0": {
-        "en": "Added support of rest-api",
-        "de": "Unterstützung von rest-api hinzugefügt",
-        "ru": "Добавлена поддержка rest-api",
-        "pt": "Adicionado suporte para rest-api",
-        "nl": "Ondersteuning van rest-api . toegevoegd",
-        "fr": "Ajout du support de rest-api",
-        "it": "Aggiunto il supporto di rest-api",
-        "es": "Soporte agregado de rest-api",
-        "pl": "Dodano obsługę rest-api",
-        "zh-cn": "增加了对 rest-api 的支持"
       }
     },
     "desc": {
