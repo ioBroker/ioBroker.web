@@ -65,5 +65,8 @@
   "Same settings must be set in socketio instance": "Dieselben Einstellungen müssen in der Socketio-Instanz festgelegt werden",
   "staticAssetCacheMaxAge": "Cache-Maximalalter für Dateien",
   "in seconds": "in Sekunden",
-  "Cache options": "Cache-Optionen"
+  "Cache options": "Cache-Optionen",
+  "Overload system language": "Systemsprache überladen",
+  "only for this instance": "nur für diesen Fall",
+  "System language": "Systemsprache"
 }

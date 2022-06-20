@@ -65,5 +65,8 @@
   "Same settings must be set in socketio instance": "必须在 socketio 实例中设置相同的设置",
   "staticAssetCacheMaxAge": "文件的缓存最大年龄",
   "in seconds": "片刻之间",
-  "Cache options": "缓存选项"
+  "Cache options": "缓存选项",
+  "Overload system language": "重载系统语言",
+  "only for this instance": "仅适用于本例",
+  "System language": "系统语言"
 }

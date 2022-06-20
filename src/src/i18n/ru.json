@@ -65,5 +65,8 @@
   "Same settings must be set in socketio instance": "Те же настройки должны быть установлены в экземпляре socketio",
   "staticAssetCacheMaxAge": "Максимальный возраст кэша для файлов",
   "in seconds": "в секундах",
-  "Cache options": "Параметры кэша"
+  "Cache options": "Параметры кэша",
+  "Overload system language": "Перегрузить системный язык",
+  "only for this instance": "только для этого экземпляра",
+  "System language": "Язык системы"
 }

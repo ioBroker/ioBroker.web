@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Allowed to overload the system language
+
 ### 5.2.2 (2022-06-09)
 * (Apollon77) Added Cache headers to all static with configurable cache time (default 60s)
 

@@ -65,5 +65,8 @@
   "Same settings must be set in socketio instance": "Te same ustawienia muszą być ustawione w instancji socketio",
   "staticAssetCacheMaxAge": "Maksymalny wiek dla plików w pamięci podręcznej",
   "in seconds": "w sekundy",
-  "Cache options": "Opcje pamięci podręcznej"
+  "Cache options": "Opcje pamięci podręcznej",
+  "Overload system language": "Przeciążenie języka systemu",
+  "only for this instance": "tylko w tym przypadku",
+  "System language": "Język systemu"
 }

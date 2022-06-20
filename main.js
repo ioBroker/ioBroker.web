@@ -151,7 +151,7 @@ function startAdapter(options) {
                     });
             }
 
-            if (id === 'system.config') {
+            if (id === 'system.config' && !adapter.config.language) {
                 lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
             }
 
@@ -288,6 +288,9 @@ function startAdapter(options) {
             }
 
             // Read language
+            if (adapter.config.language) {
+                lang = adapter.config.language;
+            } else
             if (systemConfig && systemConfig.common) {
                 lang = systemConfig.common.language || 'en';
             }
@@ -1516,6 +1519,7 @@ async function initWebServer(settings) {
         socketSettings.ttl = settings.ttl || 3600;
         socketSettings.forceWebSockets = settings.forceWebSockets || false;
         socketSettings.compatibilityV2 = settings.compatibilityV2 !== false;
+        socketSettings.language = settings.language;
 
         try {
             let filePath = settings.usePureWebSockets ? require.resolve(utils.appName + '.ws') : require.resolve(utils.appName + '.socketio');
@@ -1529,7 +1533,12 @@ async function initWebServer(settings) {
             server.io = new IOSocket(server.server, socketSettings, adapter, null, store, checkUser);
         } catch (err) {
             adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');
-            adapter.log.error(JSON.stringify(err));
+            if (err.message) {
+                adapter.log.error('ERROR: ' + err.message);
+                adapter.log.error(err.stack);
+            } else {
+                adapter.log.error(JSON.stringify(err));
+            }
         }
     }
 
