@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.2.4 (2022-07-08)
 * (bluefox) Corrected getAdapterInstances method
 
 ### 5.2.3 (2022-06-20)

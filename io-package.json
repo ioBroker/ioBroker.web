@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.3",
+    "version": "5.2.4",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.4": {
+        "en": "Corrected getAdapterInstances method",
+        "de": "Korrigierte getAdapterInstances Methode",
+        "ru": "Правильный метод getAdapterInstances",
+        "pt": "Método correto getAdapterInstâncias",
+        "nl": "Vertaling:",
+        "fr": "Méthode d'admission corrigée",
+        "it": "Corretto getAdapterInstances metodo",
+        "es": "Método corregido getAdapterInstances",
+        "pl": "Poprawiona metoda gotowania AdapterInstance",
+        "zh-cn": "改用阿达佩特文法"
+      },
       "5.2.3": {
         "en": "Allowed to overload the system language",
         "de": "Erlaubt, die Systemsprache zu überlasten",
@@ -87,18 +99,6 @@
         "es": "Se corrigió el modo \"Forzar web-sockets\"",
         "pl": "Naprawiono tryb \"Force web-sockets\"",
         "zh-cn": "修复了“强制网络套接字”模式"
-      },
-      "5.1.0": {
-        "en": "Reverted socket.io to V2",
-        "de": "Socket.io auf V2 zurückgesetzt",
-        "ru": "Восстановлен socket.io до V2",
-        "pt": "Socket.io revertido para V2",
-        "nl": "Socket.io teruggezet naar V2",
-        "fr": "Retour de socket.io en V2",
-        "it": "Socket.io ripristinato a V2",
-        "es": "Socket.io revertido a V2",
-        "pl": "Przywrócono socket.io do V2",
-        "zh-cn": "将 socket.io 恢复到 V2"
       }
     },
     "desc": {
