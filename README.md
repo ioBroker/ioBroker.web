@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected getAdapterInstances method
+
 ### 5.2.3 (2022-06-20)
 * (bluefox) Allowed to overload the system language
 
