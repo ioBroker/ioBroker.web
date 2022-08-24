@@ -158,7 +158,7 @@ class Additionally extends Component {
                             label={I18n.t('Overload system language')}
                             onChange={async e => await onChange('language', e.target.value)}
                         >
-                            {LANGUAGES.map(item => <MenuItem value={item.value}>{item.translate ? I18n.t(item.label) : item.label}</MenuItem>)}
+                            {LANGUAGES.map(item => <MenuItem key={item.value} value={item.value}>{item.translate ? I18n.t(item.label) : item.label}</MenuItem>)}
                         </Select>
                         <FormHelperText>{I18n.t('only for this instance')}</FormHelperText>
                     </FormControl>

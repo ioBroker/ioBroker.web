@@ -74,7 +74,11 @@ class App extends GenericApp {
         const { selectedTab } = this.state;
         const tab = selectedTab;
         if (tab) {
-            return arrayTabName.find((el) => el.name === tab)?.index || 0;
+            if (this.checkDisabledTabs(tab)) {
+                return 0;
+            } else {
+                return arrayTabName.find((el) => el.name === tab)?.index || 0;
+            }
         } else {
             return 0;
         }
@@ -93,7 +97,12 @@ class App extends GenericApp {
     }
 
     renderTab() {
-        const { selectedTab, native } = this.state;
+        let { native } = this.state;
+        let selectedTab = this.state.selectedTab;
+        if (this.checkDisabledTabs(this.state.selectedTab)) {
+            selectedTab = 'options';
+        }
+
         switch (selectedTab) {
             case 'options':
             default:
@@ -185,9 +194,9 @@ class App extends GenericApp {
                     <AppBar position="static">
                         <Tabs
                             value={this.getSelectedTab()}
-                            onChange={(e, index) => {
-                                this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)
-                            }} scrollButtons="auto"
+                            onChange={(e, index) =>
+                                this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)}
+                            scrollButtons="auto"
                         >
                             {arrayTabName.map((el, index) =>
                                 <Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />)}

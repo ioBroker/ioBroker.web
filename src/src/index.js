@@ -1,6 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { createRoot } from 'react-dom/client';
+import { StylesProvider, createGenerateClassName } from '@mui/styles';
+
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -14,19 +16,26 @@ let themeName = Utils.getThemeName();
 
 console.log('iobroker.' + window.adapterName + '@' + pkg.version + ' using theme "' + themeName + '"');
 
+const generateClassName = createGenerateClassName({
+    productionPrefix: 'web',
+});
+
 function build() {
-    return ReactDOM.render(
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme(themeName)}>
-                <App
-                    onThemeChange={_theme => {
-                        themeName = _theme;
-                        build();
-                    }}
-                />
-            </ThemeProvider>
-        </StyledEngineProvider>,
-        document.getElementById('root')
+    const container = document.getElementById('root');
+    const root = createRoot(container);
+    return root.render(
+        <StylesProvider generateClassName={generateClassName}>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme(themeName)}>
+                    <App
+                        onThemeChange={_theme => {
+                            themeName = _theme;
+                            build();
+                        }}
+                    />
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </StylesProvider>
     );
 }
 
