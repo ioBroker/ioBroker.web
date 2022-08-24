@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.4",
+    "version": "5.2.5",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.5": {
+        "en": "Caught error by subscribe",
+        "de": "Caught-Fehler durch abonnieren",
+        "ru": "Поймать ошибку по подписке",
+        "pt": "Erro capturado por assinatura",
+        "nl": "Kreeg fouten",
+        "fr": "Erreur coquine par abonné",
+        "it": "Errore catturato da sottoscrivere",
+        "es": "Error comprado por subscribirse",
+        "pl": "Caught error by a subscriber",
+        "zh-cn": "签 约的过失"
+      },
       "5.2.4": {
         "en": "Corrected getAdapterInstances method",
         "de": "Korrigierte getAdapterInstances Methode",
@@ -77,18 +89,6 @@
         "zh-cn": "更正了“iobroker.ws”作为集成套接字的负载"
       },
       "5.1.2": {
-        "en": "Fixed \"Force web-sockets\" mode",
-        "de": "Modus \"Web-Sockets erzwingen\" behoben",
-        "ru": "Исправлен режим \"Force web-sockets\"",
-        "pt": "Corrigido o modo \"Forçar web-sockets\"",
-        "nl": "Vaste \"Forceer web-sockets\"-modus",
-        "fr": "Correction du mode \"Forcer les sockets Web\"",
-        "it": "Risolto il problema con la modalità \"Forza web-socket\".",
-        "es": "Se corrigió el modo \"Forzar web-sockets\"",
-        "pl": "Naprawiono tryb \"Force web-sockets\"",
-        "zh-cn": "修复了“强制网络套接字”模式"
-      },
-      "5.1.1": {
         "en": "Fixed \"Force web-sockets\" mode",
         "de": "Modus \"Web-Sockets erzwingen\" behoben",
         "ru": "Исправлен режим \"Force web-sockets\"",
