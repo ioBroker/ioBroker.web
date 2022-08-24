@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.5",
+    "version": "5.2.6",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.6": {
+        "en": "Caught error by subscribe",
+        "de": "Caught-Fehler durch abonnieren",
+        "ru": "Поймать ошибку по подписке",
+        "pt": "Erro capturado por assinatura",
+        "nl": "Kreeg fouten",
+        "fr": "Erreur coquine par abonné",
+        "it": "Errore catturato da sottoscrivere",
+        "es": "Error comprado por subscribirse",
+        "pl": "Caught error by a subscriber",
+        "zh-cn": "签 约的过失"
+      },
       "5.2.4": {
         "en": "Corrected getAdapterInstances method",
         "de": "Korrigierte getAdapterInstances Methode",
