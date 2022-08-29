@@ -1492,7 +1492,7 @@ async function initWebServer(settings) {
         settings.port = parseInt(settings.port, 10) || 8082;
         serverPort = settings.port;
 
-        adapter.getPort(settings.port, port => {
+        adapter.getPort(settings.port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, port => {
             port = parseInt(port, 10);
             if (port !== settings.port && !settings.findNextPort) {
                 adapter.log.error(`port ${settings.port} already in use`);
