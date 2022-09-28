@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.6",
+    "version": "5.2.7",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.7": {
+        "en": "Updated GUI packages",
+        "de": "Aktualisierte GUI-Pakete",
+        "ru": "Обновленные пакеты GUI",
+        "pt": "Pacotes de GUI atualizados",
+        "nl": "Update GUI pakketten",
+        "fr": "Paquets GUI mis à jour",
+        "it": "Pacchetti GUI aggiornati",
+        "es": "Paquetes GUI actualizados",
+        "pl": "Pakiet GUI",
+        "zh-cn": "A. 最新古伊一揽子计划"
+      },
       "5.2.6": {
         "en": "Caught error by subscribe",
         "de": "Caught-Fehler durch abonnieren",
@@ -87,18 +99,6 @@
         "es": "Se corrigió la carga de `iobroker.ws` como socket integrado",
         "pl": "Poprawiono obciążenie `iobroker.ws` jako zintegrowane gniazdo",
         "zh-cn": "更正了“iobroker.ws”作为集成套接字的负载"
-      },
-      "5.1.2": {
-        "en": "Fixed \"Force web-sockets\" mode",
-        "de": "Modus \"Web-Sockets erzwingen\" behoben",
-        "ru": "Исправлен режим \"Force web-sockets\"",
-        "pt": "Corrigido o modo \"Forçar web-sockets\"",
-        "nl": "Vaste \"Forceer web-sockets\"-modus",
-        "fr": "Correction du mode \"Forcer les sockets Web\"",
-        "it": "Risolto il problema con la modalità \"Forza web-socket\".",
-        "es": "Se corrigió el modo \"Forzar web-sockets\"",
-        "pl": "Naprawiono tryb \"Force web-sockets\"",
-        "zh-cn": "修复了“强制网络套接字”模式"
       }
     },
     "desc": {
