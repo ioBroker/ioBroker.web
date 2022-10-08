@@ -16,8 +16,8 @@
     "url": "https://github.com/ioBroker/ioBroker.web"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.6.6",
-    "body-parser": "^1.20.0",
+    "@iobroker/adapter-core": "^2.6.7",
+    "body-parser": "^1.20.1",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
@@ -35,10 +35,10 @@
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
-    "axios": "^0.27.2",
+    "axios": "^1.1.2",
     "chai": "^4.3.6",
     "del": "^6.1.1",
-    "eslint": "^8.24.0",
+    "eslint": "^8.25.0",
     "gulp": "^4.0.2",
     "mocha": "^10.0.0"
   },

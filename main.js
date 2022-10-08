@@ -7,8 +7,7 @@ const express     = require('express');
 const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-const LE          = require(utils.controllerDir + '/lib/letsencrypt.js');
-const tools       = require(utils.controllerDir + '/lib/tools.js');
+const LE          = utils.commonTools.letsEncrypt;
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 const compression = require('compression');
@@ -361,7 +360,7 @@ function getExtensionsAndSettings(callback) {
                             if (Array.isArray(instance.encryptedNative) && instance.native) {
                                 instance.encryptedNative.forEach(key => {
                                     if (instance.native[key]) {
-                                        instance.native[key] = tools.decrypt(secret, instance.native[key]);
+                                        instance.native[key] = adapter.decrypt(secret, instance.native[key]);
                                     }
                                 });
                             }
@@ -962,7 +961,7 @@ function initAuth(server, settings) {
     session =          require('express-session');
     cookieParser =     require('cookie-parser');
     bodyParser =       require('body-parser');
-    AdapterStore =     require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
+    AdapterStore =     utils.commonTools.session(session, settings.ttl);
     passport =         require('passport');
     LocalStrategy =    require('passport-local').Strategy;
     flash =            require('connect-flash'); // TODO report error to user
