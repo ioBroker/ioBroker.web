@@ -7,7 +7,9 @@ const express     = require('express');
 const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-const LE          = utils.commonTools.letsEncrypt;
+let LE     	      = utils.commonTools && utils.commonTools.letsEncrypt;
+LE = LE || require(__dirname + '/lib/letsencrypt.js');
+
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 const compression = require('compression');
@@ -268,7 +270,7 @@ function startAdapter(options) {
                     systemConfig.native = systemConfig.native || {};
                     const buf = await new Promise(resolve => require('crypto').randomBytes(24, (ex, buf) => resolve(buf)));
                     secret = buf.toString('hex');
-                    await adapter.extendForeignObjectAsync('system.config', {native: {secret: secret}});
+                    await adapter.extendForeignObjectAsync('system.config', {native: {secret}});
                 } else {
                     secret = systemConfig.native.secret;
                 }
@@ -958,13 +960,15 @@ function checkUser(username, password, cb) {
 }
 
 function initAuth(server, settings) {
-    session =          require('express-session');
-    cookieParser =     require('cookie-parser');
-    bodyParser =       require('body-parser');
-    AdapterStore =     utils.commonTools.session(session, settings.ttl);
-    passport =         require('passport');
-    LocalStrategy =    require('passport-local').Strategy;
-    flash =            require('connect-flash'); // TODO report error to user
+    session       = require('express-session');
+    cookieParser  = require('cookie-parser');
+    bodyParser    = require('body-parser');
+    AdapterStore  = utils.commonTools && utils.commonTools.session(session, settings.ttl);
+    passport      = require('passport');
+    LocalStrategy = require('passport-local').Strategy;
+    flash         = require('connect-flash'); // TODO report error to user
+
+    AdapterStore = AdapterStore || require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
 
     store = new AdapterStore({adapter});
 
