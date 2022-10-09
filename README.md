@@ -82,8 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 5.2.8 (2022-10-09)
 * (Apollon77) Prepare for future js-controller versions
 
 ### 5.2.7 (2022-09-28)

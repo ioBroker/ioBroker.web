@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.7",
+    "version": "5.2.8",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.8": {
+        "en": "Prepare for future js-controller versions",
+        "de": "Bereiten Sie sich auf zukünftige js-Controller-Versionen",
+        "ru": "Подготовьтесь к будущим версиям js-controller",
+        "pt": "Prepare-se para futuras versões js-controller",
+        "nl": "Bereid je voor op toekomstige Js-controller versie",
+        "fr": "Préparez-vous pour les versions futures de js-controller",
+        "it": "Prepararsi per le future versioni js-controller",
+        "es": "Prepararse para futuras versiones js-controller",
+        "pl": "Prepare for future js-controller version",
+        "zh-cn": "今后防污版本的编制"
+      },
       "5.2.7": {
         "en": "Updated GUI packages",
         "de": "Aktualisierte GUI-Pakete",
@@ -87,18 +99,6 @@
         "es": "No mostrar necesidad Mensaje de registro",
         "pl": "Nie wymagać wiadomość",
         "zh-cn": "不需要说明 后勤信息"
-      },
-      "5.2.0": {
-        "en": "Corrected the load of `iobroker.ws` as integrated socket",
-        "de": "Das Laden von `iobroker.ws` als integrierter Socket wurde korrigiert",
-        "ru": "Исправлена загрузка iobroker.ws как встроенного сокета.",
-        "pt": "Corrigido o carregamento de `iobroker.ws` como soquete integrado",
-        "nl": "De belasting van `iobroker.ws` gecorrigeerd als geïntegreerde socket",
-        "fr": "Correction du chargement de `iobroker.ws` en tant que socket intégré",
-        "it": "Corretto il carico di `iobroker.ws` come socket integrato",
-        "es": "Se corrigió la carga de `iobroker.ws` como socket integrado",
-        "pl": "Poprawiono obciążenie `iobroker.ws` jako zintegrowane gniazdo",
-        "zh-cn": "更正了“iobroker.ws”作为集成套接字的负载"
       }
     },
     "desc": {
