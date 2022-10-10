@@ -113,7 +113,7 @@ class Options extends Component {
                 });
                 newState.ipAddressOptions = IPs4;
 
-                newState.list = await socket.getCertificates();
+                newState.certificatesOptions = await socket.getCertificates();
                 newState.usersOptions = await socket.getUsers();
                 this.setState(newState);
             });
