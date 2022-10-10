@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.8",
+    "version": "5.2.9",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.9": {
+        "en": "Corrected the certificate selection",
+        "de": "Korrektur der Zertifikatsauswahl",
+        "ru": "Исправлена подбор сертификата",
+        "pt": "Corrigido a seleção de certificados",
+        "nl": "Vertaling:",
+        "fr": "Correction de la sélection du certificat",
+        "it": "Corretto la selezione del certificato",
+        "es": "Corregido la selección de certificados",
+        "pl": "Wykwalifikowany certyfikat selekcji",
+        "zh-cn": "修改证书选择"
+      },
       "5.2.8": {
         "en": "Prepare for future js-controller versions",
         "de": "Bereiten Sie sich auf zukünftige js-Controller-Versionen",
@@ -87,18 +99,6 @@
         "es": "Cabeceras de caché agregadas a todas las estáticas con tiempo de caché configurable (por defecto 60s)",
         "pl": "Added Cache kieruje wszystkimi statycznymi konfigurowalnym czasem pamięci (default 60s)",
         "zh-cn": "增加所有静态的头寸,时间暗淡(60人)"
-      },
-      "5.2.1": {
-        "en": "Do not show requireLog message",
-        "de": "Nicht zeigen Log-Nachricht",
-        "ru": "Не показывать требуйте Войти сообщение",
-        "pt": "Não mostrar necessidade Mensagem de registo",
-        "nl": "Toon niet Logisch bericht",
-        "fr": "Ne pas montrer besoin Message d ' ouverture",
-        "it": "Non mostrare richiesta Messaggio di log",
-        "es": "No mostrar necesidad Mensaje de registro",
-        "pl": "Nie wymagać wiadomość",
-        "zh-cn": "不需要说明 后勤信息"
       }
     },
     "desc": {
