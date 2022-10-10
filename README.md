@@ -82,10 +82,8 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### 5.2.9 (2022-10-10)
-* (bluefox) Corrected the certificate selection
-
-### 5.2.8 (2022-10-09)
+### **WORK IN PROGRESS**
+* (bluefox) Corrected the certificate and IP selection
 * (Apollon77) Prepare for future js-controller versions
 
 ### 5.2.7 (2022-09-28)

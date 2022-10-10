@@ -16,30 +16,6 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-      "5.2.9": {
-        "en": "Corrected the certificate selection",
-        "de": "Korrektur der Zertifikatsauswahl",
-        "ru": "Исправлена подбор сертификата",
-        "pt": "Corrigido a seleção de certificados",
-        "nl": "Vertaling:",
-        "fr": "Correction de la sélection du certificat",
-        "it": "Corretto la selezione del certificato",
-        "es": "Corregido la selección de certificados",
-        "pl": "Wykwalifikowany certyfikat selekcji",
-        "zh-cn": "修改证书选择"
-      },
-      "5.2.8": {
-        "en": "Prepare for future js-controller versions",
-        "de": "Bereiten Sie sich auf zukünftige js-Controller-Versionen",
-        "ru": "Подготовьтесь к будущим версиям js-controller",
-        "pt": "Prepare-se para futuras versões js-controller",
-        "nl": "Bereid je voor op toekomstige Js-controller versie",
-        "fr": "Préparez-vous pour les versions futures de js-controller",
-        "it": "Prepararsi per le future versioni js-controller",
-        "es": "Prepararse para futuras versiones js-controller",
-        "pl": "Prepare for future js-controller version",
-        "zh-cn": "今后防污版本的编制"
-      },
       "5.2.7": {
         "en": "Updated GUI packages",
         "de": "Aktualisierte GUI-Pakete",

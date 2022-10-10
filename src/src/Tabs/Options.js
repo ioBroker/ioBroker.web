@@ -107,9 +107,11 @@ class Options extends Component {
                 };
                 const IPs4 = await socket.getHostByIp(host);
                 IPs4.forEach(ip => {
-                    if (ip.name.includes('Listen on all IPs')) {
-                        ip.name = ip.name.replace('Listen on all IPs', I18n.t('open_ip'));
+                    ip.title = ip.name;
+                    if (ip.title.includes('Listen on all IPs')) {
+                        ip.title = ip.title.replace('Listen on all IPs', I18n.t('open_ip'));
                     }
+                    ip.value = ip.address;
                 });
                 newState.ipAddressOptions = IPs4;
 
