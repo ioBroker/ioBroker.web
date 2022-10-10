@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.9",
+    "version": "5.2.10",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,18 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.10": {
+        "en": "Corrected the certificate and IP selection\nPrepare for future js-controller versions",
+        "de": "Das Zertifikat und die IP-Auswahl korrigiert\nBereiten Sie sich auf zukünftige js-Controller-Versionen",
+        "ru": "Исправлен сертификат и выбор IP\nПодготовьтесь к будущим версиям js-controller",
+        "pt": "Corrigido o certificado e a seleção IP\nPrepare-se para futuras versões js-controller",
+        "nl": "Vertaling:\nBereid je voor op toekomstige Js-controller versie",
+        "fr": "Correction du certificat et de la sélection IP\nPréparez-vous pour les versions futures de js-controller",
+        "it": "Corretto il certificato e la selezione IP\nPrepararsi per le future versioni js-controller",
+        "es": "Corregido el certificado y selección IP\nPrepararse para futuras versiones js-controller",
+        "pl": "Wykwalifikowany certyfikat i wybór IP\nPrepare for future js-controller version",
+        "zh-cn": "修改证书和IP选择\n今后防污版本的编制"
+      },
       "5.2.7": {
         "en": "Updated GUI packages",
         "de": "Aktualisierte GUI-Pakete",
