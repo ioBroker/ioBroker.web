@@ -7,9 +7,7 @@ const express     = require('express');
 const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-let LE     	      = utils.commonTools && utils.commonTools.letsEncrypt;
-LE = LE || require(__dirname + '/lib/letsencrypt.js');
-
+const LE     	  = utils.commonTools.letsEncrypt;
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 const compression = require('compression');
@@ -963,12 +961,10 @@ function initAuth(server, settings) {
     session       = require('express-session');
     cookieParser  = require('cookie-parser');
     bodyParser    = require('body-parser');
-    AdapterStore  = utils.commonTools && utils.commonTools.session(session, settings.ttl);
+    AdapterStore  = utils.commonTools.session(session, settings.ttl);
     passport      = require('passport');
     LocalStrategy = require('passport-local').Strategy;
     flash         = require('connect-flash'); // TODO report error to user
-
-    AdapterStore = AdapterStore || require(utils.controllerDir + '/lib/session.js')(session, settings.ttl);
 
     store = new AdapterStore({adapter});
 
