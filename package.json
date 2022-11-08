@@ -21,11 +21,11 @@
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
-    "express": "^4.18.1",
+    "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "iobroker.simple-api": "^2.7.1",
-    "iobroker.ws": "2.1.5",
-    "iobroker.socketio": "6.1.10",
+    "iobroker.simple-api": "^2.7.2",
+    "iobroker.ws": "2.2.1",
+    "iobroker.socketio": "6.2.0",
     "mime-types": "^2.1.35",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
@@ -36,11 +36,11 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "axios": "^0.27.2",
-    "chai": "^4.3.6",
+    "chai": "^4.3.7",
     "del": "^6.1.1",
-    "eslint": "^8.25.0",
+    "eslint": "^8.27.0",
     "gulp": "^4.0.2",
-    "mocha": "^10.0.0"
+    "mocha": "^10.1.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
