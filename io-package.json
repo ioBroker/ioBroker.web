@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.10",
+    "version": "5.2.11",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.2.11": {
+        "en": "Function `getObjects` was extended by devices, channels and enums",
+        "de": "Funktion getObjects wurde durch Geräte, Kanäle und Enums erweitert",
+        "ru": "Функция getObjects была расширена устройствами, каналами и enums",
+        "pt": "Função getObjects foi estendida por dispositivos, canais e enums",
+        "nl": "Vertaling:",
+        "fr": "Fonction getObjects a été étendue par les appareils, les canaux et les émoins",
+        "it": "Funzione getObjects è stato esteso da dispositivi, canali ed enum",
+        "es": "Función getObjetos fue ampliado por dispositivos, canales y enums",
+        "pl": "Funkcjonalne zapotrzebowania zostały przedłużone przez urządzenia, kanały i enum",
+        "uk": "Функція getObjects була розширена за допомогою пристроїв, каналів та оманів",
+        "zh-cn": "使用装置、渠道和配件,扩展了操作工具。"
+      },
       "5.2.10": {
         "en": "Corrected the certificate and IP selection\nPrepare for future js-controller versions",
         "de": "Das Zertifikat und die IP-Auswahl korrigiert\nBereiten Sie sich auf zukünftige js-Controller-Versionen",

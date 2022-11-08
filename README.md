@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.2.11 (2022-11-08)
 * (bluefox) Function `getObjects` was extended by devices, channels and enums
 
 ### 5.2.10 (2022-10-10)
