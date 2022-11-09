@@ -25,6 +25,12 @@ const styles = theme => ({
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px - 38px)',
         overflow: 'auto'
+    },
+    selected: {
+        color: theme.palette.mode === 'dark' ? undefined : '#FFF !important',
+    },
+    indicator: {
+        backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
     }
 });
 
@@ -197,9 +203,16 @@ class App extends GenericApp {
                             onChange={(e, index) =>
                                 this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)}
                             scrollButtons="auto"
+                            classes={{ indicator: this.props.classes.indicator }}
                         >
                             {arrayTabName.map((el, index) =>
-                                <Tab key={`${index}-tab-key`} disabled={this.checkDisabledTabs(el.name)} label={I18n.t(el.translate)} data-name={el.name} />)}
+                                <Tab
+                                    key={`${index}-tab-key`}
+                                    classes={{ selected: this.props.classes.selected }}
+                                    disabled={this.checkDisabledTabs(el.name)}
+                                    label={I18n.t(el.translate)}
+                                    data-name={el.name}
+                                />)}
                         </Tabs>
                     </AppBar>
                     <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>

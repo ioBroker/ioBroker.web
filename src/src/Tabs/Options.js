@@ -20,54 +20,54 @@ import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
 
-const styles = theme => ({
+const styles = () => ({
     blockWrapper: {
         display: 'flex',
         flexDirection: 'column',
         marginRight: 20,
         '@media screen and (max-width: 360px)': {
-            marginRight: 0
-        }
+            marginRight: 0,
+        },
     },
     displayNone: {
-        display: 'none !important'
+        display: 'none !important',
     },
     tab: {
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
     },
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: 20
+        marginRight: 20,
     },
     columnSettings: {
         width: 'calc(100% - 10px)',
     },
     blockWrapperCheckbox: {
         display: 'flex',
-        flexFlow: 'wrap'
+        flexFlow: 'wrap',
     },
     ipInputStyle: {
         marginTop: 10,
         width: 900,
         marginRight: 20,
         '@media screen and (max-width: 940px)': {
-            width: '100%'
-        }
+            width: '100%',
+        },
     },
     blockWarning: {
         background: '#2196f3',
         color: '#fff',
         margin: '20px 2px',
         padding: 8,
-        fontSize: 20
+        fontSize: 20,
     },
     blockWarningContent: {
         flexFlow: 'wrap',
         display: 'flex',
-        alignItems: 'flex-end'
-    }
+        alignItems: 'flex-end',
+    },
 });
 
 class Options extends Component {
@@ -142,7 +142,7 @@ class Options extends Component {
         return <Dialog
             open={this.state.confirmSocketIO}
             maxWidth="md"
-            onClose={() => this.setState({confirmSocketIO: false})}
+            onClose={() => this.setState({ confirmSocketIO: false })}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
@@ -158,12 +158,12 @@ class Options extends Component {
                     autoFocus
                     onClick={() => {
                         this.props.onChange('whiteListEnabled', false, () =>
-                            this.props.onChange('socketio', this.state.confirmValue, () => this.setState({confirmSocketIO: false})))
+                            this.props.onChange('socketio', this.state.confirmValue, () => this.setState({ confirmSocketIO: false })))
                     }}
                 >
                     {I18n.t('Ok')}
                 </Button>
-                <Button color="grey" variant="contained" onClick={() => this.setState({confirmSocketIO: false})}>
+                <Button color="grey" variant="contained" onClick={() => this.setState({ confirmSocketIO: false })}>
                     {I18n.t('Cancel')}
                 </Button>
             </DialogActions>
@@ -185,11 +185,10 @@ class Options extends Component {
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             {this.renderConfirmDialog()}
             <CustomModal
-                open={ openModal }
+                open={openModal}
                 buttonClick={() => {
                     onChange('auth', false);
-                    this.setState({ openModal: !openModal });
-                    this.setState({ toast: 'Authentication_deactivated' });
+                    this.setState({ openModal: !openModal, toast: 'Authentication_deactivated' });
                 }}
                 close={() => this.setState({ openModal: !openModal })}
                 titleButton={I18n.t('button_title')}
