@@ -48,12 +48,14 @@ const tests = {
 
     'read state that exists': function (done) {
         this.timeout(2000);
-        axios(process.env.TEST_PROTOCOL + '://localhost:' + process.env.TEST_PORT + '/state/system.adapter.web.0.alive')
+        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/state/system.adapter.web.0.alive`)
             .then(response => {
                 expect(response.status).to.be.equal(200);
                 done();
             })
-            .catch(error => expect(error).to.be.not.ok);
+            .catch(error => {
+                expect(error).to.be.not.ok;
+            });
     },
 
     'read state that not exists': function (done) {

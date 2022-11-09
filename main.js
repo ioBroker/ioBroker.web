@@ -99,12 +99,12 @@ async function getSocketUrl(obj) {
     if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
         obj = obj || (await adapter.getForeignObjectAsync(adapter.config.socketio));
         if (obj && obj.common && !obj.common.enabled) {
-            const state = await adapter.getForeignStateAsync(adapter.config.socketio + '.alive');
+            const state = await adapter.getForeignStateAsync(`${adapter.config.socketio}.alive`);
             if (state && state.val) {
-                return ':' + obj.native.port;
+                return `:${obj.native.port}`;
             }
         } else if (obj && obj.common && obj.common.enabled && obj.native) {
-            return ':' + obj.native.port;
+            return `:${obj.native.port}`;
         }
     }
 
@@ -158,7 +158,7 @@ function startAdapter(options) {
                 try {
                     webServer.io.publishAll('objectChange', id, obj);
                 } catch (e) {
-                    adapter.log.error('Cannot objectChange to io: ' + e);
+                    adapter.log.error(`Cannot objectChange to io: ${e}`);
                 }
             }
 
@@ -166,7 +166,7 @@ function startAdapter(options) {
                 try {
                     webServer.api.objectChange && webServer.api.objectChange(id, obj);
                 } catch (e) {
-                    adapter.log.error('Cannot call objectChange for simple api: ' + e.message);
+                    adapter.log.error(`Cannot call objectChange for simple api: ${e.message}`);
                 }
             }
 
@@ -190,7 +190,7 @@ function startAdapter(options) {
                 try {
                     webServer.api.stateChange && webServer.api.stateChange(id, state);
                 } catch (e) {
-                    adapter.log.error('Cannot call stateChange for simple api: ' + e.message);
+                    adapter.log.error(`Cannot call stateChange for simple api: ${e.message}`);
                 }
             }
 
@@ -243,7 +243,7 @@ function startAdapter(options) {
                 }
 
                 Promise.all(promises)
-                    .catch(e => adapter && adapter.log && adapter.log.error('Cannot unload web extensions: ' + e))
+                    .catch(e => adapter && adapter.log && adapter.log.error(`Cannot unload web extensions: ${e}`))
                     .then(() => {
                         if (!promises.length || timeout) {
                             clearTimeout(timeout);
@@ -504,7 +504,7 @@ function resolveLink(link, instanceObj, instancesMap) {
             } else
             // like "web.0_port"
             if (parts[0].match(/\.\d+$/)) {
-                link = getLinkVar(_var, instancesMap['system.adapter.' + parts[0]], parts[1], link);
+                link = getLinkVar(_var, instancesMap[`system.adapter.${parts[0]}`], parts[1], link);
                 vars.splice(v, 1);
             }
         }
@@ -1020,17 +1020,17 @@ function getSocketIoFile(req, res, next) {
     if (next === true || req.url.endsWith('socket.io.js') || req.url.match(/\/socket\.io\.js(\?.*)?$/)) {
         if (socketIoFile) {
             res.contentType('text/javascript');
-            res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
+            res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
             return res.status(200).send(socketIoFile);
         } else {
             // if used internal socket io, so deliver @iobroker/ws
             if ((!adapter.config.socketio && adapter.config.usePureWebSockets) || adapter.config.socketio.startsWith('system.adapter.ws.')) {
                 let file;
                 // If debug version stored
-                if (fs.existsSync(__dirname + '/www/lib/js/ws.js')) {
-                    file =__dirname + '/www/lib/js/ws.js';
+                if (fs.existsSync(`${__dirname}/www/lib/js/ws.js`)) {
+                    file =`${__dirname}/www/lib/js/ws.js`;
                 } else {
-                    const pathToFile = require.resolve(utils.appName + '.ws');
+                    const pathToFile = require.resolve(`${utils.appName}.ws`);
                     file = path.join(path.dirname(pathToFile), '/lib/socket.io.js');
                 }
                 socketIoFile = fs.readFileSync(file);
@@ -1038,7 +1038,7 @@ function getSocketIoFile(req, res, next) {
                 // try to get file from iobroker.socketio adapter
                 let file;
                 try {
-                    const dir = require.resolve(utils.appName + '.socketio');
+                    const dir = require.resolve(`${utils.appName}.socketio`);
                     file = path.join(path.dirname(dir), '/lib/socket.io.js');
                 } catch (e) {
                     // ignore
@@ -1052,9 +1052,9 @@ function getSocketIoFile(req, res, next) {
                         const dir = require.resolve('socket.io-client');
                         const fileDir = path.join(path.dirname(dir), '../dist/');
                         if (fs.existsSync(fileDir + 'socket.io.min.js')) {
-                            socketIoFile = fs.readFileSync(fileDir + 'socket.io.min.js');
+                            socketIoFile = fs.readFileSync(`${fileDir}socket.io.min.js`);
                         } else {
-                            socketIoFile = fs.readFileSync(fileDir + 'socket.io.js');
+                            socketIoFile = fs.readFileSync(`${fileDir}socket.io.js`);
                         }
                     } catch (e) {
                         try {
@@ -1070,7 +1070,7 @@ function getSocketIoFile(req, res, next) {
 
             if (socketIoFile) {
                 res.contentType('text/javascript');
-                res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
+                res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                 return res.status(200).send(socketIoFile);
             } else {
                 socketIoFile = false;
@@ -1163,7 +1163,7 @@ async function initWebServer(settings) {
 
     settings.defaultUser = settings.defaultUser || 'system.user.admin';
     if (!settings.defaultUser.startsWith('system.user.')) {
-        settings.defaultUser = 'system.user.' + settings.defaultUser;
+        settings.defaultUser = `system.user.${settings.defaultUser}`;
     }
 
     if (settings.port) {
@@ -1235,7 +1235,7 @@ async function initWebServer(settings) {
             const autoLogonOrRedirectToLogin = (req, res, next, redirect) => {
                 let isJs;
                 if (/\.css(\?.*)?$/.test(req.originalUrl)) {
-                    res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
+                    res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                     return res.status(200).send('');
                 } else
                 if ((isJs = /\.js(\?.*)?$/.test(req.originalUrl))) {
@@ -1245,7 +1245,7 @@ async function initWebServer(settings) {
 
                     // if request for web/lib, ignore it, because no redirect information
                     if (parts[0] === 'lib') {
-                        res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
+                        res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                         return res.status(200).send('');
                     }
                 }
@@ -1277,7 +1277,7 @@ async function initWebServer(settings) {
 
                 if (req.body.username && settings.addUserName && !redirect.includes('?')) {
                     const parts = redirect.split('#');
-                    parts[0] += '?' + req.body.username;
+                    parts[0] += `?${req.body.username}`;
                     redirect = parts.join('#');
                 }
 
@@ -1350,7 +1350,7 @@ async function initWebServer(settings) {
                                 //expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
 
                                 obj.cookie.expires = expires.toISOString();
-                                console.log('Session ' + req.session.id + ' expires on ' + obj.cookie.expires);
+                                console.log(`Session ${req.session.id} expires on ${obj.cookie.expires}`);
 
                                 store.set(req.session.id, obj);
                                 //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
@@ -1363,7 +1363,7 @@ async function initWebServer(settings) {
                         res.status(501).send('cannot prolong');
                     }
                 } else {
-                    autoLogonOrRedirectToLogin(req, res, next, LOGIN_PAGE + '?href=' + encodeURIComponent(req.originalUrl));
+                    autoLogonOrRedirectToLogin(req, res, next, `${LOGIN_PAGE}?href=${encodeURIComponent(req.originalUrl)}`);
                 }
             });
         } else {
@@ -1401,31 +1401,49 @@ async function initWebServer(settings) {
                         if (obj && obj.common.type === 'file')  {
                             contentType = mime.lookup(fileName[0]);
                         }
-                        adapter.getBinaryState(fileName[0], {user: req.user ? 'system.user.' + req.user : settings.defaultUser}, (err, obj) => {
-                            if (!err && obj !== null && obj !== undefined) {
-                                if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
-                                    res.set('Content-Type', 'application/json');
+                        if (obj && obj.common.type === 'file') {
+                            (adapter.getForeignBinaryState || adapter.getBinaryState)(fileName[0], {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, obj) => {
+                                if (!err && obj !== null && obj !== undefined) {
+                                    if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
+                                        res.set('Content-Type', 'application/json');
+                                    } else {
+                                        res.set('Content-Type', contentType || 'text/plain');
+                                    }
+                                    res.set('Cache-Control', 'no-cache');
+                                    res.status(200).send(obj);
                                 } else {
-                                    res.set('Content-Type', contentType || 'text/plain');
+                                    res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
                                 }
-                                res.set('Cache-Control', 'no-cache');
-                                res.status(200).send(obj);
-                            } else {
-                                res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
-                            }
-                        });
+                            });
+                        } else {
+                            adapter.getForeignState(fileName[0], {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, obj) => {
+                                if (!err && obj !== null && obj !== undefined) {
+                                    res.set('Content-Type', 'text/plain');
+                                    res.set('Cache-Control', 'no-cache');
+                                    if (fileName[1] && fileName[1].includes('json')) {
+                                        res.status(200).send(JSON.stringify(obj));
+                                    } else {
+                                        res.status(200).send(obj.val === undefined ? 'undefined' :
+                                            (obj.val === null ? 'null' :
+                                                (typeof obj.val === 'object' ? JSON.stringify(obj.val) : obj.val.toString())));
+                                    }
+                                } else {
+                                    res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
+                                }
+                            });
+                        }
                     });
                 } catch (e) {
                     res.status(500).send(`500. Error${e}`);
                 }
             });
-
-            server.app.get('*/_socket/info.js', (req, res) => {
-                res.set('Content-Type', 'application/javascript');
-                res.set('Cache-Control', 'no-cache');
-                res.status(200).send(getInfoJs(settings));
-            });
         }
+
+        server.app.get('*/_socket/info.js', (req, res) => {
+            res.set('Content-Type', 'application/javascript');
+            res.set('Cache-Control', 'no-cache');
+            res.status(200).send(getInfoJs(settings));
+        });
 
         // Enable CORS
         if (settings.socketio) {
@@ -1521,7 +1539,7 @@ async function initWebServer(settings) {
         socketSettings.language = settings.language;
 
         try {
-            let filePath = settings.usePureWebSockets ? require.resolve(utils.appName + '.ws') : require.resolve(utils.appName + '.socketio');
+            let filePath = settings.usePureWebSockets ? require.resolve(`${utils.appName}.ws`) : require.resolve(`${utils.appName}.socketio`);
             filePath = filePath.replace(/\\/g, '/');
             const parts = filePath.split('/');
             parts.pop(); // main.js
@@ -1533,7 +1551,7 @@ async function initWebServer(settings) {
         } catch (err) {
             adapter.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');
             if (err.message) {
-                adapter.log.error('ERROR: ' + err.message);
+                adapter.log.error(`ERROR: ${err.message}`);
                 adapter.log.error(err.stack);
             } else {
                 adapter.log.error(JSON.stringify(err));
@@ -1552,8 +1570,8 @@ async function initWebServer(settings) {
                 const parts = extensions[instance].path.split('/');
                 parts.shift();
                 let extAPI;
-                if (fs.existsSync('./' + parts.join('/'))) {
-                    extAPI = require('./' + parts.join('/'));
+                if (fs.existsSync(`./${parts.join('/')}`)) {
+                    extAPI = require(`./${parts.join('/')}`);
                 } else {
                     extAPI = require(`${utils.appName}.${extensions[instance].path}`);
                 }
@@ -1668,7 +1686,7 @@ async function initWebServer(settings) {
                         if (req.headers.range) {
                             sendRange(req, res, cache[`${id}/${url}`].buffer);
                         } else {
-                            res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
+                            res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                             res.status(200).send(cache[`${id}/${url}`].buffer);
                         }
                     } else {
@@ -1687,7 +1705,7 @@ async function initWebServer(settings) {
                             } else {
                                 // Store file in cache
                                 if (settings.cache) {
-                                    cache[id + '/' + url] = {buffer: buffer.toString(), mimeType: 'text/html'};
+                                    cache[`${id}/${url}`] = {buffer: buffer.toString(), mimeType: 'text/html'};
                                 }
                                 res.set('Cache-Control', 'no-cache');
                                 res.contentType('text/html');
@@ -1716,7 +1734,7 @@ async function initWebServer(settings) {
                                     if (req.headers.range) {
                                         sendRange(req, res, buffer);
                                     } else {
-                                        res.set('Cache-Control', 'public, max-age= ' + adapter.config.staticAssetCacheMaxAge);
+                                        res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                                         res.status(200).send(buffer);
                                     }
                                 }

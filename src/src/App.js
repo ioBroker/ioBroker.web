@@ -1,12 +1,15 @@
 import React from 'react';
 import { withStyles } from '@mui/styles';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+
 import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import Loader from '@iobroker/adapter-react-v5/Components/Loader'
 import I18n from '@iobroker/adapter-react-v5/i18n';
+
 import Options from './Tabs/Options';
 import Certificates from './Tabs/Certificates';
 import WhiteList from './Tabs/WhiteList';
@@ -61,15 +64,16 @@ class App extends GenericApp {
         const extendedProps = { ...props };
         extendedProps.encryptedFields = ['pass'];
         extendedProps.translations = {
-            'en': require('./i18n/en'),
-            'de': require('./i18n/de'),
-            'ru': require('./i18n/ru'),
-            'pt': require('./i18n/pt'),
-            'nl': require('./i18n/nl'),
-            'fr': require('./i18n/fr'),
-            'it': require('./i18n/it'),
-            'es': require('./i18n/es'),
-            'pl': require('./i18n/pl'),
+            en: require('./i18n/en'),
+            de: require('./i18n/de'),
+            ru: require('./i18n/ru'),
+            pt: require('./i18n/pt'),
+            nl: require('./i18n/nl'),
+            fr: require('./i18n/fr'),
+            it: require('./i18n/it'),
+            es: require('./i18n/es'),
+            pl: require('./i18n/pl'),
+            uk: require('./i18n/uk'),
             'zh-cn': require('./i18n/zh-cn'),
         };
         extendedProps.sentryDSN = window.sentryDSN;

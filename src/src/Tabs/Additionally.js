@@ -105,7 +105,7 @@ class Additionally extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div style={native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
+                <div>
                     <CustomCheckbox
                         title='disable_states'
                         attr='disableStates'
@@ -114,7 +114,7 @@ class Additionally extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div style={native['leEnabled'] ? { display: 'block' } : { display: 'none' }}>
+                <div>
                     <CustomCheckbox
                         title='disable_files'
                         attr='disableFilesObjects'
