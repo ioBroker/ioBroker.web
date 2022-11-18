@@ -1402,7 +1402,8 @@ async function initWebServer(settings) {
                             contentType = mime.lookup(fileName[0]);
                         }
                         if (obj && obj.common.type === 'file') {
-                            (adapter.getForeignBinaryState || adapter.getBinaryState)(fileName[0], {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, obj) => {
+                            const getForeignBinaryState = adapter.getForeignBinaryState || adapter.getBinaryState;
+                            getForeignBinaryState.call(adapter, fileName[0], {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, obj) => {
                                 if (!err && obj !== null && obj !== undefined) {
                                     if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
                                         res.set('Content-Type', 'application/json');
