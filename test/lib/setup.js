@@ -1,11 +1,13 @@
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
+/* jshint -W097 */
+/* jshint strict: false */
+/* jslint node: true */
+
 // check if tmp directory exists
 const fs            = require('fs');
 const path          = require('path');
 const child_process = require('child_process');
-const rootDir       = path.normalize(__dirname + '/../../');
-const pkg           = require(rootDir + 'package.json');
+const rootDir       = path.normalize(`${__dirname}/../../`);
+const pkg           = require(`${rootDir}package.json`);
 const debug         = typeof v8debug === 'object';
 pkg.main = pkg.main || 'main.js';
 
@@ -23,14 +25,14 @@ function getAppName() {
 function loadJSONLDB() {
     if (!JSONLDB) {
         const dbPath = require.resolve('@alcalzone/jsonl-db', {
-            paths: [rootDir + 'tmp/node_modules', rootDir, rootDir + 'tmp/node_modules/' + appName + '.js-controller']
+            paths: [`${rootDir}tmp/node_modules`, rootDir, `${rootDir}tmp/node_modules/${appName}.js-controller`]
         });
-        console.log('JSONLDB path: ' + dbPath);
+        console.log(`JSONLDB path: ${dbPath}`);
         try {
             const { JsonlDB } = require(dbPath);
             JSONLDB = JsonlDB;
         } catch (err) {
-            console.log('Jsonl require error: ' + err);
+            console.log(`Jsonl require error: ${err}`);
         }
     }
 }
@@ -49,17 +51,14 @@ function copyFileSync(source, target) {
     let targetFile = target;
 
     //if target is a directory a new file with the same name will be created
-    if (fs.existsSync(target)) {
-        if ( fs.lstatSync( target ).isDirectory() ) {
-            targetFile = path.join(target, path.basename(source));
-        }
+    if (fs.existsSync(target) && fs.lstatSync( target ).isDirectory() ) {
+        targetFile = path.join(target, path.basename(source));
     }
 
     try {
         fs.writeFileSync(targetFile, fs.readFileSync(source));
-    }
-    catch (err) {
-        console.log('file copy error: ' +source +' -> ' + targetFile + ' (error ignored)');
+    } catch (err) {
+        console.log(`file copy error: ${source} -> ${targetFile} (error ignored)`);
     }
 }
 
@@ -79,8 +78,8 @@ function copyFolderRecursiveSync(source, target, ignore) {
     //copy
     if (fs.lstatSync(source).isDirectory()) {
         files = fs.readdirSync(source);
-        files.forEach(function (file) {
-            if (ignore && ignore.indexOf(file) !== -1) {
+        files.forEach(file => {
+            if (ignore && ignore.includes(file)) {
                 return;
             }
 
@@ -88,9 +87,9 @@ function copyFolderRecursiveSync(source, target, ignore) {
             const curTarget = path.join(targetFolder, file);
             if (fs.lstatSync(curSource).isDirectory()) {
                 // ignore grunt files
-                if (file.indexOf('grunt') !== -1) return;
-                if (file === 'chai') return;
-                if (file === 'mocha') return;
+                if (file.includes('grunt') || file === 'chai' || file === 'mocha') {
+                    return;
+                }
                 copyFolderRecursiveSync(curSource, targetFolder, ignore);
             } else {
                 copyFileSync(curSource, curTarget);
@@ -105,10 +104,10 @@ if (!fs.existsSync(rootDir + 'tmp')) {
 
 async function storeOriginalFiles() {
     console.log('Store original files...');
-    const dataDir = rootDir + 'tmp/' + appName + '-data/';
+    const dataDir = `${rootDir}tmp/${appName}-data/`;
 
     if (fs.existsSync(dataDir + 'objects.json')) {
-        const f = fs.readFileSync(dataDir + 'objects.json');
+        const f = fs.readFileSync(`${dataDir}objects.json`);
         const objects = JSON.parse(f.toString());
         if (objects['system.adapter.admin.0'] && objects['system.adapter.admin.0'].common) {
             objects['system.adapter.admin.0'].common.enabled = false;
@@ -117,23 +116,23 @@ async function storeOriginalFiles() {
             objects['system.adapter.admin.1'].common.enabled = false;
         }
 
-        fs.writeFileSync(dataDir + 'objects.json.original', JSON.stringify(objects));
+        fs.writeFileSync(`${dataDir}objects.json.original`, JSON.stringify(objects));
         console.log('Store original objects.json');
     }
 
-    if (fs.existsSync(dataDir + 'states.json')) {
+    if (fs.existsSync(`${dataDir}states.json`)) {
         try {
-            const f = fs.readFileSync(dataDir + 'states.json');
-            fs.writeFileSync(dataDir + 'states.json.original', f);
+            const f = fs.readFileSync(`${dataDir}states.json`);
+            fs.writeFileSync(`${dataDir}states.json.original`, f);
             console.log('Store original states.json');
         } catch (err) {
             console.log('no states.json found - ignore');
         }
     }
 
-    if (fs.existsSync(dataDir + 'objects.jsonl')) {
+    if (fs.existsSync(`${dataDir}objects.jsonl`)) {
         loadJSONLDB();
-        const db = new JSONLDB(dataDir + 'objects.jsonl');
+        const db = new JSONLDB(`${dataDir}objects.jsonl`);
         await db.open();
 
         const admin0 = db.get('system.adapter.admin.0');
@@ -154,28 +153,28 @@ async function storeOriginalFiles() {
         await db.close();
 
         const f = fs.readFileSync(dataDir + 'objects.jsonl');
-        fs.writeFileSync(dataDir + 'objects.jsonl.original', f);
+        fs.writeFileSync(`${dataDir}objects.jsonl.original`, f);
         console.log('Store original objects.jsonl');
     }
 
-    if (fs.existsSync(dataDir + 'states.jsonl')) {
-        const f = fs.readFileSync(dataDir + 'states.jsonl');
-        fs.writeFileSync(dataDir + 'states.jsonl.original', f);
+    if (fs.existsSync(`${dataDir}states.jsonl`)) {
+        const f = fs.readFileSync(`${dataDir}states.jsonl`);
+        fs.writeFileSync(`${dataDir}states.jsonl.original`, f);
         console.log('Store original states.jsonl');
     }
 }
 
 function restoreOriginalFiles() {
     console.log('restoreOriginalFiles...');
-    const dataDir = rootDir + 'tmp/' + appName + '-data/';
+    const dataDir = `${rootDir}tmp/${appName}-data/`;
 
-    if (fs.existsSync(dataDir + 'objects.json.original')) {
-        const f = fs.readFileSync(dataDir + 'objects.json.original');
-        fs.writeFileSync(dataDir + 'objects.json', f);
+    if (fs.existsSync(`${dataDir}objects.json.original`)) {
+        const f = fs.readFileSync(`${dataDir}objects.json.original`);
+        fs.writeFileSync(`${dataDir}objects.json`, f);
     }
-    if (fs.existsSync(dataDir + 'objects.json.original')) {
-        const f = fs.readFileSync(dataDir + 'states.json.original');
-        fs.writeFileSync(dataDir + 'states.json', f);
+    if (fs.existsSync(`${dataDir}objects.json.original`)) {
+        const f = fs.readFileSync(`${dataDir}states.json.original`);
+        fs.writeFileSync(`${dataDir}states.json`, f);
     }
 
     if (fs.existsSync(dataDir + 'objects.jsonl.original')) {
@@ -191,25 +190,25 @@ function restoreOriginalFiles() {
 async function checkIsAdapterInstalled(cb, counter, customName) {
     customName = customName || pkg.name.split('.').pop();
     counter = counter || 0;
-    const dataDir = rootDir + 'tmp/' + appName + '-data/';
+    const dataDir = `${rootDir}tmp/${appName}-data/`;
     console.log('checkIsAdapterInstalled...');
 
     try {
-        if (fs.existsSync(dataDir + 'objects.json')) {
-            const f = fs.readFileSync(dataDir + 'objects.json');
+        if (fs.existsSync(`${dataDir}objects.json`)) {
+            const f = fs.readFileSync(`${dataDir}objects.json`);
             const objects = JSON.parse(f.toString());
-            if (objects['system.adapter.' + customName + '.0']) {
+            if (objects[`system.adapter.${customName}.0`]) {
                 console.log('checkIsAdapterInstalled: ready!');
                 setTimeout(function () {
-                    if (cb) cb();
+                    cb && cb();
                 }, 100);
                 return;
             } else {
                 console.warn('checkIsAdapterInstalled: still not ready');
             }
-        } else if (fs.existsSync(dataDir + 'objects.jsonl')) {
+        } else if (fs.existsSync(`${dataDir}objects.jsonl`)) {
             loadJSONLDB();
-            const db = new JSONLDB(dataDir + 'objects.jsonl');
+            const db = new JSONLDB(`${dataDir}objects.jsonl`);
             try {
                 await db.open();
             } catch (err) {
@@ -219,29 +218,27 @@ async function checkIsAdapterInstalled(cb, counter, customName) {
                 throw err;
             }
 
-            const obj = db.get('system.adapter.' + customName + '.0');
+            const obj = db.get(`system.adapter.${customName}.0`);
             await db.close();
 
             if (obj) {
                 console.log('checkIsAdapterInstalled: ready!');
-                setTimeout(function () {
-                    if (cb) cb();
-                }, 100);
+                setTimeout(() => cb && cb(), 100);
                 return;
             } else {
                 console.warn('checkIsAdapterInstalled: still not ready');
             }
         } else {
-            console.error('checkIsAdapterInstalled: No objects file found in datadir ' + dataDir);
+            console.error(`checkIsAdapterInstalled: No objects file found in datadir ${dataDir}`);
         }
 
     } catch (err) {
-        console.log('checkIsAdapterInstalled: catch ' + err);
+        console.log(`checkIsAdapterInstalled: catch ${err}`);
     }
 
     if (counter > 20) {
         console.error('checkIsAdapterInstalled: Cannot install!');
-        if (cb) cb('Cannot install');
+        cb && cb('Cannot install');
     } else {
         console.log('checkIsAdapterInstalled: wait...');
         setTimeout(function() {
@@ -252,7 +249,7 @@ async function checkIsAdapterInstalled(cb, counter, customName) {
 
 async function checkIsControllerInstalled(cb, counter) {
     counter = counter || 0;
-    const dataDir = rootDir + 'tmp/' + appName + '-data/';
+    const dataDir = `${rootDir}tmp/${appName}-data/`;
 
     console.log('checkIsControllerInstalled...');
     try {
@@ -261,14 +258,12 @@ async function checkIsControllerInstalled(cb, counter) {
             const objects = JSON.parse(f.toString());
             if (objects['system.certificates']) {
                 console.log('checkIsControllerInstalled: installed!');
-                setTimeout(function () {
-                    if (cb) cb();
-                }, 100);
+                setTimeout(() => cb && cb(), 100);
                 return;
             }
-        } else if (fs.existsSync(dataDir + 'objects.jsonl')) {
+        } else if (fs.existsSync(`${dataDir}objects.jsonl`)) {
             loadJSONLDB();
-            const db = new JSONLDB(dataDir + 'objects.jsonl');
+            const db = new JSONLDB(`${dataDir}objects.jsonl`);
             try {
                 await db.open();
             } catch (err) {
@@ -283,27 +278,23 @@ async function checkIsControllerInstalled(cb, counter) {
 
             if (obj) {
                 console.log('checkIsControllerInstalled: installed!');
-                setTimeout(function () {
-                    if (cb) cb();
-                }, 100);
+                setTimeout(() => cb && cb(), 100);
                 return;
             }
 
         } else {
-            console.error('checkIsControllerInstalled: No objects file found in datadir ' + dataDir);
+            console.error(`checkIsControllerInstalled: No objects file found in datadir ${dataDir}`);
         }
     } catch (err) {
-
+        // ignore
     }
 
     if (counter > 20) {
         console.log('checkIsControllerInstalled: Cannot install!');
-        if (cb) cb('Cannot install');
+        cb && cb('Cannot install');
     } else {
         console.log('checkIsControllerInstalled: wait...');
-        setTimeout(function() {
-            checkIsControllerInstalled(cb, counter + 1);
-        }, 1000);
+        setTimeout(() => checkIsControllerInstalled(cb, counter + 1), 1000);
     }
 }
 
@@ -314,32 +305,31 @@ function installAdapter(customName, cb) {
     }
     customName = customName || pkg.name.split('.').pop();
     console.log('Install adapter...');
-    const startFile = 'node_modules/' + appName + '.js-controller/' + appName + '.js';
+    const startFile = `node_modules/${appName}.js-controller/${appName}.js`;
     // make first install
     if (debug) {
-        child_process.execSync('node ' + startFile + ' add ' + customName + ' --enabled false', {
+        child_process.execSync(`node ${startFile} add ${customName} --enabled false`, {
             cwd:   rootDir + 'tmp',
             stdio: [0, 1, 2]
         });
-        checkIsAdapterInstalled(function (error) {
-            if (error) console.error(error);
+        checkIsAdapterInstalled(error => {
+            error && console.error(error);
             console.log('Adapter installed.');
-            if (cb) cb();
+            cb && cb();
         });
     } else {
         // add controller
         const _pid = child_process.fork(startFile, ['add', customName, '--enabled', 'false'], {
-            cwd:   rootDir + 'tmp',
+            cwd:   `${rootDir}tmp`,
             stdio: [0, 1, 2, 'ipc']
         });
 
-        waitForEnd(_pid, function () {
-            checkIsAdapterInstalled(function (error) {
-                if (error) console.error(error);
+        waitForEnd(_pid, () =>
+            checkIsAdapterInstalled(error => {
+                error && console.error(error);
                 console.log('Adapter installed.');
-                if (cb) cb();
-            });
-        });
+                cb && cb();
+            }));
     }
 }
 
@@ -348,13 +338,13 @@ function waitForEnd(_pid, cb) {
         cb(-1, -1);
         return;
     }
-    _pid.on('exit', function (code, signal) {
+    _pid.on('exit', (code, signal) => {
         if (_pid) {
             _pid = null;
             cb(code, signal);
         }
     });
-    _pid.on('close', function (code, signal) {
+    _pid.on('close', (code, signal) => {
         if (_pid) {
             _pid = null;
             cb(code, signal);
@@ -364,146 +354,144 @@ function waitForEnd(_pid, cb) {
 
 function installJsController(cb) {
     console.log('installJsController...');
-    if (!fs.existsSync(rootDir + 'tmp/node_modules/' + appName + '.js-controller') ||
-        !fs.existsSync(rootDir + 'tmp/' + appName + '-data')) {
+    if (!fs.existsSync(`${rootDir}tmp/node_modules/${appName}.js-controller`) ||
+        !fs.existsSync(`${rootDir}tmp/${appName}-data`)) {
         // try to detect appName.js-controller in node_modules/appName.js-controller
         // travis CI installs js-controller into node_modules
-        if (fs.existsSync(rootDir + 'node_modules/' + appName + '.js-controller')) {
-            console.log('installJsController: no js-controller => copy it from "' + rootDir + 'node_modules/' + appName + '.js-controller"');
+        if (fs.existsSync(`${rootDir}node_modules/${appName}.js-controller`)) {
+            console.log(`installJsController: no js-controller => copy it from "${rootDir}node_modules/${appName}.js-controller"`);
             // copy all
             // stop controller
             console.log('Stop controller if running...');
             let _pid;
             if (debug) {
                 // start controller
-                _pid = child_process.exec('node ' + appName + '.js stop', {
-                    cwd: rootDir + 'node_modules/' + appName + '.js-controller',
+                _pid = child_process.exec(`node ${appName}.js stop`, {
+                    cwd: `${rootDir}node_modules/${appName}.js-controller`,
                     stdio: [0, 1, 2]
                 });
             } else {
-                _pid = child_process.fork(appName + '.js', ['stop'], {
-                    cwd:   rootDir + 'node_modules/' + appName + '.js-controller',
+                _pid = child_process.fork(`${appName}.js`, ['stop'], {
+                    cwd:   `${rootDir}node_modules/${appName}.js-controller`,
                     stdio: [0, 1, 2, 'ipc']
                 });
             }
 
-            waitForEnd(_pid, function () {
+            waitForEnd(_pid, () => {
                 // copy all files into
-                if (!fs.existsSync(rootDir + 'tmp')) fs.mkdirSync(rootDir + 'tmp');
-                if (!fs.existsSync(rootDir + 'tmp/node_modules')) fs.mkdirSync(rootDir + 'tmp/node_modules');
+                !fs.existsSync(`${rootDir}tmp`) && fs.mkdirSync(`${rootDir}tmp`);
+                !fs.existsSync(`${rootDir}tmp/node_modules`) && fs.mkdirSync(`${rootDir}tmp/node_modules`);
 
-                if (!fs.existsSync(rootDir + 'tmp/node_modules/' + appName + '.js-controller')){
+                if (!fs.existsSync(`${rootDir}tmp/node_modules/${appName}.js-controller`)){
                     console.log('Copy js-controller...');
-                    copyFolderRecursiveSync(rootDir + 'node_modules/' + appName + '.js-controller', rootDir + 'tmp/node_modules/');
+                    copyFolderRecursiveSync(`${rootDir}node_modules/${appName}.js-controller`, `${rootDir}tmp/node_modules/`);
                 }
 
                 console.log('Setup js-controller...');
                 let __pid;
                 if (debug) {
                     // start controller
-                    _pid = child_process.exec('node ' + appName + '.js setup first --console', {
-                        cwd: rootDir + 'tmp/node_modules/' + appName + '.js-controller',
+                    _pid = child_process.exec(`node ${appName}.js setup first --console`, {
+                        cwd: `${rootDir}tmp/node_modules/${appName}.js-controller`,
                         stdio: [0, 1, 2]
                     });
                 } else {
-                    __pid = child_process.fork(appName + '.js', ['setup', 'first', '--console'], {
-                        cwd:   rootDir + 'tmp/node_modules/' + appName + '.js-controller',
+                    __pid = child_process.fork(`${appName}.js`, ['setup', 'first', '--console'], {
+                        cwd:   `${rootDir}tmp/node_modules/${appName}.js-controller`,
                         stdio: [0, 1, 2, 'ipc']
                     });
                 }
-                waitForEnd(__pid, function () {
-                    checkIsControllerInstalled(function () {
+                waitForEnd(__pid, () =>
+                    checkIsControllerInstalled(() => {
                         // change ports for object and state DBs
-                        const config = require(rootDir + 'tmp/' + appName + '-data/' + appName + '.json');
+                        const config = require(`${rootDir}tmp/${appName}-data/${appName}.json`);
                         config.objects.port = 19001;
                         config.states.port  = 19000;
 
                         // TEST WISE!
                         //config.objects.type = 'jsonl';
                         //config.states.type = 'jsonl';
-                        fs.writeFileSync(rootDir + 'tmp/' + appName + '-data/' + appName + '.json', JSON.stringify(config, null, 2));
+                        fs.writeFileSync(`${rootDir}tmp/${appName}-data/${appName}.json`, JSON.stringify(config, null, 2));
                         console.log('Setup finished.');
 
                         copyAdapterToController();
 
-                        installAdapter(async function () {
+                        installAdapter(async () => {
                             await storeOriginalFiles();
-                            if (cb) cb(true);
+                            cb && cb(true);
                         });
-                    });
-                });
+                    }));
             });
         } else {
             // check if port 9000 is free, else admin adapter will be added to running instance
             const client = new require('net').Socket();
             client.on('error', () => {});
-            client.connect(9000, '127.0.0.1', function() {
+            client.connect(9000, '127.0.0.1', () => {
                 console.error('Cannot initiate fisrt run of test, because one instance of application is running on this PC. Stop it and repeat.');
                 process.exit(0);
             });
 
-            setTimeout(function () {
+            setTimeout(() => {
                 client.destroy();
-                if (!fs.existsSync(rootDir + 'tmp/node_modules/' + appName + '.js-controller')) {
+                if (!fs.existsSync(`${rootDir}tmp/node_modules/${appName}.js-controller`)) {
                     console.log('installJsController: no js-controller => install dev build from npm');
 
-                    child_process.execSync('npm install ' + appName + '.js-controller@dev --prefix ./ --production', {
+                    child_process.execSync(`npm install ${appName}.js-controller@dev --prefix ./ --production`, {
                         cwd:   rootDir + 'tmp/',
                         stdio: [0, 1, 2]
                     });
                 } else {
                     console.log('Setup js-controller...');
-                    let __pid;
                     if (debug) {
                         // start controller
-                        child_process.exec('node ' + appName + '.js setup first', {
-                            cwd: rootDir + 'tmp/node_modules/' + appName + '.js-controller',
+                        child_process.exec(`node ${appName}.js setup first`, {
+                            cwd: `${rootDir}tmp/node_modules/${appName}.js-controller`,
                             stdio: [0, 1, 2]
                         });
                     } else {
-                        child_process.fork(appName + '.js', ['setup', 'first'], {
-                            cwd:   rootDir + 'tmp/node_modules/' + appName + '.js-controller',
+                        child_process.fork(`${appName}.js`, ['setup', 'first'], {
+                            cwd:   `${rootDir}tmp/node_modules/${appName}.js-controller`,
                             stdio: [0, 1, 2, 'ipc']
                         });
                     }
                 }
 
                 // let npm install admin and run setup
-                checkIsControllerInstalled(function () {
+                checkIsControllerInstalled(() => {
                     let _pid;
 
-                    if (fs.existsSync(rootDir + 'node_modules/' + appName + '.js-controller/' + appName + '.js')) {
-                        _pid = child_process.fork(appName + '.js', ['stop'], {
-                            cwd:   rootDir + 'node_modules/' + appName + '.js-controller',
+                    if (fs.existsSync(`${rootDir}node_modules/${appName}.js-controller/${appName}.js`)) {
+                        _pid = child_process.fork(`${appName}.js`, ['stop'], {
+                            cwd:   `${rootDir}node_modules/${appName}.js-controller`,
                             stdio: [0, 1, 2, 'ipc']
                         });
                     }
 
-                    waitForEnd(_pid, function () {
+                    waitForEnd(_pid, () => {
                         // change ports for object and state DBs
-                        const config = require(rootDir + 'tmp/' + appName + '-data/' + appName + '.json');
+                        const config = require(`${rootDir}tmp/${appName}-data/${appName}.json`);
                         config.objects.port = 19001;
                         config.states.port  = 19000;
 
                         // TEST WISE!
                         //config.objects.type = 'jsonl';
                         //config.states.type = 'jsonl';
-                        fs.writeFileSync(rootDir + 'tmp/' + appName + '-data/' + appName + '.json', JSON.stringify(config, null, 2));
+                        fs.writeFileSync(`${rootDir}tmp/${appName}-data/${appName}.json`, JSON.stringify(config, null, 2));
 
                         copyAdapterToController();
 
-                        installAdapter(async function () {
+                        installAdapter(async () => {
                             await storeOriginalFiles();
-                            if (cb) cb(true);
+                            cb && cb(true);
                         });
                     });
                 });
             }, 1000);
         }
     } else {
-        setTimeout(function () {
+        setTimeout(() => {
             console.log('installJsController: js-controller installed');
-            if (cb) cb(false);
+            cb && cb(false);
         }, 0);
     }
 }
@@ -511,7 +499,7 @@ function installJsController(cb) {
 function copyAdapterToController() {
     console.log('Copy adapter...');
     // Copy adapter to tmp/node_modules/appName.adapter
-    copyFolderRecursiveSync(rootDir, rootDir + 'tmp/node_modules/', ['.idea', 'test', 'tmp', '.git', appName + '.js-controller']);
+    copyFolderRecursiveSync(rootDir, `${rootDir}tmp/node_modules/`, ['.idea', 'test', 'tmp', '.git', appName + '.js-controller']);
     console.log('Adapter copied.');
 }
 
@@ -528,24 +516,24 @@ function clearControllerLog() {
             fs.mkdirSync(dirPath);
         }
     } catch(e) {
-        console.error('Cannot read "' + dirPath + '"');
+        console.error(`Cannot read "${dirPath}"`);
         return;
     }
     if (files.length > 0) {
         try {
             for (let i = 0; i < files.length; i++) {
-                const filePath = dirPath + '/' + files[i];
+                const filePath = `${dirPath}/${files[i]}`;
                 fs.unlinkSync(filePath);
             }
             console.log('Controller log cleared');
         } catch (err) {
-            console.error('cannot clear log: ' + err);
+            console.error(`cannot clear log: ${err}`);
         }
     }
 }
 
 function clearDB() {
-    const dirPath = rootDir + 'tmp/iobroker-data/sqlite';
+    const dirPath = `${rootDir}tmp/iobroker-data/sqlite`;
     let files;
     try {
         if (fs.existsSync(dirPath)) {
@@ -557,24 +545,24 @@ function clearDB() {
             fs.mkdirSync(dirPath);
         }
     } catch(e) {
-        console.error('Cannot read "' + dirPath + '"');
+        console.error(`Cannot read "${dirPath}"`);
         return;
     }
     if (files.length > 0) {
         try {
             for (let i = 0; i < files.length; i++) {
-                const filePath = dirPath + '/' + files[i];
+                const filePath = `${dirPath}/${files[i]}`;
                 fs.unlinkSync(filePath);
             }
             console.log('Clear sqlite DB');
         } catch (err) {
-            console.error('cannot clear DB: ' + err);
+            console.error(`cannot clear DB: ${err}`);
         }
     }
 }
 
 function setupController(cb) {
-    installJsController(async function (isInited) {
+    installJsController(async isInited => {
         try {
             clearControllerLog();
             clearDB();
@@ -584,12 +572,12 @@ function setupController(cb) {
                 copyAdapterToController();
             }
             // read system.config object
-            const dataDir = rootDir + 'tmp/' + appName + '-data/';
+            const dataDir = `${rootDir}tmp/${appName}-data/`;
 
-            if (fs.existsSync(dataDir + 'objects.json')) {
+            if (fs.existsSync(`${dataDir}objects.json`)) {
                 let objs;
                 try {
-                    objs = fs.readFileSync(dataDir + 'objects.json');
+                    objs = fs.readFileSync(`${dataDir}objects.json`);
                     objs = JSON.parse(objs);
                 } catch (e) {
                     console.log('ERROR reading/parsing system configuration. Ignore');
@@ -600,41 +588,40 @@ function setupController(cb) {
                 }
 
                 systemConfig = objs['system.config'];
-                if (cb) cb(objs['system.config']);
-            } else if (fs.existsSync(dataDir + 'objects.jsonl')) {
+                cb && cb(objs['system.config']);
+            } else if (fs.existsSync(`${dataDir}objects.jsonl`)) {
                 loadJSONLDB();
-                const db = new JSONLDB(dataDir + 'objects.jsonl');
+                const db = new JSONLDB(`${dataDir}objects.jsonl`);
                 await db.open();
 
-                let config = db.get('system.config');
+                const config = db.get('system.config');
                 systemConfig = config || {};
 
                 await db.close();
 
-                if (cb) cb(systemConfig);
+                cb && cb(systemConfig);
             } else {
-                console.error('read SystemConfig: No objects file found in datadir ' + dataDir);
+                console.error(`read SystemConfig: No objects file found in datadir ${dataDir}`);
             }
         } catch (err) {
-            console.error('setupController: ' + err);
+            console.error(`setupController: ${err}`);
         }
     });
 }
 
 async function getSecret() {
-    var dataDir = rootDir + 'tmp/' + appName + '-data/';
+    const dataDir = `${rootDir}tmp/${appName}-data/`;
 
     if (systemConfig) {
         return systemConfig.native.secret;
     }
-    if (fs.existsSync(dataDir + 'objects.json')) {
+    if (fs.existsSync(`${dataDir}objects.json`)) {
         let objs;
         try {
-            objs = fs.readFileSync(dataDir + 'objects.json');
+            objs = fs.readFileSync(`${dataDir}objects.json`);
             objs = JSON.parse(objs);
-        }
-        catch (e) {
-            console.warn("Could not load secret. Reason: " + e);
+        } catch (e) {
+            console.warn(`Could not load secret. Reason: ${e}`);
             return null;
         }
         if (!objs || !objs['system.config']) {
@@ -642,9 +629,9 @@ async function getSecret() {
         }
 
         return objs['system.config'].native.secre;
-    } else if (fs.existsSync(dataDir + 'objects.jsonl')) {
+    } else if (fs.existsSync(`${dataDir}objects.jsonl`)) {
         loadJSONLDB();
-        const db = new JSONLDB(dataDir + 'objects.jsonl');
+        const db = new JSONLDB(`${dataDir}objects.jsonl`);
         await db.open();
 
         let config = db.get('system.config');
@@ -654,14 +641,14 @@ async function getSecret() {
 
         return config.native.secret;
     } else {
-        console.error('read secret: No objects file found in datadir ' + dataDir);
+        console.error(`read secret: No objects file found in datadir ${dataDir}`);
     }
 
 }
 
 function encrypt (key, value) {
-    var result = '';
-    for (var i = 0; i < value.length; ++i) {
+    let result = '';
+    for (let i = 0; i < value.length; ++i) {
         result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
     }
     return result;
@@ -670,22 +657,22 @@ function encrypt (key, value) {
 function startAdapter(objects, states, callback) {
     if (adapterStarted) {
         console.log('Adapter already started ...');
-        if (callback) callback(objects, states);
+        callback && callback(objects, states);
         return;
     }
     adapterStarted = true;
     console.log('startAdapter...');
-    if (fs.existsSync(rootDir + 'tmp/node_modules/' + pkg.name + '/' + pkg.main)) {
+    if (fs.existsSync(`${rootDir}tmp/node_modules/${pkg.name}/${pkg.main}`)) {
         try {
             if (debug) {
                 // start controller
-                pid = child_process.exec('node node_modules/' + pkg.name + '/' + pkg.main + ' --console silly', {
+                pid = child_process.exec(`node node_modules/${pkg.name}/${pkg.main} --console silly`, {
                     cwd: rootDir + 'tmp',
                     stdio: [0, 1, 2]
                 });
             } else {
                 // start controller
-                pid = child_process.fork('node_modules/' + pkg.name + '/' + pkg.main, ['--console', 'silly'], {
+                pid = child_process.fork(`node_modules/${pkg.name}/${pkg.main}`, ['--console', 'silly'], {
                     cwd:   rootDir + 'tmp',
                     stdio: [0, 1, 2, 'ipc']
                 });
@@ -694,9 +681,9 @@ function startAdapter(objects, states, callback) {
             console.error(JSON.stringify(error));
         }
     } else {
-        console.error('Cannot find: ' + rootDir + 'tmp/node_modules/' + pkg.name + '/' + pkg.main);
+        console.error(`Cannot find: ${rootDir}tmp/node_modules/${pkg.name}/${pkg.main}`);
     }
-    if (callback) callback(objects, states);
+    callback && callback(objects, states);
 }
 
 function startController(isStartAdapter, onObjectChange, onStateChange, callback) {
@@ -717,7 +704,7 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
     } else {
         console.log('startController...');
         try {
-            const config = require(rootDir + 'tmp/' + appName + '-data/' + appName + '.json');
+            const config = require(`${rootDir}tmp/${appName}-data/${appName}.json`);
 
             adapterStarted = false;
             let isObjectConnected;
@@ -725,9 +712,9 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
 
             // rootDir + 'tmp/node_modules
             const objPath = require.resolve(`@iobroker/db-objects-${config.objects.type}`, {
-                paths: [ rootDir + 'tmp/node_modules', rootDir, rootDir + 'tmp/node_modules/' + appName + '.js-controller']
+                paths: [ rootDir + 'tmp/node_modules', rootDir, `${rootDir}tmp/node_modules/${appName}.js-controller`]
             });
-            console.log('Objects Path: ' + objPath);
+            console.log(`Objects Path: ${objPath}`);
             const Objects = require(objPath).Server;
             objects = new Objects({
                 connection: {
@@ -740,23 +727,13 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
                     'connectTimeout': 2000
                 },
                 logger: {
-                    silly: function (msg) {
-                        console.log(msg);
-                    },
-                    debug: function (msg) {
-                        console.log(msg);
-                    },
-                    info: function (msg) {
-                        console.log(msg);
-                    },
-                    warn: function (msg) {
-                        console.warn(msg);
-                    },
-                    error: function (msg) {
-                        console.error(msg);
-                    }
+                    silly: msg => console.log(msg),
+                    debug: msg => console.log(msg),
+                    info: msg => console.log(msg),
+                    warn: msg => console.warn(msg),
+                    error: msg => console.error(msg)
                 },
-                connected: function () {
+                connected: () => {
                     isObjectConnected = true;
                     if (isStatesConnected) {
                         console.log('startController: started!');
@@ -775,9 +752,9 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
 
             // Just open in memory DB itself
             const statePath = require.resolve(`@iobroker/db-states-${config.states.type}`, {
-                paths: [ rootDir + 'tmp/node_modules', rootDir, rootDir + 'tmp/node_modules/' + appName + '.js-controller']
+                paths: [ `${rootDir}tmp/node_modules`, rootDir, `${rootDir}tmp/node_modules/${appName}.js-controller`]
             });
-            console.log('States Path: ' + statePath);
+            console.log(`States Path: ${statePath}`);
             const States = require(statePath).Server;
             states = new States({
                 connection: {
@@ -831,24 +808,20 @@ function startController(isStartAdapter, onObjectChange, onStateChange, callback
 function stopAdapter(cb) {
     if (!pid) {
         console.error('Controller is not running!');
-        if (cb) {
-            setTimeout(function () {
-                cb(false);
-            }, 0);
-        }
+        cb && setTimeout(() => cb(false), 0);
     } else {
         adapterStarted = false;
-        pid.on('exit', function (code, signal) {
+        pid.on('exit', (code, signal) => {
             if (pid) {
-                console.log('child process terminated due to receipt of signal ' + signal);
-                if (cb) cb();
+                console.log(`child process terminated due to receipt of signal ${signal}`);
+                cb && cb();
                 pid = null;
             }
         });
 
-        pid.on('close', function (code, signal) {
+        pid.on('close', (/* code, signal */) => {
             if (pid) {
-                if (cb) cb();
+                cb && cb();
                 pid = null;
             }
         });
@@ -871,15 +844,15 @@ function _stopController() {
 function stopController(cb) {
     let timeout;
     if (objects) {
-        console.log('Set system.adapter.' + pkg.name + '.0');
-        objects.setObject('system.adapter.' + pkg.name + '.0', {
-            common:{
+        console.log(`Set system.adapter.${pkg.name}.0`);
+        objects.setObject(`system.adapter.${pkg.name}.0`, {
+            common: {
                 enabled: false
             }
         });
     }
 
-    stopAdapter(function () {
+    stopAdapter(() => {
         if (timeout) {
             clearTimeout(timeout);
             timeout = null;
@@ -893,7 +866,7 @@ function stopController(cb) {
         }
     });
 
-    timeout = setTimeout(function () {
+    timeout = setTimeout(() => {
         timeout = null;
         console.log('child process NOT terminated');
 
@@ -909,45 +882,53 @@ function stopController(cb) {
 
 // Setup the adapter
 async function setAdapterConfig(common, native, instance) {
-    const id = 'system.adapter.' + adapterName.split('.').pop() + '.' + (instance || 0);
-    if (fs.existsSync(rootDir + 'tmp/' + appName + '-data/objects.json')) {
-        const objects = JSON.parse(fs.readFileSync(rootDir + 'tmp/' + appName + '-data/objects.json').toString());
-        if (common) objects[id].common = common;
-        if (native) objects[id].native = native;
-        fs.writeFileSync(rootDir + 'tmp/' + appName + '-data/objects.json', JSON.stringify(objects));
-    } else if (fs.existsSync(rootDir + 'tmp/' + appName + '-data/objects.jsonl')) {
+    const id = `system.adapter.${adapterName.split('.').pop()}.${instance || 0}`;
+    if (fs.existsSync(`${rootDir}tmp/${appName}-data/objects.json`)) {
+        const objects = JSON.parse(fs.readFileSync(`${rootDir}tmp/${appName}-data/objects.json`).toString());
+        if (common) {
+            objects[id].common = common;
+        }
+        if (native) {
+            objects[id].native = native;
+        }
+        fs.writeFileSync(`${rootDir}tmp/${appName}-data/objects.json`, JSON.stringify(objects));
+    } else if (fs.existsSync(`${rootDir}tmp/${appName}-data/objects.jsonl`)) {
         loadJSONLDB();
-        const db = new JSONLDB(rootDir + 'tmp/' + appName + '-data/objects.jsonl');
+        const db = new JSONLDB(`${rootDir}tmp/${appName}-data/objects.jsonl`);
         await db.open();
 
-        let obj = db.get(id);
-        if (common) obj.common = common;
-        if (native) obj.native = native;
+        const obj = db.get(id);
+        if (common) {
+            obj.common = common;
+        }
+        if (native) {
+            obj.native = native;
+        }
         db.set(id, obj);
 
         await db.close();
     } else {
-        console.error('setAdapterConfig: No objects file found in datadir ' + rootDir + 'tmp/' + appName + '-data/');
+        console.error(`setAdapterConfig: No objects file found in datadir ${rootDir}tmp/${appName}-data/`);
     }
 }
 
 // Read config of the adapter
 async function getAdapterConfig(instance) {
-    const id = 'system.adapter.' + adapterName.split('.').pop() + '.' + (instance || 0);
-    if (fs.existsSync(rootDir + 'tmp/' + appName + '-data/objects.json')) {
-        const objects = JSON.parse(fs.readFileSync(rootDir + 'tmp/' + appName + '-data/objects.json').toString());
+    const id = `system.adapter.${adapterName.split('.').pop()}.${instance || 0}`;
+    if (fs.existsSync(`${rootDir}tmp/${appName}-data/objects.json`)) {
+        const objects = JSON.parse(fs.readFileSync(`${rootDir}tmp/${appName}-data/objects.json`).toString());
         return objects[id];
-    } else if (fs.existsSync(rootDir + 'tmp/' + appName + '-data/objects.jsonl')) {
+    } else if (fs.existsSync(`${rootDir}tmp/${appName}-data/objects.jsonl`)) {
         loadJSONLDB();
-        const db = new JSONLDB(rootDir + 'tmp/' + appName + '-data/objects.jsonl');
+        const db = new JSONLDB(`${rootDir}tmp/${appName}-data/objects.jsonl`);
         await db.open();
 
-        let obj = db.get(id);
+        const obj = db.get(id);
 
         await db.close();
         return obj;
     } else {
-        console.error('getAdapterConfig: No objects file found in datadir ' + rootDir + 'tmp/' + appName + '-data/');
+        console.error(`getAdapterConfig: No objects file found in datadir ${rootDir}tmp/${appName}-data/`);
     }
 }
 
