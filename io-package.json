@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.3.0",
+    "version": "5.3.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.3.1": {
+        "en": "Added `fileChange` event",
+        "de": "Datei hinzufügen Event ändern",
+        "ru": "Добавлен файл Изменить событие",
+        "pt": "Adicionado arquivo Evento de mudança",
+        "nl": "Vervoegd dossier Veranderingsevenement",
+        "fr": "Fichier ajouté Changement d ' événement",
+        "it": "Aggiunto il file Cambia evento",
+        "es": "Añadido el archivo Cambio de evento",
+        "pl": "Added file Zmiana",
+        "uk": "Додано файл Зміна події",
+        "zh-cn": "增加档案 变革活动"
+      },
       "5.3.0": {
         "en": "Added `fileChange` event",
         "de": "Datei hinzufügen Event ändern",
@@ -90,18 +103,6 @@
         "es": "Error comprado por subscribirse",
         "pl": "Caught error by a subscriber",
         "zh-cn": "签 约的过失"
-      },
-      "5.2.4": {
-        "en": "Corrected getAdapterInstances method",
-        "de": "Korrigierte getAdapterInstances Methode",
-        "ru": "Правильный метод getAdapterInstances",
-        "pt": "Método correto getAdapterInstâncias",
-        "nl": "Vertaling:",
-        "fr": "Méthode d'admission corrigée",
-        "it": "Corretto getAdapterInstances metodo",
-        "es": "Método corregido getAdapterInstances",
-        "pl": "Poprawiona metoda gotowania AdapterInstance",
-        "zh-cn": "改用阿达佩特文法"
       }
     },
     "desc": {
