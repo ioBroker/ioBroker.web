@@ -205,6 +205,30 @@ function startAdapter(options) {
                 }
             });
         },
+        fileChange: (id, fileName, size) => {
+            if (webServer && webServer.io) {
+                webServer.io.publishFileAll(id, fileName, size);
+            }
+
+            if (webServer && webServer.api) {
+                try {
+                    webServer.api.fileChange && webServer.api.fileChange(id, fileName, size);
+                } catch (e) {
+                    adapter.log.error(`Cannot call fileChange for simple api: ${e.message}`);
+                }
+            }
+
+            // inform extensions
+            Object.keys(extensions).forEach(instance => {
+                try {
+                    if (extensions[instance].obj && typeof extensions[instance].obj.fileChange === 'function') {
+                        extensions[instance].obj.fileChange(id, fileName, size);
+                    }
+                } catch (err) {
+                    adapter.log.error(`Cannot call fileChange for "${instance}": ${err.message}`);
+                }
+            });
+        },
         unload: callback => {
             try {
                 const promises = [];
