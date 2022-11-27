@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.2.12",
+    "version": "5.3.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.3.0": {
+        "en": "Added `fileChange` event",
+        "de": "Datei hinzufügen Event ändern",
+        "ru": "Добавлен файл Изменить событие",
+        "pt": "Adicionado arquivo Evento de mudança",
+        "nl": "Vervoegd dossier Veranderingsevenement",
+        "fr": "Fichier ajouté Changement d ' événement",
+        "it": "Aggiunto il file Cambia evento",
+        "es": "Añadido el archivo Cambio de evento",
+        "pl": "Added file Zmiana",
+        "uk": "Додано файл Зміна події",
+        "zh-cn": "增加档案 变革活动"
+      },
       "5.2.12": {
         "en": "corrected read of binary states",
         "de": "korrigiertes lesen von binären zuständen",
@@ -89,18 +102,6 @@
         "es": "Método corregido getAdapterInstances",
         "pl": "Poprawiona metoda gotowania AdapterInstance",
         "zh-cn": "改用阿达佩特文法"
-      },
-      "5.2.3": {
-        "en": "Allowed to overload the system language",
-        "de": "Erlaubt, die Systemsprache zu überlasten",
-        "ru": "Разрешено перегрузить язык системы",
-        "pt": "Permitido sobrecarregar a linguagem do sistema",
-        "nl": "Genoemd om de systeemtaal te overbelasten",
-        "fr": "Permet de surcharger la langue du système",
-        "it": "Consentito di sovraccaricare la lingua di sistema",
-        "es": "Permitido sobrecargar el lenguaje del sistema",
-        "pl": "Wszystko to było przeciążenie języka systemowego",
-        "zh-cn": "允许使用系统语文"
       }
     },
     "desc": {
