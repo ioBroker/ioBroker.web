@@ -1,7 +1,7 @@
 'use strict';
-const expect  = require('chai').expect;
-const setup   = require('./lib/setup');
-const tests   = require('./lib/tests');
+const expect = require('chai').expect;
+const setup  = require('@iobroker/legacy-testing');
+const tests  = require('./lib/tests');
 
 let objects = null;
 let states  = null;
@@ -14,7 +14,7 @@ process.env.TEST_PROTOCOL = 'http';
 function initTests() {
     for (const test in tests.tests) {
         if (tests.tests.hasOwnProperty(test)) {
-            it('Test WEB: ' + test, tests.tests[test]);
+            it(`Test WEB: ${test}`, tests.tests[test]);
         }
     }
 }
@@ -27,7 +27,7 @@ function checkConnectionOfAdapter(cb, counter) {
     }
 
     states.getState('system.adapter.web.0.alive', (err, state) => {
-        if (err) console.error(err);
+        err && console.error(err);
         if (state && state.val) {
             cb && cb();
         } else {
@@ -73,7 +73,7 @@ describe('Test WEB', function() {
         this.timeout(9000);
 
         setup.stopController((normalTerminated) => {
-            console.log('Adapter normal terminated: ' + normalTerminated);
+            console.log(`Adapter normal terminated: ${normalTerminated}`);
             setTimeout(done, 3000);
         });
     });
