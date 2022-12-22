@@ -36,7 +36,7 @@ function checkConnectionOfAdapter(cb, counter) {
     });
 }
 
-describe('Test WEB', function() {
+describe('Test WEB', function () {
     before('Test WEB: Start js-controller', function (_done) {
         this.timeout(600000); // because of first install from npm
         setup.adapterStarted = false;
@@ -65,14 +65,14 @@ describe('Test WEB', function() {
 
     it('Test WEB: Check if adapter started', done => {
         checkConnectionOfAdapter(() => setTimeout(() => done(), 2000));
-    }).timeout(5000);
+    }).timeout(10000);
 
     initTests();
 
     after('Test WEB: Stop js-controller', function (done) {
         this.timeout(9000);
 
-        setup.stopController((normalTerminated) => {
+        setup.stopController(normalTerminated => {
             console.log(`Adapter normal terminated: ${normalTerminated}`);
             setTimeout(done, 3000);
         });
