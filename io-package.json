@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.3.1",
+    "version": "5.4.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.4.0": {
+        "en": "Used new version of socket classes",
+        "de": "Gebrauchte neue Version von Steckdosenklassen",
+        "ru": "Используется новая версия socket классов",
+        "pt": "Usada nova versão de classes de soquete",
+        "nl": "Gebruikte nieuwe versie van soketlessen",
+        "fr": "Nouvelle version utilisée des classes de socket",
+        "it": "Usato nuova versione di classi di socket",
+        "es": "Nueva versión utilizada de clases de socket",
+        "pl": "Używana jest nowa wersja klas gniazdowych",
+        "uk": "Використовується нова версія класу розетки",
+        "zh-cn": "使用新版的手工艺班"
+      },
       "5.3.1": {
         "en": "Added `fileChange` event",
         "de": "Datei hinzufügen Event ändern",
@@ -91,18 +104,6 @@
         "es": "Paquetes GUI actualizados",
         "pl": "Pakiet GUI",
         "zh-cn": "A. 最新古伊一揽子计划"
-      },
-      "5.2.6": {
-        "en": "Caught error by subscribe",
-        "de": "Caught-Fehler durch abonnieren",
-        "ru": "Поймать ошибку по подписке",
-        "pt": "Erro capturado por assinatura",
-        "nl": "Kreeg fouten",
-        "fr": "Erreur coquine par abonné",
-        "it": "Errore catturato da sottoscrivere",
-        "es": "Error comprado por subscribirse",
-        "pl": "Caught error by a subscriber",
-        "zh-cn": "签 约的过失"
       }
     },
     "desc": {
