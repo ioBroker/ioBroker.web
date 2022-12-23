@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.4.0",
+    "version": "5.4.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.4.1": {
+        "en": "Corrected GUI error",
+        "de": "Korrigierter GUI-Fehler",
+        "ru": "Исправлена ошибка GUI",
+        "pt": "Erro de GUI corrigido",
+        "nl": "Correctie GUI fout",
+        "fr": "Erreur GUI corrigée",
+        "it": "Errore GUI corretto",
+        "es": "Error de GUI corregido",
+        "pl": "Kwalifikacja błędów GUI",
+        "uk": "Виправлена помилка інтерфейсу",
+        "zh-cn": "更正"
+      },
       "5.4.0": {
         "en": "Used new version of socket classes",
         "de": "Gebrauchte neue Version von Steckdosenklassen",
@@ -92,18 +105,6 @@
         "es": "Corregido el certificado y selección IP\nPrepararse para futuras versiones js-controller",
         "pl": "Wykwalifikowany certyfikat i wybór IP\nPrepare for future js-controller version",
         "zh-cn": "修改证书和IP选择\n今后防污版本的编制"
-      },
-      "5.2.7": {
-        "en": "Updated GUI packages",
-        "de": "Aktualisierte GUI-Pakete",
-        "ru": "Обновленные пакеты GUI",
-        "pt": "Pacotes de GUI atualizados",
-        "nl": "Update GUI pakketten",
-        "fr": "Paquets GUI mis à jour",
-        "it": "Pacchetti GUI aggiornati",
-        "es": "Paquetes GUI actualizados",
-        "pl": "Pakiet GUI",
-        "zh-cn": "A. 最新古伊一揽子计划"
       }
     },
     "desc": {
