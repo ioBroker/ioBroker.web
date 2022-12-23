@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected GUI error
+
 ### 5.4.0 (2022-12-22)
 * (bluefox) Used new version of socket classes
 

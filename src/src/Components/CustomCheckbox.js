@@ -1,11 +1,10 @@
 import React from 'react';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@mui/styles';
 import { Checkbox, FormControlLabel, FormGroup, FormHelperText } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 const styles = theme => ({
     input: {
@@ -23,7 +22,7 @@ const CustomCheckbox = ({ title, attr, style, classes, native, onChange, classNa
             <FormControlLabel
             key={attr}
             style={Object.assign({ paddingTop: 5 }, style)}
-            className={clsx(classes.controlElement, className)}
+            className={Utils.clsx(classes.controlElement, className)}
             control={
                 <Checkbox
                     disabled={!!disabled}

@@ -7,8 +7,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import Loader from '@iobroker/adapter-react-v5/Components/Loader'
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n, Loader, AdminConnection } from '@iobroker/adapter-react-v5';
 
 import Options from './Tabs/Options';
 import Certificates from './Tabs/Certificates';
@@ -63,6 +62,7 @@ class App extends GenericApp {
     constructor(props) {
         const extendedProps = { ...props };
         extendedProps.encryptedFields = ['pass'];
+        extendedProps.Connection = AdminConnection;
         extendedProps.translations = {
             en: require('./i18n/en'),
             de: require('./i18n/de'),
