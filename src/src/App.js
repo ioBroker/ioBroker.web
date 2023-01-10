@@ -126,7 +126,7 @@ class App extends GenericApp {
                     instance={this.instance}
                     onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
                     adapterName={this.adapterName}
-                    onLoad={native => this.setState({native})}
+                    onLoad={native => this.setState({ native })}
                 />;
 
             case 'certificates':
@@ -205,7 +205,7 @@ class App extends GenericApp {
                         <Tabs
                             value={this.getSelectedTab()}
                             onChange={(e, index) =>
-                                this.selectTab(arrayTabName.find((el) => el.index === index)?.name || arrayTabName[0].name, index)}
+                                this.selectTab(arrayTabName.find(el => el.index === index)?.name || arrayTabName[0].name, index)}
                             scrollButtons="auto"
                             classes={{ indicator: this.props.classes.indicator }}
                         >
