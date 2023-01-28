@@ -179,6 +179,7 @@
     "certPublic": "",
     "certPrivate": "",
     "certChained": "",
+    "certificateCollectionId": "",
     "addUserName": false,
     "forceWebSockets": false,
     "compatibilityV2": true,

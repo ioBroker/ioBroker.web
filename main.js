@@ -8,6 +8,7 @@ const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
 const LE     	  = utils.commonTools.letsEncrypt;
+const utilsWebServer = utils.commonTools.webServer;
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 const compression = require('compression');
@@ -1491,16 +1492,22 @@ async function initWebServer(settings) {
             appOptions.maxAge = 30758400000; // one year
         }
 
-        try {
-            if (typeof LE.createServerAsync === 'function') {
-                server.server = await LE.createServerAsync(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
-            } else {
-                server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+        if (settings.certificateCollectionId) {
+            // 'new' - maybe not when you read this ;) - certificate collection method
+            server.server = await utilsWebServer.createServerAsync(server.app, settings, adapter);
+        } else {
+            // old LE method
+            try {
+                if (typeof LE.createServerAsync === 'function') {
+                    server.server = await LE.createServerAsync(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
+                } else {
+                    server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
+                }
+            } catch (err) {
+                adapter.log.error(`Cannot create web-server: ${err}`);
+                adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                return;
             }
-        } catch (err) {
-            adapter.log.error(`Cannot create web-server: ${err}`);
-            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
-            return;
         }
         if (!server.server) {
             adapter.log.error(`Cannot create web-server`);
