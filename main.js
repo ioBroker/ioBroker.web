@@ -7,6 +7,10 @@ const express     = require('express');
 const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
+/**
+ * TODO: remove LE at some point.
+ * @deprecated
+ */
 const LE     	  = utils.commonTools.letsEncrypt;
 const utilsWebServer = utils.commonTools.webServer;
 const mime        = require('mime-types');
@@ -1161,11 +1165,22 @@ function isInWhiteList(settings, server, req) {
 //    "cache":  false
 //}
 async function initWebServer(settings) {
-    if (settings.secure) {
+    /**
+     * Old way of doing things is to use individual certificate settings and load here.
+     * Don't bother if these config values are not set.
+     * TODO: remove this code at some point.
+     * @deprecated
+     */
+    if (settings.secure && settings.certPublic && settings.certPrivate) {
+        adapter.log.warn('Looks like old certificate configuration is in place, consider updating this');
         // Load certificates and/or get Lets Encrypt config.
         const certObj = await adapter.getCertificatesAsync();
         settings.certificates = certObj[0];
         settings.leConfig = certObj[1];
+        if (!settings.certificates) {
+            adapter.log.error('Failed to load old certificates');
+            return null;
+        }
     }
 
     const server = {
@@ -1192,9 +1207,6 @@ async function initWebServer(settings) {
     }
 
     if (settings.port) {
-        if (settings.secure && !settings.certificates) {
-            return null;
-        }
         server.app = express();
         server.app.use(compression());
 
@@ -1492,11 +1504,14 @@ async function initWebServer(settings) {
             appOptions.maxAge = 30758400000; // one year
         }
 
-        if (settings.certificateCollectionId) {
+        if (!settings.certificates) {
             // 'new' - maybe not when you read this ;) - certificate collection method
-            server.server = await utilsWebServer.createServerAsync(server.app, settings, adapter);
+            server.server = await utilsWebServer.createServer(server.app, settings, adapter);
         } else {
-            // old LE method
+            /**
+             * TODO: This is the old way - remove this code at some point
+             * @deprecated
+             */
             try {
                 if (typeof LE.createServerAsync === 'function') {
                     server.server = await LE.createServerAsync(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
