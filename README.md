@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.4.3 (2023-01-29)
 * (bluefox) Corrected error with `publishFileAll` (for future use)
 
 ### 5.4.1 (2022-12-23)

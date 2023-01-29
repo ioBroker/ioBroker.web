@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.4.2",
+    "version": "5.4.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.4.3": {
+        "en": "Corrected error with `publishFileAll` (for future use)",
+        "de": "Fehler behoben mit Veröffentlichung FileAll (für zukünftige Nutzung)",
+        "ru": "Исправлена ошибка с публикацией FileAll (для будущего использования)",
+        "pt": "Erro corrigido com publicação FileAll (para uso futuro)",
+        "nl": "Gecorrigeerde fout. Vertaling:",
+        "fr": "Erreur corrigée avec publication FileAll (pour utilisation future)",
+        "it": "Errore corretto con pubblicazione FileAll (per uso futuro)",
+        "es": "Error corregido con publicación FileAll (para uso futuro)",
+        "pl": "Okazuje się, że błąd z opublikowaniem publikacji FileAll (ang.)",
+        "uk": "Виправлена помилка з опублікуванням ФайлВсі (для майбутнього використання)",
+        "zh-cn": "编辑错误 File All(今后使用)"
+      },
       "5.4.1": {
         "en": "Corrected GUI error",
         "de": "Korrigierter GUI-Fehler",
