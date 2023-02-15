@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.4.3",
+    "version": "5.5.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.5.0": {
+        "en": "Added special end-points for app authentication",
+        "de": "Zusätzliche spezielle Endpunkte für die App-Authentifizierung",
+        "ru": "Добавлены специальные конечные точки для аутентификации приложения",
+        "pt": "Adicionados pontos finais especiais para autenticação de aplicativos",
+        "nl": "Voeg speciale doelpunten toe voor authenticatie",
+        "fr": "Ajout de terminaux spéciaux pour l'authentification des applications",
+        "it": "Aggiunto punti finali speciali per l'autenticazione app",
+        "es": "Añadidos puntos finales especiales para la autenticación de aplicaciones",
+        "pl": "Dodany specjalny punkt końcowy dla autentyczności aplikacji",
+        "uk": "Додано спеціальні кінцеві точки для автентифікації додатка",
+        "zh-cn": "添加用于核证的特别最终用户"
+      },
       "5.4.3": {
         "en": "Corrected error with `publishFileAll` (for future use)",
         "de": "Fehler behoben mit Veröffentlichung FileAll (für zukünftige Nutzung)",
@@ -93,19 +106,6 @@
         "pl": "poprawiony odczyt stanów binarnych",
         "uk": "виправлено читання бінарних штатів",
         "zh-cn": "更正"
-      },
-      "5.2.11": {
-        "en": "Function `getObjects` was extended by devices, channels and enums",
-        "de": "Funktion getObjects wurde durch Geräte, Kanäle und Enums erweitert",
-        "ru": "Функция getObjects была расширена устройствами, каналами и enums",
-        "pt": "Função getObjects foi estendida por dispositivos, canais e enums",
-        "nl": "Vertaling:",
-        "fr": "Fonction getObjects a été étendue par les appareils, les canaux et les émoins",
-        "it": "Funzione getObjects è stato esteso da dispositivi, canali ed enum",
-        "es": "Función getObjetos fue ampliado por dispositivos, canales y enums",
-        "pl": "Funkcjonalne zapotrzebowania zostały przedłużone przez urządzenia, kanały i enum",
-        "uk": "Функція getObjects була розширена за допомогою пристроїв, каналів та оманів",
-        "zh-cn": "使用装置、渠道和配件,扩展了操作工具。"
       }
     },
     "desc": {

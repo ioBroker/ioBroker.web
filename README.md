@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.5.0 (2023-02-15)
 * (bluefox) Added special end-points for app authentication
 
 ### 5.4.3 (2023-01-29)
