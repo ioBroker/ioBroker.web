@@ -1152,6 +1152,17 @@ function isInWhiteList(settings, server, req) {
     return '';
 }
 
+async function getVisProjects() {
+    try {
+        const projects = await adapter.readDirAsync('vis.0', '');
+        return projects.filter(dir => dir.isDir).map(dir => dir.file);
+    } catch (e) {
+        adapter.log.warn(`Cannot read vis directory: ${e}`);
+    }
+
+    return [];
+}
+
 //settings: {
 //    "port":   8080,
 //    "auth":   false,
@@ -1211,6 +1222,29 @@ async function initWebServer(settings) {
         // replace socket.io
         server.app.use((req, res, next) => getSocketIoFile(req, res, next));
 
+        // special end point for vis
+        server.app.get('/visProjects', async (req, res) => {
+            if (settings.auth) {
+                // with basic authentication
+                if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
+                    const [user, pass] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString().split(':');
+                    checkUser(user, pass, async (err, user) => {
+                        if (user) {
+                            const list = await getVisProjects();
+                            res.json({result: list});
+                        } else {
+                            res.status(401).json({error: 'Unauthorized'});
+                        }
+                    });
+                } else {
+                    res.status(401).json({error: 'Unauthorized'});
+                }
+            } else {
+                const list = await getVisProjects();
+                res.json({result: list});
+            }
+        });
+
         if (settings.auth) {
             initAuth(server, settings);
 
@@ -1225,24 +1259,47 @@ async function initWebServer(settings) {
              */
             const authenticate = (req, res, next, redirect, origin) => {
                 passport.authenticate('local', (err, user) => {
-                    if (err) {
-                        adapter.log.warn(`Cannot login user: ${err}`);
-                        return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
-                    }
-                    if (!user) {
-                        return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
-                    }
-                    req.logIn(user, err => {
+                    if (req.url.includes('/loginApp')) {
+                        if (err) {
+                            adapter.log.warn(`Cannot login user: ${err}`);
+                            return res.status(401).json({error: 'cannot login user'});
+                        }
+                        if (!user) {
+                            adapter.log.warn('User not found');
+                            return res.status(401).json({error: 'cannot login user'});
+                        }
+                    } else {
                         if (err) {
                             adapter.log.warn(`Cannot login user: ${err}`);
                             return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                        }
+                        if (!user) {
+                            return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                        }
+                    }
+
+                    req.logIn(user, err => {
+                        if (req.url.includes('/loginApp')) {
+                            if (err) {
+                                adapter.log.warn(`Cannot login user: ${err}`);
+                                return res.status(401).json({error: 'cannot login user'});
+                            }
+                        } else {
+                            if (err) {
+                                adapter.log.warn(`Cannot login user: ${err}`);
+                                return res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
+                            }
                         }
                         if (req.body.stayLoggedIn) {
                             req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
                         } else {
                             req.session.cookie.maxAge = settings.ttl * 1000;
                         }
-                        return res.redirect(redirect);
+                        if (req.url.includes('/loginApp')) {
+                            res.json({result: 'ok'});
+                        } else {
+                            return res.redirect(redirect);
+                        }
                     });
                 })(req, res, next);
             };
@@ -1306,6 +1363,15 @@ async function initWebServer(settings) {
                 }
 
                 authenticate(req, res, next, redirect, req.body.origin || '?href=%2F');
+            });
+
+            // Login for applications to preserve cookie
+            server.app.post('/loginApp', (req, res, next) => {
+                req.body.password = (req.body.password || '').toString();
+                req.body.username = (req.body.username || '').toString();
+                req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
+
+                authenticate(req, res, next, '', req.body.origin || '?href=%2F');
             });
 
             server.app.get('/logout', (req, res) => {

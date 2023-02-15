@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Added special end-points for app authentication
+
 ### 5.4.3 (2023-01-29)
 * (bluefox) Corrected error with `publishFileAll` (for future use)
 
