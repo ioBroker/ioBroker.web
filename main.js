@@ -1785,7 +1785,7 @@ async function initWebServer(settings) {
                             loginPage = loginPage || prepareLoginTemplate();
                             const buffer = loginPage;
 
-                            if (req.isAuthenticated() || isInWhiteList(settings, server, req)) {
+                            if (!settings.auth || (req.isAuthenticated && req.isAuthenticated()) || isInWhiteList(settings, server, req)) {
                                 return res.redirect(getRedirectPage(req));
                             }
 
