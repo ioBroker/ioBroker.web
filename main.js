@@ -1152,15 +1152,52 @@ function isInWhiteList(settings, server, req) {
     return '';
 }
 
-async function getVisProjects() {
+async function getFoldersOfObject(path) {
     try {
-        const projects = await adapter.readDirAsync('vis.0', '');
+        const projects = await adapter.readDirAsync(path || 'vis.0', '');
         return projects.filter(dir => dir.isDir).map(dir => dir.file);
     } catch (e) {
-        adapter.log.warn(`Cannot read vis directory: ${e}`);
+        adapter.log.warn(`Cannot read "${path || 'vis.0'}" directory: ${e}`);
     }
 
     return [];
+}
+
+async function processReadFolders(settings, req, res) {
+    const params = req.url.split('?')[1];
+    const query = {};
+    if (params) {
+        const parts = params.split('&');
+        for (let p = 0; p < parts.length; p++) {
+            const parts2 = parts[p].split('=');
+            query[decodeURIComponent(parts2[0])] = parts2[1] === undefined ? true : decodeURIComponent(parts2[1]);
+            if (query[parts2[0]] === 'true') {
+                query[parts2[0]] = true;
+            } else if (query[parts2[0]] === 'false') {
+                query[parts2[0]] = false;
+            }
+        }
+    }
+
+    if (settings.auth) {
+        // with basic authentication
+        if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
+            const [user, pass] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString().split(':');
+            checkUser(user, pass, async (err, user) => {
+                if (user) {
+                    const list = await getFoldersOfObject(query.adapter);
+                    res.json({result: list});
+                } else {
+                    res.status(401).json({error: 'Unauthorized'});
+                }
+            });
+        } else {
+            res.status(401).json({error: 'Unauthorized'});
+        }
+    } else {
+        const list = await getFoldersOfObject(query.adapter);
+        res.json({result: list});
+    }
 }
 
 //settings: {
@@ -1223,27 +1260,8 @@ async function initWebServer(settings) {
         server.app.use((req, res, next) => getSocketIoFile(req, res, next));
 
         // special end point for vis
-        server.app.get('/visProjects', async (req, res) => {
-            if (settings.auth) {
-                // with basic authentication
-                if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
-                    const [user, pass] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString().split(':');
-                    checkUser(user, pass, async (err, user) => {
-                        if (user) {
-                            const list = await getVisProjects();
-                            res.json({result: list});
-                        } else {
-                            res.status(401).json({error: 'Unauthorized'});
-                        }
-                    });
-                } else {
-                    res.status(401).json({error: 'Unauthorized'});
-                }
-            } else {
-                const list = await getVisProjects();
-                res.json({result: list});
-            }
-        });
+        server.app.get('/visProjects', async (req, res) => await processReadFolders(settings, req, res));
+        server.app.get('/folders', async (req, res) => await processReadFolders(settings, req, res));
 
         if (settings.auth) {
             initAuth(server, settings);

@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Allowed to read projects of vis-2-beta
+
 ### 5.5.0 (2023-02-15)
 * (bluefox) Added special end-points for app authentication
 
