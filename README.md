@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 5.5.2 (2023-03-03)
 * (bluefox) Allowed deletion of fullcalendar objects
 
 ### 5.5.1 (2023-02-25)

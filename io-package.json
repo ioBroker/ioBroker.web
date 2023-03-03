@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.5.1",
+    "version": "5.5.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "5.5.2": {
+        "en": "Allowed deletion of fullcalendar objects",
+        "de": "Erlaubtes Löschen von Fullcalendar-Objekten",
+        "ru": "Разрешено удаление полнокалендарных объектов",
+        "pt": "Eliminação permitida de objetos fullcalendar",
+        "nl": "Verwijderde deletie van volcalendar objecten",
+        "fr": "Suppression autorisée d ' objets complets",
+        "it": "Cancellazione consentita di oggetti fullcalendar",
+        "es": "Supresión de objetos de mapa completo",
+        "pl": "Delecja obiektów pełnocalendarnych",
+        "uk": "Дозволено видалення повноцінних об’єктів",
+        "zh-cn": "允许删除全面升级的物体"
+      },
       "5.5.1": {
         "en": "Allowed to read projects of vis-2-beta",
         "de": "Erlaubt, Projekte von vis-2-beta zu lesen",
@@ -82,19 +95,6 @@
         "zh-cn": "使用新版的手工艺班"
       },
       "5.3.1": {
-        "en": "Added `fileChange` event",
-        "de": "Datei hinzufügen Event ändern",
-        "ru": "Добавлен файл Изменить событие",
-        "pt": "Adicionado arquivo Evento de mudança",
-        "nl": "Vervoegd dossier Veranderingsevenement",
-        "fr": "Fichier ajouté Changement d ' événement",
-        "it": "Aggiunto il file Cambia evento",
-        "es": "Añadido el archivo Cambio de evento",
-        "pl": "Added file Zmiana",
-        "uk": "Додано файл Зміна події",
-        "zh-cn": "增加档案 变革活动"
-      },
-      "5.3.0": {
         "en": "Added `fileChange` event",
         "de": "Datei hinzufügen Event ändern",
         "ru": "Добавлен файл Изменить событие",
