@@ -7,6 +7,8 @@ const express     = require('express');
 const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
+const { Webserver } = require('@iobroker/webserver');
+
 /**
  * TODO: remove LE at some point.
  * @deprecated
@@ -1506,7 +1508,8 @@ async function initWebServer(settings) {
 
         if (!settings.certificates) {
             // 'new' - maybe not when you read this ;) - certificate collection method
-            server.server = await utilsWebServer.createServer(server.app, settings, adapter);
+            const webserver = new Webserver({ app: server.app, adapter, secure: settings.secure });
+            server.server = await webserver.init();
         } else {
             /**
              * TODO: This is the old way - remove this code at some point
