@@ -68,5 +68,7 @@
   "Cache options": "缓存选项",
   "Overload system language": "重载系统语言",
   "only for this instance": "仅适用于本例",
-  "System language": "系统语言"
+  "System language": "系统语言",
+  "letsencrypt_deprecated": "这一选择被取消。 考虑设立中小企业适应机构。",
+  "letsencrypt_deprecated_certificates": "核证的备选办法被取消。 如果你利用中小企业适应者选择无。"
 }

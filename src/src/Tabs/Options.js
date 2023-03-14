@@ -296,6 +296,9 @@ class Options extends Component {
                         />*/}
                     </div>
                     <div className={classes.blockWrapper}>
+                        <p>
+                        {I18n.t('letsencrypt_deprecated_certificates')}
+                        </p>
                         <div className={`${classes.blockWrapperCheckbox} ${native['secure'] ? null : classes.displayNone}`} >
                             <CustomSelect
                                 title="public_certificate"

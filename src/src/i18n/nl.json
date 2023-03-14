@@ -68,5 +68,7 @@
   "Cache options": "Cache-opties",
   "Overload system language": "Systeemtaal overbelasten",
   "only for this instance": "alleen voor dit geval",
-  "System language": "Systeemtaal"
+  "System language": "Systeemtaal",
+  "letsencrypt_deprecated": "Deze optie is afgewezen. Beschouw de ACME-adapter.",
+  "letsencrypt_deprecated_certificates": "Bepaalde opties worden gedegradeerd. Als je de ACME-adapter gebruikt, selecteer dan geen."
 }

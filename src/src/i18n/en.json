@@ -68,5 +68,7 @@
     "Cache options": "Cache options",
     "Overload system language": "Overload system language",
     "only for this instance": "only for this instance",
-    "System language": "System language"
+    "System language": "System language",
+    "letsencrypt_deprecated": "This option is deprecated. Consider installing the ACME adapter.",
+    "letsencrypt_deprecated_certificates": "Certificate options are deprecated. If you are using the ACME adapter select 'none'."
 }

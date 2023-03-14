@@ -68,5 +68,7 @@
   "Cache options": "Opcje pamięci podręcznej",
   "Overload system language": "Przeciążenie języka systemu",
   "only for this instance": "tylko w tym przypadku",
-  "System language": "Język systemu"
+  "System language": "Język systemu",
+  "letsencrypt_deprecated": "Ta opcja jest jednak odrzucana. Współtworzył adapter ACME.",
+  "letsencrypt_deprecated_certificates": "Przepisy certyfikacyjne są odrzucane. Jeśli stosuje się do adaptatora ACME, nie wybiera żadnego."
 }

@@ -68,5 +68,7 @@
   "Cache options": "Параметры кэша",
   "Overload system language": "Перегрузить системный язык",
   "only for this instance": "только для этого экземпляра",
-  "System language": "Язык системы"
+  "System language": "Язык системы",
+  "letsencrypt_deprecated": "Эта опция устарела. Рассмотрим установку адаптера ACME.",
+  "letsencrypt_deprecated_certificates": "Варианты сертификата обесцениваются. Если вы используете адаптер ACME не выберите."
 }

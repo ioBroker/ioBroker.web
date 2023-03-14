@@ -47,6 +47,9 @@ class Certificates extends Component {
         const { classes, native, onChange, common: { readme } } = this.props;
         return <form className={classes.tab}>
             <img className={classes.logoWidth} alt='logo' src={logo} />
+            <p>
+            {I18n.t('letsencrypt_deprecated')}
+            </p>
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomCheckbox
