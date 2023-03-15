@@ -376,7 +376,7 @@ function getExtensionsAndSettings(callback) {
                 for (let i = 0; i < doc.rows.length; i++) {
                     const instance = doc.rows[i].value;
                     if (instance && instance.common) {
-                        if (instance.common.enabled &&
+                        if ((adapter.config.startDisabledExtensions || instance.common.enabled) &&
                             instance.common.webExtension &&
                         (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
 
@@ -417,7 +417,7 @@ function main() {
                     const name = instance.split('.')[0];
 
                     extensions[instance] = {
-                        path: name + '/' + ext[e].common.webExtension,
+                        path: `${name}/${ext[e].common.webExtension}`,
                         config: ext[e]
                     };
                 }
