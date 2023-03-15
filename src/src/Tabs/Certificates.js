@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import logo from '../assets/le.png';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
