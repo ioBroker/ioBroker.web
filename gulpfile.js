@@ -32,7 +32,7 @@ function npmInstall() {
         // Install node modules
         const cwd = `${__dirname.replace(/\\/g, '/')}/src/`;
 
-        const cmd = `npm install`;
+        const cmd = `npm install -f`;
         console.log(`"${cmd} in ${cwd}`);
 
         // System call used for update of js-controller itself,

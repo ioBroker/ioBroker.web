@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Increased max size of the uploaded file via socket.io to 200MB (from 10MB)
+
 ### 5.5.2 (2023-03-03)
 * (bluefox) Allowed deletion of fullcalendar objects
 
