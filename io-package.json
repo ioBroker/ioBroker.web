@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.0.0",
+    "version": "6.0.1",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.0.1": {
+        "en": "Removed letsencrypt handling from web adapter",
+        "de": "Entfernte letsencrypt Handhabung von Webadapter",
+        "ru": "Удалена обработка letsencrypt от веб-адастра",
+        "pt": "Removido letsencrypt manipulação do adaptador web",
+        "nl": "Verwijderingssencrypt afhandelen van web adapter",
+        "fr": "Manipulation de letsencrypt supprimée de l'adaptateur web",
+        "it": "Gestione di letsencrypt rimosso dall'adattatore web",
+        "es": "Manejo de letsencrypt eliminado del adaptador web",
+        "pl": "Uruchomiona krypta pozwala na korzystanie z adapterów internetowych",
+        "uk": "Вилучено глибинну обробку з веб адаптера",
+        "zh-cn": "移离网适应器的加密处理"
+      },
       "5.5.3": {
         "en": "Increased max size of the uploaded file via socket.io to 200MB (from 10MB)",
         "de": "Erhöhte maximale Größe der hochgeladenen Datei über Buchse.io auf 200MB (von 10MB)",

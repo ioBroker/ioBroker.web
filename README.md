@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.0.1 (2023-03-20)
 * (bluefox) Removed letsencrypt handling from web adapter
 
 ### 5.5.3 (2023-03-17)
