@@ -68,5 +68,6 @@
   "Cache options": "Параметры кэша",
   "Overload system language": "Перегрузить системный язык",
   "only for this instance": "только для этого экземпляра",
-  "System language": "Язык системы"
+  "System language": "Язык системы",
+  "Use %s adapter to get letsencrypt certificates.": "Используйте адаптер %s для получения сертификатов letsencrypt."
 }

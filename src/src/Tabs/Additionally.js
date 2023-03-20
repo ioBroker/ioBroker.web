@@ -4,76 +4,80 @@ import PropTypes from 'prop-types';
 
 import { FormControl, TextField, MenuItem, FormHelperText, InputLabel, Select } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
 
 const styles = theme => ({
     tab: {
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
     },
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: 20
+        marginRight: 20,
     },
     columnSettings: {
-        width: 'calc(100% - 10px)'
+        width: 'calc(100% - 10px)',
     },
     fontSize: {
         '@media screen and (max-width: 460px)': {
             '& > *': {
                 fontSize: '3.2vw',
-            }
-        }
-    }
+            },
+        },
+    },
 });
 const LANGUAGES = [
     {
         value: '',
         label: 'System language',
-        translate: true
+        translate: true,
     },
     {
         value: 'en',
-        label: 'English'
+        label: 'English',
     },
     {
         value: 'de',
-        label: 'Deutsch'
+        label: 'Deutsch',
     },
     {
         value: 'ru',
-        label: 'русский'
+        label: 'русский',
     },
     {
         value: 'pt',
-        label: 'Portugues'
+        label: 'Portugues',
     },
     {
         value: 'nl',
-        label: 'Nederlands'
+        label: 'Nederlands',
     },
     {
         value: 'fr',
-        label: 'français'
+        label: 'français',
     },
     {
         value: 'it',
-        label: 'Italiano'
+        label: 'Italiano',
     },
     {
         value: 'es',
-        label: 'Espanol'
+        label: 'Espanol',
     },
     {
         value: 'pl',
-        label: 'Polski'
+        label: 'Polski',
+    },
+    {
+        value: 'uk',
+        label: 'Українська мова',
     },
     {
         value: 'zh-ch',
-        label: '简体中文'
+        label: '简体中文',
     }
 ];
 
@@ -82,7 +86,7 @@ class Additionally extends Component {
         super(props);
         this.state = {
             toast: '',
-            ipAddressOptions: []
+            ipAddressOptions: [],
         };
     }
 

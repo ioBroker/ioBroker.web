@@ -7,7 +7,7 @@ const express     = require('express');
 const fs          = require('fs');
 const path        = require('path');
 const utils       = require('@iobroker/adapter-core'); // Get common adapter utils
-const LE     	  = utils.commonTools.letsEncrypt;
+const IoBWebServer = require('@iobroker/webserver');
 const mime        = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 const compression = require('compression');
@@ -344,6 +344,7 @@ function extractPreSetting(obj, attr) {
         }
     }
 }
+
 function updatePreSettings(obj) {
     if (!obj || !obj.common) {
         return;
@@ -1208,18 +1209,11 @@ async function processReadFolders(settings, req, res) {
 //    "cache":  false
 //}
 async function initWebServer(settings) {
-    if (settings.secure) {
-        // Load certificates and/or get Lets Encrypt config.
-        const certObj = await adapter.getCertificatesAsync();
-        settings.certificates = certObj[0];
-        settings.leConfig = certObj[1];
-    }
-
     const server = {
-        app:       null,
-        server:    null,
-        io:        null,
-        settings:  settings
+        app:    null,
+        server: null,
+        io:     null,
+        settings
     };
     adapter.subscribeForeignObjects('system.config');
 
@@ -1239,9 +1233,6 @@ async function initWebServer(settings) {
     }
 
     if (settings.port) {
-        if (settings.secure && !settings.certificates) {
-            return null;
-        }
         server.app = express();
         server.app.use(compression());
 
@@ -1577,11 +1568,8 @@ async function initWebServer(settings) {
         }
 
         try {
-            if (typeof LE.createServerAsync === 'function') {
-                server.server = await LE.createServerAsync(server.app, settings, settings.certificates, settings.leConfig, adapter.log, adapter);
-            } else {
-                server.server = LE.createServer(server.app, settings, settings.certificates, settings.leConfig, adapter.log);
-            }
+            const webserver = new IoBWebServer.Webserver({app: server.app, adapter, secure: settings.secure});
+            server.server = await webserver.init();
         } catch (err) {
             adapter.log.error(`Cannot create web-server: ${err}`);
             adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);

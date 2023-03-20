@@ -68,5 +68,6 @@
   "Cache options": "Opcje pamięci podręcznej",
   "Overload system language": "Przeciążenie języka systemu",
   "only for this instance": "tylko w tym przypadku",
-  "System language": "Język systemu"
+  "System language": "Język systemu",
+  "Use %s adapter to get letsencrypt certificates.": "Użyj adaptera %s, aby uzyskać certyfikaty Letsencrypt."
 }

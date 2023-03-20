@@ -21,42 +21,48 @@ const styles = theme => ({
     tabContent: {
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px)',
-        overflow: 'auto'
+        overflow: 'auto',
     },
     tabContentIFrame: {
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px - 38px)',
-        overflow: 'auto'
+        overflow: 'auto',
     },
     selected: {
         color: theme.palette.mode === 'dark' ? undefined : '#FFF !important',
     },
     indicator: {
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
-    }
+    },
 });
 
-const arrayTabName = [{
-    name: 'options',
-    translate: 'main_settings',
-    index: 0
-}, {
-    name: 'certificates',
-    translate: 'certificates',
-    index: 1
-}, {
-    name: 'whiteList',
-    translate: 'whiteList',
-    index: 2
-}, {
-    name: 'additionally',
-    translate: 'additionally',
-    index: 3
-}, {
-    name: 'background',
-    translate: 'background',
-    index: 4
-}]
+const arrayTabName = [
+    {
+        name: 'options',
+        translate: 'main_settings',
+        index: 0,
+    },
+    {
+        name: 'certificates',
+        translate: 'certificates',
+        index: 1
+    },
+    {
+        name: 'whiteList',
+        translate: 'whiteList',
+        index: 2,
+    },
+    {
+        name: 'additionally',
+        translate: 'additionally',
+        index: 3,
+    },
+    {
+        name: 'background',
+        translate: 'background',
+        index: 4,
+    },
+];
 
 class App extends GenericApp {
     constructor(props) {
@@ -89,9 +95,9 @@ class App extends GenericApp {
             } else {
                 return arrayTabName.find((el) => el.name === tab)?.index || 0;
             }
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     onPrepareSave(settings) {

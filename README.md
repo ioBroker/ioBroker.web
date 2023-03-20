@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Removed letsencrypt handling from web adapter
+
 ### 5.5.3 (2023-03-17)
 * (bluefox) Increased max size of the uploaded file via socket.io to 200MB (from 10MB)
 

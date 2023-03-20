@@ -3,22 +3,22 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import Toast from '../Components/Toast';
 import CustomCheckbox from '../Components/CustomCheckbox';
 import CustomInput from '../Components/CustomInput';
 import CustomButtonUpload from '../Components/CustomButtonUpload';
 
-const styles = theme => ({
+const styles = () => ({
     tab: {
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
     },
     column: {
         display: 'inline-block',
         verticalAlign: 'top',
-        marginRight: 20
+        marginRight: 20,
     },
     columnSettings: {
         width: 'calc(100% - 10px)',
@@ -38,15 +38,15 @@ const styles = theme => ({
         minHeight: 200,
         transition: 'background 1s',
         '&:focus': {
-            outline: 'inherit'
-        }
+            outline: 'inherit',
+        },
     },
     dropZoneActive: {
-        background: '#d6d6d69c'
+        background: '#d6d6d69c',
     },
     imgStyle: {
         maxWidth: 500,
-        maxHeight: 500
+        maxHeight: 500,
     },
     '@media screen and (max-width: 680px)': {
         dropZone: {
@@ -55,8 +55,8 @@ const styles = theme => ({
         },
         imgStyle: {
             width: '100%',
-        }
-    }
+        },
+    },
 });
 
 class Background extends Component {
@@ -64,7 +64,7 @@ class Background extends Component {
         super(props);
         this.state = {
             imgSRC: '',
-            toast: ''
+            toast: '',
         };
     }
 
@@ -79,7 +79,7 @@ class Background extends Component {
             if (!err && data) {
                 let arrayBufferView = new Uint8Array(data);
                 if (!arrayBufferView.length) {
-                    this.setState({ imgSRC: `../../files/web.${instance}/login-bg.png?ts=` + Date.now() });
+                    this.setState({ imgSRC: `../../files/web.${instance}/login-bg.png?ts=${Date.now()}` });
                 } else {
                     let blob = new Blob([arrayBufferView], { type: 'image/png' });
                     let urlCreator = window.URL || window.webkitURL;
@@ -103,9 +103,8 @@ class Background extends Component {
         }
         let reader = new FileReader();
         reader.onload = ({ target: { result } }) => {
-            socket.getRawSocket().emit('writeFile', `web.${instance}`, 'login-bg.png', result, () => {
-                this.readFile();
-            });
+            socket.getRawSocket().emit('writeFile', `web.${instance}`, 'login-bg.png', result, () =>
+                this.readFile());
         };
         callback && callback(file.name);
         reader.readAsArrayBuffer(file);

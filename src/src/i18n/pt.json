@@ -68,5 +68,6 @@
   "Cache options": "Opções de cache",
   "Overload system language": "Sobrecarregar o idioma do sistema",
   "only for this instance": "apenas para esta instância",
-  "System language": "Idioma do sistema"
+  "System language": "Idioma do sistema",
+  "Use %s adapter to get letsencrypt certificates.": "Use o adaptador %s para obter certificados letsencrypt."
 }
