@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "5.5.3",
+    "version": "6.0.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.0.0": {
+        "en": "Removed letsencrypt handling from web adapter",
+        "de": "Entfernte letsencrypt Handhabung von Webadapter",
+        "ru": "Удалена обработка letsencrypt от веб-адастра",
+        "pt": "Removido letsencrypt manipulação do adaptador web",
+        "nl": "Verwijderingssencrypt afhandelen van web adapter",
+        "fr": "Manipulation de letsencrypt supprimée de l'adaptateur web",
+        "it": "Gestione di letsencrypt rimosso dall'adattatore web",
+        "es": "Manejo de letsencrypt eliminado del adaptador web",
+        "pl": "Uruchomiona krypta pozwala na korzystanie z adapterów internetowych",
+        "uk": "Вилучено глибинну обробку з веб адаптера",
+        "zh-cn": "移离网适应器的加密处理"
+      },
       "5.5.3": {
         "en": "Increased max size of the uploaded file via socket.io to 200MB (from 10MB)",
         "de": "Erhöhte maximale Größe der hochgeladenen Datei über Buchse.io auf 200MB (von 10MB)",
@@ -93,19 +106,6 @@
         "pl": "Kwalifikacja błędów GUI",
         "uk": "Виправлена помилка інтерфейсу",
         "zh-cn": "更正"
-      },
-      "5.4.0": {
-        "en": "Used new version of socket classes",
-        "de": "Gebrauchte neue Version von Steckdosenklassen",
-        "ru": "Используется новая версия socket классов",
-        "pt": "Usada nova versão de classes de soquete",
-        "nl": "Gebruikte nieuwe versie van soketlessen",
-        "fr": "Nouvelle version utilisée des classes de socket",
-        "it": "Usato nuova versione di classi di socket",
-        "es": "Nueva versión utilizada de clases de socket",
-        "pl": "Używana jest nowa wersja klas gniazdowych",
-        "uk": "Використовується нова версія класу розетки",
-        "zh-cn": "使用新版的手工艺班"
       }
     },
     "desc": {
