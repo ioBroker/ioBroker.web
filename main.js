@@ -1568,7 +1568,7 @@ async function initWebServer(settings) {
         }
 
         try {
-            const webserver = new IoBWebServer.Webserver({app: server.app, adapter, secure: settings.secure});
+            const webserver = new IoBWebServer.WebServer({app: server.app, adapter, secure: settings.secure});
             server.server = await webserver.init();
         } catch (err) {
             adapter.log.error(`Cannot create web-server: ${err}`);
