@@ -50,7 +50,7 @@ const styles = () => ({
     },
     ipInputStyle: {
         marginTop: 10,
-        width: 900,
+        width: 600,
         marginRight: 20,
         '@media screen and (max-width: 940px)': {
             width: '100%',
