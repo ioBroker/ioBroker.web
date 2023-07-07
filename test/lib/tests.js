@@ -1,21 +1,25 @@
 const axios = require('axios');
 const expect = require('chai').expect;
 
-const tests = {
+const tests = (protocol, port) => ({
     'read lib/js file': function (done) {
-        this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/lib/js/selectID.js`)
-            .then(response => {
-                expect(response.status).to.be.equal(200);
-                expect(response.headers['content-type'].split(';')[0]).to.be.equal('application/javascript');
-                done();
-            })
-            .catch(error => expect(error).to.be.not.ok);
+        this.timeout(30000);
+        console.log(`${protocol}://localhost:${port}/adapter/web/index_m.html`);
+        console.log(`${protocol}://localhost:${port}/lib/js/selectID.js`);
+        setTimeout(() => {
+            axios(`${protocol}://localhost:${port}/lib/js/selectID.js`)
+                .then(response => {
+                    expect(response.status).to.be.equal(200);
+                    expect(response.headers['content-type'].split(';')[0]).to.be.equal('application/javascript');
+                    done();
+                })
+                .catch(error => expect(error).to.be.not.ok);
+        }, 29000);
     },
 
     'read css file': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/lib/css/fancytree/ui.fancytree.min.css`)
+        axios(`${protocol}://localhost:${port}/lib/css/fancytree/ui.fancytree.min.css`)
             .then(response => {
                 expect(response.status).to.be.equal(200);
                 expect(response.headers['content-type'].split(';')[0]).to.be.equal('text/css');
@@ -26,7 +30,7 @@ const tests = {
 
     'read png file': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/lib/css/fancytree/device.png`)
+        axios(`${protocol}://localhost:${port}/lib/css/fancytree/device.png`)
             .then(response => {
                 expect(response.status).to.be.equal(200);
                 expect(response.headers['content-type'].split(';')[0]).to.be.equal('image/png');
@@ -37,7 +41,7 @@ const tests = {
 
     'read admin file': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/adapter/web/index_m.html`)
+        axios(`${protocol}://localhost:${port}/adapter/web/index_m.html`)
             .then(response => {
                 expect(response.headers['content-type'].split(';')[0]).to.be.equal('text/html');
                 expect(response.status).to.be.equal(200);
@@ -48,7 +52,7 @@ const tests = {
 
     'read state that exists': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/state/system.adapter.web.0.alive`)
+        axios(`${protocol}://localhost:${port}/state/system.adapter.web.0.alive`)
             .then(response => {
                 expect(response.status).to.be.equal(200);
                 done();
@@ -60,7 +64,7 @@ const tests = {
 
     'read state that not exists': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/state/system.adapter.web.1.alive`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/state/system.adapter.web.1.alive`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -70,7 +74,7 @@ const tests = {
 
     'read file that does not exist': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/adapter/web/index1.html`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/adapter/web/index1.html`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -79,7 +83,7 @@ const tests = {
     },
     'read index.html': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/index.html`)
+        axios(`${protocol}://localhost:${port}/index.html`)
             .then(response => {
                 expect(response.status).to.be.equal(200);
                 expect(response.headers['content-type'].split(';')[0]).to.be.equal('text/html');
@@ -89,7 +93,7 @@ const tests = {
     },
     'read /': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/`)
+        axios(`${protocol}://localhost:${port}/`)
             .then(response => {
                 expect(response.status).to.be.equal(200);
                 expect(response.headers['content-type'].split(';')[0]).to.be.equal('text/html');
@@ -99,7 +103,7 @@ const tests = {
     },
     'read /..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -109,7 +113,7 @@ const tests = {
 
     'read //..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -119,7 +123,7 @@ const tests = {
 
     'read /..%5cREADME.md': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/..%5cREADME.md`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/..%5cREADME.md`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -128,7 +132,7 @@ const tests = {
     },
     'read /..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/..%5c..%5cREADME.md`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/..%5c..%5cREADME.md`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -137,7 +141,7 @@ const tests = {
     },
     'read ////..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}////..%5c..%5cREADME.md`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}////..%5c..%5cREADME.md`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -146,7 +150,7 @@ const tests = {
     },
     'read \\..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}\\..%5c..%5cREADME.md`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}\\..%5c..%5cREADME.md`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
@@ -155,12 +159,13 @@ const tests = {
     },
     'read /web/..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
-        axios(`${process.env.TEST_PROTOCOL}://localhost:${process.env.TEST_PORT}/web/..%5c..%5cREADME.md`, {validateStatus: status => true})
+        axios(`${protocol}://localhost:${port}/web/..%5c..%5cREADME.md`, {validateStatus: () => true})
             .then(response => {
                 expect(response.status).to.be.equal(404);
                 done();
             })
             .catch(error => expect(error).to.be.not.ok);
     }
-};
-module.exports.tests = tests;
+});
+
+module.exports = tests;

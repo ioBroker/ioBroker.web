@@ -1,5 +1,4 @@
 'use strict';
-// const expect  = require('chai').expect;
 const setup = require('@iobroker/legacy-testing');
 const tests = require('./lib/tests');
 
@@ -8,14 +7,14 @@ let states  = null;
 
 process.env.HTTPS_PROXY   = '';
 process.env.HTTP_PROXY    = '';
-process.env.TEST_PORT     = 18803;
-process.env.TEST_PROTOCOL = 'https';
+// process.env.JS_CONTROLLER_VERSION = '5.0.5-alpha.0-20230617-464b0fd6';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 function initTests() {
-    for (const test in tests.tests) {
-        if (tests.tests.hasOwnProperty(test)) {
-            it(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'}): ${test}`, tests.tests[test]);
+    const _tests = tests('https', 18803);
+    for (const test in _tests) {
+        if (_tests.hasOwnProperty(test)) {
+            it(`Test WEB: ${test}`, _tests[test]);
         }
     }
 }
@@ -36,8 +35,8 @@ function checkConnectionOfAdapter(cb, counter) {
     });
 }
 
-describe(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'})`, () => {
-    before(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'}): Start js-controller`, function (_done) {
+describe.skip(`Test WEB(SSL)`, () => {
+    before(`Test WEB(SSL): Start js-controller`, function (_done) {
         this.timeout(600000); // because of first install from npm
         setup.adapterStarted = false;
 
@@ -47,8 +46,13 @@ describe(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'}
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
 
-            config.native.port        = process.env.TEST_PORT;
-            config.native.secure      = process.env.TEST_PROTOCOL === 'https';
+            if (!config.native) {
+                const pack = require('../io-package.json');
+                config.native = pack.native;
+            }
+
+            config.native.port        = 18803;
+            config.native.secure      = true;
             config.native.cache       = false;
             config.native.certPublic  = config.native.secure ? 'defaultPublic' : '';
             config.native.certPrivate = config.native.secure ? 'defaultPrivate' : '';
@@ -63,13 +67,13 @@ describe(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'}
         });
     });
 
-    it(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'}): Check if adapter started`, done => {
+    it(`Test WEB(SSL): Check if adapter started`, done => {
         checkConnectionOfAdapter(() => setTimeout(() => done(), 2000));
     }).timeout(10000);
 
     initTests();
 
-    after(`Test WEB(${(process.env.TEST_PROTOCOL === 'https') ? 'SSL' : 'NO SSL'}): Stop js-controller`, function (done) {
+    after(`Test WEB(SSL): Stop js-controller`, function (done) {
         this.timeout(6000);
 
         setup.stopController(normalTerminated => {

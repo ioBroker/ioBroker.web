@@ -1,5 +1,4 @@
 'use strict';
-const expect = require('chai').expect;
 const setup  = require('@iobroker/legacy-testing');
 const tests  = require('./lib/tests');
 
@@ -8,13 +7,13 @@ let states  = null;
 
 process.env.HTTPS_PROXY   = '';
 process.env.HTTP_PROXY    = '';
-process.env.TEST_PORT     = 18802;
-process.env.TEST_PROTOCOL = 'http';
+// process.env.JS_CONTROLLER_VERSION = '5.0.5-alpha.0-20230617-464b0fd6';
 
 function initTests() {
-    for (const test in tests.tests) {
-        if (tests.tests.hasOwnProperty(test)) {
-            it(`Test WEB: ${test}`, tests.tests[test]);
+    const _tests = tests('http', 18802);
+    for (const test in _tests) {
+        if (_tests.hasOwnProperty(test)) {
+            it(`Test WEB: ${test}`, _tests[test]);
         }
     }
 }
@@ -47,8 +46,13 @@ describe('Test WEB', function () {
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
 
-            config.native.port        = process.env.TEST_PORT;
-            config.native.secure      = process.env.TEST_PROTOCOL === 'https';
+            if (!config.native) {
+                const pack = require('../io-package.json');
+                config.native = pack.native;
+            }
+
+            config.native.port        = 18802;
+            config.native.secure      = false;
             config.native.cache       = false;
             config.native.certPublic  = 'defaultPublic';
             config.native.certPrivate = 'defaultPrivate';
