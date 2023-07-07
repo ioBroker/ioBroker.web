@@ -1410,7 +1410,7 @@ async function initWebServer(settings) {
                 ) {
                     return next();
                 } else if (adapter.config.basicAuth && typeof req.headers.authorization === 'string' && req.headers.authorization.startsWith('Basic')) {
-                    // not logged in yet and basic auth is active + header present
+                    // not logged in yet, and basic auth is active + header present
                     const b64auth = req.headers.authorization.split(' ')[1];
                     const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
 
@@ -1477,7 +1477,7 @@ async function initWebServer(settings) {
                     if (!whiteListIp && server.io && remoteIp === '::1') {
                         whiteListIp = server.io.getWhiteListIpForAddress('localhost', settings.whiteListSettings);
                     }
-                    adapter.log.silly('whiteListIp ' + whiteListIp);
+                    adapter.log.silly(`whiteListIp ${whiteListIp}`);
                     if (whiteListIp) {
                         req.logIn(settings.whiteListSettings[whiteListIp].user, err =>
                             next(err));
@@ -1664,7 +1664,7 @@ async function initWebServer(settings) {
         // activate extensions
         Object.keys(extensions).forEach(instance => {
             try {
-                // for debug purposes try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
+                // for debug purposes, try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
                 const parts = extensions[instance].path.split('/');
                 parts.shift();
                 let extAPI;
@@ -1750,10 +1750,10 @@ async function initWebServer(settings) {
                     }
 
                     if (url.match(/^\/lib\//)) {
-                        url = '/' + adapter.name + url;
+                        url = `/${adapter.name}${url}`;
                     }
                     if (url.match(/^\/admin\//)) {
-                        url = '/' + adapter.name + url;
+                        url = `/${adapter.name}${url}`;
                     }
                     url = url.split('/');
                     // Skip first /
