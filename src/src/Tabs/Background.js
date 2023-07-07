@@ -131,8 +131,8 @@ class Background extends Component {
                             variant="outlined"
                             size="small"
                         />}
-                        title='color'
-                        attr='loginBackgroundColor'
+                        title="color"
+                        attr="loginBackgroundColor"
                         style={{ marginTop: -1, marginBottom: 20 }}
                         native={native}
                         onChange={async (e, value) => {
@@ -143,8 +143,8 @@ class Background extends Component {
                 </div>
                 <div>
                     <CustomCheckbox
-                        title='background_image'
-                        attr='loginBackgroundImage'
+                        title="background_image"
+                        attr="loginBackgroundImage"
                         native={native}
                         onChange={onChange}
                     />

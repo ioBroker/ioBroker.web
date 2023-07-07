@@ -193,7 +193,8 @@
     "defaultRedirect": "",
     "staticAssetCacheMaxAge": 60,
     "language": "",
-    "startDisabledExtensions": false
+    "startDisabledExtensions": false,
+    "showFolderIndex": false
   },
   "instanceObjects": [
     {

@@ -102,8 +102,8 @@ class Additionally extends Component {
                 </p>
                 <div>
                     <CustomCheckbox
-                        title='disable_extensions'
-                        attr='disableExtensions'
+                        title="disable_extensions"
+                        attr="disableExtensions"
                         className={classes.fontSize}
                         native={native}
                         onChange={onChange}
@@ -111,8 +111,8 @@ class Additionally extends Component {
                 </div>
                 <div>
                     <CustomCheckbox
-                        title='disable_states'
-                        attr='disableStates'
+                        title="disable_states"
+                        attr="disableStates"
                         className={classes.fontSize}
                         native={native}
                         onChange={onChange}
@@ -120,13 +120,22 @@ class Additionally extends Component {
                 </div>
                 <div>
                     <CustomCheckbox
-                        title='disable_files'
-                        attr='disableFilesObjects'
+                        title="disable_files"
+                        attr="disableFilesObjects"
                         className={classes.fontSize}
                         native={native}
                         onChange={onChange}
                     />
                 </div>
+                {!native.disableFilesObjects ? <div>
+                    <CustomCheckbox
+                        title="show_folders"
+                        attr="showFolderIndex"
+                        className={classes.fontSize}
+                        native={native}
+                        onChange={onChange}
+                    />
+                </div> : null}
                 <h4>
                     {I18n.t('Redirect options')}
                 </h4>

@@ -70,5 +70,6 @@
   "only for this instance": "uniquement pour ce cas",
   "System language": "Langue du système",
   "Use %s adapter to get letsencrypt certificates.": "Utilisez l'adaptateur %s pour obtenir les certificats Letsencrypt.",
-  "Language": "Langue"
+  "Language": "Langue",
+  "show_folders": "Afficher le contenu des dossiers"
 }

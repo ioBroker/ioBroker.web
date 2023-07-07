@@ -70,5 +70,6 @@
   "only for this instance": "apenas para esta instância",
   "System language": "Idioma do sistema",
   "Use %s adapter to get letsencrypt certificates.": "Use o adaptador %s para obter certificados letsencrypt.",
-  "Language": "Linguagem"
+  "Language": "Linguagem",
+  "show_folders": "Mostrar o conteúdo das pastas"
 }

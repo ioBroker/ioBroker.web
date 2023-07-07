@@ -1815,7 +1815,52 @@ async function initWebServer(settings) {
                                 return getSocketIoFile(req, res, true);
                             }
 
-                            adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? 'system.user.' + req.user : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
+                            adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? `system.user.${req.user}` : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
+                                if (adapter.config.showFolderIndex && err && err.toString() === 'Error: Not exists' && req.url.endsWith('/')) {
+                                    url = url.replace(/\/index.html$/, '');
+                                    // show folder index
+                                    return adapter.readDir(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, files) => {
+                                        res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
+                                        res.set('Content-Type', 'text/html; charset=utf-8');
+                                        const text = [
+                                            '<html>',
+                                            '<head><title>Directory</title>',
+                                            `<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    td {
+        padding: 5px;
+    }
+</style>`,
+                                            `</head><body><h3>Directory ${req.url}</h3><table>`
+                                        ];
+                                        if (url !== '/') {
+                                            const parts = url.split('/');
+                                            parts.pop();
+                                            text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                        }
+
+                                        files.sort((a, b) => {
+                                            if (a.isDir && b.isDir) {
+                                                return a.file.localeCompare(b.file);
+                                            }
+                                            if (a.isDir) {
+                                                return -1;
+                                            }
+                                            if (b.isDir) {
+                                                return 1;
+                                            }
+
+                                            return a.file.localeCompare(b.file);
+                                        });
+                                        files.forEach(file =>
+                                            text.push(`<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
+                                        text.push('</table></body></html>');
+                                        res.status(200).send(text.join('\n'));
+                                    });
+                                }
+
                                 if (buffer === null || buffer === undefined || err) {
                                     res.contentType('text/html');
                                     res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);

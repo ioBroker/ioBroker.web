@@ -70,5 +70,6 @@
   "only for this instance": "仅适用于本例",
   "System language": "系统语言",
   "Use %s adapter to get letsencrypt certificates.": "使用 %s 适配器获取 letsencrypt 证书。",
-  "Language": "语言"
+  "Language": "语言",
+  "show_folders": "显示文件夹内容"
 }

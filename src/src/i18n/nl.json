@@ -70,5 +70,6 @@
   "only for this instance": "alleen voor dit geval",
   "System language": "Systeemtaal",
   "Use %s adapter to get letsencrypt certificates.": "Gebruik %s adapter om letsencrypt-certificaten te verkrijgen.",
-  "Language": "Taal"
+  "Language": "Taal",
+  "show_folders": "Inhoud van mappen weergeven"
 }
