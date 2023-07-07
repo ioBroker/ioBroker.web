@@ -69,5 +69,6 @@
   "Overload system language": "Systeemtaal overbelasten",
   "only for this instance": "alleen voor dit geval",
   "System language": "Systeemtaal",
-  "Use %s adapter to get letsencrypt certificates.": "Gebruik %s adapter om letsencrypt-certificaten te verkrijgen."
+  "Use %s adapter to get letsencrypt certificates.": "Gebruik %s adapter om letsencrypt-certificaten te verkrijgen.",
+  "Language": "Taal"
 }

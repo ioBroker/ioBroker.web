@@ -69,5 +69,6 @@
   "Overload system language": "Sovraccarica la lingua del sistema",
   "only for this instance": "solo per questo caso",
   "System language": "Linguaggio di sistema",
-  "Use %s adapter to get letsencrypt certificates.": "Usa l'adattatore %s per ottenere i certificati letsencrypt."
+  "Use %s adapter to get letsencrypt certificates.": "Usa l'adattatore %s per ottenere i certificati letsencrypt.",
+  "Language": "Lingua"
 }

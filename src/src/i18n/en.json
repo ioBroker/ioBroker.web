@@ -69,5 +69,6 @@
   "Overload system language": "Overload system language",
   "only for this instance": "only for this instance",
   "System language": "System language",
-  "Use %s adapter to get letsencrypt certificates.": "Use %s adapter to get letsencrypt certificates."
+  "Use %s adapter to get letsencrypt certificates.": "Use %s adapter to get letsencrypt certificates.",
+  "Language": "Language"
 }

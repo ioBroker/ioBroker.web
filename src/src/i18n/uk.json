@@ -69,5 +69,6 @@
   "whiteList": "Список доступу",
   "whitelist_only_with_integrated_socket": "Білий список працює лише з вбудованим інтерфейсом socket-io",
   "write": "писати",
-  "Use %s adapter to get letsencrypt certificates.": "Використовуйте адаптер %s, щоб отримати сертифікати letsencrypt."
+  "Use %s adapter to get letsencrypt certificates.": "Використовуйте адаптер %s, щоб отримати сертифікати letsencrypt.",
+  "Language": "Мова"
 }

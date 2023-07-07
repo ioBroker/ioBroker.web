@@ -69,5 +69,6 @@
   "Overload system language": "Перегрузить системный язык",
   "only for this instance": "только для этого экземпляра",
   "System language": "Язык системы",
-  "Use %s adapter to get letsencrypt certificates.": "Используйте адаптер %s для получения сертификатов letsencrypt."
+  "Use %s adapter to get letsencrypt certificates.": "Используйте адаптер %s для получения сертификатов letsencrypt.",
+  "Language": "Язык"
 }
