@@ -7,7 +7,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-} from '@mui/material/Button';
+} from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 

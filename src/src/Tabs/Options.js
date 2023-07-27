@@ -9,7 +9,7 @@ import {
     DialogContent,
     DialogActions,
     Button,
-} from '@mui/material/LinearProgress';
+} from '@mui/material';
 
 import { Security } from '@mui/icons-material';
 
