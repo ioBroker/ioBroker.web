@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### 6.0.2 (2023-07-07)
+### **WORK IN PROGRESS**
 * (bluefox) Updated packages
 * (bluefox) Implemented the possibility to view folder content
 
