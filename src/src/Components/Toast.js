@@ -6,12 +6,12 @@ import { IconButton, Snackbar } from '@mui/material';
 
 import { MdClose as IconClose } from 'react-icons/md';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     close: {
 
-    }
+    },
 }));
 
 const Toast = ({ message, onClose }) => {
@@ -24,10 +24,10 @@ const Toast = ({ message, onClose }) => {
             vertical: 'bottom',
             horizontal: 'center',
         }}
-        open={true}
+        open
         autoHideDuration={6000}
         onClose={onClose}
-        ContentProps={{'aria-describedby': 'message-id',}}
+        ContentProps={{ 'aria-describedby': 'message-id' }}
         message={<span id="message-id">{I18n.t(message)}</span>}
         action={[
             <IconButton
@@ -41,16 +41,16 @@ const Toast = ({ message, onClose }) => {
             </IconButton>,
         ]}
     />;
-}
+};
 
 Toast.defaultProps = {
     message: '',
-    onClose: () => { }
+    onClose: () => { },
 };
 
 Toast.propTypes = {
     onClose: PropTypes.func,
-    message: PropTypes.string
+    message: PropTypes.string,
 };
 
 export default Toast;

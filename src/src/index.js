@@ -3,18 +3,18 @@ import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { createRoot } from 'react-dom/client';
 import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
+import { Theme, Utils } from '@iobroker/adapter-react-v5';
+
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import pkg from '../package.json';
-import theme from '@iobroker/adapter-react-v5/Theme';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 window.adapterName = 'web';
 window.sentryDSN = 'https://5ad729dbed504d15aa8bde423cae9a8e@sentry.iobroker.net/57';
 let themeName = Utils.getThemeName();
 
-console.log('iobroker.' + window.adapterName + '@' + pkg.version + ' using theme "' + themeName + '"');
+console.log(`iobroker.${window.adapterName}@${pkg.version} using theme "${themeName}"`);
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'web',
@@ -26,7 +26,7 @@ function build() {
     return root.render(
         <StylesProvider generateClassName={generateClassName}>
             <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={theme(themeName)}>
+                <ThemeProvider theme={Theme(themeName)}>
                     <App
                         onThemeChange={_theme => {
                             themeName = _theme;
@@ -35,7 +35,7 @@ function build() {
                     />
                 </ThemeProvider>
             </StyledEngineProvider>
-        </StylesProvider>
+        </StylesProvider>,
     );
 }
 

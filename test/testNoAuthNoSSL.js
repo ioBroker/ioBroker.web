@@ -54,6 +54,7 @@ describe('Test WEB', function () {
             config.native.port        = 18802;
             config.native.secure      = false;
             config.native.cache       = false;
+            config.native.showFolderIndex = true;
             config.native.certPublic  = 'defaultPublic';
             config.native.certPrivate = 'defaultPrivate';
 

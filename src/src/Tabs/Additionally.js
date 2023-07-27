@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import { FormControl, TextField, MenuItem, FormHelperText, InputLabel, Select } from '@mui/material';
+import {
+    FormControl, TextField, MenuItem, FormHelperText, InputLabel, Select,
+} from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
 
-const styles = theme => ({
+const styles = () => ({
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -78,27 +80,19 @@ const LANGUAGES = [
     {
         value: 'zh-ch',
         label: '简体中文',
-    }
+    },
 ];
 
 class Additionally extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            toast: '',
-            ipAddressOptions: [],
-        };
-    }
-
     render() {
         const { classes, native, onChange } = this.props;
         return <form className={classes.tab}>
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <h4>
-                {I18n.t('disable_default')}
+                    {I18n.t('disable_default')}
                 </h4>
                 <p>
-                {I18n.t('warning_incorrectly')}
+                    {I18n.t('warning_incorrectly')}
                 </p>
                 <div>
                     <CustomCheckbox
@@ -143,7 +137,7 @@ class Additionally extends Component {
                     <TextField
                         variant="standard"
                         value={native.defaultRedirect || ''}
-                        onChange={async e => await onChange('defaultRedirect', e.target.value)}
+                        onChange={e => onChange('defaultRedirect', e.target.value)}
                         label={I18n.t('defaultRedirect')}
                         helperText={I18n.t('This path will be opened if no path specified')}
                     />
@@ -155,7 +149,7 @@ class Additionally extends Component {
                     <TextField
                         variant="standard"
                         value={native.staticAssetCacheMaxAge}
-                        onChange={async e => await onChange('staticAssetCacheMaxAge', e.target.value)}
+                        onChange={e => onChange('staticAssetCacheMaxAge', e.target.value)}
                         label={I18n.t('staticAssetCacheMaxAge')}
                         helperText={I18n.t('in seconds')}
                     />
@@ -169,7 +163,7 @@ class Additionally extends Component {
                         <Select
                             value={native.language || ''}
                             label={I18n.t('Overload system language')}
-                            onChange={async e => await onChange('language', e.target.value)}
+                            onChange={e => onChange('language', e.target.value)}
                         >
                             {LANGUAGES.map(item => <MenuItem key={item.value} value={item.value}>{item.translate ? I18n.t(item.label) : item.label}</MenuItem>)}
                         </Select>
@@ -182,15 +176,8 @@ class Additionally extends Component {
 }
 
 Additionally.propTypes = {
-    common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    onLoad: PropTypes.func,
     onChange: PropTypes.func,
-    changed: PropTypes.bool,
-    socket: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Additionally);

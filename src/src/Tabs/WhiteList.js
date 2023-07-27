@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {
+    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+} from '@mui/material';
 
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,11 +19,11 @@ import Toast from '../Components/Toast';
 
 const styles = ({ name }) => ({
     backgroundTheme: {
-        background: name === 'dark' ? '#3e3838' : '#dcdcdc'
+        background: name === 'dark' ? '#3e3838' : '#dcdcdc',
     },
     tab: {
         width: '100%',
-        minHeight: '100%'
+        minHeight: '100%',
     },
     button: {
         marginRight: 20,
@@ -29,7 +31,7 @@ const styles = ({ name }) => ({
     },
     column: {
         display: 'inline-block',
-        verticalAlign: 'top'
+        verticalAlign: 'top',
     },
     columnSettings: {
         width: '100%',
@@ -37,18 +39,18 @@ const styles = ({ name }) => ({
     table: {
         minWidth: 700,
         '& td': {
-            padding: 2
-        }
+            padding: 2,
+        },
     },
     displayNone: {
-        display: 'none'
+        display: 'none',
     },
     checkBoxStyle: {
         marginLeft: 0,
-        marginRight: 0
+        marginRight: 0,
     },
     miniTable: {
-        display: 'none'
+        display: 'none',
     },
     card: {
         padding: 1,
@@ -57,34 +59,34 @@ const styles = ({ name }) => ({
         borderRadius: 10,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     '@media screen and (max-width: 1700px)': {
         table: {
             '& th': {
-                padding: 2
-            }
-        }
+                padding: 2,
+            },
+        },
     },
     '@media screen and (max-width: 1280px)': {
         miniTable: {
-            display: 'block'
+            display: 'block',
         },
         maxTable: {
-            display: 'none'
+            display: 'none',
         },
         table: {
-            minWidth: 300
+            minWidth: 300,
         },
         miniTableSelect: {
-            minWidth: 185
-        }
+            minWidth: 185,
+        },
     },
     warning: {
         color: '#FF4040',
         fontSize: 18,
-        display: 'inline-block'
-    }
+        display: 'inline-block',
+    },
 });
 
 const baseObj = {
@@ -93,29 +95,29 @@ const baseObj = {
         read: true,
         list: true,
         write: true,
-        delete: true
+        delete: true,
     },
     state: {
         read: true,
         list: true,
         write: true,
         create: true,
-        delete: true
+        delete: true,
     },
     file: {
         read: true,
         list: true,
         write: true,
         create: true,
-        delete: true
-    }
-}
+        delete: true,
+    },
+};
 class WhiteList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             toast: '',
-            usersOptions: []
+            usersOptions: [],
         };
 
         if (props.native.bind && props.native.bind !== 'localhost' && props.native.bind !== '0.0.0.0') {
@@ -130,7 +132,7 @@ class WhiteList extends Component {
             .then(list => {
                 // try to find out IP prefix
                 if (!this.ipPrefix) {
-                    this.props.socket.getObject('system.adapter.' + this.props.adapterName + '.' + this.props.instance)
+                    this.props.socket.getObject(`system.adapter.${this.props.adapterName}.${this.props.instance}`)
                         .then(obj => {
                             this.props.socket.getIpAddresses(obj.common.host)
                                 .then(interfaces => {
@@ -143,7 +145,7 @@ class WhiteList extends Component {
                                         this.ipPrefix = '192.168.0';
                                     }
                                 });
-                        })
+                        });
                 }
 
                 this.setState({ usersOptions: list });
@@ -162,7 +164,7 @@ class WhiteList extends Component {
         return <CustomSelect
             table
             value={whiteListSettings[el].user}
-            options={[...optionsSelect, ...usersOptions.map(({ _id, common: { name} }) => ({ title: name, value: _id.replace('system.user.', '') }))]}
+            options={[...optionsSelect, ...usersOptions.map(({ _id, common: { name } }) => ({ title: name, value: _id.replace('system.user.', '') }))]}
             native={native}
             style={style}
             noTranslate
@@ -172,7 +174,7 @@ class WhiteList extends Component {
                 newObj[el].user = e;
                 onChange('whiteListSettings', newObj);
             }}
-        />
+        />;
     }
 
     tableInput(el, style) {
@@ -185,9 +187,9 @@ class WhiteList extends Component {
             table
             value={el}
             style={style}
-            onChange={(e) => {
+            onChange={e => {
                 const copyObj = JSON.parse(JSON.stringify(whiteListSettings));
-                let newObj = {};
+                const newObj = {};
                 Object.keys(copyObj).forEach(keyObj => {
                     if (keyObj === el) {
                         newObj[e] = copyObj[keyObj];
@@ -195,34 +197,37 @@ class WhiteList extends Component {
                         newObj[keyObj] = copyObj[keyObj];
                     }
                 });
-                if (!this.validateIp(e)) {
+                if (!WhiteList.validateIp(e)) {
                     this.setState({ toast: 'incorrect_ip' });
                 } else {
                     onChange('whiteListSettings', newObj);
                 }
             }}
-        />
+        />;
     }
 
     buttonAdd() {
         const { native, onChange } = this.props;
         const { whiteListSettings } = native;
 
-        return <IconButton color="primary" onClick={() => {
-            let newObj = JSON.parse(JSON.stringify(whiteListSettings));
-            let number = 1;
-            let newKey = this.ipPrefix + '.1';
-            const addProperty = () => {
-                if (Object.keys(newObj).find(keySearch => keySearch === newKey)) {
-                    newKey = `${this.ipPrefix}.${number}`;
-                    number = number + 1;
-                    addProperty();
-                }
-            }
-            addProperty();
-            newObj = Object.assign({ [newKey]: baseObj }, newObj);
-            onChange('whiteListSettings', newObj);
-        }}>
+        return <IconButton
+            color="primary"
+            onClick={() => {
+                let newObj = JSON.parse(JSON.stringify(whiteListSettings));
+                let number = 1;
+                let newKey = `${this.ipPrefix}.1`;
+                const addProperty = () => {
+                    if (Object.keys(newObj).find(keySearch => keySearch === newKey)) {
+                        newKey = `${this.ipPrefix}.${number}`;
+                        number += 1;
+                        addProperty();
+                    }
+                };
+                addProperty();
+                newObj = { [newKey]: baseObj, ...newObj };
+                onChange('whiteListSettings', newObj);
+            }}
+        >
             <AddCircleIcon />
         </IconButton>;
     }
@@ -245,11 +250,11 @@ class WhiteList extends Component {
         </IconButton>;
     }
 
-    validateIp(ip) {
+    static validateIp(ip) {
         if (ip.indexOf('*') !== -1 && ip.lastIndexOf('.') > ip.indexOf('*')) {
             return false;
         }
-        let expression = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
+        const expression = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9-]*[A-Za-z0-9])$|^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$/;
         return expression.test(ip.replace('*', '111'));
     }
 
@@ -276,29 +281,29 @@ class WhiteList extends Component {
                                         read: true,
                                         list: true,
                                         write: true,
-                                        delete: true
+                                        delete: true,
                                     },
                                     state: {
                                         read: true,
                                         list: true,
                                         write: true,
                                         create: true,
-                                        delete: true
+                                        delete: true,
                                     },
                                     file: {
                                         read: true,
                                         list: true,
                                         write: true,
                                         create: true,
-                                        delete: true
-                                    }
-                                }
+                                        delete: true,
+                                    },
+                                },
                             });
                         }
                     })}
                 />
                 {this.props.native.socketio ? <span className={this.props.classes.warning}>{I18n.t('whitelist_only_with_integrated_socket')}</span> : null}
-                {!this.props.native.socketio && whiteListSettings ? <div className={native['whiteListEnabled'] ? null : classes.displayNone}>
+                {!this.props.native.socketio && whiteListSettings ? <div className={native.whiteListEnabled ? null : classes.displayNone}>
                     <TableContainer style={{ overflowX: 'visible' }} component={Paper}>
                         <Table className={`${classes.table} ${classes.maxTable}`} aria-label="spanning table">
                             <TableHead>
@@ -323,7 +328,7 @@ class WhiteList extends Component {
                                         </TableCell>
                                         <TableCell
                                             className={classes.backgroundTheme}
-                                            style={{ borderBottom: '1px solid #afafaf', color: el === 'default' ? '#006ccd' : undefined}}
+                                            style={{ borderBottom: '1px solid #afafaf', color: el === 'default' ? '#006ccd' : undefined }}
                                             title={el === 'default' ? I18n.t('If no IP address matches, show authentication dialog') : ''}
                                         >
                                             {this.tableInput(el, { marginTop: -1, minWidth: 150, paddingTop: 5 })}
@@ -332,8 +337,8 @@ class WhiteList extends Component {
                                             {this.userSelect(el, { marginTop: -1 })}
                                         </TableCell>
                                         {['object', 'state', 'file'].map((elProperty, indexProperty) =>
-                                            Object.keys(whiteListSettings[el][elProperty] || {}).map((attr, index) =>
-                                                <TableCell className={Boolean(indexProperty % 2) ? classes.backgroundTheme : null} style={{ borderBottom: Boolean(indexProperty % 2) ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
+                                            Object.keys(whiteListSettings[el][elProperty] || {}).map(attr =>
+                                                <TableCell className={indexProperty % 2 ? classes.backgroundTheme : null} style={{ borderBottom: indexProperty % 2 ? '1px solid #afafaf' : null }} key={`${elProperty}_${attr}_max`} align="center">
                                                     <CustomCheckbox
                                                         table
                                                         checked={whiteListSettings[el][elProperty][attr]}
@@ -347,60 +352,75 @@ class WhiteList extends Component {
                                                         }}
                                                     />
                                                 </TableCell>))}
-                                    </TableRow>
-                                )}
+                                    </TableRow>)}
                             </TableBody>
                         </Table>
                         <div className={classes.miniTable}>
-                            <div className={classes.backgroundTheme} style={{ position: 'sticky', top: -10, left: 12, zIndex: 22, borderBottom: '1px solid' }}>
+                            <div
+                                className={classes.backgroundTheme}
+                                style={{
+                                    position: 'sticky', top: -10, left: 12, zIndex: 22, borderBottom: '1px solid',
+                                }}
+                            >
                                 {this.buttonAdd()}
                             </div>
                             <div>
-                                {Object.keys(whiteListSettings).map((el, index) => {
-                                    return <div
-                                        key={`${index}_wrapper`}
-                                        className={`${classes.card} ${Boolean(index % 2) ? classes.backgroundTheme : null}`}
-                                    >
-                                        <div style={{ width: '100%', lineHeight: '30px', textAlign: 'center' }}>
-                                            <span>{this.buttonRemove(el)}</span>
-                                            <span style={{ marginLeft: 10 }}>IP: {this.tableInput(el, { marginTop: -5, minWidth: 150, marginLeft: 5, verticalAlign: 'middle' })}</span>
-                                            <span style={{ marginLeft: 20 }}>{I18n.t('user')}: {this.userSelect(el, { marginTop: -10, marginLeft: 5, verticalAlign: 'middle' })}</span>
-                                        </div>
-                                        {['object', 'state', 'file'].map((element, indexEl) => {
-                                            let newTableHeadArr = [...tableHeadArr].splice(indexEl === 0 ? 0 : 4, indexEl === 0 ? 4 : 5)
-                                            return <Table key={`${indexEl}_mini`} className={classes.table} style={{ width: 'inherit' }} aria-label="spanning table">
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell style={{ background: '#bbbbbb' }} align="center" colSpan={Object.keys(whiteListSettings[el][element] || {}).length}>
-                                                            {I18n.t(['object', 'status', 'file'][indexEl])}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        {newTableHeadArr.map((elhed, ind) => <TableCell key={`${elhed}_${ind}_mini`} align="center">
-                                                            {I18n.t(elhed)}</TableCell>)}
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    <TableRow>
-                                                        {Object.keys(whiteListSettings[el][element] || {}).map((attr) =>
-                                                            <TableCell key={`${element}_${attr}_mini_check`} align="center">
-                                                                <CustomCheckbox
-                                                                    table
-                                                                    checked={whiteListSettings[el][element][attr]}
-                                                                    attr={attr}
-                                                                    native={native}
-                                                                    className={classes.checkBoxStyle}
-                                                                    onChange={(e) => {
-                                                                        const newObj = JSON.parse(JSON.stringify(whiteListSettings));
-                                                                        newObj[el][element][attr] = e;
-                                                                        onChange('whiteListSettings', newObj);
-                                                                    }}
-                                                                />
-                                                            </TableCell>)}
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        })}</div>
-                                })}
+                                {Object.keys(whiteListSettings).map((el, index) => <div
+                                    key={`${index}_wrapper`}
+                                    className={`${classes.card} ${index % 2 ? classes.backgroundTheme : null}`}
+                                >
+                                    <div style={{ width: '100%', lineHeight: '30px', textAlign: 'center' }}>
+                                        <span>{this.buttonRemove(el)}</span>
+                                        <span style={{ marginLeft: 10 }}>
+IP:
+                                            {this.tableInput(el, {
+                                                marginTop: -5, minWidth: 150, marginLeft: 5, verticalAlign: 'middle',
+                                            })}
+                                        </span>
+                                        <span style={{ marginLeft: 20 }}>
+                                            {I18n.t('user')}
+:
+                                            {' '}
+                                            {this.userSelect(el, { marginTop: -10, marginLeft: 5, verticalAlign: 'middle' })}
+                                        </span>
+                                    </div>
+                                    {['object', 'state', 'file'].map((element, indexEl) => {
+                                        const newTableHeadArr = [...tableHeadArr].splice(indexEl === 0 ? 0 : 4, indexEl === 0 ? 4 : 5);
+                                        return <Table key={`${indexEl}_mini`} className={classes.table} style={{ width: 'inherit' }} aria-label="spanning table">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <TableCell style={{ background: '#bbbbbb' }} align="center" colSpan={Object.keys(whiteListSettings[el][element] || {}).length}>
+                                                        {I18n.t(['object', 'status', 'file'][indexEl])}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    {newTableHeadArr.map((elhed, ind) => <TableCell key={`${elhed}_${ind}_mini`} align="center">
+                                                        {I18n.t(elhed)}
+                                                    </TableCell>)}
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                <TableRow>
+                                                    {Object.keys(whiteListSettings[el][element] || {}).map(attr =>
+                                                        <TableCell key={`${element}_${attr}_mini_check`} align="center">
+                                                            <CustomCheckbox
+                                                                table
+                                                                checked={whiteListSettings[el][element][attr]}
+                                                                attr={attr}
+                                                                native={native}
+                                                                className={classes.checkBoxStyle}
+                                                                onChange={e => {
+                                                                    const newObj = JSON.parse(JSON.stringify(whiteListSettings));
+                                                                    newObj[el][element][attr] = e;
+                                                                    onChange('whiteListSettings', newObj);
+                                                                }}
+                                                            />
+                                                        </TableCell>)}
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>;
+                                    })}
+                                </div>)}
                             </div>
                         </div>
                     </TableContainer>
@@ -411,14 +431,10 @@ class WhiteList extends Component {
 }
 
 WhiteList.propTypes = {
-    common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
     adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
-    onLoad: PropTypes.func,
     onChange: PropTypes.func,
-    changed: PropTypes.bool,
     socket: PropTypes.object.isRequired,
 };
 

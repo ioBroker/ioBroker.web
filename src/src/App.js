@@ -43,7 +43,7 @@ const arrayTabName = [
     {
         name: 'certificates',
         translate: 'certificates',
-        index: 1
+        index: 1,
     },
     {
         name: 'whiteList',
@@ -90,9 +90,8 @@ class App extends GenericApp {
         if (tab) {
             if (this.checkDisabledTabs(tab)) {
                 return 0;
-            } else {
-                return arrayTabName.find((el) => el.name === tab)?.index || 0;
             }
+            return arrayTabName.find(el => el.name === tab)?.index || 0;
         }
 
         return 0;
@@ -105,34 +104,18 @@ class App extends GenericApp {
         if (secure && (!certPrivate || !certPublic)) {
             this.setState({ toast: 'set_certificates' });
             return false;
-        } else {
-            return true;
         }
+        return true;
     }
 
     renderTab() {
-        let { native } = this.state;
+        const { native } = this.state;
         let selectedTab = this.state.selectedTab;
         if (this.checkDisabledTabs(this.state.selectedTab)) {
             selectedTab = 'options';
         }
 
         switch (selectedTab) {
-            case 'options':
-            default:
-                return <Options
-                    key="options"
-                    themeType={this.state.themeType}
-                    common={this.common}
-                    socket={this.socket}
-                    native={native}
-                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
-                    instance={this.instance}
-                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
-                    adapterName={this.adapterName}
-                    onLoad={native => this.setState({ native })}
-                />;
-
             case 'certificates':
                 return <Certificates
                     key="certificates"
@@ -180,18 +163,37 @@ class App extends GenericApp {
                     instance={this.instance}
                     adapterName={this.adapterName}
                 />;
+            case 'options':
+            default:
+                return <Options
+                    key="options"
+                    themeType={this.state.themeType}
+                    common={this.common}
+                    socket={this.socket}
+                    native={native}
+                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
+                    instance={this.instance}
+                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                    adapterName={this.adapterName}
+                    onLoad={_native => this.setState({ native: _native })}
+                />;
         }
     }
 
     checkDisabledTabs(nameTab) {
         const { native } = this.state;
-        return (!native['auth'] && nameTab === 'background') ||
-            (!native['secure'] && nameTab === 'certificates') ||
-            (!native['auth'] && nameTab === 'whiteList');
+        return (!native.auth && nameTab === 'background') ||
+            (!native.secure && nameTab === 'certificates') ||
+            (!native.auth && nameTab === 'whiteList');
     }
 
     render() {
-        const { loaded, theme, themeType, toast } = this.state;
+        const {
+            loaded,
+            theme,
+            themeType,
+            toast,
+        } = this.state;
         const { classes } = this.props;
         if (!loaded) {
             return <StyledEngineProvider injectFirst>

@@ -3,13 +3,21 @@
     "version": "6.0.2",
     "private": true,
     "dependencies": {
-        "@iobroker/adapter-react-v5": "^4.2.0",
-        "@mui/material": "^5.13.7",
-        "@mui/icons-material": "^5.13.7",
-        "@mui/styles": "^5.13.7",
+        "@iobroker/adapter-react-v5": "^4.3.0",
+        "@mui/icons-material": "^5.14.1",
+        "@mui/material": "^5.14.2",
+        "@mui/styles": "^5.14.1",
+        "@sentry/browser": "^7.60.1",
+        "@sentry/integrations": "^7.60.1",
         "babel-eslint": "^10.1.0",
-        "@sentry/browser": "^7.57.0",
-        "@sentry/integrations": "^7.57.0",
+        "eslint": "^8.45.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-plugin-eqeqeq-fix": "^1.0.3",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-jsx-a11y": "^6.7.1",
+        "eslint-plugin-only-warn": "^1.1.0",
+        "eslint-plugin-react": "^7.33.0",
+        "eslint-plugin-react-hooks": "^4.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-dropzone": "^14.2.3",
@@ -20,7 +28,8 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "lint": "eslint src"
     },
     "eslintConfig": {
         "extends": "react-app"

@@ -77,13 +77,13 @@ class Background extends Component {
 
         socket.getRawSocket().emit('readFile', `web.${instance}`, 'login-bg.png', (err, data) => {
             if (!err && data) {
-                let arrayBufferView = new Uint8Array(data);
+                const arrayBufferView = new Uint8Array(data);
                 if (!arrayBufferView.length) {
                     this.setState({ imgSRC: `../../files/web.${instance}/login-bg.png?ts=${Date.now()}` });
                 } else {
-                    let blob = new Blob([arrayBufferView], { type: 'image/png' });
-                    let urlCreator = window.URL || window.webkitURL;
-                    let imgSRC = urlCreator.createObjectURL(blob);
+                    const blob = new Blob([arrayBufferView], { type: 'image/png' });
+                    const urlCreator = window.URL || window.webkitURL;
+                    const imgSRC = urlCreator.createObjectURL(blob);
                     this.setState({ imgSRC });
                 }
             } else {
@@ -101,7 +101,7 @@ class Background extends Component {
             callback && callback('');
             return;
         }
-        let reader = new FileReader();
+        const reader = new FileReader();
         reader.onload = ({ target: { result } }) => {
             socket.getRawSocket().emit('writeFile', `web.${instance}`, 'login-bg.png', result, () =>
                 this.readFile());
@@ -118,10 +118,12 @@ class Background extends Component {
             <div className={`${classes.column} ${classes.columnSettings}`}>
                 <div>
                     <CustomInput
-                        styleComponentBlock={{ height: 20, display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+                        styleComponentBlock={{
+                            height: 20, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        }}
                         component={<CustomInput
-                            attr='loginBackgroundColorHelper'
-                            type='color'
+                            attr="loginBackgroundColorHelper"
+                            type="color"
                             style={{ marginTop: -1, marginLeft: 10, minWidth: 60 }}
                             native={native}
                             onChange={async (e, value) => {
@@ -149,7 +151,7 @@ class Background extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div style={native['loginBackgroundImage'] ? { display: 'block' } : { display: 'none' }}>
+                <div style={native.loginBackgroundImage ? { display: 'block' } : { display: 'none' }}>
                     <div>
                         <CustomButtonUpload
                             title="upload_image"
@@ -160,13 +162,15 @@ class Background extends Component {
                     </div>
                     <Dropzone
                         accept="image/*"
-                        onDrop={acceptedFiles => this.uploadFile(acceptedFiles[0])}>
+                        onDrop={acceptedFiles => this.uploadFile(acceptedFiles[0])}
+                    >
                         {({ getRootProps, getInputProps, isDragActive }) => (
                             <section>
                                 <div
                                     className={`${classes.dropZone} ${isDragActive ? classes.dropZoneActive : null}`}
-                                    {...getRootProps()}>
-                                    <input {...getInputProps()}/>
+                                    {...getRootProps()}
+                                >
+                                    <input {...getInputProps()} />
                                     <p>{I18n.t('place_the_files_here')}</p>
                                     {imgSRC ? <img className={classes.imgStyle} src={imgSRC} alt="img" /> : null}
                                 </div>

@@ -54,6 +54,7 @@ describe.skip(`Test WEB(SSL)`, () => {
             config.native.port        = 18803;
             config.native.secure      = true;
             config.native.cache       = false;
+            config.native.showFolderIndex = true;
             config.native.certPublic  = config.native.secure ? 'defaultPublic' : '';
             config.native.certPrivate = config.native.secure ? 'defaultPrivate' : '';
 

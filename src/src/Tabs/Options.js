@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
-import LinearProgress from '@mui/material/LinearProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
+import {
+    LinearProgress,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+} from '@mui/material/LinearProgress';
 
-import Security from '@mui/icons-material/Security';
+import { Security } from '@mui/icons-material';
 
-import Logo from '@iobroker/adapter-react-v5/Components/Logo';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { Logo, I18n } from '@iobroker/adapter-react-v5';
 
 import Toast from '../Components/Toast';
 import CustomModal from '../Components/CustomModal';
@@ -80,7 +81,7 @@ class Options extends Component {
             usersOptions: [],
             socketioOptions: [
                 { title: I18n.t('nothing'), value: 'none' },
-                { title: I18n.t('built_in'), value: '_' }
+                { title: I18n.t('built_in'), value: '_' },
             ],
             openModal: false,
             ready: false,
@@ -103,7 +104,7 @@ class Options extends Component {
                     socketioOptions: [
                         ...socketioOptions,
                         ...state
-                            .map(({_id, common: {name}}) => ({title: `${name} [${name}.${_id.split('.').pop()}]`, value: _id}))]
+                            .map(({ _id, common: { name } }) => ({ title: `${name} [${name}.${_id.split('.').pop()}]`, value: _id }))],
                 };
                 const IPs4 = await socket.getHostByIp(host);
                 IPs4.forEach(ip => {
@@ -148,7 +149,8 @@ class Options extends Component {
         >
             <DialogTitle id="alert-dialog-title">{I18n.t('Warning')}</DialogTitle>
             <DialogContent>
-                {I18n.t('whitelist_only_with_integrated_socket')}<br/>
+                {I18n.t('whitelist_only_with_integrated_socket')}
+                <br />
                 {I18n.t('White list will be disabled. Please confirm.')}
             </DialogContent>
             <DialogActions>
@@ -158,7 +160,7 @@ class Options extends Component {
                     autoFocus
                     onClick={() => {
                         this.props.onChange('whiteListEnabled', false, () =>
-                            this.props.onChange('socketio', this.state.confirmValue, () => this.setState({ confirmSocketIO: false })))
+                            this.props.onChange('socketio', this.state.confirmValue, () => this.setState({ confirmSocketIO: false })));
                     }}
                 >
                     {I18n.t('Ok')}
@@ -171,14 +173,18 @@ class Options extends Component {
     }
 
     render() {
-        const { instance, common, classes, native, onLoad, onChange } = this.props;
-        const { certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, ready } = this.state;
+        const {
+            instance, common, classes, native, onLoad, onChange,
+        } = this.props;
+        const {
+            certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, ready,
+        } = this.state;
 
         if (!ready) {
             return <LinearProgress />;
         }
 
-        let newCommon = JSON.parse(JSON.stringify(common));
+        const newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
 
         return <form className={classes.tab}>
@@ -192,15 +198,19 @@ class Options extends Component {
                 }}
                 close={() => this.setState({ openModal: !openModal })}
                 titleButton={I18n.t('button_title')}
-                titleButton2={I18n.t('button_title2')}>
-                <div className={classes.blockWarningContent}><Security style={{ width: 32, height: 32 }} />{I18n.t('modal_title')}</div>
+                titleButton2={I18n.t('button_title2')}
+            >
+                <div className={classes.blockWarningContent}>
+                    <Security style={{ width: 32, height: 32 }} />
+                    {I18n.t('modal_title')}
+                </div>
             </CustomModal>
             <Logo
                 instance={instance}
                 classes={undefined}
                 common={newCommon}
                 native={native}
-                onError={text => this.setState({ errorText: text })}
+                // onError={text => this.setState({ errorText: text })}
                 onLoad={onLoad}
             />
             <div className={`${classes.column} ${classes.columnSettings}`}>
@@ -240,7 +250,7 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            className={native['auth'] ? null : classes.displayNone}
+                            className={native.auth ? null : classes.displayNone}
                             title="basic_authentication"
                             attr="basicAuth"
                             style={{ marginTop: 10 }}
@@ -258,12 +268,12 @@ class Options extends Component {
                             title="socket"
                             attr="socketio"
                             noTranslate
-                            options={ socketioOptions }
+                            options={socketioOptions}
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={(attr, value, cb) => {
                                 if (value && native.whiteListEnabled) {
-                                    this.setState({confirmSocketIO: true, confirmValue: value});
+                                    this.setState({ confirmSocketIO: true, confirmValue: value });
                                 } else {
                                     onChange(attr, value, cb);
                                 }
@@ -286,24 +296,24 @@ class Options extends Component {
                             native={native}
                             onChange={onChange}
                         />
-                        {/*<CustomCheckbox
+                        {/* <CustomCheckbox
                             className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
                             title="Compatibility mode with socket.io@2.x"
                             attr="compatibilityV2"
                             style={{ marginTop: 10 }}
                             native={native}
                             onChange={onChange}
-                        />*/}
+                        /> */}
                     </div>
                     <div className={classes.blockWrapper}>
-                        <div className={`${classes.blockWrapperCheckbox} ${native['secure'] ? null : classes.displayNone}`} >
+                        <div className={`${classes.blockWrapperCheckbox} ${native.secure ? null : classes.displayNone}`}>
                             <CustomSelect
                                 title="public_certificate"
                                 attr="certPublic"
                                 noTranslate
                                 options={[
                                     { title: I18n.t('nothing'), value: '' },
-                                    ...certificatesOptions.filter(({ type }) => !type || type === 'public').map(({ name }) => ({ title: name, value: name }))
+                                    ...certificatesOptions.filter(({ type }) => !type || type === 'public').map(({ name }) => ({ title: name, value: name })),
                                 ]}
                                 style={{ marginTop: 10, marginRight: 20 }}
                                 native={native}
@@ -315,7 +325,7 @@ class Options extends Component {
                                 noTranslate
                                 options={[
                                     { title: I18n.t('nothing'), value: '' },
-                                    ...certificatesOptions.filter(({ type }) => !type || type === 'private').map(({ name }) => ({ title: name, value: name }))
+                                    ...certificatesOptions.filter(({ type }) => !type || type === 'private').map(({ name }) => ({ title: name, value: name })),
                                 ]}
                                 style={{ marginTop: 10, marginRight: 20 }}
                                 native={native}
@@ -327,7 +337,7 @@ class Options extends Component {
                                 noTranslate
                                 options={[
                                     { title: I18n.t('nothing'), value: '' },
-                                    ...certificatesOptions.filter(({ type }) => !type || type === 'chained').map(({ name }) => ({ title: name, value: name }))
+                                    ...certificatesOptions.filter(({ type }) => !type || type === 'chained').map(({ name }) => ({ title: name, value: name })),
                                 ]}
                                 style={{ marginTop: 10 }}
                                 native={native}
@@ -344,14 +354,14 @@ class Options extends Component {
                                 title: typeof name === 'object' ? name[this.props.lang] || name.end || _id.replace(/^system\.user\./, '') : name,
                                 value: _id.replace(/^system\.user\./, ''),
                                 color,
-                                icon
+                                icon,
                             }))}
                             style={{ marginTop: 10, width: 300 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomInput
-                            className={native['auth'] ? null : classes.displayNone}
+                            className={native.auth ? null : classes.displayNone}
                             title="time_out"
                             attr="ttl"
                             type="number"
@@ -377,11 +387,8 @@ Options.propTypes = {
     common: PropTypes.object.isRequired,
     native: PropTypes.object.isRequired,
     instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    onError: PropTypes.func,
     onLoad: PropTypes.func,
     onChange: PropTypes.func,
-    changed: PropTypes.bool,
     socket: PropTypes.object.isRequired,
     themeType: PropTypes.string,
 };
