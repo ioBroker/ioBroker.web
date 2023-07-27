@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.0.3": {
+        "en": "Updated packages\nImplemented the possibility to view folder content",
+        "de": "Aktualisierte Pakete\nErgänzt die Möglichkeit, den Ordnerinhalt anzuzeigen",
+        "ru": "Обновленные пакеты\nРеализована возможность просмотра содержимого папки",
+        "pt": "Pacotes atualizados\nImplementou a possibilidade de visualizar o conteúdo da pasta",
+        "nl": "Verouderde pakketten\nDe mogelijkheid om de inhoud te bekijken",
+        "fr": "Forfaits mis à jour\nMise en œuvre de la possibilité de voir le contenu du dossier",
+        "it": "Pacchetti aggiornati\nHo implementato la possibilità di visualizzare il contenuto della cartella",
+        "es": "Paquetes actualizados\nImplementó la posibilidad de ver contenido de carpetas",
+        "pl": "Pakiet upoważniony\nPoprawiono możliwość widzenia treści z folderem",
+        "uk": "Оновлені пакети\nРеалізовано можливість перегляду вмісту папки",
+        "zh-cn": "最新一揽子计划\nB. 实施可能查明内容的演变"
+      },
       "6.0.1": {
         "en": "Removed letsencrypt handling from web adapter",
         "de": "Entfernte letsencrypt Handhabung von Webadapter",

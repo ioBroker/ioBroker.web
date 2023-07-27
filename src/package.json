@@ -1,6 +1,6 @@
 {
     "name": "web-admin",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "private": true,
     "dependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
