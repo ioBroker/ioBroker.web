@@ -26,7 +26,7 @@
     "express-session": "^1.17.3",
     "iobroker.simple-api": "^2.7.2",
     "iobroker.ws": "2.4.0",
-    "iobroker.socketio": "6.4.0",
+    "iobroker.socketio": "6.5.1",
     "mime-types": "^2.1.35",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
