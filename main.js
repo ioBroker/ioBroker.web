@@ -14,13 +14,13 @@ const compression = require('compression');
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 
-let session;// =           require('express-session');
-let cookieParser;// =      require('cookie-parser');
-let bodyParser;// =        require('body-parser');
-let AdapterStore;// =      require(__dirname + '/../../lib/session.js')(session);
-let passport;// =          require('passport');
-let LocalStrategy;// =     require('passport-local').Strategy;
-let flash;// =             require('connect-flash'); // TODO report error to user
+let session; // =           require('express-session');
+let cookieParser; // =      require('cookie-parser');
+let bodyParser; // =        require('body-parser');
+let AdapterStore; // =      require(__dirname + '/../../lib/session.js')(session);
+let passport; // =          require('passport');
+let LocalStrategy; // =     require('passport-local').Strategy;
+let flash; // =             require('connect-flash'); // TODO report error to user
 
 let webServer    = null;
 let store        = null;
@@ -228,6 +228,20 @@ function startAdapter(options) {
                     adapter.log.error(`Cannot call fileChange for "${instance}": ${err.message}`);
                 }
             });
+        },
+        message: obj => {
+            if (!obj || obj.command !== 'im') { // if not instance message
+                return;
+            }
+
+            if (webServer.io && webServer.io) {
+                // to make messages shorter, we code the answer as:
+                // m - message type
+                // s - socket ID
+                // d - data
+
+                webServer.io.publishInstanceMessageAll(obj.from, obj.message.m, obj.message.s, obj.message.d);
+            }
         },
         unload: callback => {
             try {
@@ -602,7 +616,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
         welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen));
         if (Array.isArray(welcomeScreen)) {
             for (let w = 0; w < welcomeScreen.length; w++) {
-                // temporary disabled for non-pro
+                // temporarily disabled for non-pro
                 if (!isPro && welcomeScreen[w].name === 'vis editor') {
                     continue;
                 }
@@ -1213,7 +1227,7 @@ async function initWebServer(settings) {
         app:    null,
         server: null,
         io:     null,
-        settings
+        settings,
     };
     adapter.subscribeForeignObjects('system.config');
 
@@ -1347,7 +1361,7 @@ async function initWebServer(settings) {
                     if (isJs) {
                         return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
                     } else if (adapter.config.basicAuth) {
-                        // if basic auth active, we tell it by sending header with 401 status
+                        // if basic auth active, we tell it by sending a header with status 401
                         res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
                         return res.status(401).send('Basic Authentication has been aborted. You have to reload the page.');
                     } else {
