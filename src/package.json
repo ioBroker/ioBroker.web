@@ -11,7 +11,7 @@
         "@sentry/browser": "^7.60.1",
         "@sentry/integrations": "^7.60.1",
         "babel-eslint": "^10.1.0",
-        "eslint": "^8.45.0",
+        "eslint": "^8.46.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-import": "^2.27.5",
