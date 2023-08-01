@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.1.0 (2023-08-01)
 * (bluefox) Added the subscribing on the specific instance messages
 
 ### 6.0.3 (2023-07-27)

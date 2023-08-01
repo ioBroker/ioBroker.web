@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.0.3",
+    "version": "6.1.0",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.1.0": {
+        "en": "Added the subscribing on the specific instance messages",
+        "de": "Hinzugefügt die Anmeldung auf den spezifischen Instanz Nachrichten",
+        "ru": "Добавлена подписка на конкретные сообщения",
+        "pt": "Adicionado a subscrição nas mensagens de instância específica",
+        "nl": "Voegde de subscribing toe op de specifieke instantie berichten",
+        "fr": "Ajout de l'inscription sur les messages d'instance spécifiques",
+        "it": "Aggiunto la sottoscrizione sui messaggi di istanza specifici",
+        "es": "Añadido el subscribir en los mensajes de instancia específicos",
+        "pl": "Dodać subskrypcję określonych wiadomości",
+        "uk": "Додано підспріб на конкретних повідомленнях екземпляра",
+        "zh-cn": "添加关于具体事例信息的字"
+      },
       "6.0.3": {
         "en": "Updated packages\nImplemented the possibility to view folder content",
         "de": "Aktualisierte Pakete\nErgänzt die Möglichkeit, den Ordnerinhalt anzuzeigen",
@@ -93,19 +106,6 @@
         "pl": "Dodany specjalny punkt końcowy dla autentyczności aplikacji",
         "uk": "Додано спеціальні кінцеві точки для автентифікації додатка",
         "zh-cn": "添加用于核证的特别最终用户"
-      },
-      "5.4.3": {
-        "en": "Corrected error with `publishFileAll` (for future use)",
-        "de": "Fehler behoben mit Veröffentlichung FileAll (für zukünftige Nutzung)",
-        "ru": "Исправлена ошибка с публикацией FileAll (для будущего использования)",
-        "pt": "Erro corrigido com publicação FileAll (para uso futuro)",
-        "nl": "Gecorrigeerde fout. Vertaling:",
-        "fr": "Erreur corrigée avec publication FileAll (pour utilisation future)",
-        "it": "Errore corretto con pubblicazione FileAll (per uso futuro)",
-        "es": "Error corregido con publicación FileAll (para uso futuro)",
-        "pl": "Okazuje się, że błąd z opublikowaniem publikacji FileAll (ang.)",
-        "uk": "Виправлена помилка з опублікуванням ФайлВсі (для майбутнього використання)",
-        "zh-cn": "编辑错误 File All(今后使用)"
       }
     },
     "desc": {
