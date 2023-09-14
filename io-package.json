@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.1.1",
+    "version": "6.1.2",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.1.2": {
+        "en": "upgrade socketio and ws dependencies",
+        "de": "upgrade-sockel und abhängigkeiten",
+        "ru": "обновление socketio и ws зависимостей",
+        "pt": "atualizar socketio e ws dependências",
+        "nl": "upgrade socketio en ws afhankelijkheid",
+        "fr": "upgrade socketio et ws dépendances",
+        "it": "aggiornamento socketio e dipendenze ws",
+        "es": "actualización de las dependencias de socketio y ws",
+        "pl": "ulepszenie gniazda i włókna",
+        "uk": "модернізація плунжерів і залежностей",
+        "zh-cn": "a. 升级的骨干和妻子的依赖"
+      },
       "6.1.1": {
         "en": "added missing node16 requirement",
         "de": "fehlende knoten16 anforderung",
@@ -93,19 +106,6 @@
         "pl": "Delecja obiektów pełnocalendarnych",
         "uk": "Дозволено видалення повноцінних об’єктів",
         "zh-cn": "允许删除全面升级的物体"
-      },
-      "5.5.1": {
-        "en": "Allowed to read projects of vis-2-beta",
-        "de": "Erlaubt, Projekte von vis-2-beta zu lesen",
-        "ru": "Разрешено читать проекты vis-2-beta",
-        "pt": "Permite ler projetos de vis-2-beta",
-        "nl": "Toegestaan om projecten te lezen van vis-2-beta",
-        "fr": "Permis de lire les projets de vis-2-beta",
-        "it": "Consentito di leggere progetti di vis-2-beta",
-        "es": "Permitido leer proyectos de vis-2-beta",
-        "pl": "Wszystko opracowuje projekty vis-2-beta",
-        "uk": "Доведено прочитані проекти vis-2-beta",
-        "zh-cn": "获准阅读与-2-贝塔的项目"
       }
     },
     "desc": {
