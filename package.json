@@ -19,7 +19,7 @@
     "node": ">= 16"
   },
   "dependencies": {
-    "@iobroker/webserver": "^0.3.6",
+    "@iobroker/webserver": "^0.3.7",
     "@iobroker/adapter-core": "^3.0.3",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
@@ -28,8 +28,8 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "iobroker.simple-api": "^2.7.2",
-    "iobroker.ws": "2.5.5",
-    "iobroker.socketio": "6.5.5",
+    "iobroker.ws": "2.5.6",
+    "iobroker.socketio": "6.5.6",
     "mime-types": "^2.1.35",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
@@ -39,10 +39,10 @@
     "@alcalzone/release-script": "^3.6.0",
     "@alcalzone/release-script-plugin-iobroker": "^3.6.0",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
-    "@iobroker/legacy-testing": "^0.3.7",
-    "axios": "^1.5.0",
-    "chai": "^4.3.8",
-    "eslint": "^8.48.0",
+    "@iobroker/legacy-testing": "^1.0.0",
+    "axios": "^1.5.1",
+    "chai": "^4.3.10",
+    "eslint": "^8.50.0",
     "gulp": "^4.0.2",
     "mocha": "^10.2.0"
   },
@@ -52,7 +52,6 @@
   "main": "main.js",
   "files": [
     "admin/",
-    "lib/",
     "www/",
     "io-package.json",
     "LICENSE",
