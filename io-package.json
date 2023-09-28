@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.1.2",
+    "version": "6.1.3",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.1.3": {
+        "en": "upgraded socketio and ws dependencies to correct the error by unsubscribing on client disconnect",
+        "de": "erweiterte muffizio- und ws-abhängigkeiten, um den fehler zu korrigieren, indem sie die abschaltung des clients deaktivieren",
+        "ru": "обновление socketio и ws зависимостей, чтобы исправить ошибку, отписавшись от клиента отключить",
+        "pt": "socketio atualizado e ws dependências para corrigir o erro, dessubscrevendo no cliente desconectar",
+        "nl": "opgewaardeerde socketio en ws afhankelijkheid om de fout te corrigeren door onbeduidende cliënten los te laten",
+        "fr": "mise à niveau de socketio et de dépendances ws pour corriger l'erreur en désabonnement à la déconnection du client",
+        "it": "socketio aggiornato e dipendenze ws per correggere l'errore cancellando la sottoscrizione sul client disconnette",
+        "es": "actualización de las dependencias de socketio y ws para corregir el error al darse cuenta de la desconexión del cliente",
+        "pl": "ulepszona gniazdo i wsy zależą od poprawy błędu przez niepodpisanie na odłączeniu klienta",
+        "uk": "модернізоване розетки і залежності від відмов від від клієнта",
+        "zh-cn": "升级的袖手旁观和头寸,以纠正错误,不用说不让客户脱钩。"
+      },
       "6.1.2": {
         "en": "upgrade socketio and ws dependencies",
         "de": "upgrade-sockel und abhängigkeiten",
@@ -93,19 +106,6 @@
         "pl": "Maksymalny rozmiar pliku załadowanego za pomocą gniazda.io do 200 MB (z 10MB)",
         "uk": "Підвищений розмір завантаженого файлу за допомогою Socket.io до 200MB (від 10MB)",
         "zh-cn": "装载档案量增加至200MB(从10MB)"
-      },
-      "5.5.2": {
-        "en": "Allowed deletion of fullcalendar objects",
-        "de": "Erlaubtes Löschen von Fullcalendar-Objekten",
-        "ru": "Разрешено удаление полнокалендарных объектов",
-        "pt": "Eliminação permitida de objetos fullcalendar",
-        "nl": "Verwijderde deletie van volcalendar objecten",
-        "fr": "Suppression autorisée d ' objets complets",
-        "it": "Cancellazione consentita di oggetti fullcalendar",
-        "es": "Supresión de objetos de mapa completo",
-        "pl": "Delecja obiektów pełnocalendarnych",
-        "uk": "Дозволено видалення повноцінних об’єктів",
-        "zh-cn": "允许删除全面升级的物体"
       }
     },
     "desc": {
