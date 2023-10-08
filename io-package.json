@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.1.3",
+    "version": "6.1.4",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.1.4": {
+        "en": "upgrade socketio and ws dependencies to fix vis subscribe problem",
+        "de": "upgrade-sockel und ws abhängigkeiten zu beheben vis abonnieren problem",
+        "ru": "обновить socketio и ws зависимости, чтобы исправить vis подписаться проблема",
+        "pt": "atualizar socketio e ws dependências para corrigir vis problema de assinatura",
+        "nl": "upgrade socketio en ws afhankelijkheid om vis te repareren",
+        "fr": "mise à niveau socketio et les dépendances ws pour corriger le problème d'abonnement vis",
+        "it": "aggiornamento socketio e dipendenze ws per risolvere il problema vis abbonamento",
+        "es": "actualizar las dependencias de socketio y ws para fijar vis problema de suscripción",
+        "pl": "ulepszenie gniazd i wstawki zależą od naprawy problemu wizji",
+        "uk": "оновлення плагіна і ws залежностей, щоб виправити проблему підписки",
+        "zh-cn": "装配量和妻子的依赖性"
+      },
       "6.1.3": {
         "en": "upgraded socketio and ws dependencies to correct the error by unsubscribing on client disconnect",
         "de": "erweiterte muffizio- und ws-abhängigkeiten, um den fehler zu korrigieren, indem sie die abschaltung des clients deaktivieren",
@@ -93,19 +106,6 @@
         "pl": "Uruchomiona krypta pozwala na korzystanie z adapterów internetowych",
         "uk": "Вилучено глибинну обробку з веб адаптера",
         "zh-cn": "移离网适应器的加密处理"
-      },
-      "5.5.3": {
-        "en": "Increased max size of the uploaded file via socket.io to 200MB (from 10MB)",
-        "de": "Erhöhte maximale Größe der hochgeladenen Datei über Buchse.io auf 200MB (von 10MB)",
-        "ru": "Увеличен максимальный размер загруженного файла через socket.io до 200MB (от 10MB)",
-        "pt": "Aumento do tamanho máximo do arquivo carregado via socket.io para 200MB (de 10MB)",
-        "nl": "Verhoogde max grootte van het geüploade bestand via socket.io tot 200MB (MB)",
-        "fr": "Augmentation de la taille max du fichier téléchargé via socket.io à 200Mo (de 10Mo)",
-        "it": "Maggiore dimensione massima del file caricato tramite socket.io a 200MB (da 10MB)",
-        "es": "Aumento del tamaño máximo del archivo subido vía socket.io a 200MB (de 10MB)",
-        "pl": "Maksymalny rozmiar pliku załadowanego za pomocą gniazda.io do 200 MB (z 10MB)",
-        "uk": "Підвищений розмір завантаженого файлу за допомогою Socket.io до 200MB (від 10MB)",
-        "zh-cn": "装载档案量增加至200MB(从10MB)"
       }
     },
     "desc": {

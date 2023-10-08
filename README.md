@@ -82,6 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### 6.1.4 (2023-10-08)
+* (foxriver76) upgrade socketio and ws dependencies to fix vis subscribe problem
+
 ### 6.1.3 (2023-09-28)
 * (bluefox) upgraded socketio and ws dependencies to correct the error by unsubscribing on client disconnect
 
