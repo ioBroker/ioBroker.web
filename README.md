@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.1.5 (2023-10-11)
 * (bluefox) Corrected adapter termination if the alias has no target
 
 ### 6.1.4 (2023-10-08)
