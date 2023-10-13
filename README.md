@@ -82,8 +82,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### 6.1.5 (2023-10-11)
+### **WORK IN PROGRESS**
 * (bluefox) Corrected adapter termination if the alias has no target
+* (bluefox) Corrected socket.io connection
 
 ### 6.1.4 (2023-10-08)
 * (foxriver76) upgrade socketio and ws dependencies to fix vis subscribe problem
