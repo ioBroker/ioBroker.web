@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.1.7",
+    "version": "6.1.8",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.1.8": {
+        "en": "Corrected the start screen",
+        "de": "Korrektur des Startbildschirms",
+        "ru": "Исправлен стартовый экран",
+        "pt": "Corrigido a tela inicial",
+        "nl": "Vertaling:",
+        "fr": "Correction de l'écran de démarrage",
+        "it": "Corretto la schermata di avvio",
+        "es": "Corregido la pantalla de inicio",
+        "pl": "Naprawdę na ekranie startowym",
+        "uk": "Виправлено екран запуску",
+        "zh-cn": "B. 改编开屏幕"
+      },
       "6.1.7": {
         "en": "Added the public accessibility check",
         "de": "Die öffentliche Zugänglichkeitsprüfung wurde hinzugefügt",
@@ -93,19 +106,6 @@
         "pl": "zastrzeżenie",
         "uk": "доданий відсутній вузол16 вимога",
         "zh-cn": "增加未满足要求"
-      },
-      "6.1.0": {
-        "en": "Added the subscribing on the specific instance messages",
-        "de": "Hinzugefügt die Anmeldung auf den spezifischen Instanz Nachrichten",
-        "ru": "Добавлена подписка на конкретные сообщения",
-        "pt": "Adicionado a subscrição nas mensagens de instância específica",
-        "nl": "Voegde de subscribing toe op de specifieke instantie berichten",
-        "fr": "Ajout de l'inscription sur les messages d'instance spécifiques",
-        "it": "Aggiunto la sottoscrizione sui messaggi di istanza specifici",
-        "es": "Añadido el subscribir en los mensajes de instancia específicos",
-        "pl": "Dodać subskrypcję określonych wiadomości",
-        "uk": "Додано підспріб на конкретних повідомленнях екземпляра",
-        "zh-cn": "添加关于具体事例信息的字"
       }
     },
     "desc": {
