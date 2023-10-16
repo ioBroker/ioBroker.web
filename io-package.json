@@ -2,7 +2,6 @@
   "common": {
     "name": "web",
     "version": "6.1.7",
-    "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -13,6 +12,7 @@
       "it": "Server web",
       "es": "Servidor web",
       "pl": "Serwer internetowy",
+      "uk": "Веб-сервер",
       "zh-cn": "Web服务器"
     },
     "news": {
@@ -109,15 +109,16 @@
       }
     },
     "desc": {
-      "en": "opens a webserver for other adapters",
+      "en": "Opens a webserver for other adapters",
       "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
       "ru": "Запускает веб сервер для 'ioBroker драйверов'",
-      "pt": "abre um servidor web para outros adaptadores",
-      "nl": "opent een webserver voor andere adapters",
-      "fr": "ouvre un serveur web pour d'autres adaptateurs",
-      "it": "apre un server web per altri adattatori",
-      "es": "abre un servidor web para otros adaptadores",
-      "pl": "otwiera serwer internetowy dla innych kart",
+      "pt": "Abre um servidor web para outros adaptadores",
+      "nl": "Opent een webserver voor andere adapters",
+      "fr": "Ouvre un serveur web pour d'autres adaptateurs",
+      "it": "Apre un server web per altri adattatori",
+      "es": "Abre un servidor web para otros adaptadores",
+      "pl": "Otwiera serwer internetowy dla innych kart",
+      "uk": "Відкриває веб-сервер для інших адаптерів",
       "zh-cn": "为其他适配器服务的web服务器"
     },
     "license": "MIT",
@@ -128,6 +129,9 @@
     "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
     "enabled": true,
     "materialize": true,
+    "adminUI": {
+      "config": "materialize"
+    },
     "messagebox": true,
     "compact": true,
     "keywords": [
