@@ -633,7 +633,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
                 if (welcomeScreen[w].localLink) {
                     if (foundInstanceIDs.length > 1) {
                         foundInstanceIDs.forEach(id => {
-                            const _welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen));
+                            const _welcomeScreen = JSON.parse(JSON.stringify(welcomeScreen[w]));
                             _welcomeScreen.id = id;
                             _welcomeScreen.instance = parseInt(id.split('.').pop(), 10);
                             list.push(_welcomeScreen);
@@ -675,228 +675,231 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
     }
 }
 
-function getListOfAllAdapters(settings, server, req, callback) {
+async function getListOfAllAdapters(settings, server, req, callback) {
     // read all instances
-    adapter.getObjectView('system', 'instance', {}, (err, instances) => {
-        adapter.getObjectView('system', 'adapter', {}, (err, adapters) => {
-            try {
-                const list = [];
-                const mapInstance = {};
-                for (let r = 0; r < instances.rows.length; r++) {
-                    mapInstance[instances.rows[r].id] = instances.rows[r].value;
+    const instances = await adapter.getObjectViewAsync('system', 'instance', {});
+    const adapters = await adapter.getObjectViewAsync('system', 'adapter', {});
+    const list = [];
+    const mapInstance = {};
+    for (let r = 0; r < instances.rows.length; r++) {
+        mapInstance[instances.rows[r].id] = instances.rows[r].value;
+    }
+    for (let a = 0; a < adapters.rows.length; a++) {
+        const obj = adapters.rows[a].value;
+        let found;
+        if (instances && instances.rows) {
+            found = [];
+            // find if any instance of this adapter exists and started
+            for (let i = 0; i < instances.rows.length; i++) {
+                let id = instances.rows[i].id;
+                const ids = id.split('.');
+                ids.pop();
+                id = ids.join('.');
+                if (id === obj._id &&
+                    instances.rows[i].value.common
+                    // && (true || instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)
+                ) {
+                    found.push(instances.rows[i].id);
                 }
-                for (let a = 0; a < adapters.rows.length; a++) {
-                    const obj = adapters.rows[a].value;
-                    let found;
-                    if (instances && instances.rows) {
-                        found = [];
-                        // find if any instance of this adapter exists and started
-                        for (let i = 0; i < instances.rows.length; i++) {
-                            let id = instances.rows[i].id;
-                            const ids = id.split('.');
-                            ids.pop();
-                            id = ids.join('.');
-                            if (id === obj._id && instances.rows[i].value.common && (true || instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)) {
-                                found.push(instances.rows[i].id);
-                            }
-                        }
-                    }
-
-                    if (found && found.length) {
-                        processWelcome(obj.common.welcomeScreen, false, obj, found, list);
-                        processWelcome(obj.common.welcomeScreenPro, true, obj, found, list);
-                        /*if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
-                            if (obj.common.welcomeScreen) {
-                                if (obj.common.welcomeScreen instanceof Array) {
-                                    for (let w = 0; w < obj.common.welcomeScreen.length; w++) {
-                                        // temporary disabled
-                                        if (obj.common.welcomeScreen[w].name === 'vis editor') {
-                                            continue;
-                                        }
-                                        if (obj.common.welcomeScreen[w].localLinks && typeof obj.common.welcomeScreen[w].localLinks === 'string') {
-                                            obj.common.welcomeScreen[w].localLink = obj.common.localLinks[obj.common.welcomeScreen[w].localLinks];
-                                            if (typeof obj.common.welcomeScreen[w].localLink === 'object') {
-                                                obj.common.welcomeScreen[w].localLink = obj.common.welcomeScreen[w].localLink.link;
-                                            }
-                                        } else
-                                        if (obj.common.welcomeScreen[w].localLink && typeof obj.common.welcomeScreen[w].localLink === 'boolean') {
-                                            obj.common.welcomeScreen[w].localLink = obj.common.localLink;
-                                        }
-
-                                        if (obj.common.welcomeScreen[w].localLink) {
-                                            if (found.length > 1) {
-                                                found.forEach(id => {
-                                                    const welcomeScreen = JSON.stringify(JSON.parse(obj.common.welcomeScreen[w]));
-                                                    welcomeScreen.id = id;
-                                                    list.push(welcomeScreen);
-                                                });
-                                            } else {
-                                                obj.common.welcomeScreen[w].id = found[0];
-                                                list.push(obj.common.welcomeScreen[w]);
-                                            }
-                                        } else {
-                                            list.push(obj.common.welcomeScreen[w]);
-                                        }
-                                    }
-                                } else {
-                                    if (obj.common.welcomeScreen.localLinks && typeof obj.common.welcomeScreen.localLinks === 'string') {
-                                        obj.common.welcomeScreen.localLink = obj.common.localLinks[obj.common.welcomeScreen.localLinks];
-                                        if (typeof obj.common.welcomeScreen.localLink === 'object') {
-                                            obj.common.welcomeScreen.localLink = obj.common.welcomeScreen.localLink.link;
-                                        }
-                                    } else
-                                    if (obj.common.welcomeScreen.localLink && typeof obj.common.welcomeScreen.localLink === 'boolean') {
-                                        obj.common.welcomeScreen.localLink = obj.common.localLink;
-                                    }
-
-                                    if (obj.common.welcomeScreen.localLink) {
-                                        if (found.length > 1) {
-                                            found.forEach(id => {
-                                                const welcomeScreen = JSON.stringify(JSON.parse(obj.common.welcomeScreen));
-                                                welcomeScreen.id = id;
-                                                list.push(welcomeScreen);
-                                            });
-                                        } else {
-                                            obj.common.welcomeScreen.id = found[0];
-                                            list.push(obj.common.welcomeScreen);
-                                        }
-                                    } else {
-                                        list.push(obj.common.welcomeScreen);
-                                    }
-                                }
-                            }
-                            if (obj.common.welcomeScreenPro) {
-                                if (obj.common.welcomeScreenPro instanceof Array) {
-                                    for (let ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
-                                        const tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
-                                        tile.pro = true;
-                                        if (tile.localLinks && typeof tile.localLinks === 'string') {
-                                            tile.localLink = obj.common.localLinks[tile.localLinks];
-                                            if (typeof tile.localLink === 'object') {
-                                                tile.localLink = tile.localLink.link;
-                                            }
-                                        } else
-                                        if (tile.localLink && typeof tile.localLink === 'boolean') {
-                                            tile.localLink = obj.common.localLink;
-                                        }
-                                        if (tile.localLink) {
-                                            tile.id = found;
-                                        }
-                                        list.push(tile);
-                                    }
-                                } else {
-                                    const tile_ = Object.assign({}, obj.common.welcomeScreenPro);
-                                    tile_.pro = true;
-                                    if (tile_.localLinks && typeof tile_.localLinks === 'string') {
-                                        tile_.localLink = obj.common.localLinks[tile_.localLinks];
-                                        if (typeof tile_.localLink === 'object') {
-                                            tile_.localLink = tile_.localLink.link;
-                                        }
-                                    } else
-                                    if (tile_.localLink && typeof tile_.localLink === 'boolean') {
-                                        tile_.localLink = obj.common.localLink;
-                                    }
-                                    if (tile_.localLink) {
-                                        if (found.length > 1) {
-                                            found.forEach(id => {
-                                                const welcomeScreen = JSON.stringify(JSON.parse(obj.common.tile_));
-                                                welcomeScreen.id = id;
-                                                list.push(welcomeScreen);
-                                            });
-                                        } else {
-                                            tile_.id = found[0];
-                                            list.push(obj.common.welcomeScreen);
-                                        }
-                                    } else {
-                                        list.push(tile_);
-                                    }
-                                }
-                            }
-                        }*/
-                    }
-                }
-
-                if (!indexHtml && !fs.existsSync(`${__dirname}/${wwwDir}/index.html`)) {
-                    return callback(null, `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`);
-                }
-
-                indexHtml = indexHtml || fs.readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
-
-                // calculate localLinks
-                for (let t = 0; t < list.length; t++) {
-                    if (list[t].localLink) {
-                        list[t].localLink = resolveLink(list[t].localLink, mapInstance[list[t].id], mapInstance);
-                    }
-                }
-
-                // try to find swagger web-extension
-                // inform extensions
-                Object.keys(extensions).forEach(instance => {
-                    try {
-                        if (extensions[instance].obj && typeof extensions[instance].obj.welcomePage === 'function') {
-                            list.push(extensions[instance].obj.welcomePage());
-                        }
-                    } catch (err) {
-                        adapter.log.error(`Cannot call welcomePage for "${instance}": ${err.message}`);
-                    }
-                });
-
-                list.sort((a, b) => {
-                    const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
-                    const bName = (typeof b.name === 'object' ? b.name[lang] || b.name.en : b.name).toLowerCase();
-                    if (a.order === undefined && b.order === undefined) {
-                        if (aName > bName) {
-                            return 1;
-                        }
-                        if (aName < bName) {
-                            return -1;
-                        }
-                        return 0;
-                    } else if (a.order === undefined) {
-                        return -1;
-                    } else if (b.order === undefined) {
-                        return 1;
-                    } else {
-                        if (a.order > b.order) {
-                            return 1;
-                        }
-                        if (a.order < b.order) {
-                            return -1;
-                        }
-                        if (aName > bName) {
-                            return 1;
-                        }
-                        if (aName < bName) {
-                            return -1;
-                        }
-                        if (a.instance !== undefined && b.instance !== undefined) {
-                            if (a.instance > b.instance) {
-                                return 1;
-                            }
-                            if (a.instance < b.instance) {
-                                return -1;
-                            }
-                        }
-
-                        return 0;
-                    }
-                });
-
-                let text = `systemLang = "${lang}";\n`;
-                text += `list = ${JSON.stringify(list, null, 2)};\n`;
-
-                const whiteListIp = isInWhiteList(settings, server, req);
-
-                // if login
-                text += `let authEnabled = ${adapter.config.auth && !adapter.config.basicAuth && !whiteListIp};\n`;
-
-                callback(null, indexHtml.replace('// -- PLACE THE LIST HERE --', text));
-            } catch (e) {
-                callback(e);
             }
-        });
+        }
+
+        if (found && found.length) {
+            try {
+                processWelcome(obj.common.welcomeScreen, false, obj, found, list);
+                processWelcome(obj.common.welcomeScreenPro, true, obj, found, list);
+            } catch (e) {
+                adapter.log.warn(`Cannot process welcome screen for "${obj._id}": ${e}`);
+            }
+            /*if (obj.common.welcomeScreen || obj.common.welcomeScreenPro) {
+                if (obj.common.welcomeScreen) {
+                    if (obj.common.welcomeScreen instanceof Array) {
+                        for (let w = 0; w < obj.common.welcomeScreen.length; w++) {
+                            // temporary disabled
+                            if (obj.common.welcomeScreen[w].name === 'vis editor') {
+                                continue;
+                            }
+                            if (obj.common.welcomeScreen[w].localLinks && typeof obj.common.welcomeScreen[w].localLinks === 'string') {
+                                obj.common.welcomeScreen[w].localLink = obj.common.localLinks[obj.common.welcomeScreen[w].localLinks];
+                                if (typeof obj.common.welcomeScreen[w].localLink === 'object') {
+                                    obj.common.welcomeScreen[w].localLink = obj.common.welcomeScreen[w].localLink.link;
+                                }
+                            } else
+                            if (obj.common.welcomeScreen[w].localLink && typeof obj.common.welcomeScreen[w].localLink === 'boolean') {
+                                obj.common.welcomeScreen[w].localLink = obj.common.localLink;
+                            }
+
+                            if (obj.common.welcomeScreen[w].localLink) {
+                                if (found.length > 1) {
+                                    found.forEach(id => {
+                                        const welcomeScreen = JSON.stringify(JSON.parse(obj.common.welcomeScreen[w]));
+                                        welcomeScreen.id = id;
+                                        list.push(welcomeScreen);
+                                    });
+                                } else {
+                                    obj.common.welcomeScreen[w].id = found[0];
+                                    list.push(obj.common.welcomeScreen[w]);
+                                }
+                            } else {
+                                list.push(obj.common.welcomeScreen[w]);
+                            }
+                        }
+                    } else {
+                        if (obj.common.welcomeScreen.localLinks && typeof obj.common.welcomeScreen.localLinks === 'string') {
+                            obj.common.welcomeScreen.localLink = obj.common.localLinks[obj.common.welcomeScreen.localLinks];
+                            if (typeof obj.common.welcomeScreen.localLink === 'object') {
+                                obj.common.welcomeScreen.localLink = obj.common.welcomeScreen.localLink.link;
+                            }
+                        } else
+                        if (obj.common.welcomeScreen.localLink && typeof obj.common.welcomeScreen.localLink === 'boolean') {
+                            obj.common.welcomeScreen.localLink = obj.common.localLink;
+                        }
+
+                        if (obj.common.welcomeScreen.localLink) {
+                            if (found.length > 1) {
+                                found.forEach(id => {
+                                    const welcomeScreen = JSON.stringify(JSON.parse(obj.common.welcomeScreen));
+                                    welcomeScreen.id = id;
+                                    list.push(welcomeScreen);
+                                });
+                            } else {
+                                obj.common.welcomeScreen.id = found[0];
+                                list.push(obj.common.welcomeScreen);
+                            }
+                        } else {
+                            list.push(obj.common.welcomeScreen);
+                        }
+                    }
+                }
+                if (obj.common.welcomeScreenPro) {
+                    if (obj.common.welcomeScreenPro instanceof Array) {
+                        for (let ww = 0; ww < obj.common.welcomeScreenPro.length; ww++) {
+                            const tile = Object.assign({}, obj.common.welcomeScreenPro[ww]);
+                            tile.pro = true;
+                            if (tile.localLinks && typeof tile.localLinks === 'string') {
+                                tile.localLink = obj.common.localLinks[tile.localLinks];
+                                if (typeof tile.localLink === 'object') {
+                                    tile.localLink = tile.localLink.link;
+                                }
+                            } else
+                            if (tile.localLink && typeof tile.localLink === 'boolean') {
+                                tile.localLink = obj.common.localLink;
+                            }
+                            if (tile.localLink) {
+                                tile.id = found;
+                            }
+                            list.push(tile);
+                        }
+                    } else {
+                        const tile_ = Object.assign({}, obj.common.welcomeScreenPro);
+                        tile_.pro = true;
+                        if (tile_.localLinks && typeof tile_.localLinks === 'string') {
+                            tile_.localLink = obj.common.localLinks[tile_.localLinks];
+                            if (typeof tile_.localLink === 'object') {
+                                tile_.localLink = tile_.localLink.link;
+                            }
+                        } else
+                        if (tile_.localLink && typeof tile_.localLink === 'boolean') {
+                            tile_.localLink = obj.common.localLink;
+                        }
+                        if (tile_.localLink) {
+                            if (found.length > 1) {
+                                found.forEach(id => {
+                                    const welcomeScreen = JSON.stringify(JSON.parse(obj.common.tile_));
+                                    welcomeScreen.id = id;
+                                    list.push(welcomeScreen);
+                                });
+                            } else {
+                                tile_.id = found[0];
+                                list.push(obj.common.welcomeScreen);
+                            }
+                        } else {
+                            list.push(tile_);
+                        }
+                    }
+                }
+            }*/
+        }
+    }
+
+    if (!indexHtml && !fs.existsSync(`${__dirname}/${wwwDir}/index.html`)) {
+        return callback(null, `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`);
+    }
+
+    indexHtml = indexHtml || fs.readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
+
+    // calculate localLinks
+    for (let t = 0; t < list.length; t++) {
+        if (list[t].localLink) {
+            list[t].localLink = resolveLink(list[t].localLink, mapInstance[list[t].id], mapInstance);
+        }
+        if (!list[t].name) {
+            list[t].name = list[t].title;
+        }
+    }
+
+    // try to find swagger web-extension
+    // inform extensions
+    Object.keys(extensions).forEach(instance => {
+        try {
+            if (extensions[instance].obj && typeof extensions[instance].obj.welcomePage === 'function') {
+                list.push(extensions[instance].obj.welcomePage());
+            }
+        } catch (err) {
+            adapter.log.error(`Cannot call welcomePage for "${instance}": ${err.message}`);
+        }
     });
 
+    list.sort((a, b) => {
+        const aName = (typeof a.name === 'object' ? a.name[lang] || a.name.en : a.name).toLowerCase();
+        const bName = (typeof b.name === 'object' ? b.name[lang] || b.name.en : b.name).toLowerCase();
+        if (a.order === undefined && b.order === undefined) {
+            if (aName > bName) {
+                return 1;
+            }
+            if (aName < bName) {
+                return -1;
+            }
+            return 0;
+        } else if (a.order === undefined) {
+            return -1;
+        } else if (b.order === undefined) {
+            return 1;
+        } else {
+            if (a.order > b.order) {
+                return 1;
+            }
+            if (a.order < b.order) {
+                return -1;
+            }
+            if (aName > bName) {
+                return 1;
+            }
+            if (aName < bName) {
+                return -1;
+            }
+            if (a.instance !== undefined && b.instance !== undefined) {
+                if (a.instance > b.instance) {
+                    return 1;
+                }
+                if (a.instance < b.instance) {
+                    return -1;
+                }
+            }
+
+            return 0;
+        }
+    });
+
+    let text = `systemLang = "${lang}";\n`;
+    text += `list = ${JSON.stringify(list, null, 2)};\n`;
+
+    const whiteListIp = isInWhiteList(settings, server, req);
+
+    // if login
+    text += `let authEnabled = ${adapter.config.auth && !adapter.config.basicAuth && !whiteListIp};\n`;
+
+    return indexHtml.replace('// -- PLACE THE LIST HERE --', text);
 }
 
 function getInfoJs(settings) {
