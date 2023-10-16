@@ -675,7 +675,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
     }
 }
 
-async function getListOfAllAdapters(settings, server, req, callback) {
+async function getListOfAllAdapters(settings, server, req) {
     // read all instances
     const instances = await adapter.getObjectViewAsync('system', 'instance', {});
     const adapters = await adapter.getObjectViewAsync('system', 'adapter', {});
@@ -715,7 +715,7 @@ async function getListOfAllAdapters(settings, server, req, callback) {
     }
 
     if (!indexHtml && !fs.existsSync(`${__dirname}/${wwwDir}/index.html`)) {
-        return callback(null, `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`);
+        return `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`;
     }
 
     indexHtml = indexHtml || fs.readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
@@ -1647,28 +1647,28 @@ async function initWebServer(settings) {
                         url = url.substring(i - 1);
                     }
                     if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                        return res.status(404).send('Not found');
+                        res.status(404).send('Not found');
+                        return;
                     }
 
                     if (server.api && server.api.checkRequest(url)) {
-                        return server.api.restApi(req, res);
+                        server.api.restApi(req, res);
+                        return;
                     }
 
                     if (url === '/' || url === '/index.html') {
                         if (adapter.config.defaultRedirect) {
-                            return res.redirect(301, adapter.config.defaultRedirect);
+                            res.redirect(301, adapter.config.defaultRedirect);
+                            return;
                         } else {
-                            return getListOfAllAdapters(settings, server, req, (err, data) => {
-                                if (err) {
-                                    res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
-                                } else {
-                                    res
-                                        .set('Content-Type', 'text/html')
-                                        .set('Cache-Control', 'no-cache')
-                                        .status(200)
-                                        .send(data);
-                                }
-                            });
+                            getListOfAllAdapters(settings, server, req)
+                                .then(data => res
+                                    .set('Content-Type', 'text/html')
+                                    .set('Cache-Control', 'no-cache')
+                                    .status(200)
+                                    .send(data))
+                                .catch(err => res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`));
+                            return;
                         }
                     }
 
@@ -1706,7 +1706,8 @@ async function initWebServer(settings) {
                         if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
                             // redirect to version
                             res.set('location', `/${id}/${webByVersion[id]}/${url}`);
-                            return res.status(301).send();
+                            res.status(301).send();
+                            return;
                         }
                     }
 
@@ -1724,7 +1725,8 @@ async function initWebServer(settings) {
                             const buffer = loginPage;
 
                             if (!settings.auth || (req.isAuthenticated && req.isAuthenticated()) || isInWhiteList(settings, server, req)) {
-                                return res.redirect(getRedirectPage(req));
+                                res.redirect(getRedirectPage(req));
+                                return;
                             }
 
                             if (buffer === null || buffer === undefined) {
@@ -1743,20 +1745,34 @@ async function initWebServer(settings) {
                         } else {
                             // special solution for socket.io
                             if (url.endsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/)) {
-                                return getSocketIoFile(req, res, true);
+                                getSocketIoFile(req, res, true);
+                                return;
                             }
 
-                            adapter.readFile(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? `system.user.${req.user}` : settings.defaultUser, noFileCache: noFileCache}, (err, buffer, mimeType) => {
-                                if (adapter.config.showFolderIndex && err && err.toString() === 'Error: Not exists' && req.url.endsWith('/')) {
-                                    url = url.replace(/\/index.html$/, '');
-                                    // show folder index
-                                    return adapter.readDir(id, webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url, {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, files) => {
-                                        res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
-                                        res.set('Content-Type', 'text/html; charset=utf-8');
-                                        const text = [
-                                            '<html>',
-                                            '<head><title>Directory</title>',
-                                            `<style>
+                            adapter.readFile(
+                                id,
+                                webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url,
+                                {
+                                    user: req.user ? `system.user.${req.user}` : settings.defaultUser,
+                                    noFileCache: noFileCache
+                                },
+                                (err, buffer, mimeType) => {
+                                    if (adapter.config.showFolderIndex && err && err.toString() === 'Error: Not exists' && req.url.endsWith('/')) {
+                                        url = url.replace(/\/index.html$/, '');
+                                        // show folder index
+                                        return adapter.readDir(
+                                            id,
+                                            webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url,
+                                            {
+                                                user: req.user ? `system.user.${req.user}` : settings.defaultUser
+                                            },
+                                            (err, files) => {
+                                                res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
+                                                res.set('Content-Type', 'text/html; charset=utf-8');
+                                                const text = [
+                                                    '<html>',
+                                                    '<head><title>Directory</title>',
+                                                    `<style>
     body {
         font-family: Arial, sans-serif;
     }
@@ -1764,55 +1780,55 @@ async function initWebServer(settings) {
         padding: 5px;
     }
 </style>`,
-                                            `</head><body><h3>Directory ${req.url}</h3><table>`
-                                        ];
-                                        if (url !== '/') {
-                                            const parts = url.split('/');
-                                            parts.pop();
-                                            text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                                    `</head><body><h3>Directory ${req.url}</h3><table>`
+                                                ];
+                                                if (url !== '/') {
+                                                    const parts = url.split('/');
+                                                    parts.pop();
+                                                    text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                                }
+
+                                                files.sort((a, b) => {
+                                                    if (a.isDir && b.isDir) {
+                                                        return a.file.localeCompare(b.file);
+                                                    }
+                                                    if (a.isDir) {
+                                                        return -1;
+                                                    }
+                                                    if (b.isDir) {
+                                                        return 1;
+                                                    }
+
+                                                    return a.file.localeCompare(b.file);
+                                                });
+                                                files.forEach(file =>
+                                                    text.push(`<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
+                                                text.push('</table></body></html>');
+                                                res.status(200).send(text.join('\n'));
+                                            });
+                                    }
+
+                                    if (buffer === null || buffer === undefined || err) {
+                                        res.contentType('text/html');
+                                        res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
+                                    } else {
+                                        mimeType = mimeType || mime.lookup(url) || 'text/javascript';
+
+                                        // Store file in cache
+                                        if (settings.cache) {
+                                            cache[`${id}/${url}`] = {buffer, mimeType};
                                         }
 
-                                        files.sort((a, b) => {
-                                            if (a.isDir && b.isDir) {
-                                                return a.file.localeCompare(b.file);
-                                            }
-                                            if (a.isDir) {
-                                                return -1;
-                                            }
-                                            if (b.isDir) {
-                                                return 1;
-                                            }
+                                        res.contentType(mimeType);
 
-                                            return a.file.localeCompare(b.file);
-                                        });
-                                        files.forEach(file =>
-                                            text.push(`<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
-                                        text.push('</table></body></html>');
-                                        res.status(200).send(text.join('\n'));
-                                    });
-                                }
-
-                                if (buffer === null || buffer === undefined || err) {
-                                    res.contentType('text/html');
-                                    res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
-                                } else {
-                                    mimeType = mimeType || mime.lookup(url) || 'text/javascript';
-
-                                    // Store file in cache
-                                    if (settings.cache) {
-                                        cache[`${id}/${url}`] = {buffer, mimeType};
+                                        if (req.headers.range) {
+                                            sendRange(req, res, buffer);
+                                        } else {
+                                            res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
+                                            res.status(200).send(buffer);
+                                        }
                                     }
-
-                                    res.contentType(mimeType);
-
-                                    if (req.headers.range) {
-                                        sendRange(req, res, buffer);
-                                    } else {
-                                        res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
-                                        res.status(200).send(buffer);
-                                    }
-                                }
-                            });
+                                });
                         }
                     }
                 });

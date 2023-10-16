@@ -16,19 +16,6 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-      "6.1.8": {
-        "en": "Corrected the start screen",
-        "de": "Korrektur des Startbildschirms",
-        "ru": "Исправлен стартовый экран",
-        "pt": "Corrigido a tela inicial",
-        "nl": "Vertaling:",
-        "fr": "Correction de l'écran de démarrage",
-        "it": "Corretto la schermata di avvio",
-        "es": "Corregido la pantalla de inicio",
-        "pl": "Naprawdę na ekranie startowym",
-        "uk": "Виправлено екран запуску",
-        "zh-cn": "B. 改编开屏幕"
-      },
       "6.1.7": {
         "en": "Added the public accessibility check",
         "de": "Die öffentliche Zugänglichkeitsprüfung wurde hinzugefügt",
