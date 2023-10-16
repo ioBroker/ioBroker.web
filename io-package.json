@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.1.6",
+    "version": "6.1.7",
     "title": "WEB server",
     "titleLang": {
       "en": "WEB server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.1.7": {
+        "en": "Added the public accessibility check",
+        "de": "Die öffentliche Zugänglichkeitsprüfung wurde hinzugefügt",
+        "ru": "Добавлена проверка доступности населения",
+        "pt": "Adicionado o cheque de acessibilidade pública",
+        "nl": "Voeg de publieke toegangscontrole toe",
+        "fr": "Ajout de la vérification de l'accessibilité publique",
+        "it": "Aggiunto il controllo di accessibilità pubblica",
+        "es": "Añadido el cheque de accesibilidad pública",
+        "pl": "Addditional accessibility check",
+        "uk": "Додано перевірку публічного доступу",
+        "zh-cn": "增加公共无障碍检查"
+      },
       "6.1.6": {
         "en": "Corrected adapter termination if the alias has no target\nCorrected socket.io connection",
         "de": "Korrigierter Adapterabschluss, wenn der Alias kein Ziel hat\nRichtige Steckdose. io-Verbindung",
@@ -93,19 +106,6 @@
         "pl": "Dodać subskrypcję określonych wiadomości",
         "uk": "Додано підспріб на конкретних повідомленнях екземпляра",
         "zh-cn": "添加关于具体事例信息的字"
-      },
-      "6.0.3": {
-        "en": "Updated packages\nImplemented the possibility to view folder content",
-        "de": "Aktualisierte Pakete\nErgänzt die Möglichkeit, den Ordnerinhalt anzuzeigen",
-        "ru": "Обновленные пакеты\nРеализована возможность просмотра содержимого папки",
-        "pt": "Pacotes atualizados\nImplementou a possibilidade de visualizar o conteúdo da pasta",
-        "nl": "Verouderde pakketten\nDe mogelijkheid om de inhoud te bekijken",
-        "fr": "Forfaits mis à jour\nMise en œuvre de la possibilité de voir le contenu du dossier",
-        "it": "Pacchetti aggiornati\nHo implementato la possibilità di visualizzare il contenuto della cartella",
-        "es": "Paquetes actualizados\nImplementó la posibilidad de ver contenido de carpetas",
-        "pl": "Pakiet upoważniony\nPoprawiono możliwość widzenia treści z folderem",
-        "uk": "Оновлені пакети\nРеалізовано можливість перегляду вмісту папки",
-        "zh-cn": "最新一揽子计划\nB. 实施可能查明内容的演变"
       }
     },
     "desc": {

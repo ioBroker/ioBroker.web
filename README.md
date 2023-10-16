@@ -82,7 +82,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.1.7 (2023-10-16)
 * (bluefox) Added the public accessibility check
 
 ### 6.1.6 (2023-10-13)
