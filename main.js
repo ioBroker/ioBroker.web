@@ -21,6 +21,7 @@ let AdapterStore; // =      require(__dirname + '/../../lib/session.js')(session
 let passport; // =          require('passport');
 let LocalStrategy; // =     require('passport-local').Strategy;
 let flash; // =             require('connect-flash'); // TODO report error to user
+let checkTimeout;
 
 let webServer    = null;
 let store        = null;
@@ -244,6 +245,9 @@ function startAdapter(options) {
             }
         },
         unload: callback => {
+            checkTimeout && clearTimeout(checkTimeout);
+            checkTimeout = null;
+
             try {
                 const promises = [];
 
@@ -327,8 +331,7 @@ function startAdapter(options) {
             // Read language
             if (adapter.config.language) {
                 lang = adapter.config.language;
-            } else
-            if (systemConfig && systemConfig.common) {
+            } else if (systemConfig && systemConfig.common) {
                 lang = systemConfig.common.language || 'en';
             }
 
@@ -478,8 +481,7 @@ function getLinkVar(_var, obj, attr, link) {
 
     if (_var === 'ip') {
         link = link.replace(`%${_var}%`, '$host$');
-    } else
-    if (_var === 'instance') {
+    } else if (_var === 'instance') {
         const instance = obj._id.split('.').pop();
         link = link.replace(`%${_var}%`, instance);
     } else {
@@ -536,13 +538,11 @@ function resolveLink(link, instanceObj, instancesMap) {
             if (_var.startsWith('native_')) {
                 link = getLinkVar(_var, instanceObj, _var, link);
                 vars.splice(v, 1);
-            } else
-            if (parts.length === 1) {
+            } else if (parts.length === 1) {
                 link = getLinkVar(_var, instanceObj, parts[0], link);
                 vars.splice(v, 1);
-            } else
-            // like "web.0_port"
-            if (parts[0].match(/\.\d+$/)) {
+            } else if (parts[0].match(/\.\d+$/)) {
+                // like "web.0_port"
                 link = getLinkVar(_var, instancesMap[`system.adapter.${parts[0]}`], parts[1], link);
                 vars.splice(v, 1);
             }
@@ -625,8 +625,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
                     if (typeof welcomeScreen[w].localLink === 'object') {
                         welcomeScreen[w].localLink = welcomeScreen[w].localLink.link;
                     }
-                } else
-                if (welcomeScreen[w].localLink && typeof welcomeScreen[w].localLink === 'boolean') {
+                } else if (welcomeScreen[w].localLink && typeof welcomeScreen[w].localLink === 'boolean') {
                     welcomeScreen[w].localLink = adapterObj.common.localLink;
                 }
 
@@ -653,8 +652,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
                 if (typeof welcomeScreen.localLink === 'object') {
                     welcomeScreen.localLink = welcomeScreen.localLink.link;
                 }
-            } else
-            if (welcomeScreen.localLink && typeof welcomeScreen.localLink === 'boolean') {
+            } else if (welcomeScreen.localLink && typeof welcomeScreen.localLink === 'boolean') {
                 welcomeScreen.localLink = adapterObj.common.localLink;
             }
             welcomeScreen.pro = isPro;
@@ -692,7 +690,7 @@ function getListOfAllAdapters(settings, server, req, callback) {
                     let found;
                     if (instances && instances.rows) {
                         found = [];
-                        // find if any instance of this adapter is exists and started
+                        // find if any instance of this adapter exists and started
                         for (let i = 0; i < instances.rows.length; i++) {
                             let id = instances.rows[i].id;
                             const ids = id.split('.');
@@ -953,22 +951,19 @@ function checkUser(username, password, cb) {
             } else {
                 minutes = 0;
             }
-        } else
-        if (bruteForce[username].errors < 10) {
+        } else if (bruteForce[username].errors < 10) {
             if (Date.now() - bruteForce[username].time < 180000) {
                 minutes = Math.ceil((180000 - minutes) / 60000);
             } else {
                 minutes = 0;
             }
-        } else
-        if (bruteForce[username].errors < 15) {
+        } else if (bruteForce[username].errors < 15) {
             if (Date.now() - bruteForce[username].time < 600000) {
                 minutes = Math.ceil((600000 - minutes) / 60000);
             } else {
                 minutes = 0;
             }
-        } else
-        if (Date.now() - bruteForce[username].time < 3600000) {
+        } else if (Date.now() - bruteForce[username].time < 3600000) {
             minutes = Math.ceil((3600000 - minutes) / 60000);
         } else {
             minutes = 0;
@@ -1148,8 +1143,7 @@ function isInWhiteList(settings, server, req) {
 
     if (!adapter.config.auth) {
         return remoteIp;
-    } else
-    if (settings.whiteListSettings) {
+    } else if (settings.whiteListSettings) {
         // if whitelist is used
         let whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
         if (!whiteListIp && server.io && remoteIp === '::1') {
@@ -1227,7 +1221,7 @@ async function initWebServer(settings) {
         app:    null,
         server: null,
         io:     null,
-        settings,
+        settings
     };
     adapter.subscribeForeignObjects('system.config');
 
@@ -1341,8 +1335,7 @@ async function initWebServer(settings) {
                 if (/\.css(\?.*)?$/.test(req.originalUrl)) {
                     res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                     return res.status(200).send('');
-                } else
-                if ((isJs = /\.js(\?.*)?$/.test(req.originalUrl))) {
+                } else if ((isJs = /\.js(\?.*)?$/.test(req.originalUrl))) {
                     // return always valid js file for js, because if cache is active it leads to errors
                     const parts = req.originalUrl.split('/');
                     parts.shift();
@@ -1480,6 +1473,7 @@ async function initWebServer(settings) {
                 }
             });
         } else {
+            server.app.get('/iobroker_check.html', (req, res) => res.send('ioBroker.web'));
             server.app.get('/login', (req, res) => res.redirect('/'));
             server.app.get('/logout', (req, res) => res.redirect('/'));
 
@@ -1631,6 +1625,34 @@ async function initWebServer(settings) {
             server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, () => {
                 serverListening = true;
                 adapter.setState('info.connection', true, true);
+
+                if (!settings.doNotCheckPublicIP && !settings.auth) {
+                    checkTimeout = setTimeout(async () => {
+                        checkTimeout = null;
+                        try {
+                            await IoBWebServer.checkPublicIP(settings.port, 'ioBroker.web', '/iobroker_check.html');
+                        } catch (e) {
+                            // this supported first from js-controller 5.0.
+                            adapter.sendToHost(
+                                `system.host.${adapter.host}`,
+                                'addNotification',
+                                {
+                                    scope: 'system',
+                                    category: 'securityIssues',
+                                    message:
+                                        'Your web instance is accessible from the internet without any protection. ' +
+                                        'Please enable authentication or disable the access from the internet.',
+                                    instance: `system.adapter.${adapter.namespace}`
+                                },
+                                (/* result */) => {
+                                    /* ignore */
+                                }
+                            );
+
+                            adapter.log.error(e.toString());
+                        }
+                    }, 1000);
+                }
             });
 
             adapter.log.info(`http${settings.secure ? 's' : ''} server listening on port ${port}`);

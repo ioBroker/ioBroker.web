@@ -71,5 +71,6 @@
   "write": "писати",
   "Use %s adapter to get letsencrypt certificates.": "Використовуйте адаптер %s, щоб отримати сертифікати letsencrypt.",
   "Language": "Мова",
-  "show_folders": "Показати вміст папок"
+  "show_folders": "Показати вміст папок",
+  "Do not check if this instance is available from internet": "Не перевіряйте, чи доступний цей екземпляр в Інтернеті"
 }

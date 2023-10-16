@@ -71,5 +71,6 @@
   "System language": "Idioma do sistema",
   "Use %s adapter to get letsencrypt certificates.": "Use o adaptador %s para obter certificados letsencrypt.",
   "Language": "Linguagem",
-  "show_folders": "Mostrar o conteúdo das pastas"
+  "show_folders": "Mostrar o conteúdo das pastas",
+  "Do not check if this instance is available from internet": "Não verifique se esta instância está disponível na Internet"
 }

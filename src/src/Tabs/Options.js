@@ -376,6 +376,13 @@ class Options extends Component {
                             native={native}
                             onChange={onChange}
                         />
+                        <CustomCheckbox
+                            title="Do not check if this instance is available from internet"
+                            attr="doNotCheckPublicIP"
+                            style={{ marginTop: 10 }}
+                            native={native}
+                            onChange={onChange}
+                        />
                     </div>
                 </div>
             </div>

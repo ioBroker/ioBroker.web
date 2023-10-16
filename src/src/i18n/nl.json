@@ -71,5 +71,6 @@
   "System language": "Systeemtaal",
   "Use %s adapter to get letsencrypt certificates.": "Gebruik %s adapter om letsencrypt-certificaten te verkrijgen.",
   "Language": "Taal",
-  "show_folders": "Inhoud van mappen weergeven"
+  "show_folders": "Inhoud van mappen weergeven",
+  "Do not check if this instance is available from internet": "Controleer niet of dit exemplaar beschikbaar is via internet"
 }
