@@ -1,7 +1,7 @@
 {
     "main_settings": "Allgemeine Einstellungen",
     "port": "Port",
-    "encryption": "Verschlüsselung (HTTPS)",
+    "encryption": "Verschlüsselte Verbindung (HTTPS)",
     "authentication": "Authentifikation",
     "basic_authentication": "Basic-Authentifizierung",
     "cache": "Cache",
