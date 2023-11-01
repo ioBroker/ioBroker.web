@@ -42,7 +42,7 @@
     "@iobroker/legacy-testing": "^1.0.3",
     "axios": "^1.6.0",
     "chai": "^4.3.10",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "gulp": "^4.0.2",
     "mocha": "^10.2.0"
   },
