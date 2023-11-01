@@ -9,7 +9,7 @@
         "@mui/material": "^5.14.16",
         "@mui/styles": "^5.14.13",
         "@sentry/browser": "^7.74.0",
-        "@sentry/integrations": "^7.74.0",
+        "@sentry/integrations": "^7.77.0",
         "babel-eslint": "^10.1.0",
         "eslint": "^8.52.0",
         "eslint-config-airbnb": "^19.0.4",
