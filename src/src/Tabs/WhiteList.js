@@ -3,14 +3,23 @@ import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 import {
-    Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    IconButton,
+    TableRow,
 } from '@mui/material';
 
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import {
+    Delete as DeleteIcon,
+    AddCircle as AddCircleIcon,
+} from '@mui/icons-material';
+
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
 import CustomInput from '../Components/CustomInput';
@@ -152,6 +161,14 @@ class WhiteList extends Component {
             });
     }
 
+    static getText(text) {
+        if (typeof text === 'string') {
+            return text;
+        }
+
+        return text[I18n.getLanguage()] || text.en;
+    }
+
     userSelect(el, style) {
         const { classes, native, onChange } = this.props;
         const { usersOptions } = this.state;
@@ -164,7 +181,7 @@ class WhiteList extends Component {
         return <CustomSelect
             table
             value={whiteListSettings[el].user}
-            options={[...optionsSelect, ...usersOptions.map(({ _id, common: { name } }) => ({ title: name, value: _id.replace('system.user.', '') }))]}
+            options={[...optionsSelect, ...usersOptions.map(({ _id, common: { name } }) => ({ title: WhiteList.getText(name), value: _id.replace('system.user.', '') }))]}
             native={native}
             style={style}
             noTranslate
@@ -276,27 +293,7 @@ class WhiteList extends Component {
                         if (value && !native.whiteListSettings) {
                             onChange('whiteListSettings', {
                                 default: {
-                                    user: 'admin',
-                                    object: {
-                                        read: true,
-                                        list: true,
-                                        write: true,
-                                        delete: true,
-                                    },
-                                    state: {
-                                        read: true,
-                                        list: true,
-                                        write: true,
-                                        create: true,
-                                        delete: true,
-                                    },
-                                    file: {
-                                        read: true,
-                                        list: true,
-                                        write: true,
-                                        create: true,
-                                        delete: true,
-                                    },
+                                    user: 'auth',
                                 },
                             });
                         }

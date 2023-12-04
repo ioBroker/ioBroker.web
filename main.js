@@ -37,6 +37,8 @@ const webPreSettings = {};
 const webByVersion = {};
 let loginPage    = null;
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\\s?]/g; // with space
+let groups = null;
+let users = null;
 
 const LOGIN_PAGE = '/login/index.html';
 const wwwDir = 'www';
@@ -119,6 +121,21 @@ function startAdapter(options) {
     Object.assign(options, {
         name: adapterName,
         objectChange: (id, obj) => {
+            if (groups && id.startsWith('system.group.')) {
+                if (obj) {
+                    groups[id] = obj;
+                } else {
+                    delete groups[id];
+                }
+            }
+            if (users && id.startsWith('system.user.')) {
+                if (obj) {
+                    users[id] = obj;
+                } else {
+                    delete users[id];
+                }
+            }
+
             if (id.startsWith('system.adapter')) {
                 if (obj && obj.common && obj.common.webExtension && obj.native &&
                     (extensions[id.substring('system.adapter.'.length)] ||
@@ -426,7 +443,7 @@ function getExtensionsAndSettings(callback) {
 }
 
 function main() {
-    getExtensionsAndSettings((err, ext) => {
+    getExtensionsAndSettings(async (err, ext) => {
         err && adapter.log.error(`Cannot read extensions: ${err}`);
         if (ext) {
             for (let e = 0; e < ext.length; e++) {
@@ -440,6 +457,28 @@ function main() {
                     };
                 }
             }
+        }
+        if (adapter.config.userListSettings) {
+            try {
+                const _users = await adapter.getObjectViewAsync('system', 'user', {startkey: 'system.user.', endkey: 'system.user.\u9999'});
+                users = {};
+                for (let u = 0; u < _users.rows.length; u++) {
+                    users[_users.rows[u].value._id] = _users.rows[u].value;
+                }
+            } catch (e) {
+                adapter.log.error(`Cannot read users: ${e}`);
+            }
+            try {
+                const _groups = await adapter.getObjectViewAsync('system', 'group', {startkey: 'system.group.', endkey: 'system.group.\u9999'});
+                groups = {};
+                for (let u = 0; u < _groups.rows.length; u++) {
+                    groups[_groups.rows[u].value._id] = _groups.rows[u].value;
+                }
+            } catch (e) {
+                adapter.log.error(`Cannot read users: ${e}`);
+            }
+            await adapter.subscribeForeignObjectsAsync('system.user.*');
+            await adapter.subscribeForeignObjectsAsync('system.group.*');
         }
 
         // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
@@ -1171,6 +1210,35 @@ async function initWebServer(settings) {
              */
             const authenticate = (req, res, next, redirect, origin) => {
                 passport.authenticate('local', (err, user) => {
+                    // replace user
+                    if (user && settings.userListEnabled) {
+                        // get the user group
+                        const longUser = user.startsWith('system.user.') ? user : `system.user.${user}`;
+                        user = '';
+                        if (settings.userListSettings.users.includes(longUser)) {
+                            if (settings.userListSettings.accessAsUser) {
+                                user = settings.userListSettings.accessAsUser;
+                            } else {
+                                user = longUser;
+                            }
+                        } else {
+                            const groupId = Object.keys(groups).find(groupId => groups[groupId].common.members.includes(longUser));
+                            if (settings.userListSettings.groups.includes(groupId)) {
+                                if (settings.userListSettings.accessAsUser) {
+                                    user = settings.userListSettings.accessAsUser;
+                                } else {
+                                    user = longUser;
+                                }
+                            }
+                        }
+                        if (!user) {
+                            adapter.log.warn(`User ${longUser} is not in the user list`);
+                        } else {
+                            adapter.log.debug(`User ${longUser} threaded as ${user}`);
+                            user = user.substring('system.user.'.length);
+                        }
+                    }
+
                     if (req.url.includes('/loginApp')) {
                         if (err) {
                             adapter.log.warn(`Cannot login user: ${err}`);

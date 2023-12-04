@@ -72,5 +72,13 @@
   "Use %s adapter to get letsencrypt certificates.": "Используйте адаптер %s для получения сертификатов letsencrypt.",
   "Language": "Язык",
   "show_folders": "Показать содержимое папок",
-  "Do not check if this instance is available from internet": "Не проверять, доступен ли этот экземпляр из Интернета"
+  "Do not check if this instance is available from internet": "Не проверять, доступен ли этот экземпляр из Интернета",
+  "UserList": "Список доступа пользователей",
+  "Only following users may access web interface as": "Только следующие пользователи могут получить доступ к веб-интерфейсу, как",
+  "logged in user": "вошедший в систему пользователь",
+  "after authentication": "после аутентификации",
+  "Groups": "Группы",
+  "Group members:": "Участники группы:",
+  "Users": "Пользователи",
+  "In groups:": "В группах:"
 }

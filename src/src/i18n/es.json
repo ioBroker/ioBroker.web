@@ -72,5 +72,13 @@
   "Use %s adapter to get letsencrypt certificates.": "Use el adaptador %s para obtener certificados de letsencrypt.",
   "Language": "Idioma",
   "show_folders": "Mostrar el contenido de las carpetas",
-  "Do not check if this instance is available from internet": "No verifique si esta instancia está disponible en Internet."
+  "Do not check if this instance is available from internet": "No verifique si esta instancia está disponible en Internet.",
+  "UserList": "Lista de acceso de usuarios",
+  "Only following users may access web interface as": "Sólo los siguientes usuarios pueden acceder a la interfaz web como",
+  "logged in user": "usuario registrado",
+  "after authentication": "después de la autenticación",
+  "Groups": "Grupos",
+  "Group members:": "Miembros del grupo:",
+  "Users": "Usuarios",
+  "In groups:": "En grupos:"
 }

@@ -72,5 +72,13 @@
   "Use %s adapter to get letsencrypt certificates.": "Gebruik %s adapter om letsencrypt-certificaten te verkrijgen.",
   "Language": "Taal",
   "show_folders": "Inhoud van mappen weergeven",
-  "Do not check if this instance is available from internet": "Controleer niet of dit exemplaar beschikbaar is via internet"
+  "Do not check if this instance is available from internet": "Controleer niet of dit exemplaar beschikbaar is via internet",
+  "UserList": "Lijst met gebruikerstoegang",
+  "Only following users may access web interface as": "Alleen de volgende gebruikers hebben toegang tot de webinterface als",
+  "logged in user": "ingelogde gebruiker",
+  "after authentication": "na authenticatie",
+  "Groups": "Groepen",
+  "Group members:": "Groepsleden:",
+  "Users": "Gebruikers",
+  "In groups:": "In groepen:"
 }

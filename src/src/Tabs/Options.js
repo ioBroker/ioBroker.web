@@ -210,7 +210,7 @@ class Options extends Component {
                 classes={undefined}
                 common={newCommon}
                 native={native}
-                // onError={text => this.setState({ errorText: text })}
+                onError={text => this.setState({ errorText: text })}
                 onLoad={onLoad}
             />
             <div className={`${classes.column} ${classes.columnSettings}`}>

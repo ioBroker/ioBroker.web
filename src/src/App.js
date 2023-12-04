@@ -12,6 +12,7 @@ import Certificates from './Tabs/Certificates';
 import WhiteList from './Tabs/WhiteList';
 import Background from './Tabs/Background';
 import Additionally from './Tabs/Additionally';
+import UserList from './Tabs/UserList';
 import Toast from './Components/Toast';
 
 const styles = theme => ({
@@ -51,14 +52,19 @@ const arrayTabName = [
         index: 2,
     },
     {
+        name: 'userList',
+        translate: 'UserList',
+        index: 3,
+    },
+    {
         name: 'additionally',
         translate: 'additionally',
-        index: 3,
+        index: 4,
     },
     {
         name: 'background',
         translate: 'background',
-        index: 4,
+        index: 5,
     },
 ];
 
@@ -140,6 +146,18 @@ class App extends GenericApp {
                     adapterName={this.adapterName}
                 />;
 
+            case 'userList':
+                return <UserList
+                    key="userList"
+                    common={this.common}
+                    socket={this.socket}
+                    native={native}
+                    onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                    onError={text => this.setState({ errorText: (text || text === 0) && typeof text !== 'string' ? text.toString() : text })}
+                    instance={this.instance}
+                    adapterName={this.adapterName}
+                />;
+
             case 'additionally':
                 return <Additionally
                     key="additionally"
@@ -184,7 +202,7 @@ class App extends GenericApp {
         const { native } = this.state;
         return (!native.auth && nameTab === 'background') ||
             (!native.secure && nameTab === 'certificates') ||
-            (!native.auth && nameTab === 'whiteList');
+            (!native.auth && (nameTab === 'whiteList' || nameTab === 'userList'));
     }
 
     render() {

@@ -72,5 +72,13 @@
   "Use %s adapter to get letsencrypt certificates.": "使用 %s 适配器获取 letsencrypt 证书。",
   "Language": "语言",
   "show_folders": "显示文件夹内容",
-  "Do not check if this instance is available from internet": "不检查此实例是否可从 Internet 获取"
+  "Do not check if this instance is available from internet": "不检查此实例是否可从 Internet 获取",
+  "UserList": "用户访问列表",
+  "Only following users may access web interface as": "只有以下用户可以访问 Web 界面：",
+  "logged in user": "登录用户",
+  "after authentication": "认证后",
+  "Groups": "团体",
+  "Group members:": "小组成员：",
+  "Users": "用户",
+  "In groups:": "在团队中："
 }

@@ -72,5 +72,13 @@
   "Use %s adapter to get letsencrypt certificates.": "Use %s adapter to get letsencrypt certificates.",
   "Language": "Language",
   "show_folders": "Show folders content",
-  "Do not check if this instance is available from internet": "Do not check if this instance is available from internet"
+  "Do not check if this instance is available from internet": "Do not check if this instance is available from internet",
+  "UserList": "User access list",
+  "Only following users may access web interface as": "Only following users may access web interface as",
+  "logged in user": "logged in user",
+  "after authentication": "after authentication",
+  "Groups": "Groups",
+  "Group members:": "Group members:",
+  "Users": "Users",
+  "In groups:": "In groups:"
 }
