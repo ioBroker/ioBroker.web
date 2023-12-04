@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.1.10",
+    "version": "6.2.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.2.0": {
+        "en": "Added the user access list option",
+        "de": "Option Benutzerzugriffsliste hinzugefügt",
+        "ru": "Добавлена опция списка доступа пользователей",
+        "pt": "Adicionado a opção de lista de acesso ao usuário",
+        "nl": "Voeg de gebruiker toegangslijst toe",
+        "fr": "Ajout de l'option de liste d'accès utilisateur",
+        "it": "Aggiunto l'opzione lista di accesso utente",
+        "es": "Añadido la opción lista de acceso del usuario",
+        "pl": "Added udostępnienie listy dostępu użytkownika",
+        "uk": "Додано варіант списку користувачів",
+        "zh-cn": "增加用户出入名单"
+      },
       "6.1.10": {
         "en": "Corrected the start screen",
         "de": "Korrektur des Startbildschirms",
@@ -93,19 +106,6 @@
         "pl": "ulepszenie gniazda i włókna",
         "uk": "модернізація плунжерів і залежностей",
         "zh-cn": "a. 升级的骨干和妻子的依赖"
-      },
-      "6.1.1": {
-        "en": "added missing node16 requirement",
-        "de": "fehlende knoten16 anforderung",
-        "ru": "добавлено отсутствует требование к node16",
-        "pt": "requisito adicional node16 faltando",
-        "nl": "vermiste vereiste",
-        "fr": "exigence node16 manquante",
-        "it": "aggiunto mancante node16 requisito",
-        "es": "nodo16 faltante",
-        "pl": "zastrzeżenie",
-        "uk": "доданий відсутній вузол16 вимога",
-        "zh-cn": "增加未满足要求"
       }
     },
     "desc": {
