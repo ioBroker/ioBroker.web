@@ -132,7 +132,7 @@ class UserList extends Component {
                             value={native.userListSettings.accessAsUser || '_'}
                             onChange={e => {
                                 const _userListSettings = JSON.parse(JSON.stringify(native.userListSettings));
-                                _userListSettings.accessAsUser = e.target.value === '_' || !e.target.value ? '' : e.target.value
+                                _userListSettings.accessAsUser = e.target.value === '_' || !e.target.value ? '' : e.target.value;
                                 onChange('userListSettings', _userListSettings);
                             }}
                             renderValue={item => {
