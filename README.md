@@ -89,6 +89,9 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (joltcoke) Corrected the crash if authentication is enabled
+
 ### 6.2.1 (2023-12-04)
 * (bluefox) Added the user access list option
 
