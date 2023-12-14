@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.2.1",
+    "version": "6.2.2",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.2.2": {
+        "en": "Corrected the crash if authentication is enabled",
+        "de": "Korrigiert den Crash, wenn die Authentifizierung aktiviert ist",
+        "ru": "Исправлена ошибка, если авторизация включена",
+        "pt": "Corrigido o acidente se a autenticação estiver ativada",
+        "nl": "Vertaling:",
+        "fr": "Correction du crash si l'authentification est activée",
+        "it": "Corretto il crash se l'autenticazione è abilitata",
+        "es": "Corregido el accidente si la autenticación está habilitada",
+        "pl": "Poprawiona katastrofa, jeśli uwierzytelnianie jest możliwe",
+        "uk": "Виправлено помилку, якщо ввімкнено автентифікацію",
+        "zh-cn": "如果能够证明确证,便纠正了事故。"
+      },
       "6.2.1": {
         "en": "Added the user access list option",
         "de": "Option Benutzerzugriffsliste hinzugefügt",
@@ -93,19 +106,6 @@
         "pl": "ulepszona gniazdo i wsy zależą od poprawy błędu przez niepodpisanie na odłączeniu klienta",
         "uk": "модернізоване розетки і залежності від відмов від від клієнта",
         "zh-cn": "升级的袖手旁观和头寸,以纠正错误,不用说不让客户脱钩。"
-      },
-      "6.1.2": {
-        "en": "upgrade socketio and ws dependencies",
-        "de": "upgrade-sockel und abhängigkeiten",
-        "ru": "обновление socketio и ws зависимостей",
-        "pt": "atualizar socketio e ws dependências",
-        "nl": "upgrade socketio en ws afhankelijkheid",
-        "fr": "upgrade socketio et ws dépendances",
-        "it": "aggiornamento socketio e dipendenze ws",
-        "es": "actualización de las dependencias de socketio y ws",
-        "pl": "ulepszenie gniazda i włókna",
-        "uk": "модернізація плунжерів і залежностей",
-        "zh-cn": "a. 升级的骨干和妻子的依赖"
       }
     },
     "desc": {
