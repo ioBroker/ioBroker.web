@@ -89,7 +89,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.3 (2023-12-18)
 * (foxriver76) update websocket library to increase maximum file size from 100 MB to 500 MB
 
 ### 6.2.2 (2023-12-14)

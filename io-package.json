@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.2.2",
+    "version": "6.2.3",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.2.3": {
+        "en": "update websocket library to increase maximum file size from 100 MB to 500 MB",
+        "de": "websocket-Bibliothek aktualisieren, um die maximale Dateigröße von 100 MB auf 500 MB zu erhöhen",
+        "ru": "обновление библиотеки websocket для увеличения максимального размера файла от 100 МБ до 500 МБ",
+        "pt": "atualizar biblioteca websocket para aumentar o tamanho máximo do arquivo de 100 MB para 500 MB",
+        "nl": "update websocket bibliotheek om maximale bestandsmaat te verhogen van 100 MB tot 500 MB",
+        "fr": "mettre à jour la bibliothèque websocket pour augmenter la taille maximale de fichier de 100 MB à 500 MB",
+        "it": "aggiornare la libreria websocket per aumentare la dimensione massima del file da 100 MB a 500 MB",
+        "es": "actualizar la biblioteca websocket para aumentar el tamaño máximo del archivo de 100 MB a 500 MB",
+        "pl": "zaktualizowana biblioteka internetowa do zwiększenia rozmiaru pliku z 100 MB do 500 MB",
+        "uk": "оновлення бібліотеки websocket для збільшення максимального розміру файлу від 100 МБ до 500 МБ",
+        "zh-cn": "a. 更新的网站库图书馆,以增加最高档案数量,从100个到500个MB"
+      },
       "6.2.2": {
         "en": "Corrected the crash if authentication is enabled",
         "de": "Korrigiert den Crash, wenn die Authentifizierung aktiviert ist",
@@ -93,19 +106,6 @@
         "pl": "ulepszenie gniazd i wstawki zależą od naprawy problemu wizji",
         "uk": "оновлення плагіна і ws залежностей, щоб виправити проблему підписки",
         "zh-cn": "装配量和妻子的依赖性"
-      },
-      "6.1.3": {
-        "en": "upgraded socketio and ws dependencies to correct the error by unsubscribing on client disconnect",
-        "de": "erweiterte muffizio- und ws-abhängigkeiten, um den fehler zu korrigieren, indem sie die abschaltung des clients deaktivieren",
-        "ru": "обновление socketio и ws зависимостей, чтобы исправить ошибку, отписавшись от клиента отключить",
-        "pt": "socketio atualizado e ws dependências para corrigir o erro, dessubscrevendo no cliente desconectar",
-        "nl": "opgewaardeerde socketio en ws afhankelijkheid om de fout te corrigeren door onbeduidende cliënten los te laten",
-        "fr": "mise à niveau de socketio et de dépendances ws pour corriger l'erreur en désabonnement à la déconnection du client",
-        "it": "socketio aggiornato e dipendenze ws per correggere l'errore cancellando la sottoscrizione sul client disconnette",
-        "es": "actualización de las dependencias de socketio y ws para corregir el error al darse cuenta de la desconexión del cliente",
-        "pl": "ulepszona gniazdo i wsy zależą od poprawy błędu przez niepodpisanie na odłączeniu klienta",
-        "uk": "модернізоване розетки і залежності від відмов від від клієнта",
-        "zh-cn": "升级的袖手旁观和头寸,以纠正错误,不用说不让客户脱钩。"
       }
     },
     "desc": {
