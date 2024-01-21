@@ -58,7 +58,7 @@
     "whitelist_only_with_integrated_socket": "Biała lista działa tylko ze zintegrowanym interfejsem socket-io",
     "White list will be disabled. Please confirm.": "Biała lista zostanie wyłączona. Proszę potwierdzić.",
     "Ok": "Ok",
-    "Cancel": "odwołaj",
+    "Cancel": "Odwołaj",
     "usePureWebSockets": "Używaj czystych gniazd sieciowych (iobroker.ws)",
     "If no IP address matches, show authentication dialog": "Jeśli żaden adres IP nie pasuje, pokaż okno uwierzytelniania",
     "Compatibility mode with socket.io@2.x": "Tryb zgodności z socket.io@2.x",
