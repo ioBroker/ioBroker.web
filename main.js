@@ -1838,30 +1838,28 @@ async function initWebServer(settings) {
                                 },
                                 (err, buffer, mimeType) => {
                                     if (adapter.config.showFolderIndex && err && err.toString() === 'Error: Not exists' && req.url.endsWith('/')) {
-                                        url = url.replace(/\/index.html$/, '');
+                                        url = url.replace(/\/?index.html$/, '');
                                         // show folder index
+
+                                        const path = webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url;
                                         return adapter.readDir(
                                             id,
-                                            webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url,
+                                            path,
                                             {
                                                 user: req.user ? `system.user.${req.user}` : settings.defaultUser
                                             },
                                             (err, files) => {
+                                                adapter.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
+
                                                 res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                                                 res.set('Content-Type', 'text/html; charset=utf-8');
                                                 const text = [
                                                     '<html>',
                                                     '<head><title>Directory</title>',
-                                                    `<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-    td {
-        padding: 5px;
-    }
-</style>`,
+                                                    `<style>body { font-family: Arial, sans-serif; } td { padding: 5px; }</style>`,
                                                     `</head><body><h3>Directory ${req.url}</h3><table>`
                                                 ];
+
                                                 if (url !== '/') {
                                                     const parts = url.split('/');
                                                     parts.pop();
@@ -1871,11 +1869,9 @@ async function initWebServer(settings) {
                                                 files.sort((a, b) => {
                                                     if (a.isDir && b.isDir) {
                                                         return a.file.localeCompare(b.file);
-                                                    }
-                                                    if (a.isDir) {
+                                                    } else if (a.isDir) {
                                                         return -1;
-                                                    }
-                                                    if (b.isDir) {
+                                                    } else if (b.isDir) {
                                                         return 1;
                                                     }
 
