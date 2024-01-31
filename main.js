@@ -1675,7 +1675,19 @@ async function initWebServer(settings) {
 
                 extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
                 if (extensions[instance].obj.waitForReady) {
-                    extensionPromises.push(new Promise(resolve => extensions[instance].obj.waitForReady(resolve)));
+                    extensionPromises.push(new Promise(resolve => {
+                        const timeout = adapter.setTimeout(() => {
+                            adapter.log.error(`Extension of instance ${instance} is not responding (waitForReady)`);
+                            resolve();
+                        }, 5000);
+
+                        const ready = () => {
+                            adapter.clearTimeout(timeout);
+                            resolve();
+                        };
+
+                        extensions[instance].obj.waitForReady(ready);
+                    }));
                 }
                 adapter.log.info(`Connect extension "${extensions[instance].path}"`);
             } catch (err) {
