@@ -275,7 +275,7 @@ function startAdapter(options) {
 
                 Object.keys(extensions).forEach(instance => {
                     try {
-                        if (extensions[instance] && extensions[instance].obj && extensions[instance].obj.unload) {
+                        if (extensions?.[instance]?.obj?.unload) {
                             const promise = extensions[instance].obj.unload();
                             if (promise && typeof promise === 'object' && typeof promise.then === 'function') {
                                 promises.push(promise
@@ -773,7 +773,7 @@ async function getListOfAllAdapters(settings, server, req) {
     // inform extensions
     Object.keys(extensions).forEach(instance => {
         try {
-            if (extensions[instance].obj && typeof extensions[instance].obj.welcomePage === 'function') {
+            if (extensions?.[instance]?.obj?.welcomePage && typeof extensions[instance].obj.welcomePage === 'function') {
                 list.push(extensions[instance].obj.welcomePage());
             }
         } catch (err) {
@@ -1673,15 +1673,19 @@ async function initWebServer(settings) {
                     extAPI = require(`${utils.appName}.${extensions[instance].path}`);
                 }
 
+                adapter.log.info(`Connecting extension "${extensions[instance].path}"`);
+
                 extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
-                if (extensions[instance].obj.waitForReady) {
+                if (extensions[instance].obj?.waitForReady && typeof extensions[instance].obj.waitForReady === 'function') {
                     extensionPromises.push(new Promise(resolve => {
                         const timeout = adapter.setTimeout(() => {
-                            adapter.log.error(`Extension of instance ${instance} is not responding (waitForReady)`);
+                            adapter.log.error(`Extension "${instance}" (${extensions[instance].path}) is not responding (waitForReady)`);
                             resolve();
                         }, 5000);
 
                         const ready = () => {
+                            adapter.log.debug(`Connected extension "${extensions[instance].path}"`);
+
                             adapter.clearTimeout(timeout);
                             resolve();
                         };
@@ -1689,7 +1693,6 @@ async function initWebServer(settings) {
                         extensions[instance].obj.waitForReady(ready);
                     }));
                 }
-                adapter.log.info(`Connect extension "${extensions[instance].path}"`);
             } catch (err) {
                 adapter.log.error(`Cannot start extension "${instance}": ${err}`);
             }
