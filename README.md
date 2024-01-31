@@ -154,7 +154,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2014-2023 Bluefox <dogafox@gmail.com>
+Copyright (c) 2014-2024 Bluefox <dogafox@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
