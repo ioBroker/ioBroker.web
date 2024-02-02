@@ -262,7 +262,7 @@ function startAdapter(options) {
             }
         },
         unload: callback => {
-            checkTimeout && clearTimeout(checkTimeout);
+            checkTimeout && adapter.clearTimeout(checkTimeout);
             checkTimeout = null;
 
             try {
@@ -290,7 +290,7 @@ function startAdapter(options) {
 
                 let timeout;
                 if (promises.length) {
-                    timeout = setTimeout(() => {
+                    timeout = adapter.setTimeout(() => {
                         timeout = null;
                         adapter && adapter.log && adapter.log.warn(`Timeout by termination of web-extensions!`);
                         webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
@@ -305,7 +305,7 @@ function startAdapter(options) {
                     .catch(e => adapter && adapter.log && adapter.log.error(`Cannot unload web extensions: ${e}`))
                     .then(() => {
                         if (!promises.length || timeout) {
-                            clearTimeout(timeout);
+                            adapter.clearTimeout(timeout);
                             timeout = null;
                             webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             webServer && webServer.io && webServer.io.close();
@@ -1590,7 +1590,7 @@ async function initWebServer(settings) {
                 adapter.setState('info.connection', true, true);
 
                 if (!settings.doNotCheckPublicIP && !settings.auth) {
-                    checkTimeout = setTimeout(async () => {
+                    checkTimeout = adapter.setTimeout(async () => {
                         checkTimeout = null;
                         try {
                             await IoBWebServer.checkPublicIP(settings.port, 'ioBroker.web', '/iobroker_check.html');
