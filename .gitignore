@@ -16,3 +16,4 @@ package-lock.json
 /lib/passportSocket.js
 /www/lib/js/ws.js
 *.tgz
+.DS_Store
