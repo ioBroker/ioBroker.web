@@ -262,7 +262,7 @@ function startAdapter(options) {
             }
         },
         unload: callback => {
-            checkTimeout && clearTimeout(checkTimeout);
+            checkTimeout && adapter.clearTimeout(checkTimeout);
             checkTimeout = null;
 
             try {
@@ -275,7 +275,7 @@ function startAdapter(options) {
 
                 Object.keys(extensions).forEach(instance => {
                     try {
-                        if (extensions[instance] && extensions[instance].obj && extensions[instance].obj.unload) {
+                        if (extensions?.[instance]?.obj?.unload) {
                             const promise = extensions[instance].obj.unload();
                             if (promise && typeof promise === 'object' && typeof promise.then === 'function') {
                                 promises.push(promise
@@ -290,7 +290,7 @@ function startAdapter(options) {
 
                 let timeout;
                 if (promises.length) {
-                    timeout = setTimeout(() => {
+                    timeout = adapter.setTimeout(() => {
                         timeout = null;
                         adapter && adapter.log && adapter.log.warn(`Timeout by termination of web-extensions!`);
                         webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
@@ -305,7 +305,7 @@ function startAdapter(options) {
                     .catch(e => adapter && adapter.log && adapter.log.error(`Cannot unload web extensions: ${e}`))
                     .then(() => {
                         if (!promises.length || timeout) {
-                            clearTimeout(timeout);
+                            adapter.clearTimeout(timeout);
                             timeout = null;
                             webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
                             webServer && webServer.io && webServer.io.close();
@@ -773,7 +773,7 @@ async function getListOfAllAdapters(settings, server, req) {
     // inform extensions
     Object.keys(extensions).forEach(instance => {
         try {
-            if (extensions[instance].obj && typeof extensions[instance].obj.welcomePage === 'function') {
+            if (extensions?.[instance]?.obj?.welcomePage && typeof extensions[instance].obj.welcomePage === 'function') {
                 list.push(extensions[instance].obj.welcomePage());
             }
         } catch (err) {
@@ -1590,7 +1590,7 @@ async function initWebServer(settings) {
                 adapter.setState('info.connection', true, true);
 
                 if (!settings.doNotCheckPublicIP && !settings.auth) {
-                    checkTimeout = setTimeout(async () => {
+                    checkTimeout = adapter.setTimeout(async () => {
                         checkTimeout = null;
                         try {
                             await IoBWebServer.checkPublicIP(settings.port, 'ioBroker.web', '/iobroker_check.html');
@@ -1673,11 +1673,26 @@ async function initWebServer(settings) {
                     extAPI = require(`${utils.appName}.${extensions[instance].path}`);
                 }
 
+                adapter.log.info(`Connecting extension "${extensions[instance].path}"`);
+
                 extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
-                if (extensions[instance].obj.waitForReady) {
-                    extensionPromises.push(new Promise(resolve => extensions[instance].obj.waitForReady(resolve)));
+                if (extensions[instance].obj?.waitForReady && typeof extensions[instance].obj.waitForReady === 'function') {
+                    extensionPromises.push(new Promise(resolve => {
+                        const timeout = adapter.setTimeout(() => {
+                            adapter.log.error(`Extension "${instance}" (${extensions[instance].path}) is not responding (waitForReady)`);
+                            resolve();
+                        }, 5000);
+
+                        const ready = () => {
+                            adapter.log.debug(`Connected extension "${extensions[instance].path}"`);
+
+                            adapter.clearTimeout(timeout);
+                            resolve();
+                        };
+
+                        extensions[instance].obj.waitForReady(ready);
+                    }));
                 }
-                adapter.log.info(`Connect extension "${extensions[instance].path}"`);
             } catch (err) {
                 adapter.log.error(`Cannot start extension "${instance}": ${err}`);
             }
@@ -1826,30 +1841,28 @@ async function initWebServer(settings) {
                                 },
                                 (err, buffer, mimeType) => {
                                     if (adapter.config.showFolderIndex && err && err.toString() === 'Error: Not exists' && req.url.endsWith('/')) {
-                                        url = url.replace(/\/index.html$/, '');
+                                        url = url.replace(/\/?index.html$/, '');
                                         // show folder index
+
+                                        const path = webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url;
                                         return adapter.readDir(
                                             id,
-                                            webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url,
+                                            path,
                                             {
                                                 user: req.user ? `system.user.${req.user}` : settings.defaultUser
                                             },
                                             (err, files) => {
+                                                adapter.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
+
                                                 res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
                                                 res.set('Content-Type', 'text/html; charset=utf-8');
                                                 const text = [
                                                     '<html>',
                                                     '<head><title>Directory</title>',
-                                                    `<style>
-    body {
-        font-family: Arial, sans-serif;
-    }
-    td {
-        padding: 5px;
-    }
-</style>`,
+                                                    `<style>body { font-family: Arial, sans-serif; } td { padding: 5px; }</style>`,
                                                     `</head><body><h3>Directory ${req.url}</h3><table>`
                                                 ];
+
                                                 if (url !== '/') {
                                                     const parts = url.split('/');
                                                     parts.pop();
@@ -1859,11 +1872,9 @@ async function initWebServer(settings) {
                                                 files.sort((a, b) => {
                                                     if (a.isDir && b.isDir) {
                                                         return a.file.localeCompare(b.file);
-                                                    }
-                                                    if (a.isDir) {
+                                                    } else if (a.isDir) {
                                                         return -1;
-                                                    }
-                                                    if (b.isDir) {
+                                                    } else if (b.isDir) {
                                                         return 1;
                                                     }
 

@@ -1,4 +1,5 @@
 node_modules
+.dev-server
 .idea
 tmp
 admin/i18n/*/flat.txt
