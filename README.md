@@ -89,7 +89,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.4 (2024-02-17)
 * (klein0r) Extensions may block the web instance
 * (klein0r) Fixed directory listing
 

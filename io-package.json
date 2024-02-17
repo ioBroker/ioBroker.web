@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.2.3",
+    "version": "6.2.4",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.2.4": {
+        "en": "Extensions may block the web instance\nFixed directory listing",
+        "de": "Erweiterungen können die Web-Instanz blockieren\nBehobene Verzeichnisliste",
+        "ru": "Продления могут блокировать веб-экран\nФиксированный список каталогов",
+        "pt": "Extensões podem bloquear a instância da Web\nLista de diretórios fixos",
+        "nl": "Extensies kunnen de web instantie blokkeren\nVaste maplijst",
+        "fr": "Les extensions peuvent bloquer l'instance web\nListe des répertoires fixes",
+        "it": "Le estensioni possono bloccare l'istanza web\nElenco delle directory fisse",
+        "es": "Las extensiones pueden bloquear la instancia web\nListado de directorio fijo",
+        "pl": "Rozszerzenia mogą blokować instancję internetową\nStała lista katalogów",
+        "uk": "Розширення можуть блокувати веб-пристрою\nВиправлено список каталогів",
+        "zh-cn": "扩展名可能屏蔽网页实例\n固定目录列表"
+      },
       "6.2.3": {
         "en": "update websocket library to increase maximum file size from 100 MB to 500 MB",
         "de": "websocket-Bibliothek aktualisieren, um die maximale Dateigröße von 100 MB auf 500 MB zu erhöhen",
@@ -93,19 +106,6 @@
         "pl": "Poprawne rozwiązanie adaptacyjne, jeśli alias nie ma docelowego celu\nPoprawione gniazdo. połączenie io",
         "uk": "Виправлено припинення адаптера, якщо псевдонім не має цілей\nВиправлена розетка. io підключення",
         "zh-cn": "如果除其它外别无目标,适应适应人员终止\n更正。 联系"
-      },
-      "6.1.4": {
-        "en": "upgrade socketio and ws dependencies to fix vis subscribe problem",
-        "de": "upgrade-sockel und ws abhängigkeiten zu beheben vis abonnieren problem",
-        "ru": "обновить socketio и ws зависимости, чтобы исправить vis подписаться проблема",
-        "pt": "atualizar socketio e ws dependências para corrigir vis problema de assinatura",
-        "nl": "upgrade socketio en ws afhankelijkheid om vis te repareren",
-        "fr": "mise à niveau socketio et les dépendances ws pour corriger le problème d'abonnement vis",
-        "it": "aggiornamento socketio e dipendenze ws per risolvere il problema vis abbonamento",
-        "es": "actualizar las dependencias de socketio y ws para fijar vis problema de suscripción",
-        "pl": "ulepszenie gniazd i wstawki zależą od naprawy problemu wizji",
-        "uk": "оновлення плагіна і ws залежностей, щоб виправити проблему підписки",
-        "zh-cn": "装配量和妻子的依赖性"
       }
     },
     "desc": {
