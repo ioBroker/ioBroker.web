@@ -1678,16 +1678,21 @@ async function initWebServer(settings) {
                 extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
                 if (extensions[instance].obj?.waitForReady && typeof extensions[instance].obj.waitForReady === 'function') {
                     extensionPromises.push(new Promise(resolve => {
-                        const timeout = adapter.setTimeout(() => {
-                            adapter.log.error(`Extension "${instance}" (${extensions[instance].path}) is not responding (waitForReady)`);
-                            resolve();
+                        let timeout = adapter.setTimeout(() => {
+                            if (timeout) {
+                                timeout = null;
+                                adapter.log.error(`Extension "${instance}" (${extensions[instance].path}) is not responding (waitForReady)`);
+                                resolve();
+                            }
                         }, 5000);
 
                         const ready = () => {
-                            adapter.log.debug(`Connected extension "${extensions[instance].path}"`);
-
-                            adapter.clearTimeout(timeout);
-                            resolve();
+                            if (timeout) {
+                                adapter.log.debug(`Connected extension "${extensions[instance].path}"`);
+                                adapter.clearTimeout(timeout);
+                                timeout = null;
+                                resolve();
+                            }
                         };
 
                         extensions[instance].obj.waitForReady(ready);
