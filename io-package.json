@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.2.4",
+    "version": "6.2.5",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.2.5": {
+        "en": "Just some packages were updates",
+        "de": "Nur einige Pakete waren Updates",
+        "ru": "Просто некоторые пакеты были обновления",
+        "pt": "Apenas alguns pacotes foram atualizações",
+        "nl": "Enkele pakketten waren updates",
+        "fr": "Juste quelques paquets étaient des mises à jour",
+        "it": "Solo alcuni pacchetti sono stati aggiornamenti",
+        "es": "Sólo algunos paquetes eran actualizaciones",
+        "pl": "Tylko kilka pakietów były aktualizacje",
+        "uk": "Просто деякі пакети були оновлені",
+        "zh-cn": "只是一些软件包是更新的"
+      },
       "6.2.4": {
         "en": "Extensions may block the web instance\nFixed directory listing",
         "de": "Erweiterungen können die Web-Instanz blockieren\nBehobene Verzeichnisliste",
@@ -93,19 +106,6 @@
         "pl": "Addditional accessibility check",
         "uk": "Додано перевірку публічного доступу",
         "zh-cn": "增加公共无障碍检查"
-      },
-      "6.1.6": {
-        "en": "Corrected adapter termination if the alias has no target\nCorrected socket.io connection",
-        "de": "Korrigierter Adapterabschluss, wenn der Alias kein Ziel hat\nRichtige Steckdose. io-Verbindung",
-        "ru": "Исправлено прекращение адаптера, если псевдоним не имеет цели\nИсправлена розетка. io подключение",
-        "pt": "Terminação correta do adaptador se o alias não tiver nenhum alvo\nTomada corrigida. conexão io",
-        "nl": "Verminderde adapter terminatie als de alias geen doelwit heeft\nGecorrigeerde sok. io connectie",
-        "fr": "Résiliation correcte de l'adaptateur si l'alias n'a pas de cible\nDouille corrigée. io connection",
-        "it": "Rescissione adattatore corretta se l'alias non ha un obiettivo\nPresa corretta. collegamento io",
-        "es": "Terminación corregida del adaptador si el alias no tiene objetivo\nEnchufe corregido. io conexión",
-        "pl": "Poprawne rozwiązanie adaptacyjne, jeśli alias nie ma docelowego celu\nPoprawione gniazdo. połączenie io",
-        "uk": "Виправлено припинення адаптера, якщо псевдонім не має цілей\nВиправлена розетка. io підключення",
-        "zh-cn": "如果除其它外别无目标,适应适应人员终止\n更正。 联系"
       }
     },
     "desc": {

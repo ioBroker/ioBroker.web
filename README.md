@@ -89,7 +89,7 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 6.2.5 (2024-02-22)
 * (bluefox) Just some packages were updates
 
 ### 6.2.4 (2024-02-17)
