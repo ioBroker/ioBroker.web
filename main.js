@@ -22,6 +22,7 @@ let passport; // =          require('passport');
 let LocalStrategy; // =     require('passport-local').Strategy;
 let flash; // =             require('connect-flash'); // TODO report error to user
 let checkTimeout;
+let vendorPrefix;
 
 let webServer    = null;
 let store        = null;
@@ -334,6 +335,14 @@ function startAdapter(options) {
             } else {
                 adapter.log.error('Cannot find object system.config');
             }
+
+            let uuid = null;
+            try {
+                uuid = await adapter.getForeignObjectAsync('system.meta.uuid');
+            } catch (e) {
+                adapter.log.warn(`Cannot read UUID: ${e}`);
+            }
+            vendorPrefix = systemConfig?.native?.vendor?.uuidPrefix || (uuid?.native?.uuid?.length > 36 ? uuid.native.uuid.substring(0, 2) : '');
 
             // information about connected socket.io adapter
             if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
@@ -1744,6 +1753,7 @@ async function initWebServer(settings) {
                         return;
                     }
 
+                    // If root directory requested
                     if (url === '/' || url === '/index.html') {
                         if (adapter.config.defaultRedirect) {
                             res.redirect(301, adapter.config.defaultRedirect);
@@ -1898,9 +1908,27 @@ async function initWebServer(settings) {
                                     } else {
                                         mimeType = mimeType || mime.lookup(url) || 'text/javascript';
 
+                                        // replace some important variables in HTML
+                                        if (url === 'index.html' || url === 'edit.html') {
+                                            buffer = buffer
+                                                .toString()
+                                                .replaceAll(`'@@vendorPrefix@@'`, vendorPrefix)
+                                                .replaceAll(`"@@vendorPrefix@@"`, vendorPrefix)
+
+                                                .replaceAll(`'@@disableDataReporting@@'`, adapter.common.disableDataReporting ? 'true' : 'false')
+                                                .replaceAll(`"@@disableDataReporting@@"`, adapter.common.disableDataReporting ? 'true' : 'false')
+
+                                                .replaceAll(`@@loadingBackgroundColor@@`, adapter.config.loadingBackgroundColor || '')
+
+                                                .replaceAll(`@@loadingBackgroundImage@@`, adapter.config.loadingBackgroundImage ? `files/${adapter.namespace}/loading-bg.png` : '')
+
+                                                .replaceAll(`'@@loadingHideLogo@@'`, adapter.config.loadingHideLogo ? 'true' : 'false')
+                                                .replaceAll(`"@@loadingHideLogo@@"`, adapter.config.loadingHideLogo ? 'true' : 'false');
+                                        }
+
                                         // Store file in cache
                                         if (settings.cache) {
-                                            cache[`${id}/${url}`] = {buffer, mimeType};
+                                            cache[`${id}/${url}`] = { buffer, mimeType };
                                         }
 
                                         res.contentType(mimeType);
