@@ -1912,8 +1912,7 @@ async function initWebServer(settings) {
                                         if (url === 'index.html' || url === 'edit.html') {
                                             buffer = buffer
                                                 .toString()
-                                                .replaceAll(`'@@vendorPrefix@@'`, vendorPrefix)
-                                                .replaceAll(`"@@vendorPrefix@@"`, vendorPrefix)
+                                                .replaceAll(`@@vendorPrefix@@`, vendorPrefix)
 
                                                 .replaceAll(`'@@disableDataReporting@@'`, adapter.common.disableDataReporting ? 'true' : 'false')
                                                 .replaceAll(`"@@disableDataReporting@@"`, adapter.common.disableDataReporting ? 'true' : 'false')
