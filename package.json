@@ -20,12 +20,12 @@
   },
   "dependencies": {
     "@iobroker/webserver": "^1.0.3",
-    "@iobroker/adapter-core": "^3.0.4",
+    "@iobroker/adapter-core": "^3.0.6",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
-    "express": "^4.18.3",
+    "express": "^4.19.2",
     "express-session": "^1.18.0",
     "iobroker.simple-api": "^2.7.2",
     "iobroker.ws": "2.5.11",
@@ -39,12 +39,12 @@
     "@alcalzone/release-script": "^3.7.0",
     "@alcalzone/release-script-plugin-iobroker": "^3.7.0",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
-    "@iobroker/legacy-testing": "^1.0.9",
+    "@iobroker/legacy-testing": "^1.0.10",
     "axios": "^1.6.8",
     "chai": "^4.4.1",
-    "eslint": "^8.57.0",
+    "eslint": "^9.0.0",
     "gulp": "^4.0.2",
-    "mocha": "^10.3.0"
+    "mocha": "^10.4.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
