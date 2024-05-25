@@ -6,7 +6,7 @@
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@iobroker/adapter-react-v5": "^4.13.24",
         "@mui/icons-material": "^5.15.18",
-        "@mui/material": "5.14.14",
+        "@mui/material": "5.15.18",
         "@mui/styles": "5.14.14",
         "@sentry/browser": "^8.4.0",
         "@sentry/integrations": "^7.114.0",
