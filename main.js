@@ -1409,6 +1409,33 @@ async function initWebServer(settings) {
                 }
             });
 
+            // get user by session  /cookie
+            server.app.get('/getUser', (req, res, next) => {
+                if (req.isAuthenticated()) {
+                    const parts = req.headers.cookie.split(';');
+                    const cookie = {};
+                    parts.forEach(item => {
+                        const [name, value] = item.split('=');
+                        cookie[name.trim()] = value;
+                    });
+
+                    if (cookie['connect.sid']) {
+                        store && store.get(cookie['connect.sid'], (err, obj) => {
+                            // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
+                            if (obj) {
+                                res.send({ expires: obj.cookie.expires, user: obj.passport.user });
+                            } else {
+                                res.status(501).send('User not logged in.');
+                            }
+                        });
+                    } else {
+                        res.status(501).send('User not logged in.');
+                    }
+                } else {
+                    res.status(501).send('User not logged in.');
+                }
+            });
+            
             // todo
             server.app.get('/prolongSession', (req, res, next) => {
                 if (req.isAuthenticated()) {
@@ -1421,7 +1448,7 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store && store.get(req.session.id, (err, obj) => {
+                        store && store.get(cookie['connect.sid'], (err, obj) => {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 const expires = new Date();
@@ -1432,7 +1459,7 @@ async function initWebServer(settings) {
 
                                 store.set(req.session.id, obj);
                                 //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
-                                res.send(obj.cookie.expires);
+                                res.send({ expires: obj.cookie.expires, user: obj.passport.user });
                             } else {
                                 res.status(501).send('cannot prolong');
                             }
