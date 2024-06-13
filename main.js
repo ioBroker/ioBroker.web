@@ -1285,7 +1285,7 @@ async function initWebServer(settings) {
                             req.session.cookie.maxAge = settings.ttl * 1000;
                         }
                         if (req.url.includes('/loginApp')) {
-                            res.json({result: 'ok'});
+                            res.json({ result: 'ok', user });
                         } else {
                             return res.redirect(redirect);
                         }
