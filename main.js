@@ -1420,7 +1420,7 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store && store.get(cookie['connect.sid'], (err, obj) => {
+                        store && store.get(req.session.id, (err, obj) => {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 res.send({ expires: obj.cookie.expires, user: obj.passport.user });
@@ -1448,7 +1448,7 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store && store.get(cookie['connect.sid'], (err, obj) => {
+                        store && store.get(req.session.id, (err, obj) => {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 const expires = new Date();
