@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.2.6",
+    "version": "6.3.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.3.0": {
+        "en": "Corrected call of getObjectView with null parameter\nupdated packages\nGUI was migrated to non-style framework",
+        "de": "Korrigierter Anruf von getObject Ansicht mit Null-Parameter\naktualisierte pakete\nGUI wurde zu nicht-style-Framework migriert",
+        "ru": "Исправленный звонок getObject Просмотр с нулевым параметром\nобновления пакетов\nGUI был перенесен в рамки, не связанные с стилем",
+        "pt": "Chamada correta de getObject Ver com parâmetro nulo\npacotes atualizados\nGUI foi migrado para o framework não-estilo",
+        "nl": "Gecorrigeerde aanroep van getObject Beeld met nul parameter\nbijgewerkte pakketten\nGUI is gemigreerd naar non-style framework",
+        "fr": "Appel corrigé de getObject Affichage avec paramètre null\npaquets mis à jour\nL'interface graphique a été migrée vers un cadre non style",
+        "it": "Chiamata corretta di getObject Visualizza con parametro null\npacchetti aggiornati\nGUI è stata migrata al framework non-stile",
+        "es": "Llamada corregida de getObject Ver con parámetro null\npaquetes actualizados\nGUI was migrated to non-style framework",
+        "pl": "Poprawione wywołanie getObject Widok z parametrem null\nzaktualizowane pakiety\nInterfejs GUI został przeniesiony na niestylowe ramy",
+        "uk": "Виправлений виклик getObject Перегляд з параметром null\nоновлені пакети\nГрафічний інтерфейс був мігрований в рамкову рамку",
+        "zh-cn": "已更正的调取对象 以无效参数查看\n更新软件包\nGUI 已迁移到非样式框架"
+      },
       "6.2.6": {
         "en": "Preparations for a custom loading background\nupdated packages",
         "de": "Vorbereitungen für einen benutzerdefinierten Ladehintergrund\naktualisierte pakete",
@@ -93,19 +106,6 @@
         "pl": "Added udostępnienie listy dostępu użytkownika",
         "uk": "Додано варіант списку користувачів",
         "zh-cn": "增加用户出入名单"
-      },
-      "6.1.10": {
-        "en": "Corrected the start screen",
-        "de": "Korrektur des Startbildschirms",
-        "ru": "Исправлен стартовый экран",
-        "pt": "Corrigido a tela inicial",
-        "nl": "Vertaling:",
-        "fr": "Correction de l'écran de démarrage",
-        "it": "Corretto la schermata di avvio",
-        "es": "Corregido la pantalla de inicio",
-        "pl": "Naprawdę na ekranie startowym",
-        "uk": "Виправлено екран запуску",
-        "zh-cn": "B. 改编开屏幕"
       }
     },
     "desc": {
