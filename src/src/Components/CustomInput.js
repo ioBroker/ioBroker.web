@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@mui/styles';
 import { FormControl, FormHelperText, TextField } from '@mui/material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
-const styles = () => ({
+const styles = {
     input: {
         minWidth: 300,
     },
@@ -16,15 +15,14 @@ const styles = () => ({
     heightInput: {
         height: 30,
     },
-});
+};
 
 const CustomInput = ({
-    styleComponentBlock, component, size, variant, table, value, title, attr, type, style, classes, native, onChange, className,
+    styleComponentBlock, component, size, variant, table, value, title, attr, type, style, native, onChange,
 }) => {
     const error = false;
     return <FormControl
-        className={Utils.clsx(type === 'number' ? classes.inputNumber : `${classes.input} ${classes.controlElement}`, className)}
-        style={({ paddingTop: 5, ...style })}
+        style={{ ...(type === 'number' ? styles.inputNumber : styles.input), paddingTop: 5, ...style }}
     >
         <TextField
             error={!!error}
@@ -32,8 +30,7 @@ const CustomInput = ({
             value={table ? value : native[attr]}
             type={type}
             helperText={error || ''}
-            style={style}
-            className={classes.heightInput}
+            style={{ ...styles.heightInput, ...style }}
             onChange={e => {
                 if (table) {
                     onChange(e.target.value);
@@ -54,7 +51,6 @@ const CustomInput = ({
 CustomInput.defaultProps = {
     value: '',
     type: 'text',
-    className: null,
     table: false,
     native: {},
     variant: 'standard',
@@ -67,7 +63,6 @@ CustomInput.propTypes = {
     title: PropTypes.string,
     attr: PropTypes.string,
     type: PropTypes.string,
-    className: PropTypes.string,
     table: PropTypes.bool,
     value: PropTypes.string,
     variant: PropTypes.string,
@@ -79,4 +74,4 @@ CustomInput.propTypes = {
     styleComponentBlock: PropTypes.object,
 };
 
-export default withStyles(styles)(CustomInput);
+export default CustomInput;

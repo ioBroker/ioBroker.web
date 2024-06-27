@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -10,7 +9,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 
 import CustomCheckbox from '../Components/CustomCheckbox';
 
-const styles = () => ({
+const styles = {
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -30,7 +29,7 @@ const styles = () => ({
             },
         },
     },
-});
+};
 const LANGUAGES = [
     {
         value: '',
@@ -85,9 +84,9 @@ const LANGUAGES = [
 
 class Additionally extends Component {
     render() {
-        const { classes, native, onChange } = this.props;
-        return <form className={classes.tab}>
-            <div className={`${classes.column} ${classes.columnSettings}`}>
+        const { native, onChange } = this.props;
+        return <form style={styles.tab}>
+            <div style={{ ...styles.column, ...styles.columnSettings }}>
                 <h4>
                     {I18n.t('disable_default')}
                 </h4>
@@ -98,7 +97,7 @@ class Additionally extends Component {
                     <CustomCheckbox
                         title="disable_extensions"
                         attr="disableExtensions"
-                        className={classes.fontSize}
+                        sx={styles.fontSize}
                         native={native}
                         onChange={onChange}
                     />
@@ -107,7 +106,7 @@ class Additionally extends Component {
                     <CustomCheckbox
                         title="disable_states"
                         attr="disableStates"
-                        className={classes.fontSize}
+                        sx={styles.fontSize}
                         native={native}
                         onChange={onChange}
                     />
@@ -116,7 +115,7 @@ class Additionally extends Component {
                     <CustomCheckbox
                         title="disable_files"
                         attr="disableFilesObjects"
-                        className={classes.fontSize}
+                        sx={styles.fontSize}
                         native={native}
                         onChange={onChange}
                     />
@@ -125,7 +124,7 @@ class Additionally extends Component {
                     <CustomCheckbox
                         title="show_folders"
                         attr="showFolderIndex"
-                        className={classes.fontSize}
+                        sx={styles.fontSize}
                         native={native}
                         onChange={onChange}
                     />
@@ -180,4 +179,4 @@ Additionally.propTypes = {
     onChange: PropTypes.func,
 };
 
-export default withStyles(styles)(Additionally);
+export default Additionally;

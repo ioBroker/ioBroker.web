@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -12,17 +11,10 @@ import { TextWithIcon, I18n } from '@iobroker/adapter-react-v5';
 import CustomCheckbox from '../Components/CustomCheckbox';
 import Toast from '../Components/Toast';
 
-const styles = ({ name }) => ({
-    backgroundTheme: {
-        background: name === 'dark' ? '#3e3838' : '#dcdcdc',
-    },
+const styles = {
     tab: {
         width: '100%',
         minHeight: '100%',
-    },
-    button: {
-        marginRight: 20,
-        marginBottom: 40,
     },
     column: {
         display: 'inline-block',
@@ -31,58 +23,7 @@ const styles = ({ name }) => ({
     columnSettings: {
         width: '100%',
     },
-    table: {
-        minWidth: 700,
-        '& td': {
-            padding: 2,
-        },
-    },
-    displayNone: {
-        display: 'none',
-    },
-    checkBoxStyle: {
-        marginLeft: 0,
-        marginRight: 0,
-    },
-    miniTable: {
-        display: 'none',
-    },
-    card: {
-        padding: 1,
-        margin: '20px 0',
-        border: '1px solid',
-        borderRadius: 10,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    '@media screen and (max-width: 1700px)': {
-        table: {
-            '& th': {
-                padding: 2,
-            },
-        },
-    },
-    '@media screen and (max-width: 1280px)': {
-        miniTable: {
-            display: 'block',
-        },
-        maxTable: {
-            display: 'none',
-        },
-        table: {
-            minWidth: 300,
-        },
-        miniTableSelect: {
-            minWidth: 185,
-        },
-    },
-    warning: {
-        color: '#FF4040',
-        fontSize: 18,
-        display: 'inline-block',
-    },
-});
+};
 
 class UserList extends Component {
     constructor(props) {
@@ -102,13 +43,13 @@ class UserList extends Component {
     }
 
     render() {
-        const { classes, native, onChange } = this.props;
+        const { native, onChange } = this.props;
         const { userListSettings } = native;
         const { toast } = this.state;
 
-        return <form className={classes.tab}>
+        return <form style={styles.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
-            <div style={{ position: 'relative' }} className={`${classes.column} ${classes.columnSettings}`}>
+            <div style={{ ...styles.column, ...styles.columnSettings, position: 'relative' }}>
                 <CustomCheckbox
                     title="included"
                     attr="userListEnabled"
@@ -279,4 +220,4 @@ UserList.propTypes = {
     socket: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(UserList);
+export default UserList;

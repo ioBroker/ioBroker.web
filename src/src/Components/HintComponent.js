@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { makeStyles } from '@mui/styles';
 import { ClickAwayListener, Fab, Tooltip } from '@mui/material';
 
 import { HelpOutlineOutlinedIcon } from '@mui/icons-material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const useStyles = makeStyles(({ name }) => ({
-    colorTheme: {
-        color: name === 'dark' ? '#a2a2a2;' : '#c0c0c0',
-        backgroundColor: name === 'dark' ? '#ffffff00' : '#ffffff',
-    },
-}));
+const styles = {
+    colorTheme: theme => ({
+        color: theme.palette.mode === 'dark' ? '#a2a2a2;' : '#c0c0c0',
+        backgroundColor: theme.palette.mode === 'dark' ? '#ffffff00' : '#ffffff',
+    }),
+};
 
 const HintComponent = ({ children, openLink, style }) => {
     const [open, setOpen] = useState(false);
-    const classes = useStyles();
     return <ClickAwayListener onClickAway={() => setOpen(false)}>
         <Tooltip
             arrow
@@ -28,7 +26,7 @@ const HintComponent = ({ children, openLink, style }) => {
             onOpen={() => setOpen(true)}
         >
             <Fab
-                className={classes.colorTheme}
+                sx={styles.colorTheme}
                 style={({
                     boxShadow: 'none',
                     marginLeft: 10,

@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 import { IconButton, Snackbar } from '@mui/material';
@@ -8,14 +7,7 @@ import { MdClose as IconClose } from 'react-icons/md';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const useStyles = makeStyles(() => ({
-    close: {
-
-    },
-}));
-
 const Toast = ({ message, onClose }) => {
-    const classes = useStyles();
     if (!message) {
         return null;
     }
@@ -34,7 +26,6 @@ const Toast = ({ message, onClose }) => {
                 key="close"
                 aria-label="Close"
                 color="inherit"
-                className={classes.close}
                 onClick={onClose}
             >
                 <IconClose />

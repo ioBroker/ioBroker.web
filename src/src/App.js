@@ -1,11 +1,12 @@
 import React from 'react';
-import { withStyles } from '@mui/styles';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
 import { AppBar, Tabs, Tab } from '@mui/material';
 
-import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import { I18n, Loader, AdminConnection } from '@iobroker/adapter-react-v5';
+import {
+    I18n, Loader,
+    AdminConnection, GenericApp,
+} from '@iobroker/adapter-react-v5';
 
 import Options from './Tabs/Options';
 import Certificates from './Tabs/Certificates';
@@ -15,8 +16,7 @@ import Additionally from './Tabs/Additionally';
 import UserList from './Tabs/UserList';
 import Toast from './Components/Toast';
 
-const styles = theme => ({
-    root: {},
+const styles = {
     tabContent: {
         padding: 10,
         height: 'calc(100% - 64px - 48px - 20px)',
@@ -27,13 +27,13 @@ const styles = theme => ({
         height: 'calc(100% - 64px - 48px - 20px - 38px)',
         overflow: 'auto',
     },
-    selected: {
+    selected: theme => ({
         color: theme.palette.mode === 'dark' ? undefined : '#FFF !important',
-    },
-    indicator: {
+    }),
+    indicator: theme => ({
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.main : '#FFF',
-    },
-});
+    }),
+};
 
 const arrayTabName = [
     {
@@ -137,6 +137,7 @@ class App extends GenericApp {
             case 'whiteList':
                 return <WhiteList
                     key="whiteList"
+                    theme={this.state.theme}
                     common={this.common}
                     socket={this.socket}
                     native={native}
@@ -212,7 +213,6 @@ class App extends GenericApp {
             themeType,
             toast,
         } = this.state;
-        const { classes } = this.props;
         if (!loaded) {
             return <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
@@ -231,19 +231,19 @@ class App extends GenericApp {
                             onChange={(e, index) =>
                                 this.selectTab(arrayTabName.find(el => el.index === index)?.name || arrayTabName[0].name, index)}
                             scrollButtons="auto"
-                            classes={{ indicator: this.props.classes.indicator }}
+                            sx={{ '& .MuiTabs-indicator': styles.indicator }}
                         >
                             {arrayTabName.map((el, index) =>
                                 <Tab
                                     key={`${index}-tab-key`}
-                                    classes={{ selected: this.props.classes.selected }}
+                                    sx={{ '& .MuiTab-selected': styles.selected }}
                                     disabled={this.checkDisabledTabs(el.name)}
                                     label={I18n.t(el.translate)}
                                     data-name={el.name}
                                 />)}
                         </Tabs>
                     </AppBar>
-                    <div className={this.isIFrame ? classes.tabContentIFrame : classes.tabContent}>
+                    <div style={this.isIFrame ? styles.tabContentIFrame : styles.tabContent}>
                         {this.renderTab()}
                     </div>
                     {this.renderError()}
@@ -254,4 +254,4 @@ class App extends GenericApp {
     }
 }
 
-export default withStyles(styles)(App);
+export default App;

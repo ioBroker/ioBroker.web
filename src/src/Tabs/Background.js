@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
+
+import { Box } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
@@ -10,7 +11,7 @@ import CustomCheckbox from '../Components/CustomCheckbox';
 import CustomInput from '../Components/CustomInput';
 import CustomButtonUpload from '../Components/CustomButtonUpload';
 
-const styles = () => ({
+const styles = {
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -24,11 +25,11 @@ const styles = () => ({
         width: 'calc(100% - 10px)',
     },
     dropZone: {
-        marginTop: 30,
+        mt: '30px',
         width: 600,
         border: '2px dashed #bbb',
-        borderRadius: 5,
-        padding: 25,
+        borderRadius: '5px',
+        p: '25px',
         textAlign: 'center',
         fontSize: '20pt',
         fontWeight: 'bold',
@@ -40,6 +41,13 @@ const styles = () => ({
         '&:focus': {
             outline: 'inherit',
         },
+        '@media screen and (max-width: 680px)': {
+            width: 'calc(100% - 45px)',
+            minWidth: 200,
+            '& img': {
+                width: '100%',
+            },
+        },
     },
     dropZoneActive: {
         background: '#d6d6d69c',
@@ -48,16 +56,7 @@ const styles = () => ({
         maxWidth: 500,
         maxHeight: 500,
     },
-    '@media screen and (max-width: 680px)': {
-        dropZone: {
-            width: 'calc(100% - 45px)',
-            minWidth: 200,
-        },
-        imgStyle: {
-            width: '100%',
-        },
-    },
-});
+};
 
 class Background extends Component {
     constructor(props) {
@@ -111,15 +110,18 @@ class Background extends Component {
     }
 
     render() {
-        const { classes, native, onChange } = this.props;
+        const { native, onChange } = this.props;
         const { imgSRC, toast } = this.state;
-        return <form className={classes.tab}>
+        return <form style={styles.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
-            <div className={`${classes.column} ${classes.columnSettings}`}>
+            <div style={{ ...styles.column, ...styles.columnSettings }}>
                 <div>
                     <CustomInput
                         styleComponentBlock={{
-                            height: 20, display: 'flex', justifyContent: 'center', alignItems: 'center',
+                            height: 20,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
                         }}
                         component={<CustomInput
                             attr="loginBackgroundColorHelper"
@@ -166,14 +168,15 @@ class Background extends Component {
                     >
                         {({ getRootProps, getInputProps, isDragActive }) => (
                             <section>
-                                <div
-                                    className={`${classes.dropZone} ${isDragActive ? classes.dropZoneActive : null}`}
+                                <Box
+                                    component="div"
+                                    sx={{ ...styles.dropZone, ...(isDragActive ? styles.dropZoneActive : undefined) }}
                                     {...getRootProps()}
                                 >
                                     <input {...getInputProps()} />
                                     <p>{I18n.t('place_the_files_here')}</p>
-                                    {imgSRC ? <img className={classes.imgStyle} src={imgSRC} alt="img" /> : null}
-                                </div>
+                                    {imgSRC ? <img style={styles.imgStyle} src={imgSRC} alt="img" /> : null}
+                                </Box>
                             </section>
                         )}
                     </Dropzone>
@@ -195,4 +198,4 @@ Background.propTypes = {
     socket: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Background);
+export default Background;

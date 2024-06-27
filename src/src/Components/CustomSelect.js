@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@mui/styles';
 import {
     FormControl, FormHelperText, Input, MenuItem, Select,
 } from '@mui/material';
 
 import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
-const styles = () => ({
+const styles = {
     input: {
         minWidth: 300,
     },
@@ -20,13 +19,13 @@ const styles = () => ({
         height: 24,
         marginRight: 8,
     },
-});
+};
 
 const CustomSelect = ({
-    table, value, title, attr, options, style, classes, native, onChange, className, noTranslate, themeType,
+    table, value, title, attr, options, style, native, onChange, noTranslate, themeType, sx,
 }) => <FormControl
-    className={Utils.clsx(classes.input, classes.controlElement, className)}
-    style={({ paddingTop: 5, ...style })}
+    style={({ ...styles.input, paddingTop: 5, ...style })}
+    sx={sx}
 >
     <Select
         variant="standard"
@@ -41,7 +40,7 @@ const CustomSelect = ({
         renderValue={_item => {
             const item = options.find(it => it.value === _item);
             return item ? <>
-                <Icon src={item.icon || ''} className={classes.icon} />
+                <Icon src={item.icon || ''} style={styles.icon} />
                 {noTranslate ? item.title : I18n.t(item.title)}
             </> : _item;
         }}
@@ -49,7 +48,7 @@ const CustomSelect = ({
     >
         {options.map(item =>
             <MenuItem key={`key-${item.value}`} value={item.value || '_'} style={item.color ? { color: item.color, backgroundColor: Utils.getInvertedColor ? Utils.getInvertedColor(item.color, themeType) : undefined } : {}}>
-                <Icon src={item.icon || ''} className={classes.icon} />
+                <Icon src={item.icon || ''} style={styles.icon} />
                 {noTranslate ? item.title : I18n.t(item.title)}
             </MenuItem>)}
     </Select>
@@ -58,7 +57,6 @@ const CustomSelect = ({
 
 CustomSelect.defaultProps = {
     value: '',
-    className: null,
     table: false,
 };
 
@@ -67,8 +65,8 @@ CustomSelect.propTypes = {
     attr: PropTypes.string,
     options: PropTypes.array.isRequired,
     style: PropTypes.object,
+    sx: PropTypes.object,
     value: PropTypes.any,
-    className: PropTypes.string,
     table: PropTypes.bool,
     native: PropTypes.object.isRequired,
     onChange: PropTypes.func,
@@ -76,4 +74,4 @@ CustomSelect.propTypes = {
     themeType: PropTypes.string,
 };
 
-export default withStyles(styles)(CustomSelect);
+export default CustomSelect;

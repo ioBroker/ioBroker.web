@@ -1,29 +1,27 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@mui/styles';
 
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
 
-const useStyles = makeStyles(theme => ({
+const styles = {
     root: {
         '& > *': {
-            margin: theme.spacing(1),
+            m: '8px',
         },
     },
     input: {
         display: 'none',
     },
-}));
+};
 
 const CustomButtonUpload = ({ title, onChange }) => {
-    const classes = useStyles();
     const [valueFileUpload, setValueFileUpload] = useState('');
 
-    return <div className={classes.root}>
+    return <Box component="div" sx={styles.root}>
         <input
             accept="image/*"
-            className={classes.input || ''}
+            style={styles.input || ''}
             id="contained-button-file"
             multiple
             type="file"
@@ -36,7 +34,7 @@ const CustomButtonUpload = ({ title, onChange }) => {
             </Button>
             <TextField variant="standard" style={{ marginLeft: 20 }} value={valueFileUpload} />
         </label>
-    </div>;
+    </Box>;
 };
 
 export default CustomButtonUpload;

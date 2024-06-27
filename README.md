@@ -89,6 +89,10 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected call of getObjectView with null parameter
+* (bluefox) updated packages
+
 ### 6.2.6 (2024-05-25)
 * (bluefox) Preparations for a custom loading background
 * (bluefox) updated packages

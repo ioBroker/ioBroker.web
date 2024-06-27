@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { withStyles } from '@mui/styles';
 import {
     Checkbox,
     FormControlLabel,
@@ -9,16 +8,10 @@ import {
     FormHelperText,
 } from '@mui/material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
-
-const styles = () => ({
-    input: {
-        minWidth: 300,
-    },
-});
+import { I18n } from '@iobroker/adapter-react-v5';
 
 const CustomCheckbox = ({
-    title, attr, style, classes, native, onChange, className, table, checked, disabled, help,
+    title, attr, style, native, sx, onChange, table, checked, disabled, help,
 }) => {
     let value = table ? checked : native[attr];
     if (attr === 'whiteListEnabled' && native.socketio) {
@@ -29,7 +22,7 @@ const CustomCheckbox = ({
         <FormControlLabel
             key={attr}
             style={{ paddingTop: 5, ...style }}
-            className={Utils.clsx(classes.controlElement, className)}
+            sx={sx}
             control={<Checkbox
                 disabled={!!disabled}
                 checked={!!value}
@@ -50,7 +43,6 @@ const CustomCheckbox = ({
 
 CustomCheckbox.defaultProps = {
     table: false,
-    className: null,
 };
 
 CustomCheckbox.propTypes = {
@@ -58,10 +50,9 @@ CustomCheckbox.propTypes = {
     attr: PropTypes.string.isRequired,
     style: PropTypes.object,
     native: PropTypes.object.isRequired,
-    className: PropTypes.string,
     onChange: PropTypes.func,
     table: PropTypes.bool,
     help: PropTypes.string,
 };
 
-export default withStyles(styles)(CustomCheckbox);
+export default CustomCheckbox;

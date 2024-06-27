@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { withStyles } from '@mui/styles';
 import PropTypes from 'prop-types';
 
 import {
@@ -8,7 +7,7 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button,
+    Button, Box,
 } from '@mui/material';
 
 import { Security } from '@mui/icons-material';
@@ -21,13 +20,13 @@ import CustomSelect from '../Components/CustomSelect';
 import CustomInput from '../Components/CustomInput';
 import CustomCheckbox from '../Components/CustomCheckbox';
 
-const styles = () => ({
+const styles = {
     blockWrapper: {
         display: 'flex',
         flexDirection: 'column',
-        marginRight: 20,
+        mr: '20px',
         '@media screen and (max-width: 360px)': {
-            marginRight: 0,
+            mr: 0,
         },
     },
     displayNone: {
@@ -50,9 +49,9 @@ const styles = () => ({
         flexFlow: 'wrap',
     },
     ipInputStyle: {
-        marginTop: 10,
+        mt: '10px',
         width: 600,
-        marginRight: 20,
+        mr: '20px',
         '@media screen and (max-width: 940px)': {
             width: '100%',
         },
@@ -69,7 +68,7 @@ const styles = () => ({
         display: 'flex',
         alignItems: 'flex-end',
     },
-});
+};
 
 class Options extends Component {
     constructor(props) {
@@ -174,7 +173,7 @@ class Options extends Component {
 
     render() {
         const {
-            instance, common, classes, native, onLoad, onChange,
+            instance, common, native, onLoad, onChange,
         } = this.props;
         const {
             certificatesOptions, ipAddressOptions, usersOptions, openModal, toast, socketioOptions, ready,
@@ -187,7 +186,7 @@ class Options extends Component {
         const newCommon = JSON.parse(JSON.stringify(common));
         newCommon.icon = newCommon.extIcon;
 
-        return <form className={classes.tab}>
+        return <form style={styles.tab}>
             <Toast message={toast} onClose={() => this.setState({ toast: '' })} />
             {this.renderConfirmDialog()}
             <CustomModal
@@ -200,26 +199,25 @@ class Options extends Component {
                 titleButton={I18n.t('button_title')}
                 titleButton2={I18n.t('button_title2')}
             >
-                <div className={classes.blockWarningContent}>
+                <div style={styles.blockWarningContent}>
                     <Security style={{ width: 32, height: 32 }} />
                     {I18n.t('modal_title')}
                 </div>
             </CustomModal>
             <Logo
                 instance={instance}
-                classes={undefined}
                 common={newCommon}
                 native={native}
                 onError={text => console.error(text)}
                 onLoad={onLoad}
             />
-            <div className={`${classes.column} ${classes.columnSettings}`}>
+            <div style={{ ...styles.column, ...styles.columnSettings }}>
                 <div>
                     <CustomSelect
                         title="IP address"
                         attr="bind"
                         noTranslate
-                        className={classes.ipInputStyle}
+                        sx={styles.ipInputStyle}
                         options={ipAddressOptions}
                         native={native}
                         onChange={onChange}
@@ -233,8 +231,8 @@ class Options extends Component {
                         onChange={onChange}
                     />
                 </div>
-                <div className={classes.blockWrapperCheckbox}>
-                    <div className={classes.blockWrapper}>
+                <div style={styles.blockWrapperCheckbox}>
+                    <Box component="div" sx={styles.blockWrapper}>
                         <CustomCheckbox
                             title="encryption"
                             attr="secure"
@@ -250,10 +248,9 @@ class Options extends Component {
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            className={native.auth ? null : classes.displayNone}
                             title="basic_authentication"
                             attr="basicAuth"
-                            style={{ marginTop: 10 }}
+                            style={{ ...(native.auth ? undefined : styles.displayNone), marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
@@ -280,33 +277,30 @@ class Options extends Component {
                             }}
                         />
                         <CustomCheckbox
-                            className={!native.socketio ? null : classes.displayNone}
                             title="usePureWebSockets"
                             attr="usePureWebSockets"
-                            style={{ marginTop: 10 }}
+                            style={{ ...(!native.socketio ? undefined : styles.displayNone), marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomCheckbox
-                            className={(!native.socketio || native.socketio.startsWith('system.adapter.socket')) && !native.usePureWebSockets ? null : classes.displayNone}
                             title="web_sockets"
                             help={native.socketio && native.socketio.startsWith('system.adapter.socket') ? I18n.t('Same settings must be set in socketio instance') : ''}
                             attr="forceWebSockets"
-                            style={{ marginTop: 10 }}
+                            style={{ ...((!native.socketio || native.socketio.startsWith('system.adapter.socket')) && !native.usePureWebSockets ? undefined : styles.displayNone), marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         />
                         {/* <CustomCheckbox
-                            className={native.socketio === '' && !native.usePureWebSockets ? null : classes.displayNone}
                             title="Compatibility mode with socket.io@2.x"
                             attr="compatibilityV2"
-                            style={{ marginTop: 10 }}
+                            style={{ ...(native.socketio === '' && !native.usePureWebSockets ? undefined : styles.displayNone), marginTop: 10 }}
                             native={native}
                             onChange={onChange}
                         /> */}
-                    </div>
-                    <div className={classes.blockWrapper}>
-                        <div className={`${classes.blockWrapperCheckbox} ${native.secure ? null : classes.displayNone}`}>
+                    </Box>
+                    <Box component="div" sx={styles.blockWrapper}>
+                        <div style={{ ...styles.blockWrapperCheckbox, ...(native.secure ? undefined : styles.displayNone) }}>
                             <CustomSelect
                                 title="public_certificate"
                                 attr="certPublic"
@@ -345,7 +339,6 @@ class Options extends Component {
                             />
                         </div>
                         <CustomSelect
-                            className={!native.auth ? null : classes.displayNone}
                             title="users"
                             attr="defaultUser"
                             themeType={this.props.themeType}
@@ -356,16 +349,15 @@ class Options extends Component {
                                 color,
                                 icon,
                             }))}
-                            style={{ marginTop: 10, width: 300 }}
+                            style={{ ...(!native.auth ? undefined : styles.displayNone), marginTop: 10, width: 300 }}
                             native={native}
                             onChange={onChange}
                         />
                         <CustomInput
-                            className={native.auth ? null : classes.displayNone}
                             title="time_out"
                             attr="ttl"
                             type="number"
-                            style={{ marginTop: -1, width: 300 }}
+                            style={{ ...(native.auth ? undefined : styles.displayNone), marginTop: -1, width: 300 }}
                             native={native}
                             onChange={onChange}
                         />
@@ -383,7 +375,7 @@ class Options extends Component {
                             native={native}
                             onChange={onChange}
                         />
-                    </div>
+                    </Box>
                 </div>
             </div>
         </form>;
@@ -400,4 +392,4 @@ Options.propTypes = {
     themeType: PropTypes.string,
 };
 
-export default withStyles(styles)(Options);
+export default Options;
