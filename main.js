@@ -11,6 +11,7 @@ const IoBWebServer = require('@iobroker/webserver');
 const mime = require('mime-types');
 const adapterName = require('./package.json').name.split('.').pop();
 const compression = require('compression');
+const signature = require('cookie-signature');
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 
@@ -248,8 +249,28 @@ function startAdapter(options) {
                 }
             });
         },
-        message: obj => {
-            if (!obj || obj.command !== 'im') { // if not instance message
+        message: msg => {
+			if (msg && msg.command === 'getUserByCookie') {
+				let cookie = msg.message.cookie;
+				
+				// extract cookie
+				if (cookie.indexOf('connect.sid=') !== -1) {
+					const cookies = cookie.split(';');
+					cookie = cookies.find(cookie => cookie.trim().startsWith('connect.sid=')).replace('connect.sid=', '').trim();
+				}
+				
+				// decrypt cookie
+				cookie = signature.unsign(decodeURIComponent(cookie).slice(2), secret);
+				
+				// get session by cookie
+				if (store && cookie) {
+					store.get(cookie, (error, session) => {
+						adapter.sendTo(msg.from, msg.command, { error, 'user': session?.passport?.user }, msg.callback);
+					});
+				}
+			}
+			
+            if (!msg || msg.command !== 'im') { // if not instance message
                 return;
             }
 
@@ -259,7 +280,7 @@ function startAdapter(options) {
                 // s - socket ID
                 // d - data
 
-                webServer.io.publishInstanceMessageAll(obj.from, obj.message.m, obj.message.s, obj.message.d);
+                webServer.io.publishInstanceMessageAll(msg.from, msg.message.m, msg.message.s, msg.message.d);
             }
         },
         unload: callback => {
@@ -1285,7 +1306,7 @@ async function initWebServer(settings) {
                             req.session.cookie.maxAge = settings.ttl * 1000;
                         }
                         if (req.url.includes('/loginApp')) {
-                            res.json({result: 'ok'});
+                            res.json({ result: 'ok', user });
                         } else {
                             return res.redirect(redirect);
                         }
@@ -1409,6 +1430,33 @@ async function initWebServer(settings) {
                 }
             });
 
+            // get user by session  /cookie
+            server.app.get('/getUser', (req, res, next) => {
+                if (req.isAuthenticated()) {
+                    const parts = req.headers.cookie.split(';');
+                    const cookie = {};
+                    parts.forEach(item => {
+                        const [name, value] = item.split('=');
+                        cookie[name.trim()] = value;
+                    });
+
+                    if (cookie['connect.sid']) {
+                        store && store.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
+                            // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
+                            if (obj) {
+                                res.send({ expires: obj.cookie.expires, user: obj.passport.user });
+                            } else {
+                                res.status(501).send('User not logged in.');
+                            }
+                        });
+                    } else {
+                        res.status(501).send('User not logged in.');
+                    }
+                } else {
+                    res.status(501).send('User not logged in.');
+                }
+            });
+            
             // todo
             server.app.get('/prolongSession', (req, res, next) => {
                 if (req.isAuthenticated()) {
@@ -1421,7 +1469,7 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store && store.get(req.session.id, (err, obj) => {
+                        store && store.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 const expires = new Date();
@@ -1432,7 +1480,7 @@ async function initWebServer(settings) {
 
                                 store.set(req.session.id, obj);
                                 //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
-                                res.send(obj.cookie.expires);
+                                res.send({ expires: obj.cookie.expires, user: obj.passport.user });
                             } else {
                                 res.status(501).send('cannot prolong');
                             }
