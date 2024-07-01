@@ -4,7 +4,7 @@
     "private": true,
     "dependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-        "@iobroker/adapter-react-v5": "^6.0.9",
+        "@iobroker/adapter-react-v5": "^6.0.13",
         "@mui/icons-material": "^5.15.20",
         "@mui/material": "^5.15.20",
         "@sentry/browser": "^8.12.0",
