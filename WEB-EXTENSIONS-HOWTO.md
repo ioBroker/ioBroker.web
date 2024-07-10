@@ -92,3 +92,4 @@ Following adapters support web-extensions:
 - Proxy: https://github.com/ioBroker/ioBroker.proxy/blob/master/lib/proxy.js#L20
 - Eufy-Security: https://github.com/bropat/ioBroker.eufy-security/blob/master/src/lib/web.ts (Typescript-implementation)
 - REST-API: https://github.com/ioBroker/ioBroker.rest-api/blob/master/src/lib/rest-api.js#L67
+- Energiefluss-erweitert: https://github.com/SKB-CGN/ioBroker.energiefluss-erweitert/blob/main/lib/web.js
