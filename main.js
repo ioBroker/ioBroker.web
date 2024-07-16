@@ -250,37 +250,41 @@ function startAdapter(options) {
             });
         },
         message: msg => {
-			if (msg && msg.command === 'getUserByCookie') {
-				let cookie = msg.message.cookie;
-				
+			if (msg?.command === 'getUserByCookie') {
+				let cookie = (msg.message?.cookie || '').toString();
+
 				// extract cookie
-				if (cookie.indexOf('connect.sid=') !== -1) {
+				if (cookie.includes('connect.sid=')) {
 					const cookies = cookie.split(';');
 					cookie = cookies.find(cookie => cookie.trim().startsWith('connect.sid=')).replace('connect.sid=', '').trim();
 				}
-				
+
 				// decrypt cookie
-				cookie = signature.unsign(decodeURIComponent(cookie).slice(2), secret);
-				
+                if (cookie) {
+                    try {
+                        cookie = signature.unsign(decodeURIComponent(cookie).slice(2), secret);
+                    } catch (e) {
+                        adapter.log.warn(`Cannot decrypt cookie: ${e}`);
+                    }
+                }
+
 				// get session by cookie
-				if (store && cookie) {
+				if (store && cookie && msg.callback) {
 					store.get(cookie, (error, session) => {
 						adapter.sendTo(msg.from, msg.command, { error, 'user': session?.passport?.user }, msg.callback);
 					});
-				}
-			}
-			
-            if (!msg || msg.command !== 'im') { // if not instance message
-                return;
-            }
+				} else if (msg.callback) {
+                    adapter.sendTo(msg.from, msg.command, { error: 'cookie not found' }, msg.callback);
+                }
+			} else if (msg?.command === 'im') { // if not instance message
+                if (webServer?.io) {
+                    // to make messages shorter, we code the answer as:
+                    // m - message type
+                    // s - socket ID
+                    // d - data
 
-            if (webServer.io && webServer.io) {
-                // to make messages shorter, we code the answer as:
-                // m - message type
-                // s - socket ID
-                // d - data
-
-                webServer.io.publishInstanceMessageAll(msg.from, msg.message.m, msg.message.s, msg.message.d);
+                    webServer.io.publishInstanceMessageAll(msg.from, msg.message.m, msg.message.s, msg.message.d);
+                }
             }
         },
         unload: callback => {
@@ -980,7 +984,7 @@ function initAuth(server, settings) {
         secret,
         saveUninitialized: true,
         resave:            true,
-        cookie:            {maxAge: settings.ttl * 1000, httpOnly: false}, // default TTL
+        cookie:            { maxAge: settings.ttl * 1000, httpOnly: false }, // default TTL
         store
     }));
     server.app.use(passport.initialize());
@@ -1430,7 +1434,7 @@ async function initWebServer(settings) {
                 }
             });
 
-            // get user by session  /cookie
+            // get user by session /cookie
             server.app.get('/getUser', (req, res, next) => {
                 if (req.isAuthenticated()) {
                     const parts = req.headers.cookie.split(';');
@@ -1441,7 +1445,7 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store && store.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
+                        store?.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 res.send({ expires: obj.cookie.expires, user: obj.passport.user });
@@ -1456,7 +1460,7 @@ async function initWebServer(settings) {
                     res.status(501).send('User not logged in.');
                 }
             });
-            
+
             // todo
             server.app.get('/prolongSession', (req, res, next) => {
                 if (req.isAuthenticated()) {
@@ -1469,7 +1473,7 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store && store.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
+                        store?.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
                             // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                             if (obj) {
                                 const expires = new Date();
@@ -1996,9 +2000,9 @@ async function initWebServer(settings) {
 
     if (server.server) {
         return server;
-    } else {
-        return null;
     }
+
+    return null;
 }
 
 // If started as allInOne/compact mode => return function to create instance
