@@ -123,8 +123,7 @@
     },
     "licenseInformation": {
       "license": "MIT",
-      "type": "free",
-      "link": "https://github.com/ioBroker/ioBroker.web/blob/master/LICENSE"
+      "type": "free"
     },
     "mode": "daemon",
     "platform": "Javascript/Node.js",
