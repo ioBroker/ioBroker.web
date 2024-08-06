@@ -121,7 +121,10 @@
       "uk": "Відкриває веб-сервер для інших адаптерів",
       "zh-cn": "为其他适配器服务的web服务器"
     },
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "mode": "daemon",
     "platform": "Javascript/Node.js",
     "loglevel": "info",
@@ -168,10 +171,6 @@
       "sentry": {
         "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
       }
-    },
-    "licenseInformation": {
-      "type": "free",
-      "link": "https://github.com/ioBroker/ioBroker.web/blob/master/LICENSE"
     },
     "tier": 3
   },
