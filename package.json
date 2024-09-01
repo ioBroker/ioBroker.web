@@ -41,7 +41,7 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/legacy-testing": "^1.0.13",
-    "axios": "^1.7.2",
+    "axios": "^1.7.7",
     "chai": "^4.4.1",
     "eslint": "^8.57.0",
     "gulp": "^4.0.2",
