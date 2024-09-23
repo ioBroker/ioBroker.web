@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "6.3.0",
+    "version": "6.3.1",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "6.3.1": {
+        "en": "added new admin icon (svg)",
+        "de": "neues admin-symbol (svg) hinzugefügt",
+        "ru": "добавлена новая иконка администратора (svg)",
+        "pt": "adicionado novo ícone de administrador (svg)",
+        "nl": "nieuw admin-pictogram toevoegen (svg)",
+        "fr": "ajout d'une nouvelle icône d'administration (svg)",
+        "it": "aggiunta nuova icona di amministratore (svg)",
+        "es": "nuevo icono de administración (svg)",
+        "pl": "dodano nową ikonę administratora (svg)",
+        "uk": "додано нову іконку адміністратора (снд)",
+        "zh-cn": "添加新管理员图标( svg)"
+      },
       "6.3.0": {
         "en": "Corrected call of getObjectView with null parameter\nupdated packages\nGUI was migrated to non-style framework",
         "de": "Korrigierter Anruf von getObject Ansicht mit Null-Parameter\naktualisierte pakete\nGUI wurde zu nicht-style-Framework migriert",
@@ -93,19 +106,6 @@
         "pl": "Poprawiona katastrofa, jeśli uwierzytelnianie jest możliwe",
         "uk": "Виправлено помилку, якщо ввімкнено автентифікацію",
         "zh-cn": "如果能够证明确证,便纠正了事故。"
-      },
-      "6.2.1": {
-        "en": "Added the user access list option",
-        "de": "Option Benutzerzugriffsliste hinzugefügt",
-        "ru": "Добавлена опция списка доступа пользователей",
-        "pt": "Adicionado a opção de lista de acesso ao usuário",
-        "nl": "Voeg de gebruiker toegangslijst toe",
-        "fr": "Ajout de l'option de liste d'accès utilisateur",
-        "it": "Aggiunto l'opzione lista di accesso utente",
-        "es": "Añadido la opción lista de acceso del usuario",
-        "pl": "Added udostępnienie listy dostępu użytkownika",
-        "uk": "Додано варіант списку користувачів",
-        "zh-cn": "增加用户出入名单"
       }
     },
     "desc": {
