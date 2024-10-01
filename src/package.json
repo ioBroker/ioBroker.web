@@ -7,7 +7,7 @@
         "@iobroker/adapter-react-v5": "^6.0.14",
         "@mui/icons-material": "^5.16.6",
         "@mui/material": "^5.16.6",
-        "@sentry/browser": "^8.21.0",
+        "@sentry/browser": "^8.32.0",
         "babel-eslint": "^10.1.0",
         "eslint": "^8.57.0",
         "eslint-config-airbnb": "^19.0.4",
