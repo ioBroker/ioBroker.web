@@ -3,10 +3,13 @@ If some adapter want to be available under same port as web adapter, it should i
 
 First, it must have a `common.webExtension` flag in `io-package.json` file that points to thw web extension file. Like `"webExtension": "lib/web.js"`.
 
-Second, `common.native.webInstance` flag in `io-package.json` has to point to the instance name of the web-adapter for which the extension should be loaded. 
+Second, `native.webInstance` flag in `io-package.json` has to point to the instance name of the web-adapter for which the extension should be loaded. 
 Or simply load it for all instances via `"webInstance": "*"`.
 
-Third, the file `lib/web.js` (or whatever) must exist, and it must export a class.
+Third, make sure `common.enabled` of the respective web-extension adapter is set to true in `io-package.json`: `"enabled": true`.
+If you're working with **dev-server** please note: dev-server does **not set the instance to enabled** when using "dev-server watch", you have to do this manually: Navigate to `system.adapter.<ADAPTER_NAME>.0`, use `edit object` to set `"enabled": true` within object data. If not set correctly, the web extension will not be activated by web adapter.
+
+Fourth, the file `lib/web.js` (or whatever) must exist, and it must export a class.
 ```
 /**
  * Web extension example
@@ -69,7 +72,7 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
         
         that.app.use('/' + that.config.demoParam, (req, res) => {
             res.setHeader('Content-type', 'text/html');
-            res.status(200).send('You called a demo web extension with path "' + req.url + '");
+            res.status(200).send('You called a demo web extension with path "' + req.url + '"');
         });
         
         // inform web about that all routes are installed
