@@ -27,7 +27,7 @@
     "cookie-parser": "^1.4.7",
     "cookie-signature": "^1.2.1",
     "express": "^4.19.2",
-    "express-session": "^1.18.0",
+    "express-session": "^1.18.1",
     "iobroker.simple-api": "^2.8.0",
     "iobroker.ws": "2.6.2",
     "iobroker.socketio": "6.7.1",
