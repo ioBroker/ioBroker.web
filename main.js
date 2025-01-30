@@ -53,7 +53,7 @@ utils.appName = getAppName();
 
 // copied from here: https://github.com/component/escape-html/blob/master/index.js
 const matchHtmlRegExp = /["'&<>]/;
-function escapeHtml (string) {
+function escapeHtml(string) {
     const str = '' + string;
     const match = matchHtmlRegExp.exec(str);
 
@@ -95,9 +95,7 @@ function escapeHtml (string) {
         html += escape;
     }
 
-    return lastIndex !== index
-        ? html + str.substring(lastIndex, index)
-        : html;
+    return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
 }
 
 async function getSocketUrl(obj) {
@@ -139,14 +137,16 @@ function startAdapter(options) {
             }
 
             if (id.startsWith('system.adapter')) {
-                if (obj && obj.common && obj.common.webExtension && obj.native &&
+                if (
+                    obj?.common?.webExtension &&
+                    obj.native &&
                     (extensions[id.substring('system.adapter.'.length)] ||
                         obj.native.webInstance === '*' ||
-                        obj.native.webInstance === adapter.namespace
-                    )
+                        obj.native.webInstance === adapter.namespace)
                 ) {
                     return adapter.setForeignState(`system.adapter.${adapter.namespace}.alive`, false, true, () =>
-                        adapter.terminate ? adapter.terminate(-100) : process.exit(-100));
+                        adapter.terminate ? adapter.terminate(-100) : process.exit(-100),
+                    );
                 }
 
                 // 'system.adapter.'.length = 15
@@ -158,20 +158,19 @@ function startAdapter(options) {
                 }
             }
 
-            if (obj && obj.common && obj.common.webPreSettings) {
+            if (obj?.common?.webPreSettings) {
                 updatePreSettings(obj);
             }
 
             if (!ownSocket && id === adapter.config.socketio) {
-                getSocketUrl(obj)
-                    .then(_socketUrl => {
-                        socketUrl = _socketUrl;
-                        adapter.log.info(`SocketURL now "${socketUrl}"`);
-                    });
+                getSocketUrl(obj).then(_socketUrl => {
+                    socketUrl = _socketUrl;
+                    adapter.log.info(`SocketURL now "${socketUrl}"`);
+                });
             }
 
             if (id === 'system.config' && !adapter.config.language) {
-                lang = obj && obj.common && obj.common.language ? obj.common.language : 'en';
+                lang = obj?.common?.language || 'en';
             }
 
             if (webServer && webServer.io) {
@@ -182,9 +181,9 @@ function startAdapter(options) {
                 }
             }
 
-            if (webServer && webServer.api) {
+            if (webServer?.api?.objectChange) {
                 try {
-                    webServer.api.objectChange && webServer.api.objectChange(id, obj);
+                    webServer.api.objectChange(id, obj);
                 } catch (e) {
                     adapter.log.error(`Cannot call objectChange for simple api: ${e.message}`);
                 }
@@ -202,13 +201,11 @@ function startAdapter(options) {
             });
         },
         stateChange: (id, state) => {
-            if (webServer && webServer.io) {
-                webServer.io.publishAll('stateChange', id, state);
-            }
+            webServer?.io?.publishAll('stateChange', id, state);
 
-            if (webServer && webServer.api) {
+            if (webServer?.api?.stateChange) {
                 try {
-                    webServer.api.stateChange && webServer.api.stateChange(id, state);
+                    webServer.api.stateChange(id, state);
                 } catch (e) {
                     adapter.log.error(`Cannot call stateChange for simple api: ${e.message}`);
                 }
@@ -226,13 +223,11 @@ function startAdapter(options) {
             });
         },
         fileChange: (id, fileName, size) => {
-            if (webServer && webServer.io) {
-                webServer.io.publishFileAll(id, fileName, size);
-            }
+            webServer?.io?.publishFileAll(id, fileName, size);
 
-            if (webServer && webServer.api) {
+            if (webServer?.api?.fileChange) {
                 try {
-                    webServer.api.fileChange && webServer.api.fileChange(id, fileName, size);
+                    webServer.api.fileChange(id, fileName, size);
                 } catch (e) {
                     adapter.log.error(`Cannot call fileChange for simple api: ${e.message}`);
                 }
@@ -250,16 +245,19 @@ function startAdapter(options) {
             });
         },
         message: msg => {
-			if (msg?.command === 'getUserByCookie') {
-				let cookie = (msg.message?.cookie || '').toString();
+            if (msg?.command === 'getUserByCookie') {
+                let cookie = (msg.message?.cookie || '').toString();
 
-				// extract cookie
-				if (cookie.includes('connect.sid=')) {
-					const cookies = cookie.split(';');
-					cookie = cookies.find(cookie => cookie.trim().startsWith('connect.sid=')).replace('connect.sid=', '').trim();
-				}
+                // extract cookie
+                if (cookie.includes('connect.sid=')) {
+                    const cookies = cookie.split(';');
+                    cookie = cookies
+                        .find(cookie => cookie.trim().startsWith('connect.sid='))
+                        .replace('connect.sid=', '')
+                        .trim();
+                }
 
-				// decrypt cookie
+                // decrypt cookie
                 if (cookie) {
                     try {
                         cookie = signature.unsign(decodeURIComponent(cookie).slice(2), secret);
@@ -268,15 +266,16 @@ function startAdapter(options) {
                     }
                 }
 
-				// get session by cookie
-				if (store && cookie && msg.callback) {
-					store.get(cookie, (error, session) => {
-						adapter.sendTo(msg.from, msg.command, { error, 'user': session?.passport?.user }, msg.callback);
-					});
-				} else if (msg.callback) {
+                // get session by cookie
+                if (store && cookie && msg.callback) {
+                    store.get(cookie, (error, session) => {
+                        adapter.sendTo(msg.from, msg.command, { error, user: session?.passport?.user }, msg.callback);
+                    });
+                } else if (msg.callback) {
                     adapter.sendTo(msg.from, msg.command, { error: 'cookie not found' }, msg.callback);
                 }
-			} else if (msg?.command === 'im') { // if not instance message
+            } else if (msg?.command === 'im') {
+                // if not instance message
                 if (webServer?.io) {
                     // to make messages shorter, we code the answer as:
                     // m - message type
@@ -288,8 +287,10 @@ function startAdapter(options) {
             }
         },
         unload: callback => {
-            checkTimeout && adapter.clearTimeout(checkTimeout);
-            checkTimeout = null;
+            if (checkTimeout) {
+                adapter.clearTimeout(checkTimeout);
+                checkTimeout = null;
+            }
 
             try {
                 const promises = [];
@@ -304,9 +305,14 @@ function startAdapter(options) {
                         if (extensions?.[instance]?.obj?.unload) {
                             const promise = extensions[instance].obj.unload();
                             if (promise && typeof promise === 'object' && typeof promise.then === 'function') {
-                                promises.push(promise
-                                    .catch(e =>
-                                        adapter && adapter.log && adapter.log.error(`Cannot unload web extension "${instance}": ${e}`)));
+                                promises.push(
+                                    promise.catch(
+                                        e =>
+                                            adapter &&
+                                            adapter.log &&
+                                            adapter.log.error(`Cannot unload web extension "${instance}": ${e}`),
+                                    ),
+                                );
                             }
                         }
                     } catch (e) {
@@ -318,11 +324,17 @@ function startAdapter(options) {
                 if (promises.length) {
                     timeout = adapter.setTimeout(() => {
                         timeout = null;
-                        adapter && adapter.log && adapter.log.warn(`Timeout by termination of web-extensions!`);
-                        webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                        webServer && webServer.io && webServer.io.close();
-                        webServer && webServer.server && webServer.server.close();
-                        webServer && webServer.settings && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
+                        adapter?.log?.warn(`Timeout by termination of web-extensions!`);
+                        webServer?.settings &&
+                            adapter?.log?.debug(
+                                `terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`,
+                            );
+                        webServer?.io?.close();
+                        webServer?.server?.close();
+                        webServer?.settings &&
+                            adapter?.log?.info(
+                                `terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`,
+                            );
                         callback && callback();
                     }, 500);
                 }
@@ -333,11 +345,19 @@ function startAdapter(options) {
                         if (!promises.length || timeout) {
                             adapter.clearTimeout(timeout);
                             timeout = null;
-                            webServer && webServer.settings && adapter && adapter.log && adapter.log.debug(`terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                            webServer && webServer.io && webServer.io.close();
-                            webServer && webServer.server && webServer.server.close();
-                            webServer && webServer.settings && adapter && adapter.log && adapter.log.info(`terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`);
-                            callback && callback();
+                            webServer?.settings &&
+                                adapter?.log?.debug(
+                                    `terminating http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`,
+                                );
+                            webServer?.io?.close();
+                            webServer?.server?.close();
+                            webServer?.settings &&
+                                adapter?.log?.info(
+                                    `terminated http${webServer.settings.secure ? 's' : ''} server on port ${webServer.settings.port}`,
+                                );
+                            if (callback) {
+                                callback();
+                            }
                         }
                     });
             } catch (e) {
@@ -351,9 +371,11 @@ function startAdapter(options) {
             if (systemConfig) {
                 if (!systemConfig.native || !systemConfig.native.secret) {
                     systemConfig.native = systemConfig.native || {};
-                    const buf = await new Promise(resolve => require('crypto').randomBytes(24, (ex, buf) => resolve(buf)));
+                    const buf = await new Promise(resolve =>
+                        require('crypto').randomBytes(24, (ex, buf) => resolve(buf)),
+                    );
                     secret = buf.toString('hex');
-                    await adapter.extendForeignObjectAsync('system.config', {native: {secret}});
+                    await adapter.extendForeignObjectAsync('system.config', { native: { secret } });
                 } else {
                     secret = systemConfig.native.secret;
                 }
@@ -367,7 +389,9 @@ function startAdapter(options) {
             } catch (e) {
                 adapter.log.warn(`Cannot read UUID: ${e}`);
             }
-            vendorPrefix = systemConfig?.native?.vendor?.uuidPrefix || (uuid?.native?.uuid?.length > 36 ? uuid.native.uuid.substring(0, 2) : '');
+            vendorPrefix =
+                systemConfig?.native?.vendor?.uuidPrefix ||
+                (uuid?.native?.uuid?.length > 36 ? uuid.native.uuid.substring(0, 2) : '');
 
             // information about connected socket.io adapter
             if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
@@ -387,7 +411,7 @@ function startAdapter(options) {
             }
 
             main();
-        }
+        },
     });
 
     adapter = new utils.Adapter(options);
@@ -438,17 +462,18 @@ function getExtensionsAndSettings(callback) {
         if (err) {
             callback && callback(err, []);
         } else {
-            if (doc.rows.length === 0) {
+            if (!doc.rows?.length) {
                 callback && callback(null, []);
             } else {
                 const res = [];
                 for (let i = 0; i < doc.rows.length; i++) {
                     const instance = doc.rows[i].value;
                     if (instance && instance.common) {
-                        if ((adapter.config.startDisabledExtensions || instance.common.enabled) &&
+                        if (
+                            (adapter.config.startDisabledExtensions || instance.common.enabled) &&
                             instance.common.webExtension &&
-                        (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')) {
-
+                            (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')
+                        ) {
                             // decrypt all native attributes listed in instance.encryptedNative
                             if (Array.isArray(instance.encryptedNative) && instance.native) {
                                 instance.encryptedNative.forEach(key => {
@@ -470,7 +495,9 @@ function getExtensionsAndSettings(callback) {
                         }
                     }
                 }
-                callback && callback(null, res);
+                if (callback) {
+                    callback(null, res);
+                }
             }
         }
     });
@@ -478,7 +505,9 @@ function getExtensionsAndSettings(callback) {
 
 function main() {
     getExtensionsAndSettings(async (err, ext) => {
-        err && adapter.log.error(`Cannot read extensions: ${err}`);
+        if (err) {
+            adapter.log.error(`Cannot read extensions: ${err}`);
+        }
         if (ext) {
             for (let e = 0; e < ext.length; e++) {
                 if (ext[e] && ext[e].common) {
@@ -487,14 +516,17 @@ function main() {
 
                     extensions[instance] = {
                         path: `${name}/${ext[e].common.webExtension}`,
-                        config: ext[e]
+                        config: ext[e],
                     };
                 }
             }
         }
         if (adapter.config.userListSettings) {
             try {
-                const _users = await adapter.getObjectViewAsync('system', 'user', {startkey: 'system.user.', endkey: 'system.user.\u9999'});
+                const _users = await adapter.getObjectViewAsync('system', 'user', {
+                    startkey: 'system.user.',
+                    endkey: 'system.user.\u9999',
+                });
                 users = {};
                 for (let u = 0; u < _users.rows.length; u++) {
                     users[_users.rows[u].value._id] = _users.rows[u].value;
@@ -503,7 +535,10 @@ function main() {
                 adapter.log.error(`Cannot read users: ${e}`);
             }
             try {
-                const _groups = await adapter.getObjectViewAsync('system', 'group', {startkey: 'system.group.', endkey: 'system.group.\u9999'});
+                const _groups = await adapter.getObjectViewAsync('system', 'group', {
+                    startkey: 'system.group.',
+                    endkey: 'system.group.\u9999',
+                });
                 groups = {};
                 for (let u = 0; u < _groups.rows.length; u++) {
                     groups[_groups.rows[u].value._id] = _groups.rows[u].value;
@@ -517,34 +552,18 @@ function main() {
 
         // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
         initWebServer(adapter.config)
-            .then(returnedServer => webServer = returnedServer)
+            .then(returnedServer => (webServer = returnedServer))
             .catch(err => {
                 adapter.log.error(`Failed to initWebServer: ${err}`);
-                adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                adapter.terminate
+                    ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+                    : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             });
         // monitor extensions and pro keys
         adapter.subscribeForeignObjects('system.adapter.*');
     });
 }
 
-/* function readDirs(dirs, cb, result) {
-    result = result || [];
-    if (!dirs || !dirs.length) {
-        return cb && cb(result);
-    }
-    const dir = dirs.shift();
-    adapter.readDir(dir, '', (err, files) => {
-        if (!err && files && files.length) {
-            for (let f = 0; f < files.length; f++) {
-                if (files[f].file.match(/\.html$/)) {
-                    result.push(dir + '/' + files[f].file);
-                }
-            }
-        }
-        setImmediate(readDirs, dirs, cb, result);
-    });
-}
-*/
 let indexHtml;
 
 function getLinkVar(_var, obj, attr, link) {
@@ -647,7 +666,12 @@ function resolveLink(link, instanceObj, instancesMap) {
             for (let i = 0; i < instances.length; i++) {
                 links[adptr + '.' + i] = {
                     instance: `${adptr}.${i}`,
-                    link: getLinkVar(_var, instancesMap[`system.adapter.${adptr}.${i}`], parts[1], links[`${adptr}.${i}`] ? links[adptr + '.' + i].link : link)
+                    link: getLinkVar(
+                        _var,
+                        instancesMap[`system.adapter.${adptr}.${i}`],
+                        parts[1],
+                        links[`${adptr}.${i}`] ? links[adptr + '.' + i].link : link,
+                    ),
                 };
             }
         }
@@ -768,7 +792,8 @@ async function getListOfAllAdapters(settings, server, req) {
                 const ids = id.split('.');
                 ids.pop();
                 id = ids.join('.');
-                if (id === obj._id &&
+                if (
+                    id === obj._id &&
                     instances.rows[i].value.common
                     // && (true || instances.rows[i].value.common.enabled || instances.rows[i].value.common.onlyWWW)
                 ) {
@@ -807,7 +832,10 @@ async function getListOfAllAdapters(settings, server, req) {
     // inform extensions
     Object.keys(extensions).forEach(instance => {
         try {
-            if (extensions?.[instance]?.obj?.welcomePage && typeof extensions[instance].obj.welcomePage === 'function') {
+            if (
+                extensions?.[instance]?.obj?.welcomePage &&
+                typeof extensions[instance].obj.welcomePage === 'function'
+            ) {
                 list.push(extensions[instance].obj.welcomePage());
             }
         } catch (err) {
@@ -873,7 +901,7 @@ function getInfoJs(settings) {
         `var socketSession = "";`,
         `window._authIoBroker = ${settings.auth};`,
         `window.sysLang = "${lang}";`,
-        `window.socketForceWebSockets = ${settings.forceWebSockets ? 'true' : 'false'};`
+        `window.socketForceWebSockets = ${settings.forceWebSockets ? 'true' : 'false'};`,
     ];
     for (const id of Object.keys(webPreSettings)) {
         if (webPreSettings[id]) {
@@ -887,7 +915,7 @@ function getInfoJs(settings) {
 
 function prepareLoginTemplate() {
     let def =
-        '            font: 13px/20px \'Lucida Grande\', Tahoma, Verdana, sans-serif;\n' +
+        "            font: 13px/20px 'Lucida Grande', Tahoma, Verdana, sans-serif;\n" +
         '            color: #404040;\n' +
         '            background-color: #0ae;\n' +
         '            background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));\n' +
@@ -896,8 +924,7 @@ function prepareLoginTemplate() {
         '            background-image: -ms-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
         '            background-image: -o-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
         '            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-        '            background-size: 50px 50px;\n'
-    ;
+        '            background-size: 50px 50px;\n';
     const template = fs.readFileSync(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8');
     if (adapter.config.loginBackgroundColor) {
         def = `background-color: ${adapter.config.loginBackgroundColor};\n`;
@@ -909,7 +936,12 @@ function prepareLoginTemplate() {
 }
 
 function checkUser(username, password, cb) {
-    username = (username || '').toString().replace(FORBIDDEN_CHARS, '_').replace(/\s/g, '_').replace(/\./g, '_').toLowerCase();
+    username = (username || '')
+        .toString()
+        .replace(FORBIDDEN_CHARS, '_')
+        .replace(/\s/g, '_')
+        .replace(/\./g, '_')
+        .toLowerCase();
 
     if (bruteForce[username] && bruteForce[username].errors > 4) {
         let minutes = Date.now() - bruteForce[username].time;
@@ -944,7 +976,7 @@ function checkUser(username, password, cb) {
 
     adapter.checkPassword(username, password, res => {
         if (!res) {
-            bruteForce[username] = bruteForce[username] || {errors: 0};
+            bruteForce[username] = bruteForce[username] || { errors: 0 };
             bruteForce[username].time = Date.now();
             bruteForce[username].errors++;
         } else if (bruteForce[username]) {
@@ -960,15 +992,15 @@ function checkUser(username, password, cb) {
 }
 
 function initAuth(server, settings) {
-    session       = require('express-session');
-    cookieParser  = require('cookie-parser');
-    bodyParser    = require('body-parser');
-    AdapterStore  = utils.commonTools.session(session, settings.ttl);
-    passport      = require('passport');
+    session = require('express-session');
+    cookieParser = require('cookie-parser');
+    bodyParser = require('body-parser');
+    AdapterStore = utils.commonTools.session(session, settings.ttl);
+    passport = require('passport');
     LocalStrategy = require('passport-local').Strategy;
-    flash         = require('connect-flash'); // TODO report error to user
+    flash = require('connect-flash'); // TODO report error to user
 
-    store = new AdapterStore({adapter});
+    store = new AdapterStore({ adapter });
 
     passport.use(new LocalStrategy(checkUser));
 
@@ -977,16 +1009,18 @@ function initAuth(server, settings) {
     passport.deserializeUser((user, done) => done(null, user));
 
     server.app.use(cookieParser());
-    server.app.use(bodyParser.urlencoded({extended: true}));
+    server.app.use(bodyParser.urlencoded({ extended: true }));
     server.app.use(bodyParser.json());
     server.app.use(bodyParser.text());
-    server.app.use(session({
-        secret,
-        saveUninitialized: true,
-        resave:            true,
-        cookie:            { maxAge: settings.ttl * 1000, httpOnly: false }, // default TTL
-        store
-    }));
+    server.app.use(
+        session({
+            secret,
+            saveUninitialized: true,
+            resave: true,
+            cookie: { maxAge: settings.ttl * 1000, httpOnly: false }, // default TTL
+            store,
+        }),
+    );
     server.app.use(passport.initialize());
     server.app.use(passport.session());
     server.app.use(flash());
@@ -1011,7 +1045,7 @@ function sendRange(req, res, buffer) {
     }
 
     // This is for <video> tag on iOS Safari, only one range is used by Safari, so this is enough for now
-    const range = ranges[0] || {start: 0, end: buffer.length};
+    const range = ranges[0] || { start: 0, end: buffer.length };
     res.set('Content-Range', `bytes ${range.start}-${range.end}/${buffer.length}`);
     const buf = buffer.slice(range.start, range.end + 1);
     res.set('Content-Length', buf.length);
@@ -1026,11 +1060,14 @@ function getSocketIoFile(req, res, next) {
             return res.status(200).send(socketIoFile);
         } else {
             // if used internal socket io, so deliver @iobroker/ws
-            if ((!adapter.config.socketio && adapter.config.usePureWebSockets) || adapter.config.socketio.startsWith('system.adapter.ws.')) {
+            if (
+                (!adapter.config.socketio && adapter.config.usePureWebSockets) ||
+                adapter.config.socketio.startsWith('system.adapter.ws.')
+            ) {
                 let file;
                 // If debug version stored
                 if (fs.existsSync(`${__dirname}/www/lib/js/ws.js`)) {
-                    file =`${__dirname}/www/lib/js/ws.js`;
+                    file = `${__dirname}/www/lib/js/ws.js`;
                 } else {
                     const pathToFile = require.resolve(`${utils.appName}.ws`);
                     file = path.join(path.dirname(pathToFile), '/lib/socket.io.js');
@@ -1163,17 +1200,17 @@ async function processReadFolders(settings, req, res) {
             checkUser(user, pass, async (err, user) => {
                 if (user) {
                     const list = await getFoldersOfObject(query.adapter);
-                    res.json({result: list});
+                    res.json({ result: list });
                 } else {
-                    res.status(401).json({error: 'Unauthorized'});
+                    res.status(401).json({ error: 'Unauthorized' });
                 }
             });
         } else {
-            res.status(401).json({error: 'Unauthorized'});
+            res.status(401).json({ error: 'Unauthorized' });
         }
     } else {
         const list = await getFoldersOfObject(query.adapter);
-        res.json({result: list});
+        res.json({ result: list });
     }
 }
 
@@ -1186,10 +1223,10 @@ async function processReadFolders(settings, req, res) {
 //}
 async function initWebServer(settings) {
     const server = {
-        app:    null,
+        app: null,
         server: null,
-        io:     null,
-        settings
+        io: null,
+        settings,
     };
     adapter.subscribeForeignObjects('system.config');
 
@@ -1256,7 +1293,9 @@ async function initWebServer(settings) {
                                 user = longUser;
                             }
                         } else {
-                            const groupId = Object.keys(groups).find(groupId => groups[groupId].common.members.includes(longUser));
+                            const groupId = Object.keys(groups).find(groupId =>
+                                groups[groupId].common.members.includes(longUser),
+                            );
                             if (settings.userListSettings.groups.includes(groupId)) {
                                 if (settings.userListSettings.accessAsUser) {
                                     user = settings.userListSettings.accessAsUser;
@@ -1276,11 +1315,11 @@ async function initWebServer(settings) {
                     if (req.url.includes('/loginApp')) {
                         if (err) {
                             adapter.log.warn(`Cannot login user: ${err}`);
-                            return res.status(401).json({error: 'cannot login user'});
+                            return res.status(401).json({ error: 'cannot login user' });
                         }
                         if (!user) {
                             adapter.log.warn('User not found');
-                            return res.status(401).json({error: 'cannot login user'});
+                            return res.status(401).json({ error: 'cannot login user' });
                         }
                     } else {
                         if (err) {
@@ -1296,7 +1335,7 @@ async function initWebServer(settings) {
                         if (req.url.includes('/loginApp')) {
                             if (err) {
                                 adapter.log.warn(`Cannot login user: ${err}`);
-                                return res.status(401).json({error: 'cannot login user'});
+                                return res.status(401).json({ error: 'cannot login user' });
                             }
                         } else {
                             if (err) {
@@ -1305,7 +1344,8 @@ async function initWebServer(settings) {
                             }
                         }
                         if (req.body.stayLoggedIn) {
-                            req.session.cookie.maxAge = settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
+                            req.session.cookie.maxAge =
+                                settings.ttl > ONE_MONTH_SEC ? settings.ttl * 1000 : ONE_MONTH_SEC * 1000;
                         } else {
                             req.session.cookie.maxAge = settings.ttl * 1000;
                         }
@@ -1349,11 +1389,17 @@ async function initWebServer(settings) {
                 // if not authenticated
                 if (!whiteListIp) {
                     if (isJs) {
-                        return res.status(200).send(`document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`);
+                        return res
+                            .status(200)
+                            .send(
+                                `document.location="${LOGIN_PAGE}?href=" + encodeURI(location.href.replace(location.origin, ""));`,
+                            );
                     } else if (adapter.config.basicAuth) {
                         // if basic auth active, we tell it by sending a header with status 401
                         res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
-                        return res.status(401).send('Basic Authentication has been aborted. You have to reload the page.');
+                        return res
+                            .status(401)
+                            .send('Basic Authentication has been aborted. You have to reload the page.');
                     } else {
                         return res.redirect(redirect);
                     }
@@ -1367,7 +1413,10 @@ async function initWebServer(settings) {
 
                 req.body.password = (req.body.password || '').toString();
                 req.body.username = (req.body.username || '').toString();
-                req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
+                req.body.stayLoggedIn =
+                    req.body.stayloggedin === 'true' ||
+                    req.body.stayloggedin === true ||
+                    req.body.stayloggedin === 'on';
 
                 if (req.body.username && settings.addUserName && !redirect.includes('?')) {
                     const parts = redirect.split('#');
@@ -1382,7 +1431,10 @@ async function initWebServer(settings) {
             server.app.post('/loginApp', (req, res, next) => {
                 req.body.password = (req.body.password || '').toString();
                 req.body.username = (req.body.username || '').toString();
-                req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
+                req.body.stayLoggedIn =
+                    req.body.stayloggedin === 'true' ||
+                    req.body.stayloggedin === true ||
+                    req.body.stayloggedin === 'on';
 
                 authenticate(req, res, next, '', req.body.origin || '?href=%2F');
             });
@@ -1406,14 +1458,19 @@ async function initWebServer(settings) {
                     return res.send(fs.readFileSync(`${__dirname}/${wwwDir}/login/favicon.ico`));
                 }
                 // if cache.manifest got back not 200 it makes an error
-                if (req.isAuthenticated() ||
+                if (
+                    req.isAuthenticated() ||
                     /web\.\d+\/login-bg\.png(\?.*)?$/.test(req.originalUrl) ||
                     /cache\.manifest(\?.*)?$/.test(req.originalUrl) ||
                     /^\/login\//.test(req.originalUrl) ||
                     /\.ico(\?.*)?$/.test(req.originalUrl)
                 ) {
                     return next();
-                } else if (adapter.config.basicAuth && typeof req.headers.authorization === 'string' && req.headers.authorization.startsWith('Basic')) {
+                } else if (
+                    adapter.config.basicAuth &&
+                    typeof req.headers.authorization === 'string' &&
+                    req.headers.authorization.startsWith('Basic')
+                ) {
                     // not logged in yet, and basic auth is active + header present
                     const b64auth = req.headers.authorization.split(' ')[1];
                     const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
@@ -1422,7 +1479,10 @@ async function initWebServer(settings) {
 
                     req.body.username = login;
                     req.body.password = password;
-                    req.body.stayLoggedIn = req.body.stayloggedin === 'true' || req.body.stayloggedin === true || req.body.stayloggedin === 'on';
+                    req.body.stayLoggedIn =
+                        req.body.stayloggedin === 'true' ||
+                        req.body.stayloggedin === true ||
+                        req.body.stayloggedin === 'on';
 
                     const origin = req.body.origin || '?href=%2F';
                     const redirect = req.originalUrl;
@@ -1430,7 +1490,12 @@ async function initWebServer(settings) {
                     authenticate(req, res, next, redirect, origin);
                 } else {
                     // not logged in yet, redirect, auto login or send 401 if basicAuth activated
-                    autoLogonOrRedirectToLogin(req, res, next, `${LOGIN_PAGE}?href=${encodeURIComponent(req.originalUrl)}`);
+                    autoLogonOrRedirectToLogin(
+                        req,
+                        res,
+                        next,
+                        `${LOGIN_PAGE}?href=${encodeURIComponent(req.originalUrl)}`,
+                    );
                 }
             });
 
@@ -1445,14 +1510,17 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store?.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
-                            // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
-                            if (obj) {
-                                res.send({ expires: obj.cookie.expires, user: obj.passport.user });
-                            } else {
-                                res.status(501).send('User not logged in.');
-                            }
-                        });
+                        store?.get(
+                            signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret),
+                            (err, obj) => {
+                                // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
+                                if (obj) {
+                                    res.send({ expires: obj.cookie.expires, user: obj.passport.user });
+                                } else {
+                                    res.status(501).send('User not logged in.');
+                                }
+                            },
+                        );
                     } else {
                         res.status(501).send('User not logged in.');
                     }
@@ -1473,27 +1541,35 @@ async function initWebServer(settings) {
                     });
 
                     if (cookie['connect.sid']) {
-                        store?.get(signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret), (err, obj) => {
-                            // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
-                            if (obj) {
-                                const expires = new Date();
-                                //expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
+                        store?.get(
+                            signature.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), secret),
+                            (err, obj) => {
+                                // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
+                                if (obj) {
+                                    const expires = new Date();
+                                    //expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
 
-                                obj.cookie.expires = expires.toISOString();
-                                console.log(`Session ${req.session.id} expires on ${obj.cookie.expires}`);
+                                    obj.cookie.expires = expires.toISOString();
+                                    console.log(`Session ${req.session.id} expires on ${obj.cookie.expires}`);
 
-                                store.set(req.session.id, obj);
-                                //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
-                                res.send({ expires: obj.cookie.expires, user: obj.passport.user });
-                            } else {
-                                res.status(501).send('cannot prolong');
-                            }
-                        });
+                                    store.set(req.session.id, obj);
+                                    //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
+                                    res.send({ expires: obj.cookie.expires, user: obj.passport.user });
+                                } else {
+                                    res.status(501).send('cannot prolong');
+                                }
+                            },
+                        );
                     } else {
                         res.status(501).send('cannot prolong');
                     }
                 } else {
-                    autoLogonOrRedirectToLogin(req, res, next, `${LOGIN_PAGE}?href=${encodeURIComponent(req.originalUrl)}`);
+                    autoLogonOrRedirectToLogin(
+                        req,
+                        res,
+                        next,
+                        `${LOGIN_PAGE}?href=${encodeURIComponent(req.originalUrl)}`,
+                    );
                 }
             });
         } else {
@@ -1505,17 +1581,20 @@ async function initWebServer(settings) {
                 initAuth(server, settings);
                 server.app.use((req, res, next) => {
                     const remoteIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                    let whiteListIp = server.io && server.io.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
+                    let whiteListIp = server?.io?.getWhiteListIpForAddress(remoteIp, settings.whiteListSettings);
                     if (!whiteListIp && server.io && remoteIp === '::1') {
                         whiteListIp = server.io.getWhiteListIpForAddress('localhost', settings.whiteListSettings);
                     }
                     adapter.log.silly(`whiteListIp ${whiteListIp}`);
                     if (whiteListIp) {
-                        req.logIn(settings.whiteListSettings[whiteListIp].user, err =>
-                            next(err));
+                        req.logIn(settings.whiteListSettings[whiteListIp].user, err => next(err));
                     } else {
-                        req.logIn(settings.defaultUser.substr(12), err => // cut "system.user."
-                            next(err));
+                        req.logIn(
+                            settings.defaultUser.substr(12),
+                            (
+                                err, // cut "system.user."
+                            ) => next(err),
+                        );
                     }
                 });
             }
@@ -1529,40 +1608,64 @@ async function initWebServer(settings) {
                     const fileName = req.url.split('/', 3)[2].split('?', 2);
                     adapter.getForeignObject(fileName[0], (err, obj) => {
                         let contentType = 'text/plain';
-                        if (obj && obj.common.type === 'file')  {
+                        if (obj && obj.common.type === 'file') {
                             contentType = mime.lookup(fileName[0]);
                         }
                         if (obj && obj.common.type === 'file') {
                             const getForeignBinaryState = adapter.getForeignBinaryState || adapter.getBinaryState;
-                            getForeignBinaryState.call(adapter, fileName[0], {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, obj) => {
-                                if (!err && obj !== null && obj !== undefined) {
-                                    if (obj && typeof obj === 'object' && obj.val !== undefined && obj.ack !== undefined) {
-                                        res.set('Content-Type', 'application/json');
+                            getForeignBinaryState.call(
+                                adapter,
+                                fileName[0],
+                                { user: req.user ? `system.user.${req.user}` : settings.defaultUser },
+                                (err, obj) => {
+                                    if (!err && obj !== null && obj !== undefined) {
+                                        if (
+                                            obj &&
+                                            typeof obj === 'object' &&
+                                            obj.val !== undefined &&
+                                            obj.ack !== undefined
+                                        ) {
+                                            res.set('Content-Type', 'application/json');
+                                        } else {
+                                            res.set('Content-Type', contentType || 'text/plain');
+                                        }
+                                        res.set('Cache-Control', 'no-cache');
+                                        res.status(200).send(obj);
                                     } else {
-                                        res.set('Content-Type', contentType || 'text/plain');
+                                        res.status(404).send(
+                                            `404 Not found. File ${escapeHtml(fileName[0])} not found`,
+                                        );
                                     }
-                                    res.set('Cache-Control', 'no-cache');
-                                    res.status(200).send(obj);
-                                } else {
-                                    res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
-                                }
-                            });
+                                },
+                            );
                         } else {
-                            adapter.getForeignState(fileName[0], {user: req.user ? `system.user.${req.user}` : settings.defaultUser}, (err, obj) => {
-                                if (!err && obj !== null && obj !== undefined) {
-                                    res.set('Content-Type', 'text/plain');
-                                    res.set('Cache-Control', 'no-cache');
-                                    if (fileName[1] && fileName[1].includes('json')) {
-                                        res.status(200).send(JSON.stringify(obj));
+                            adapter.getForeignState(
+                                fileName[0],
+                                { user: req.user ? `system.user.${req.user}` : settings.defaultUser },
+                                (err, obj) => {
+                                    if (!err && obj !== null && obj !== undefined) {
+                                        res.set('Content-Type', 'text/plain');
+                                        res.set('Cache-Control', 'no-cache');
+                                        if (fileName[1] && fileName[1].includes('json')) {
+                                            res.status(200).send(JSON.stringify(obj));
+                                        } else {
+                                            res.status(200).send(
+                                                obj.val === undefined
+                                                    ? 'undefined'
+                                                    : obj.val === null
+                                                      ? 'null'
+                                                      : typeof obj.val === 'object'
+                                                        ? JSON.stringify(obj.val)
+                                                        : obj.val.toString(),
+                                            );
+                                        }
                                     } else {
-                                        res.status(200).send(obj.val === undefined ? 'undefined' :
-                                            (obj.val === null ? 'null' :
-                                                (typeof obj.val === 'object' ? JSON.stringify(obj.val) : obj.val.toString())));
+                                        res.status(404).send(
+                                            `404 Not found. File ${escapeHtml(fileName[0])} not found`,
+                                        );
                                     }
-                                } else {
-                                    res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
-                                }
-                            });
+                                },
+                            );
                         }
                     });
                 } catch (e) {
@@ -1582,7 +1685,10 @@ async function initWebServer(settings) {
             server.app.use((req, res, next) => {
                 res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
                 res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-                res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, *');
+                res.header(
+                    'Access-Control-Allow-Headers',
+                    'Content-Type, Authorization, Content-Length, X-Requested-With, *',
+                );
                 res.header('Access-Control-Allow-Credentials', 'true');
 
                 // intercept OPTIONS method
@@ -1600,23 +1706,29 @@ async function initWebServer(settings) {
         }
 
         try {
-            const webserver = new IoBWebServer.WebServer({app: server.app, adapter, secure: settings.secure});
+            const webserver = new IoBWebServer.WebServer({ app: server.app, adapter, secure: settings.secure });
             server.server = await webserver.init();
         } catch (err) {
             adapter.log.error(`Cannot create web-server: ${err}`);
-            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            adapter.terminate
+                ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+                : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
         if (!server.server) {
             adapter.log.error(`Cannot create web-server`);
-            adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            adapter.terminate
+                ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+                : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             return;
         }
 
         server.server.__server = server;
     } else {
         adapter.log.error('port missing');
-        adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION): process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+        adapter.terminate
+            ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+            : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
     }
 
     if (server.server) {
@@ -1624,63 +1736,80 @@ async function initWebServer(settings) {
         let serverPort;
         server.server.on('error', e => {
             if (e.toString().includes('EACCES') && serverPort <= 1024) {
-                adapter.log.error(`node.js process has no rights to start server on the port ${serverPort}.\n` +
-                    `Do you know that on linux you need special permissions for ports under 1024?\n` +
-                    `You can call in shell following scrip to allow it for node.js: "iobroker fix"`
+                adapter.log.error(
+                    `node.js process has no rights to start server on the port ${serverPort}.\n` +
+                        `Do you know that on linux you need special permissions for ports under 1024?\n` +
+                        `You can call in shell following scrip to allow it for node.js: "iobroker fix"`,
                 );
             } else {
                 adapter.log.error(`Cannot start server on ${settings.bind || '0.0.0.0'}:${serverPort}: ${e}`);
             }
             if (!serverListening) {
-                adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION) : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                adapter.terminate
+                    ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+                    : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
             }
         });
 
         settings.port = parseInt(settings.port, 10) || 8082;
         serverPort = settings.port;
 
-        adapter.getPort(settings.port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, port => {
-            port = parseInt(port, 10);
-            if (port !== settings.port && !settings.findNextPort) {
-                adapter.log.error(`port ${settings.port} already in use`);
-                adapter.terminate ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION): process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
-            }
-            serverPort = port;
-            server.server.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, () => {
-                serverListening = true;
-                adapter.setState('info.connection', true, true);
-
-                if (!settings.doNotCheckPublicIP && !settings.auth) {
-                    checkTimeout = adapter.setTimeout(async () => {
-                        checkTimeout = null;
-                        try {
-                            await IoBWebServer.checkPublicIP(settings.port, 'ioBroker.web', '/iobroker_check.html');
-                        } catch (e) {
-                            // this supported first from js-controller 5.0.
-                            adapter.sendToHost(
-                                `system.host.${adapter.host}`,
-                                'addNotification',
-                                {
-                                    scope: 'system',
-                                    category: 'securityIssues',
-                                    message:
-                                        'Your web instance is accessible from the internet without any protection. ' +
-                                        'Please enable authentication or disable the access from the internet.',
-                                    instance: `system.adapter.${adapter.namespace}`
-                                },
-                                (/* result */) => {
-                                    /* ignore */
-                                }
-                            );
-
-                            adapter.log.error(e.toString());
-                        }
-                    }, 1000);
+        adapter.getPort(
+            settings.port,
+            !settings.bind || settings.bind === '0.0.0.0' ? undefined : settings.bind || undefined,
+            port => {
+                port = parseInt(port, 10);
+                if (port !== settings.port && !settings.findNextPort) {
+                    adapter.log.error(`port ${settings.port} already in use`);
+                    adapter.terminate
+                        ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+                        : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 }
-            });
+                serverPort = port;
+                server.server.listen(
+                    port,
+                    !settings.bind || settings.bind === '0.0.0.0' ? undefined : settings.bind || undefined,
+                    () => {
+                        serverListening = true;
+                        adapter.setState('info.connection', true, true);
 
-            adapter.log.info(`http${settings.secure ? 's' : ''} server listening on port ${port}`);
-        });
+                        if (!settings.doNotCheckPublicIP && !settings.auth) {
+                            checkTimeout = adapter.setTimeout(async () => {
+                                checkTimeout = null;
+                                try {
+                                    await IoBWebServer.checkPublicIP(
+                                        settings.port,
+                                        'ioBroker.web',
+                                        '/iobroker_check.html',
+                                    );
+                                } catch (e) {
+                                    // this supported first from js-controller 5.0.
+                                    adapter.sendToHost(
+                                        `system.host.${adapter.host}`,
+                                        'addNotification',
+                                        {
+                                            scope: 'system',
+                                            category: 'securityIssues',
+                                            message:
+                                                'Your web instance is accessible from the internet without any protection. ' +
+                                                'Please enable authentication or disable the access from the internet.',
+                                            instance: `system.adapter.${adapter.namespace}`,
+                                        },
+                                        (/* result */) => {
+                                            /* ignore */
+                                        },
+                                    );
+
+                                    adapter.log.error(e.toString());
+                                }
+                            }, 1000);
+                        }
+                    },
+                );
+
+                adapter.log.info(`http${settings.secure ? 's' : ''} server listening on port ${port}`);
+            },
+        );
     }
 
     // Activate integrated socket
@@ -1697,7 +1826,9 @@ async function initWebServer(settings) {
         socketSettings.language = settings.language;
 
         try {
-            let filePath = settings.usePureWebSockets ? require.resolve(`${utils.appName}.ws`) : require.resolve(`${utils.appName}.socketio`);
+            let filePath = settings.usePureWebSockets
+                ? require.resolve(`${utils.appName}.ws`)
+                : require.resolve(`${utils.appName}.socketio`);
             filePath = filePath.replace(/\\/g, '/');
             const parts = filePath.split('/');
             parts.pop(); // main.js
@@ -1736,28 +1867,43 @@ async function initWebServer(settings) {
 
                 adapter.log.info(`Connecting extension "${extensions[instance].path}"`);
 
-                extensions[instance].obj = new extAPI(server.server, {secure: settings.secure, port: settings.port}, adapter, extensions[instance].config, server.app);
-                if (extensions[instance].obj?.waitForReady && typeof extensions[instance].obj.waitForReady === 'function') {
-                    extensionPromises.push(new Promise(resolve => {
-                        let timeout = adapter.setTimeout(() => {
-                            if (timeout) {
-                                timeout = null;
-                                adapter.log.error(`Extension "${instance}" (${extensions[instance].path}) is not responding (waitForReady)`);
-                                resolve();
-                            }
-                        }, 5000);
+                // Start web-extension
+                extensions[instance].obj = new extAPI(
+                    server.server,
+                    { secure: settings.secure, port: settings.port },
+                    adapter,
+                    extensions[instance].config,
+                    server.app,
+                );
 
-                        const ready = () => {
-                            if (timeout) {
-                                adapter.log.debug(`Connected extension "${extensions[instance].path}"`);
-                                adapter.clearTimeout(timeout);
-                                timeout = null;
-                                resolve();
-                            }
-                        };
+                if (
+                    extensions[instance].obj?.waitForReady &&
+                    typeof extensions[instance].obj.waitForReady === 'function'
+                ) {
+                    extensionPromises.push(
+                        new Promise(resolve => {
+                            let timeout = adapter.setTimeout(() => {
+                                if (timeout) {
+                                    timeout = null;
+                                    adapter.log.error(
+                                        `Extension "${instance}" (${extensions[instance].path}) is not responding (waitForReady)`,
+                                    );
+                                    resolve();
+                                }
+                            }, 5000);
 
-                        extensions[instance].obj.waitForReady(ready);
-                    }));
+                            const ready = () => {
+                                if (timeout) {
+                                    adapter.log.debug(`Connected extension "${extensions[instance].path}"`);
+                                    adapter.clearTimeout(timeout);
+                                    timeout = null;
+                                    resolve();
+                                }
+                            };
+
+                            extensions[instance].obj.waitForReady(ready);
+                        }),
+                    );
                 }
             } catch (err) {
                 adapter.log.error(`Cannot start extension "${instance}": ${err}`);
@@ -1765,238 +1911,288 @@ async function initWebServer(settings) {
         });
     }
 
-    Promise.all(extensionPromises)
-        .then(() => {
-            // Activate integrated simple API
-            if (settings.simpleapi) {
-                adapter.log.debug('Activating simple API');
-                try {
-                    const SimpleAPI = require(`${utils.appName}.simple-api/lib/simpleapi.js`);
+    Promise.all(extensionPromises).then(() => {
+        // Activate integrated simple API
+        if (settings.simpleapi) {
+            adapter.log.debug('Activating simple API');
+            try {
+                const SimpleAPI = require(`${utils.appName}.simple-api/lib/simpleapi.js`);
 
-                    server.api = new SimpleAPI(server.server, {secure: settings.secure, port: settings.port}, adapter);
-                } catch (e) {
-                    adapter.log.error(`Cannot find simple api module! ${e}`);
-                }
+                server.api = new SimpleAPI(server.server, { secure: settings.secure, port: settings.port }, adapter);
+            } catch (e) {
+                adapter.log.error(`Cannot find simple api module! ${e}`);
             }
+        }
 
-            if (server.app && !settings.disableFilesObjects) {
-                adapter.log.debug('Activating web files from objectDB');
-                // deliver web files from objectDB
-                server.app.use('/', (req, res) => {
-                    let url = decodeURI(req.url);
-                    // remove all ../
-                    // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
-                    url = path.normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
-                    // remove '////' at start and let only one
-                    if (url[0] === '/' && url[1] === '/') {
-                        let i = 2;
-                        while (url[i] === '/') {
-                            i++;
-                        }
-                        url = url.substring(i - 1);
+        if (server.app && !settings.disableFilesObjects) {
+            adapter.log.debug('Activating web files from objectDB');
+            // deliver web files from objectDB
+            server.app.use('/', (req, res) => {
+                let url = decodeURI(req.url);
+                // remove all ../
+                // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
+                url = path.normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
+                // remove '////' at start and let only one
+                if (url[0] === '/' && url[1] === '/') {
+                    let i = 2;
+                    while (url[i] === '/') {
+                        i++;
                     }
-                    if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                        res.status(404).send('Not found');
+                    url = url.substring(i - 1);
+                }
+                if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
+                    res.status(404).send('Not found');
+                    return;
+                }
+
+                if (server.api && server.api.checkRequest(url)) {
+                    server.api.restApi(req, res);
+                    return;
+                }
+
+                // If root directory requested
+                if (url === '/' || url === '/index.html') {
+                    if (adapter.config.defaultRedirect) {
+                        res.redirect(301, adapter.config.defaultRedirect);
                         return;
-                    }
-
-                    if (server.api && server.api.checkRequest(url)) {
-                        server.api.restApi(req, res);
-                        return;
-                    }
-
-                    // If root directory requested
-                    if (url === '/' || url === '/index.html') {
-                        if (adapter.config.defaultRedirect) {
-                            res.redirect(301, adapter.config.defaultRedirect);
-                            return;
-                        } else {
-                            getListOfAllAdapters(settings, server, req)
-                                .then(data => res
+                    } else {
+                        getListOfAllAdapters(settings, server, req)
+                            .then(data =>
+                                res
                                     .set('Content-Type', 'text/html')
                                     .set('Cache-Control', 'no-cache')
                                     .status(200)
-                                    .send(data))
-                                .catch(err => res.status(500).send(`500. Error${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`));
+                                    .send(data),
+                            )
+                            .catch(err =>
+                                res
+                                    .status(500)
+                                    .send(`500. Error${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`),
+                            );
+                        return;
+                    }
+                }
+
+                // add index.html
+                url = url.replace(/\/($|\?|#)/, '/index.html$1');
+
+                if (url.match(/^\/adapter\//)) {
+                    // add .admin to adapter name
+                    url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
+                }
+
+                if (url.match(/^\/lib\//)) {
+                    url = `/${adapter.name}${url}`;
+                }
+                if (url.match(/^\/admin\//)) {
+                    url = `/${adapter.name}${url}`;
+                }
+                url = url.split('/');
+                // Skip first /
+                url.shift();
+                // Get ID
+                const id = url.shift();
+                const versionPrefix = url[0];
+                url = url.join('/');
+                const pos = url.indexOf('?');
+                let noFileCache;
+                if (pos !== -1) {
+                    url = url.substring(0, pos);
+                    // disable file cache if request like /vis/files/picture.png?noCache
+                    noFileCache = true;
+                }
+
+                // get adapter name
+                if (webByVersion[id]) {
+                    if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
+                        // redirect to version
+                        res.set('location', `/${id}/${webByVersion[id]}/${url}`);
+                        res.status(301).send();
+                        return;
+                    }
+                }
+
+                if (settings.cache && cache[`${id}/${url}`] && !noFileCache) {
+                    res.contentType(cache[`${id}/${url}`].mimeType);
+                    if (req.headers.range) {
+                        sendRange(req, res, cache[`${id}/${url}`].buffer);
+                    } else {
+                        res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
+                        res.status(200).send(cache[`${id}/${url}`].buffer);
+                    }
+                } else {
+                    if (id === 'login' && url === 'index.html') {
+                        loginPage = loginPage || prepareLoginTemplate();
+                        const buffer = loginPage;
+
+                        if (
+                            !settings.auth ||
+                            (req.isAuthenticated && req.isAuthenticated()) ||
+                            isInWhiteList(settings, server, req)
+                        ) {
+                            res.redirect(getRedirectPage(req));
                             return;
                         }
-                    }
 
-                    // add index.html
-                    url = url.replace(/\/($|\?|#)/, '/index.html$1');
-
-                    if (url.match(/^\/adapter\//)) {
-                        // add .admin to adapter name
-                        url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
-                    }
-
-                    if (url.match(/^\/lib\//)) {
-                        url = `/${adapter.name}${url}`;
-                    }
-                    if (url.match(/^\/admin\//)) {
-                        url = `/${adapter.name}${url}`;
-                    }
-                    url = url.split('/');
-                    // Skip first /
-                    url.shift();
-                    // Get ID
-                    const id = url.shift();
-                    const versionPrefix = url[0];
-                    url = url.join('/');
-                    const pos = url.indexOf('?');
-                    let noFileCache;
-                    if (pos !== -1) {
-                        url = url.substring(0, pos);
-                        // disable file cache if request like /vis/files/picture.png?noCache
-                        noFileCache = true;
-                    }
-
-                    // get adapter name
-                    if (webByVersion[id]) {
-                        if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
-                            // redirect to version
-                            res.set('location', `/${id}/${webByVersion[id]}/${url}`);
-                            res.status(301).send();
-                            return;
-                        }
-                    }
-
-                    if (settings.cache && cache[`${id}/${url}`] && !noFileCache) {
-                        res.contentType(cache[`${id}/${url}`].mimeType);
-                        if (req.headers.range) {
-                            sendRange(req, res, cache[`${id}/${url}`].buffer);
+                        if (buffer === null || buffer === undefined) {
+                            res.contentType('text/html');
+                            res.set('Cache-Control', 'no-cache');
+                            res.status(200).send(`File ${escapeHtml(url)} not found`, 404);
                         } else {
-                            res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
-                            res.status(200).send(cache[`${id}/${url}`].buffer);
+                            // Store file in cache
+                            if (settings.cache) {
+                                cache[`${id}/${url}`] = { buffer: buffer.toString(), mimeType: 'text/html' };
+                            }
+                            res.set('Cache-Control', 'no-cache');
+                            res.contentType('text/html');
+                            res.status(200).send(buffer.toString());
                         }
                     } else {
-                        if (id === 'login' && url === 'index.html') {
-                            loginPage = loginPage || prepareLoginTemplate();
-                            const buffer = loginPage;
+                        // special solution for socket.io
+                        if (url.endsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/)) {
+                            getSocketIoFile(req, res, true);
+                            return;
+                        }
 
-                            if (!settings.auth || (req.isAuthenticated && req.isAuthenticated()) || isInWhiteList(settings, server, req)) {
-                                res.redirect(getRedirectPage(req));
-                                return;
-                            }
+                        adapter.readFile(
+                            id,
+                            webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url,
+                            {
+                                user: req.user ? `system.user.${req.user}` : settings.defaultUser,
+                                noFileCache: noFileCache,
+                            },
+                            (err, buffer, mimeType) => {
+                                if (
+                                    adapter.config.showFolderIndex &&
+                                    err &&
+                                    err.toString() === 'Error: Not exists' &&
+                                    req.url.endsWith('/')
+                                ) {
+                                    url = url.replace(/\/?index.html$/, '');
+                                    // show folder index
 
-                            if (buffer === null || buffer === undefined) {
-                                res.contentType('text/html');
-                                res.set('Cache-Control', 'no-cache');
-                                res.status(200).send(`File ${escapeHtml(url)} not found`, 404);
-                            } else {
-                                // Store file in cache
-                                if (settings.cache) {
-                                    cache[`${id}/${url}`] = {buffer: buffer.toString(), mimeType: 'text/html'};
-                                }
-                                res.set('Cache-Control', 'no-cache');
-                                res.contentType('text/html');
-                                res.status(200).send(buffer.toString());
-                            }
-                        } else {
-                            // special solution for socket.io
-                            if (url.endsWith('socket.io.js') || url.match(/\/socket\.io\.js(\?.*)?$/)) {
-                                getSocketIoFile(req, res, true);
-                                return;
-                            }
+                                    const path =
+                                        webByVersion[id] && versionPrefix
+                                            ? url.substring(versionPrefix.length + 1)
+                                            : url;
+                                    return adapter.readDir(
+                                        id,
+                                        path,
+                                        {
+                                            user: req.user ? `system.user.${req.user}` : settings.defaultUser,
+                                        },
+                                        (err, files) => {
+                                            adapter.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
 
-                            adapter.readFile(
-                                id,
-                                webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url,
-                                {
-                                    user: req.user ? `system.user.${req.user}` : settings.defaultUser,
-                                    noFileCache: noFileCache
-                                },
-                                (err, buffer, mimeType) => {
-                                    if (adapter.config.showFolderIndex && err && err.toString() === 'Error: Not exists' && req.url.endsWith('/')) {
-                                        url = url.replace(/\/?index.html$/, '');
-                                        // show folder index
+                                            res.set(
+                                                'Cache-Control',
+                                                `public, max-age=${adapter.config.staticAssetCacheMaxAge}`,
+                                            );
+                                            res.set('Content-Type', 'text/html; charset=utf-8');
+                                            const text = [
+                                                '<html>',
+                                                '<head><title>Directory</title>',
+                                                `<style>body { font-family: Arial, sans-serif; } td { padding: 5px; }</style>`,
+                                                `</head><body><h3>Directory ${req.url}</h3><table>`,
+                                            ];
 
-                                        const path = webByVersion[id] && versionPrefix ? url.substring(versionPrefix.length + 1) : url;
-                                        return adapter.readDir(
-                                            id,
-                                            path,
-                                            {
-                                                user: req.user ? `system.user.${req.user}` : settings.defaultUser
-                                            },
-                                            (err, files) => {
-                                                adapter.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
+                                            if (url !== '/') {
+                                                const parts = url.split('/');
+                                                parts.pop();
+                                                text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                            }
 
-                                                res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
-                                                res.set('Content-Type', 'text/html; charset=utf-8');
-                                                const text = [
-                                                    '<html>',
-                                                    '<head><title>Directory</title>',
-                                                    `<style>body { font-family: Arial, sans-serif; } td { padding: 5px; }</style>`,
-                                                    `</head><body><h3>Directory ${req.url}</h3><table>`
-                                                ];
-
-                                                if (url !== '/') {
-                                                    const parts = url.split('/');
-                                                    parts.pop();
-                                                    text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                            files.sort((a, b) => {
+                                                if (a.isDir && b.isDir) {
+                                                    return a.file.localeCompare(b.file);
+                                                } else if (a.isDir) {
+                                                    return -1;
+                                                } else if (b.isDir) {
+                                                    return 1;
                                                 }
 
-                                                files.sort((a, b) => {
-                                                    if (a.isDir && b.isDir) {
-                                                        return a.file.localeCompare(b.file);
-                                                    } else if (a.isDir) {
-                                                        return -1;
-                                                    } else if (b.isDir) {
-                                                        return 1;
-                                                    }
-
-                                                    return a.file.localeCompare(b.file);
-                                                });
-                                                files.forEach(file =>
-                                                    text.push(`<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
-                                                text.push('</table></body></html>');
-                                                res.status(200).send(text.join('\n'));
+                                                return a.file.localeCompare(b.file);
                                             });
+                                            files.forEach(file =>
+                                                text.push(
+                                                    `<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`,
+                                                ),
+                                            );
+                                            text.push('</table></body></html>');
+                                            res.status(200).send(text.join('\n'));
+                                        },
+                                    );
+                                }
+
+                                if (buffer === null || buffer === undefined || err) {
+                                    res.contentType('text/html');
+                                    res.status(404).send(
+                                        `File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`,
+                                    );
+                                } else {
+                                    mimeType = mimeType || mime.lookup(url) || 'text/javascript';
+
+                                    // replace some important variables in HTML
+                                    if (url === 'index.html' || url === 'edit.html') {
+                                        buffer = buffer
+                                            .toString()
+                                            .replaceAll(`@@vendorPrefix@@`, vendorPrefix)
+
+                                            .replaceAll(
+                                                `'@@disableDataReporting@@'`,
+                                                adapter.common.disableDataReporting ? 'true' : 'false',
+                                            )
+                                            .replaceAll(
+                                                `"@@disableDataReporting@@"`,
+                                                adapter.common.disableDataReporting ? 'true' : 'false',
+                                            )
+
+                                            .replaceAll(
+                                                `@@loadingBackgroundColor@@`,
+                                                adapter.config.loadingBackgroundColor || '',
+                                            )
+
+                                            .replaceAll(
+                                                `@@loadingBackgroundImage@@`,
+                                                adapter.config.loadingBackgroundImage
+                                                    ? `files/${adapter.namespace}/loading-bg.png`
+                                                    : '',
+                                            )
+
+                                            .replaceAll(
+                                                `'@@loadingHideLogo@@'`,
+                                                adapter.config.loadingHideLogo ? 'true' : 'false',
+                                            )
+                                            .replaceAll(
+                                                `"@@loadingHideLogo@@"`,
+                                                adapter.config.loadingHideLogo ? 'true' : 'false',
+                                            );
                                     }
 
-                                    if (buffer === null || buffer === undefined || err) {
-                                        res.contentType('text/html');
-                                        res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof err !== 'string' ? JSON.stringify(err) : err)}`);
+                                    // Store file in cache
+                                    if (settings.cache) {
+                                        cache[`${id}/${url}`] = { buffer, mimeType };
+                                    }
+
+                                    res.contentType(mimeType);
+
+                                    if (req.headers.range) {
+                                        sendRange(req, res, buffer);
                                     } else {
-                                        mimeType = mimeType || mime.lookup(url) || 'text/javascript';
-
-                                        // replace some important variables in HTML
-                                        if (url === 'index.html' || url === 'edit.html') {
-                                            buffer = buffer
-                                                .toString()
-                                                .replaceAll(`@@vendorPrefix@@`, vendorPrefix)
-
-                                                .replaceAll(`'@@disableDataReporting@@'`, adapter.common.disableDataReporting ? 'true' : 'false')
-                                                .replaceAll(`"@@disableDataReporting@@"`, adapter.common.disableDataReporting ? 'true' : 'false')
-
-                                                .replaceAll(`@@loadingBackgroundColor@@`, adapter.config.loadingBackgroundColor || '')
-
-                                                .replaceAll(`@@loadingBackgroundImage@@`, adapter.config.loadingBackgroundImage ? `files/${adapter.namespace}/loading-bg.png` : '')
-
-                                                .replaceAll(`'@@loadingHideLogo@@'`, adapter.config.loadingHideLogo ? 'true' : 'false')
-                                                .replaceAll(`"@@loadingHideLogo@@"`, adapter.config.loadingHideLogo ? 'true' : 'false');
-                                        }
-
-                                        // Store file in cache
-                                        if (settings.cache) {
-                                            cache[`${id}/${url}`] = { buffer, mimeType };
-                                        }
-
-                                        res.contentType(mimeType);
-
-                                        if (req.headers.range) {
-                                            sendRange(req, res, buffer);
-                                        } else {
-                                            res.set('Cache-Control', `public, max-age=${adapter.config.staticAssetCacheMaxAge}`);
-                                            res.status(200).send(buffer);
-                                        }
+                                        res.set(
+                                            'Cache-Control',
+                                            `public, max-age=${adapter.config.staticAssetCacheMaxAge}`,
+                                        );
+                                        res.status(200).send(buffer);
                                     }
-                                });
-                        }
+                                }
+                            },
+                        );
                     }
-                });
-            }
-        });
+                }
+            });
+        }
+    });
 
     if (server.server) {
         return server;

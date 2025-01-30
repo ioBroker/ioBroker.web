@@ -20,13 +20,13 @@
   },
   "dependencies": {
     "@iobroker/webserver": "^1.0.6",
-    "@iobroker/adapter-core": "^3.1.6",
+    "@iobroker/adapter-core": "^3.2.3",
     "body-parser": "^1.20.3",
     "compression": "^1.7.5",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
     "cookie-signature": "^1.2.2",
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "express-session": "^1.18.1",
     "iobroker.simple-api": "^2.8.0",
     "iobroker.ws": "2.6.2",
@@ -40,12 +40,12 @@
     "@alcalzone/release-script": "^3.8.0",
     "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
-    "@iobroker/legacy-testing": "^1.0.13",
-    "axios": "^1.7.7",
-    "chai": "^4.4.1",
-    "eslint": "^8.57.0",
-    "gulp": "^4.0.2",
-    "mocha": "^10.8.2"
+    "@iobroker/build-tools": "^2.0.15",
+    "@iobroker/eslint-config": "^1.0.0",
+    "@iobroker/legacy-testing": "^2.0.2",
+    "axios": "^1.7.9",
+    "chai": "^4.5.0",
+    "mocha": "^11.1.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
@@ -60,14 +60,18 @@
   ],
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit",
-    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
-    "build": "node node_modules/gulp/bin/gulp.js",
+    "prepublishOnly": "node tasks",
+    "build": "node tasks",
     "release": "release-script",
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
-    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd ..",
-    "npm": "npm i && cd src && npm i -f && cd .."
+    "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade",
+    "npm": "npm i && cd src-admin && npm i -f",
+    "0-clean": "node tasks --0-clean",
+    "1-npm": "node tasks --1-npm",
+    "2-build": "node tasks --2-build",
+    "3-copy": "node tasks --3-copy"
   },
   "license": "MIT",
   "maintainers": [
