@@ -22,9 +22,6 @@ const styles = {
             mr: 0,
         },
     },
-    displayNone: {
-        display: 'none !important',
-    },
     tab: {
         width: '100%',
         minHeight: '100%',
@@ -325,13 +322,6 @@ class Options extends Component {
                                     onChange={onChange}
                                 />
                             ) : null}
-                            {/* <CustomCheckbox
-                            title="Compatibility mode with socket.io@2.x"
-                            attr="compatibilityV2"
-                            style={{ ...(native.socketio === '' && !native.usePureWebSockets ? undefined : styles.displayNone), marginTop: 10 }}
-                            native={native}
-                            onChange={onChange}
-                        /> */}
                         </Box>
                         <Box
                             component="div"
