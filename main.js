@@ -99,14 +99,14 @@ function escapeHtml(string) {
 }
 
 async function getSocketUrl(obj) {
-    if (adapter.config.socketio && adapter.config.socketio.match(/^system\.adapter\./)) {
+    if (adapter.config.socketio?.match(/^system\.adapter\./)) {
         obj = obj || (await adapter.getForeignObjectAsync(adapter.config.socketio));
-        if (obj && obj.common && !obj.common.enabled) {
+        if (obj?.common && !obj.common.enabled) {
             const state = await adapter.getForeignStateAsync(`${adapter.config.socketio}.alive`);
-            if (state && state.val) {
+            if (state?.val) {
                 return `:${obj.native.port}`;
             }
-        } else if (obj && obj.common && obj.common.enabled && obj.native) {
+        } else if (obj?.common?.enabled && obj.native) {
             return `:${obj.native.port}`;
         }
     }
@@ -457,111 +457,116 @@ function updatePreSettings(obj) {
     }
 }
 
-function getExtensionsAndSettings(callback) {
-    adapter.getObjectView('system', 'instance', null, (err, doc) => {
-        if (err) {
-            callback && callback(err, []);
-        } else {
-            if (!doc.rows?.length) {
-                callback && callback(null, []);
-            } else {
-                const res = [];
-                for (let i = 0; i < doc.rows.length; i++) {
-                    const instance = doc.rows[i].value;
-                    if (instance && instance.common) {
-                        if (
-                            (adapter.config.startDisabledExtensions || instance.common.enabled) &&
-                            instance.common.webExtension &&
-                            (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')
-                        ) {
-                            // decrypt all native attributes listed in instance.encryptedNative
-                            if (Array.isArray(instance.encryptedNative) && instance.native) {
-                                instance.encryptedNative.forEach(key => {
-                                    if (instance.native[key]) {
-                                        instance.native[key] = adapter.decrypt(secret, instance.native[key]);
-                                    }
-                                });
-                            }
-
-                            res.push(instance);
-                        }
-                        if (instance.common.webPreSettings) {
-                            updatePreSettings(instance);
-                        }
-                        if (instance.common.webByVersion) {
-                            // 'system.adapter.'.length = 15
-                            const _id = doc.rows[i].value._id.substring(15).replace(/\.\d+$/, '');
-                            webByVersion[_id] = instance.common.version;
-                        }
-                    }
-                }
-                if (callback) {
-                    callback(null, res);
+async function getExtensionsAndSettings() {
+    const doc = await adapter.getObjectView('system', 'instance', null);
+    if (!doc.rows?.length) {
+        return [];
+    }
+    const res = [];
+    for (let i = 0; i < doc.rows.length; i++) {
+        const instance = doc.rows[i].value;
+        if (instance?.common) {
+            if (!adapter.config.startDisabledExtensions && !instance.common.enabled) {
+                const alive = await adapter.getForeignStateAsync(`${instance._id}.alive`);
+                if (alive?.val) {
+                    // simulate as it is enabled
+                    instance.common.enabled = true;
                 }
             }
+
+            if (
+                (adapter.config.startDisabledExtensions || instance.common.enabled) &&
+                instance.common.webExtension &&
+                (instance.native.webInstance === adapter.namespace || instance.native.webInstance === '*')
+            ) {
+                // decrypt all native attributes listed in instance.encryptedNative
+                if (Array.isArray(instance.encryptedNative) && instance.native) {
+                    instance.encryptedNative.forEach(key => {
+                        if (instance.native[key]) {
+                            instance.native[key] = adapter.decrypt(secret, instance.native[key]);
+                        }
+                    });
+                }
+
+                res.push(instance);
+            }
+            if (instance.common.webPreSettings) {
+                updatePreSettings(instance);
+            }
+            if (instance.common.webByVersion) {
+                // 'system.adapter.'.length = 15
+                const _id = doc.rows[i].value._id.substring(15).replace(/\.\d+$/, '');
+                webByVersion[_id] = instance.common.version;
+            }
         }
-    });
+    }
+
+    return res;
 }
 
-function main() {
-    getExtensionsAndSettings(async (err, ext) => {
-        if (err) {
-            adapter.log.error(`Cannot read extensions: ${err}`);
-        }
-        if (ext) {
-            for (let e = 0; e < ext.length; e++) {
-                if (ext[e] && ext[e].common) {
-                    const instance = ext[e]._id.substring('system.adapter.'.length);
-                    const name = instance.split('.')[0];
+async function main() {
+    let ext;
+    try {
+        ext = await getExtensionsAndSettings();
+    } catch (err) {
+        adapter.log.error(`Cannot read extensions: ${err}`);
+    }
 
-                    extensions[instance] = {
-                        path: `${name}/${ext[e].common.webExtension}`,
-                        config: ext[e],
-                    };
-                }
-            }
-        }
-        if (adapter.config.userListSettings) {
-            try {
-                const _users = await adapter.getObjectViewAsync('system', 'user', {
-                    startkey: 'system.user.',
-                    endkey: 'system.user.\u9999',
-                });
-                users = {};
-                for (let u = 0; u < _users.rows.length; u++) {
-                    users[_users.rows[u].value._id] = _users.rows[u].value;
-                }
-            } catch (e) {
-                adapter.log.error(`Cannot read users: ${e}`);
-            }
-            try {
-                const _groups = await adapter.getObjectViewAsync('system', 'group', {
-                    startkey: 'system.group.',
-                    endkey: 'system.group.\u9999',
-                });
-                groups = {};
-                for (let u = 0; u < _groups.rows.length; u++) {
-                    groups[_groups.rows[u].value._id] = _groups.rows[u].value;
-                }
-            } catch (e) {
-                adapter.log.error(`Cannot read users: ${e}`);
-            }
-            await adapter.subscribeForeignObjectsAsync('system.user.*');
-            await adapter.subscribeForeignObjectsAsync('system.group.*');
-        }
+    if (ext) {
+        for (let e = 0; e < ext.length; e++) {
+            if (ext[e]?.common) {
+                const instance = ext[e]._id.substring('system.adapter.'.length);
+                const name = instance.split('.')[0];
 
-        // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
-        initWebServer(adapter.config)
-            .then(returnedServer => (webServer = returnedServer))
-            .catch(err => {
-                adapter.log.error(`Failed to initWebServer: ${err}`);
-                adapter.terminate
-                    ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                    : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                extensions[instance] = {
+                    path: `${name}/${ext[e].common.webExtension}`,
+                    config: ext[e],
+                };
+            }
+        }
+    }
+
+    if (adapter.config.userListSettings) {
+        try {
+            const _users = await adapter.getObjectViewAsync('system', 'user', {
+                startkey: 'system.user.',
+                endkey: 'system.user.\u9999',
             });
-        // monitor extensions and pro keys
-        adapter.subscribeForeignObjects('system.adapter.*');
-    });
+            users = {};
+            for (let u = 0; u < _users.rows.length; u++) {
+                users[_users.rows[u].value._id] = _users.rows[u].value;
+            }
+        } catch (e) {
+            adapter.log.error(`Cannot read users: ${e}`);
+        }
+        try {
+            const _groups = await adapter.getObjectViewAsync('system', 'group', {
+                startkey: 'system.group.',
+                endkey: 'system.group.\u9999',
+            });
+            groups = {};
+            for (let u = 0; u < _groups.rows.length; u++) {
+                groups[_groups.rows[u].value._id] = _groups.rows[u].value;
+            }
+        } catch (e) {
+            adapter.log.error(`Cannot read users: ${e}`);
+        }
+        await adapter.subscribeForeignObjectsAsync('system.user.*');
+        await adapter.subscribeForeignObjectsAsync('system.group.*');
+    }
+
+    // TODO: This whole setting of webServer global is pretty nasty, needs cleaning up.
+    try {
+        webServer = await initWebServer(adapter.config)
+    } catch (err) {
+        adapter.log.error(`Failed to initWebServer: ${err}`);
+        adapter.terminate
+            ? adapter.terminate(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
+            : process.exit(utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+    }
+
+    // monitor extensions and pro keys
+    await adapter.subscribeForeignObjectsAsync('system.adapter.*');
 }
 
 let indexHtml;
@@ -1855,7 +1860,7 @@ async function initWebServer(settings) {
         // activate extensions
         Object.keys(extensions).forEach(instance => {
             try {
-                // for debug purposes, try to load file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
+                // for debug purposes, try to load a file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
                 const parts = extensions[instance].path.split('/');
                 parts.shift();
                 let extAPI;
@@ -1863,6 +1868,10 @@ async function initWebServer(settings) {
                     extAPI = require(`./${parts.join('/')}`);
                 } else {
                     extAPI = require(`${utils.appName}.${extensions[instance].path}`);
+                }
+                // if loaded from TS
+                if (extAPI.default) {
+                    extAPI = extAPI.default;
                 }
 
                 adapter.log.info(`Connecting extension "${extensions[instance].path}"`);
@@ -1874,6 +1883,7 @@ async function initWebServer(settings) {
                     adapter,
                     extensions[instance].config,
                     server.app,
+                    server.io,
                 );
 
                 if (

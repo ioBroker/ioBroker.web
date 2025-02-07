@@ -268,13 +268,15 @@ class Options extends Component {
                                 native={native}
                                 onChange={onChange}
                             />
-                            <CustomCheckbox
-                                title="basic_authentication"
-                                attr="basicAuth"
-                                style={{ ...(native.auth ? undefined : styles.displayNone), marginTop: 10 }}
-                                native={native}
-                                onChange={onChange}
-                            />
+                            {native.auth ? (
+                                <CustomCheckbox
+                                    title="basic_authentication"
+                                    attr="basicAuth"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
                             <CustomCheckbox
                                 title="cache"
                                 attr="cache"
@@ -297,31 +299,32 @@ class Options extends Component {
                                     }
                                 }}
                             />
-                            <CustomCheckbox
-                                title="usePureWebSockets"
-                                attr="usePureWebSockets"
-                                style={{ ...(!native.socketio ? undefined : styles.displayNone), marginTop: 10 }}
-                                native={native}
-                                onChange={onChange}
-                            />
-                            <CustomCheckbox
-                                title="web_sockets"
-                                help={
-                                    native.socketio && native.socketio.startsWith('system.adapter.socket')
-                                        ? I18n.t('Same settings must be set in socketio instance')
-                                        : ''
-                                }
-                                attr="forceWebSockets"
-                                style={{
-                                    ...((!native.socketio || native.socketio.startsWith('system.adapter.socket')) &&
-                                    !native.usePureWebSockets
-                                        ? undefined
-                                        : styles.displayNone),
-                                    marginTop: 10,
-                                }}
-                                native={native}
-                                onChange={onChange}
-                            />
+                            {!native.socketio ? (
+                                <CustomCheckbox
+                                    title="usePureWebSockets"
+                                    attr="usePureWebSockets"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
+                            {(!native.socketio || native.socketio.startsWith('system.adapter.socket')) &&
+                            !native.usePureWebSockets ? (
+                                <CustomCheckbox
+                                    title="web_sockets"
+                                    help={
+                                        native.socketio?.startsWith('system.adapter.socket')
+                                            ? I18n.t('Same settings must be set in socketio instance')
+                                            : ''
+                                    }
+                                    attr="forceWebSockets"
+                                    style={{
+                                        marginTop: 10,
+                                    }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
                             {/* <CustomCheckbox
                             title="Compatibility mode with socket.io@2.x"
                             attr="compatibilityV2"
@@ -334,85 +337,87 @@ class Options extends Component {
                             component="div"
                             sx={styles.blockWrapper}
                         >
-                            <div
-                                style={{
-                                    ...styles.blockWrapperCheckbox,
-                                    ...(native.secure ? undefined : styles.displayNone),
-                                }}
-                            >
+                            {native.secure ? (
+                                <div style={styles.blockWrapperCheckbox}>
+                                    <CustomSelect
+                                        title="public_certificate"
+                                        attr="certPublic"
+                                        noTranslate
+                                        options={[
+                                            { title: I18n.t('nothing'), value: '' },
+                                            ...certificatesOptions
+                                                .filter(({ type }) => !type || type === 'public')
+                                                .map(({ name }) => ({ title: name, value: name })),
+                                        ]}
+                                        style={{ marginTop: 10, marginRight: 20 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                    <CustomSelect
+                                        title="private_certificate"
+                                        attr="certPrivate"
+                                        noTranslate
+                                        options={[
+                                            { title: I18n.t('nothing'), value: '' },
+                                            ...certificatesOptions
+                                                .filter(({ type }) => !type || type === 'private')
+                                                .map(({ name }) => ({ title: name, value: name })),
+                                        ]}
+                                        style={{ marginTop: 10, marginRight: 20 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                    <CustomSelect
+                                        title="chained_certificate"
+                                        attr="certChained"
+                                        noTranslate
+                                        options={[
+                                            { title: I18n.t('nothing'), value: '' },
+                                            ...certificatesOptions
+                                                .filter(({ type }) => !type || type === 'chained')
+                                                .map(({ name }) => ({ title: name, value: name })),
+                                        ]}
+                                        style={{ marginTop: 10 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                </div>
+                            ) : null}
+                            {!native.auth ? (
                                 <CustomSelect
-                                    title="public_certificate"
-                                    attr="certPublic"
+                                    title="users"
+                                    attr="defaultUser"
+                                    themeType={this.props.themeType}
                                     noTranslate
-                                    options={[
-                                        { title: I18n.t('nothing'), value: '' },
-                                        ...certificatesOptions
-                                            .filter(({ type }) => !type || type === 'public')
-                                            .map(({ name }) => ({ title: name, value: name })),
-                                    ]}
-                                    style={{ marginTop: 10, marginRight: 20 }}
+                                    options={usersOptions.map(({ _id, common: { name, color, icon } }) => ({
+                                        title:
+                                            typeof name === 'object'
+                                                ? name[this.props.lang] ||
+                                                  name.end ||
+                                                  _id.replace(/^system\.user\./, '')
+                                                : name,
+                                        value: _id.replace(/^system\.user\./, ''),
+                                        color,
+                                        icon,
+                                    }))}
+                                    style={{
+                                        marginTop: 10,
+                                        width: 300,
+                                    }}
                                     native={native}
                                     onChange={onChange}
                                 />
-                                <CustomSelect
-                                    title="private_certificate"
-                                    attr="certPrivate"
-                                    noTranslate
-                                    options={[
-                                        { title: I18n.t('nothing'), value: '' },
-                                        ...certificatesOptions
-                                            .filter(({ type }) => !type || type === 'private')
-                                            .map(({ name }) => ({ title: name, value: name })),
-                                    ]}
-                                    style={{ marginTop: 10, marginRight: 20 }}
+                            ) : null}
+                            {native.auth ? (
+                                <CustomInput
+                                    title="time_out"
+                                    attr="ttl"
+                                    type="number"
+                                    style={{ marginTop: -1, width: 300 }}
                                     native={native}
                                     onChange={onChange}
                                 />
-                                <CustomSelect
-                                    title="chained_certificate"
-                                    attr="certChained"
-                                    noTranslate
-                                    options={[
-                                        { title: I18n.t('nothing'), value: '' },
-                                        ...certificatesOptions
-                                            .filter(({ type }) => !type || type === 'chained')
-                                            .map(({ name }) => ({ title: name, value: name })),
-                                    ]}
-                                    style={{ marginTop: 10 }}
-                                    native={native}
-                                    onChange={onChange}
-                                />
-                            </div>
-                            <CustomSelect
-                                title="users"
-                                attr="defaultUser"
-                                themeType={this.props.themeType}
-                                noTranslate
-                                options={usersOptions.map(({ _id, common: { name, color, icon } }) => ({
-                                    title:
-                                        typeof name === 'object'
-                                            ? name[this.props.lang] || name.end || _id.replace(/^system\.user\./, '')
-                                            : name,
-                                    value: _id.replace(/^system\.user\./, ''),
-                                    color,
-                                    icon,
-                                }))}
-                                style={{
-                                    ...(!native.auth ? undefined : styles.displayNone),
-                                    marginTop: 10,
-                                    width: 300,
-                                }}
-                                native={native}
-                                onChange={onChange}
-                            />
-                            <CustomInput
-                                title="time_out"
-                                attr="ttl"
-                                type="number"
-                                style={{ ...(native.auth ? undefined : styles.displayNone), marginTop: -1, width: 300 }}
-                                native={native}
-                                onChange={onChange}
-                            />
+                            ) : null}
                             <CustomCheckbox
                                 title="simple_api"
                                 attr="simpleapi"
