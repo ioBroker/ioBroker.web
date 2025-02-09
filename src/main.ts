@@ -281,10 +281,9 @@ interface WebStructure {
 }
 
 export class WebAdapter extends Adapter {
+    declare public config: WebAdapterConfig;
+
     private indexHtml = '';
-
-    private webConfig: WebAdapterConfig;
-
     private checkTimeout: ioBroker.Timeout | undefined;
     private vendorPrefix = '';
 
@@ -323,8 +322,6 @@ export class WebAdapter extends Adapter {
             fileChange: (id: string, fileName: string, size: number | null): void =>
                 this.onFileChange(id, fileName, size),
         });
-
-        this.webConfig = this.config as WebAdapterConfig;
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
@@ -369,14 +366,14 @@ export class WebAdapter extends Adapter {
             this.updatePreSettings(obj as ioBroker.InstanceObject);
         }
 
-        if (!this.ownSocket && id === this.webConfig.socketio) {
+        if (!this.ownSocket && id === this.config.socketio) {
             void this.getSocketUrl(obj as ioBroker.InstanceObject).then(() => {
                 this.log.info(`SocketURL now "${this.socketUrl}"`);
             });
         }
 
         // If system language desired => update language
-        if (id === 'system.config' && !this.webConfig.language) {
+        if (id === 'system.config' && !this.config.language) {
             this.lang = obj?.common?.language || 'en';
         }
 
@@ -522,12 +519,12 @@ export class WebAdapter extends Adapter {
                     timeout = undefined;
                     this?.log?.warn(`Timeout by termination of web-extensions!`);
                     this?.log?.debug(
-                        `terminating http${this.webConfig.secure ? 's' : ''} server on port ${this.webConfig.port}`,
+                        `terminating http${this.config.secure ? 's' : ''} server on port ${this.config.port}`,
                     );
                     this.webServer?.io?.close();
                     this.webServer?.server?.close();
                     this?.log?.info(
-                        `terminated http${this.webConfig.secure ? 's' : ''} server on port ${this.webConfig.port}`,
+                        `terminated http${this.config.secure ? 's' : ''} server on port ${this.config.port}`,
                     );
                     if (callback) {
                         callback();
@@ -542,12 +539,12 @@ export class WebAdapter extends Adapter {
                         this.clearTimeout(timeout);
                         timeout = null;
                         this?.log?.debug(
-                            `terminating http${this.webConfig.secure ? 's' : ''} server on port ${this.webConfig.port}`,
+                            `terminating http${this.config.secure ? 's' : ''} server on port ${this.config.port}`,
                         );
                         this.webServer?.io?.close();
                         this.webServer?.server?.close();
                         this?.log?.info(
-                            `terminated http${this.webConfig.secure ? 's' : ''} server on port ${this.webConfig.port}`,
+                            `terminated http${this.config.secure ? 's' : ''} server on port ${this.config.port}`,
                         );
                         if (callback) {
                             callback();
@@ -562,8 +559,6 @@ export class WebAdapter extends Adapter {
     }
 
     async onReady(): Promise<void> {
-        this.webConfig = this.config as WebAdapterConfig;
-
         // Generate secret for session manager
         const systemConfig = await this.getForeignObjectAsync('system.config');
 
@@ -593,18 +588,18 @@ export class WebAdapter extends Adapter {
             (uuid?.native?.uuid?.length > 36 ? uuid!.native.uuid.substring(0, 2) : '');
 
         // information about connected socket.io adapter
-        if (this.webConfig.socketio?.match(/^system\.adapter\./)) {
+        if (this.config.socketio?.match(/^system\.adapter\./)) {
             await this.getSocketUrl();
             // Listen for changes
-            await this.subscribeForeignObjectsAsync(this.webConfig.socketio);
+            await this.subscribeForeignObjectsAsync(this.config.socketio);
         } else {
-            this.socketUrl = this.webConfig.socketio;
+            this.socketUrl = this.config.socketio;
             this.ownSocket = this.socketUrl !== 'none';
         }
 
         // Read language
-        if (this.webConfig.language) {
-            this.lang = this.webConfig.language;
+        if (this.config.language) {
+            this.lang = this.config.language;
         } else if (systemConfig?.common) {
             this.lang = systemConfig.common.language || 'en';
         }
@@ -646,7 +641,7 @@ export class WebAdapter extends Adapter {
         for (let i = 0; i < doc.rows.length; i++) {
             const instance = doc.rows[i].value;
             if (instance?.common) {
-                if (!this.webConfig.startDisabledExtensions && !instance.common.enabled) {
+                if (!this.config.startDisabledExtensions && !instance.common.enabled) {
                     const alive = await this.getForeignStateAsync(`${instance._id}.alive`);
                     if (alive?.val) {
                         // simulate as it is enabled
@@ -655,7 +650,7 @@ export class WebAdapter extends Adapter {
                 }
 
                 if (
-                    (this.webConfig.startDisabledExtensions || instance.common.enabled) &&
+                    (this.config.startDisabledExtensions || instance.common.enabled) &&
                     instance.common.webExtension &&
                     (instance.native.webInstance === this.namespace || instance.native.webInstance === '*')
                 ) {
@@ -852,7 +847,7 @@ export class WebAdapter extends Adapter {
         const whiteListIp = this.isInWhiteList(req);
 
         // if login
-        text += `let authEnabled = ${this.webConfig.auth && !this.webConfig.basicAuth && !whiteListIp};\n`;
+        text += `let authEnabled = ${this.config.auth && !this.config.basicAuth && !whiteListIp};\n`;
 
         return this.indexHtml.replace('// -- PLACE THE LIST HERE --', text);
     }
@@ -951,9 +946,9 @@ export class WebAdapter extends Adapter {
         const result = [
             `var socketUrl = "${this.socketUrl}";`,
             `var socketSession = "";`,
-            `window._authIoBroker = ${this.webConfig.auth};`,
+            `window._authIoBroker = ${this.config.auth};`,
             `window.sysLang = "${this.lang}";`,
-            `window.socketForceWebSockets = ${this.webConfig.forceWebSockets ? 'true' : 'false'};`,
+            `window.socketForceWebSockets = ${this.config.forceWebSockets ? 'true' : 'false'};`,
         ];
         Object.values(this.webPreSettings).forEach(preSetting => {
             if (preSetting) {
@@ -980,10 +975,10 @@ export class WebAdapter extends Adapter {
             '            background-size: 50px 50px;\n';
 
         const template = readFileSync(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8');
-        if (this.webConfig.loginBackgroundColor) {
-            def = `background-color: ${this.webConfig.loginBackgroundColor};\n`;
+        if (this.config.loginBackgroundColor) {
+            def = `background-color: ${this.config.loginBackgroundColor};\n`;
         }
-        if (this.webConfig.loginBackgroundImage) {
+        if (this.config.loginBackgroundImage) {
             def += `            background-image: url(../${this.namespace}/login-bg.png);\n`;
         }
         return template.replace('background: black;', def);
@@ -1056,7 +1051,7 @@ export class WebAdapter extends Adapter {
         if (!this.webServer.app) {
             return;
         }
-        const AdapterStore = commonTools.session(session, this.webConfig.ttl);
+        const AdapterStore = commonTools.session(session, this.config.ttl);
 
         this.store = new AdapterStore({ adapter: this });
 
@@ -1082,7 +1077,7 @@ export class WebAdapter extends Adapter {
                 secret: this.secret,
                 saveUninitialized: true,
                 resave: true,
-                cookie: { maxAge: (parseInt(this.webConfig.ttl as string, 10) || 3600) * 1000, httpOnly: false }, // default TTL
+                cookie: { maxAge: (parseInt(this.config.ttl as string, 10) || 3600) * 1000, httpOnly: false }, // default TTL
                 // @ts-expect-error missing typing
                 store: this.store!,
             }),
@@ -1130,14 +1125,14 @@ export class WebAdapter extends Adapter {
         ) {
             if (this.socketIoFile) {
                 res.contentType('text/javascript');
-                res.set('Cache-Control', `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`);
+                res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                 res.status(200).send(this.socketIoFile);
                 return;
             }
             // if used internal socket io, so deliver @iobroker/ws
             if (
-                (!this.webConfig.socketio && this.webConfig.usePureWebSockets) ||
-                this.webConfig.socketio.startsWith('system.adapter.ws.')
+                (!this.config.socketio && this.config.usePureWebSockets) ||
+                this.config.socketio.startsWith('system.adapter.ws.')
             ) {
                 let file: string;
                 // If debug version stored
@@ -1184,7 +1179,7 @@ export class WebAdapter extends Adapter {
 
             if (this.socketIoFile) {
                 res.contentType('text/javascript');
-                res.set('Cache-Control', `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`);
+                res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                 res.status(200).send(this.socketIoFile);
                 return;
             }
@@ -1198,17 +1193,17 @@ export class WebAdapter extends Adapter {
     isInWhiteList(req: Request): string {
         const remoteIp: string = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString();
 
-        if (!this.webConfig.auth) {
+        if (!this.config.auth) {
             return remoteIp;
         }
-        if (this.webConfig.whiteListSettings) {
+        if (this.config.whiteListSettings) {
             // if whitelist is used
-            let whiteListIp = this.webServer.io?.getWhiteListIpForAddress(remoteIp, this.webConfig.whiteListSettings);
+            let whiteListIp = this.webServer.io?.getWhiteListIpForAddress(remoteIp, this.config.whiteListSettings);
             if (!whiteListIp && this.webServer.io && remoteIp === '::1') {
-                whiteListIp = this.webServer.io.getWhiteListIpForAddress('localhost', this.webConfig.whiteListSettings);
+                whiteListIp = this.webServer.io.getWhiteListIpForAddress('localhost', this.config.whiteListSettings);
             }
 
-            if (whiteListIp && this.webConfig.whiteListSettings[whiteListIp].user !== 'auth') {
+            if (whiteListIp && this.config.whiteListSettings[whiteListIp].user !== 'auth') {
                 this.log.silly(`whiteListIp ${whiteListIp}`);
                 return whiteListIp;
             }
@@ -1245,7 +1240,7 @@ export class WebAdapter extends Adapter {
             }
         }
 
-        if (this.webConfig.auth) {
+        if (this.config.auth) {
             // with basic authentication
             if (req.headers.authorization?.startsWith('Basic ')) {
                 const [user, pass] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64')
@@ -1270,21 +1265,21 @@ export class WebAdapter extends Adapter {
     }
 
     async getSocketUrl(obj?: ioBroker.InstanceObject): Promise<void> {
-        if (this.webConfig.socketio?.match(/^system\.adapter\./)) {
+        if (this.config.socketio?.match(/^system\.adapter\./)) {
             const socketInstance: ioBroker.InstanceObject | undefined =
                 obj ||
-                ((await this.getForeignObjectAsync(this.webConfig.socketio)) as ioBroker.InstanceObject | undefined) ||
+                ((await this.getForeignObjectAsync(this.config.socketio)) as ioBroker.InstanceObject | undefined) ||
                 undefined;
 
             if (socketInstance?.common && !socketInstance.common.enabled) {
-                let state = await this.getForeignStateAsync(`${this.webConfig.socketio}.alive`);
+                let state = await this.getForeignStateAsync(`${this.config.socketio}.alive`);
                 if (state?.val) {
                     this.socketUrl = `:${socketInstance.native.port}`;
                     return;
                 }
                 // give 5 seconds to restart the adapter
                 await new Promise(resolve => setTimeout(resolve, 5000));
-                state = await this.getForeignStateAsync(`${this.webConfig.socketio}.alive`);
+                state = await this.getForeignStateAsync(`${this.config.socketio}.alive`);
                 if (state?.val) {
                     this.socketUrl = `:${socketInstance.native.port}`;
                     return;
@@ -1301,22 +1296,22 @@ export class WebAdapter extends Adapter {
     async initWebServer(): Promise<void> {
         this.subscribeForeignObjects('system.config');
 
-        this.webConfig.ttl = parseInt(this.webConfig.ttl as string, 10) || 3600;
+        this.config.ttl = parseInt(this.config.ttl as string, 10) || 3600;
 
-        if (this.webConfig.ttl < 30) {
-            this.webConfig.ttl = 30;
+        if (this.config.ttl < 30) {
+            this.config.ttl = 30;
         }
 
-        if (!this.webConfig.whiteListEnabled && this.webConfig.whiteListSettings) {
-            delete this.webConfig.whiteListSettings;
+        if (!this.config.whiteListEnabled && this.config.whiteListSettings) {
+            delete this.config.whiteListSettings;
         }
 
-        this.webConfig.defaultUser = this.webConfig.defaultUser || 'system.user.admin';
-        if (!this.webConfig.defaultUser.startsWith('system.user.')) {
-            this.webConfig.defaultUser = `system.user.${this.webConfig.defaultUser}`;
+        this.config.defaultUser = this.config.defaultUser || 'system.user.admin';
+        if (!this.config.defaultUser.startsWith('system.user.')) {
+            this.config.defaultUser = `system.user.${this.config.defaultUser}`;
         }
 
-        if (this.webConfig.port) {
+        if (this.config.port) {
             this.webServer.app = express();
             this.webServer.app.use(compression());
 
@@ -1346,7 +1341,7 @@ export class WebAdapter extends Adapter {
                 async (req: Request, res: Response): Promise<void> => await this.processReadFolders(req, res),
             );
 
-            if (this.webConfig.auth) {
+            if (this.config.auth) {
                 this.initAuth();
 
                 /**
@@ -1374,15 +1369,15 @@ export class WebAdapter extends Adapter {
                             status?: number | Array<number | undefined>, */
                         ): void => {
                             // replace user
-                            if (user && this.webConfig.userListEnabled) {
+                            if (user && this.config.userListEnabled) {
                                 // get the user group
                                 const longUser: `system.user.${string}` = user.startsWith('system.user.')
                                     ? (user as `system.user.${string}`)
                                     : `system.user.${user}`;
                                 user = '';
-                                if (this.webConfig.userListSettings.users.includes(longUser)) {
-                                    if (this.webConfig.userListSettings.accessAsUser) {
-                                        user = this.webConfig.userListSettings.accessAsUser;
+                                if (this.config.userListSettings.users.includes(longUser)) {
+                                    if (this.config.userListSettings.accessAsUser) {
+                                        user = this.config.userListSettings.accessAsUser;
                                     } else {
                                         user = longUser;
                                     }
@@ -1398,12 +1393,12 @@ export class WebAdapter extends Adapter {
                                         : undefined;
                                     if (
                                         groupId &&
-                                        this.webConfig.userListSettings.groups.includes(
+                                        this.config.userListSettings.groups.includes(
                                             groupId as `system.group.${string}`,
                                         )
                                     ) {
-                                        if (this.webConfig.userListSettings.accessAsUser) {
-                                            user = this.webConfig.userListSettings.accessAsUser;
+                                        if (this.config.userListSettings.accessAsUser) {
+                                            user = this.config.userListSettings.accessAsUser;
                                         } else {
                                             user = longUser;
                                         }
@@ -1456,11 +1451,11 @@ export class WebAdapter extends Adapter {
                                 }
                                 if (req.body.stayLoggedIn) {
                                     req.session.cookie.maxAge =
-                                        ((this.webConfig.ttl as number) || 3600) > ONE_MONTH_SEC
-                                            ? ((this.webConfig.ttl as number) || 3600) * 1000
+                                        ((this.config.ttl as number) || 3600) > ONE_MONTH_SEC
+                                            ? ((this.config.ttl as number) || 3600) * 1000
                                             : ONE_MONTH_SEC * 1000;
                                 } else {
-                                    req.session.cookie.maxAge = ((this.webConfig.ttl as number) || 3600) * 1000;
+                                    req.session.cookie.maxAge = ((this.config.ttl as number) || 3600) * 1000;
                                 }
                                 if (req.url.includes('/loginApp')) {
                                     res.json({ result: 'ok', user });
@@ -1488,7 +1483,7 @@ export class WebAdapter extends Adapter {
                 ): void => {
                     let isJs;
                     if (/\.css(\?.*)?$/.test(req.originalUrl)) {
-                        res.set('Cache-Control', `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`);
+                        res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                         res.status(200).send('');
                         return;
                     }
@@ -1499,7 +1494,7 @@ export class WebAdapter extends Adapter {
 
                         // if request for web/lib, ignore it, because no redirect information
                         if (parts[0] === 'lib') {
-                            res.set('Cache-Control', `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`);
+                            res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                             res.status(200).send('');
                             return;
                         }
@@ -1516,7 +1511,7 @@ export class WebAdapter extends Adapter {
                             return;
                         }
 
-                        if (this.webConfig.basicAuth) {
+                        if (this.config.basicAuth) {
                             // if basic auth active, we tell it by sending a header with status 401
                             res.set('WWW-Authenticate', `Basic realm="Access to ioBroker web", charset="UTF-8"`);
                             res.status(401).send('Basic Authentication has been aborted. You have to reload the page.');
@@ -1527,8 +1522,8 @@ export class WebAdapter extends Adapter {
                         return;
                     }
 
-                    if (this.webConfig.whiteListSettings?.[whiteListIp]) {
-                        req.logIn(this.webConfig.whiteListSettings[whiteListIp].user.toString(), err => next(err));
+                    if (this.config.whiteListSettings?.[whiteListIp]) {
+                        req.logIn(this.config.whiteListSettings[whiteListIp].user.toString(), err => next(err));
                     } else {
                         next('No user found');
                     }
@@ -1544,7 +1539,7 @@ export class WebAdapter extends Adapter {
                         req.body.stayloggedin === true ||
                         req.body.stayloggedin === 'on';
 
-                    if (req.body.username && this.webConfig.addUserName && !redirect.includes('?')) {
+                    if (req.body.username && this.config.addUserName && !redirect.includes('?')) {
                         const parts = redirect.split('#');
                         parts[0] += `?${req.body.username}`;
                         redirect = parts.join('#');
@@ -1593,7 +1588,7 @@ export class WebAdapter extends Adapter {
                     ) {
                         return next();
                     } else if (
-                        this.webConfig.basicAuth &&
+                        this.config.basicAuth &&
                         typeof req.headers.authorization === 'string' &&
                         req.headers.authorization.startsWith('Basic')
                     ) {
@@ -1748,7 +1743,7 @@ export class WebAdapter extends Adapter {
                 this.webServer.app.get('/login', (req: Request, res: Response): void => res.redirect('/'));
                 this.webServer.app.get('/logout', (req: Request, res: Response): void => res.redirect('/'));
 
-                if (this.webConfig.whiteListEnabled) {
+                if (this.config.whiteListEnabled) {
                     this.initAuth();
                     this.webServer.app.use((req, res, next) => {
                         const remoteIp = (
@@ -1757,25 +1752,25 @@ export class WebAdapter extends Adapter {
                             ''
                         ).toString();
                         let whiteListIp: string | undefined;
-                        if (this.webConfig.whiteListSettings) {
+                        if (this.config.whiteListSettings) {
                             let whiteListIp = this.webServer?.io?.getWhiteListIpForAddress(
                                 remoteIp,
-                                this.webConfig.whiteListSettings,
+                                this.config.whiteListSettings,
                             );
                             if (!whiteListIp && this.webServer.io && remoteIp === '::1') {
                                 whiteListIp = this.webServer.io.getWhiteListIpForAddress(
                                     'localhost',
-                                    this.webConfig.whiteListSettings,
+                                    this.config.whiteListSettings,
                                 );
                             }
                             this.log.silly(`whiteListIp ${whiteListIp}`);
                         }
 
-                        if (whiteListIp && this.webConfig.whiteListSettings?.[whiteListIp]) {
-                            req.logIn(this.webConfig.whiteListSettings[whiteListIp].user, err => next(err));
+                        if (whiteListIp && this.config.whiteListSettings?.[whiteListIp]) {
+                            req.logIn(this.config.whiteListSettings[whiteListIp].user, err => next(err));
                         } else {
                             req.logIn(
-                                this.webConfig.defaultUser.substring('system.user.'.length), // remove 'system.user.'
+                                this.config.defaultUser.substring('system.user.'.length), // remove 'system.user.'
                                 (
                                     err, // cut "system.user."
                                 ) => next(err),
@@ -1785,7 +1780,7 @@ export class WebAdapter extends Adapter {
                 }
             }
 
-            if (!this.webConfig.disableStates) {
+            if (!this.config.disableStates) {
                 this.log.debug('Activating states & socket info');
                 // Init read from states
                 this.webServer.app.get('/state/*', (req: Request, res: Response): void => {
@@ -1807,7 +1802,7 @@ export class WebAdapter extends Adapter {
                                         {
                                             user: req.user
                                                 ? `system.user.${req.user as string}`
-                                                : this.webConfig.defaultUser,
+                                                : this.config.defaultUser,
                                         },
                                         (err: Error | null | undefined, obj?: Buffer | ioBroker.State | null): void => {
                                             if (!err && obj !== null && obj !== undefined) {
@@ -1836,7 +1831,7 @@ export class WebAdapter extends Adapter {
                                         {
                                             user: req.user
                                                 ? `system.user.${req.user as string}`
-                                                : this.webConfig.defaultUser,
+                                                : this.config.defaultUser,
                                         },
                                         (err, obj) => {
                                             if (!err && obj !== null && obj !== undefined) {
@@ -1878,7 +1873,7 @@ export class WebAdapter extends Adapter {
             });
 
             // Enable CORS
-            if (this.webConfig.socketio || this.common!.loglevel === 'debug') {
+            if (this.config.socketio || this.common!.loglevel === 'debug') {
                 this.webServer.app.use((req, res, next) => {
                     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
                     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -1898,7 +1893,7 @@ export class WebAdapter extends Adapter {
             }
 
             const appOptions: { maxAge?: number } = {};
-            if (this.webConfig.cache) {
+            if (this.config.cache) {
                 appOptions.maxAge = 30758400000; // one year
             }
 
@@ -1906,7 +1901,7 @@ export class WebAdapter extends Adapter {
                 const webserver = new WebServer({
                     app: this.webServer.app,
                     adapter: this,
-                    secure: this.webConfig.secure,
+                    secure: this.config.secure,
                 });
                 this.webServer.server = (await webserver.init()) as Server & { __server: WebStructure };
             } catch (err) {
@@ -1943,7 +1938,7 @@ export class WebAdapter extends Adapter {
                             `You can call in shell following scrip to allow it for node.js: "iobroker fix"`,
                     );
                 } else {
-                    this.log.error(`Cannot start server on ${this.webConfig.bind || '0.0.0.0'}:${serverPort}: ${e}`);
+                    this.log.error(`Cannot start server on ${this.config.bind || '0.0.0.0'}:${serverPort}: ${e}`);
                 }
                 if (!serverListening) {
                     this.terminate
@@ -1952,18 +1947,16 @@ export class WebAdapter extends Adapter {
                 }
             });
 
-            this.webConfig.port = parseInt(this.webConfig.port as string, 10) || 8082;
-            serverPort = this.webConfig.port;
+            this.config.port = parseInt(this.config.port as string, 10) || 8082;
+            serverPort = this.config.port;
 
             this.getPort(
-                this.webConfig.port,
-                !this.webConfig.bind || this.webConfig.bind === '0.0.0.0'
-                    ? undefined
-                    : this.webConfig.bind || undefined,
+                this.config.port,
+                !this.config.bind || this.config.bind === '0.0.0.0' ? undefined : this.config.bind || undefined,
                 port => {
                     port = parseInt(port as unknown as string, 10);
-                    if (port !== this.webConfig.port) {
-                        this.log.error(`port ${this.webConfig.port} already in use`);
+                    if (port !== this.config.port) {
+                        this.log.error(`port ${this.config.port} already in use`);
                         this.terminate
                             ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
                             : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
@@ -1971,22 +1964,16 @@ export class WebAdapter extends Adapter {
                     serverPort = port;
                     this.webServer.server!.listen(
                         port,
-                        !this.webConfig.bind || this.webConfig.bind === '0.0.0.0'
-                            ? undefined
-                            : this.webConfig.bind || undefined,
+                        !this.config.bind || this.config.bind === '0.0.0.0' ? undefined : this.config.bind || undefined,
                         () => {
                             serverListening = true;
                             void this.setState('info.connection', true, true);
 
-                            if (!this.webConfig.doNotCheckPublicIP && !this.webConfig.auth) {
+                            if (!this.config.doNotCheckPublicIP && !this.config.auth) {
                                 this.checkTimeout = this.setTimeout(async () => {
                                     this.checkTimeout = null;
                                     try {
-                                        await checkPublicIP(
-                                            this.webConfig.port,
-                                            'ioBroker.web',
-                                            '/iobroker_check.html',
-                                        );
+                                        await checkPublicIP(this.config.port, 'ioBroker.web', '/iobroker_check.html');
                                     } catch (e) {
                                         // this supported first from js-controller 5.0.
                                         this.sendToHost(
@@ -2012,7 +1999,7 @@ export class WebAdapter extends Adapter {
                         },
                     );
 
-                    this.log.info(`http${this.webConfig.secure ? 's' : ''} server listening on port ${port}`);
+                    this.log.info(`http${this.config.secure ? 's' : ''} server listening on port ${port}`);
                 },
             );
         }
@@ -2020,17 +2007,17 @@ export class WebAdapter extends Adapter {
         // Activate integrated socket
         if (this.ownSocket) {
             this.log.debug('Activating IOSocket');
-            const socketSettings: SocketSettings = JSON.parse(JSON.stringify(this.webConfig));
+            const socketSettings: SocketSettings = JSON.parse(JSON.stringify(this.config));
             // Authentication checked by server itself
             socketSettings.secret = this.secret;
 
             // Used only for socket.io
-            socketSettings.forceWebSockets = !!this.webConfig.forceWebSockets;
+            socketSettings.forceWebSockets = !!this.config.forceWebSockets;
             // Used only for socket.io
-            socketSettings.compatibilityV2 = this.webConfig.compatibilityV2 !== false;
+            socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
 
             try {
-                let filePath = this.webConfig.usePureWebSockets
+                let filePath = this.config.usePureWebSockets
                     ? require.resolve(`iobroker.ws`)
                     : require.resolve(`iobroker.socketio`);
 
@@ -2070,7 +2057,7 @@ export class WebAdapter extends Adapter {
 
         const extensionPromises: Promise<void>[] = [];
 
-        if (!this.webConfig.disableExtensions) {
+        if (!this.config.disableExtensions) {
             this.log.debug('Activating extensions');
             // activate extensions
             Object.keys(this.extensions).forEach(instance => {
@@ -2094,7 +2081,7 @@ export class WebAdapter extends Adapter {
                     // Start web-extension
                     this.extensions[instance].obj = new extAPI(
                         this.webServer.server,
-                        { secure: this.webConfig.secure, port: this.webConfig.port },
+                        { secure: this.config.secure, port: this.config.port },
                         this,
                         this.extensions[instance].config,
                         this.webServer.app,
@@ -2137,7 +2124,7 @@ export class WebAdapter extends Adapter {
         }
 
         void Promise.all(extensionPromises).then(() => {
-            if (this.webServer.app && !this.webConfig.disableFilesObjects) {
+            if (this.webServer.app && !this.config.disableFilesObjects) {
                 this.log.debug('Activating web files from objectDB');
 
                 // deliver web files from objectDB
@@ -2161,8 +2148,8 @@ export class WebAdapter extends Adapter {
 
                     // If root directory requested
                     if (url === '/' || url === '/index.html') {
-                        if (this.webConfig.defaultRedirect) {
-                            res.redirect(301, this.webConfig.defaultRedirect);
+                        if (this.config.defaultRedirect) {
+                            res.redirect(301, this.config.defaultRedirect);
                             return;
                         }
                         this.getListOfAllAdapters(req)
@@ -2220,12 +2207,12 @@ export class WebAdapter extends Adapter {
                         }
                     }
 
-                    if (this.webConfig.cache && this.cache[`${id}/${url}`] && !noFileCache) {
+                    if (this.config.cache && this.cache[`${id}/${url}`] && !noFileCache) {
                         res.contentType(this.cache[`${id}/${url}`].mimeType);
                         if (req.headers.range) {
                             this.sendRange(req, res, this.cache[`${id}/${url}`].buffer);
                         } else {
-                            res.set('Cache-Control', `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`);
+                            res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                             res.status(200).send(this.cache[`${id}/${url}`].buffer);
                         }
                     } else {
@@ -2234,7 +2221,7 @@ export class WebAdapter extends Adapter {
                             const buffer = this.loginPage;
 
                             if (
-                                !this.webConfig.auth ||
+                                !this.config.auth ||
                                 (req.isAuthenticated && req.isAuthenticated()) ||
                                 this.isInWhiteList(req)
                             ) {
@@ -2248,7 +2235,7 @@ export class WebAdapter extends Adapter {
                                 res.status(404).send(`File ${escapeHtml(url)} not found`);
                             } else {
                                 // Store file in cache
-                                if (this.webConfig.cache) {
+                                if (this.config.cache) {
                                     this.cache[`${id}/${url}`] = { buffer: Buffer.from(buffer), mimeType: 'text/html' };
                                 }
                                 res.set('Cache-Control', 'no-cache');
@@ -2270,9 +2257,7 @@ export class WebAdapter extends Adapter {
                                         ? url.substring(versionPrefix.length + 1)
                                         : url,
                                     {
-                                        user: req.user
-                                            ? `system.user.${req.user as string}`
-                                            : this.webConfig.defaultUser,
+                                        user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
                                         noFileCache: noFileCache,
                                     },
                                 );
@@ -2280,7 +2265,7 @@ export class WebAdapter extends Adapter {
                                 error = err;
                             }
                             if (
-                                this.webConfig.showFolderIndex &&
+                                this.config.showFolderIndex &&
                                 error?.toString() === 'Error: Not exists' &&
                                 req.url.endsWith('/')
                             ) {
@@ -2293,11 +2278,11 @@ export class WebAdapter extends Adapter {
                                         : url;
 
                                 const files: ioBroker.ReadDirResult[] | undefined = await this.readDirAsync(id, path, {
-                                    user: req.user ? `system.user.${req.user as string}` : this.webConfig.defaultUser,
+                                    user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
                                 });
                                 this.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
 
-                                res.set('Cache-Control', `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`);
+                                res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                                 res.set('Content-Type', 'text/html; charset=utf-8');
                                 const text = [
                                     '<html>',
@@ -2357,26 +2342,26 @@ export class WebAdapter extends Adapter {
                                         .replaceAll(`"@@disableDataReporting@@"`, state?.val ? 'true' : 'false')
                                         .replaceAll(
                                             `@@loadingBackgroundColor@@`,
-                                            this.webConfig.loadingBackgroundColor || '',
+                                            this.config.loadingBackgroundColor || '',
                                         )
                                         .replaceAll(
                                             `@@loadingBackgroundImage@@`,
-                                            this.webConfig.loadingBackgroundImage
+                                            this.config.loadingBackgroundImage
                                                 ? `files/${this.namespace}/loading-bg.png`
                                                 : '',
                                         )
                                         .replaceAll(
                                             `'@@loadingHideLogo@@'`,
-                                            this.webConfig.loadingHideLogo ? 'true' : 'false',
+                                            this.config.loadingHideLogo ? 'true' : 'false',
                                         )
                                         .replaceAll(
                                             `"@@loadingHideLogo@@"`,
-                                            this.webConfig.loadingHideLogo ? 'true' : 'false',
+                                            this.config.loadingHideLogo ? 'true' : 'false',
                                         );
                                 }
 
                                 // Store file in cache
-                                if (this.webConfig.cache) {
+                                if (this.config.cache) {
                                     this.cache[`${id}/${url}`] = {
                                         buffer: Buffer.from(result.file),
                                         mimeType: result.mimeType,
@@ -2388,10 +2373,7 @@ export class WebAdapter extends Adapter {
                                 if (req.headers.range) {
                                     this.sendRange(req, res, Buffer.from(result.file));
                                 } else {
-                                    res.set(
-                                        'Cache-Control',
-                                        `public, max-age=${this.webConfig.staticAssetCacheMaxAge}`,
-                                    );
+                                    res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                                     res.status(200).send(result.file);
                                 }
                             }
@@ -2424,7 +2406,7 @@ export class WebAdapter extends Adapter {
             }
         }
 
-        if (this.webConfig.userListSettings) {
+        if (this.config.userListSettings) {
             try {
                 const _users = await this.getObjectViewAsync('system', 'user', {
                     startkey: 'system.user.',

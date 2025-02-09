@@ -2,10 +2,11 @@ import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
+import type { WebAdapterConfig } from './types';
 export type Server = HttpServer | HttpsServer;
 export declare class WebAdapter extends Adapter {
+    config: WebAdapterConfig;
     private indexHtml;
-    private webConfig;
     private checkTimeout;
     private vendorPrefix;
     private webServer;
