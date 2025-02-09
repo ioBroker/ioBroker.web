@@ -6,6 +6,12 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import pkg from '../package.json';
 
+declare global {
+    interface Window {
+        sentryDSN: string;
+    }
+}
+
 window.adapterName = 'web';
 window.sentryDSN = 'https://5ad729dbed504d15aa8bde423cae9a8e@sentry.iobroker.net/57';
 

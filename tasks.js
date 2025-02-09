@@ -1,6 +1,5 @@
-const fs = require('fs');
 const { deleteFoldersRecursive, buildReact, npmInstall, patchHtmlFile, copyFiles } = require('@iobroker/build-tools');
-const { copyFileSync } = require('node:fs');
+const { copyFileSync, existsSync } = require('node:fs');
 
 async function copyAllFiles() {
     copyFiles(['src-admin/build/**/*', '!src-admin/build/index.html'], 'admin/');
@@ -13,7 +12,7 @@ if (process.argv.includes('--0-clean')) {
     deleteFoldersRecursive('admin', ['web.png']);
     deleteFoldersRecursive('src-admin/build');
 } else if (process.argv.includes('--1-npm')) {
-    if (!fs.existsSync(`${__dirname}/src-admin/node_modules`)) {
+    if (!existsSync(`${__dirname}/src-admin/node_modules`)) {
         npmInstall(`${__dirname}/src-admin`).catch(e => {
             console.log(`Cannot npm install: ${e}`);
             process.exit(2);
@@ -35,7 +34,7 @@ if (process.argv.includes('--0-clean')) {
     return npmInstall(`${__dirname}/src-admin`)
         .then(() => buildReact(`${__dirname}/src-admin`, { rootDir: `${__dirname}/src-admin`, vite: true }))
         .then(() => copyAllFiles())
-        .catch(() => {
+        .catch(e => {
             console.log(`Cannot build: ${e}`);
             process.exit(2);
         });

@@ -408,13 +408,7 @@ class Options extends Component {
                                     onChange={onChange}
                                 />
                             ) : null}
-                            <CustomCheckbox
-                                title="simple_api"
-                                attr="simpleapi"
-                                style={{ marginTop: 10 }}
-                                native={native}
-                                onChange={onChange}
-                            />
+                            <div>{I18n.t('Simple API is now working as Web-Extension. Please create an instance and make settings there.')}</div>
                             <CustomCheckbox
                                 title="Do not check if this instance is available from internet"
                                 attr="doNotCheckPublicIP"
