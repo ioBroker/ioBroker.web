@@ -90,9 +90,11 @@ the path could be provided here (e.g. `/vis/`) so this path will be opened autom
 
 ## Changelog
 ### **WORK IN PROGRESS**
+* (@GermanBluefox) [Breaking change] Removed simple-api as it could be used as web-extension
 * (@GermanBluefox) updated packages
 * (@GermanBluefox) removed gulp in a build process
-* (@GermanBluefox) Migrated GUI ti vite
+* (@GermanBluefox) Migrated GUI to vite
+* (@GermanBluefox) Rewritten in TypeScript
 
 ### 6.3.1 (2024-09-23)
 * (@foxriver76) added new admin icon (svg)
