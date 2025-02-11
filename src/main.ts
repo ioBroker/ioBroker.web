@@ -317,7 +317,7 @@ export class WebAdapter extends Adapter {
             unload: callback => this.onUnload(callback),
             message: obj => this.onMessage(obj),
             stateChange: (id: string, state: ioBroker.State | null | undefined) => this.onStateChange(id, state),
-            ready: () => this.main(),
+            ready: () => this.onReady(),
             objectChange: (id: string, obj: ioBroker.Object | null | undefined): void => this.onObjectChange(id, obj),
             fileChange: (id: string, fileName: string, size: number | null): void =>
                 this.onFileChange(id, fileName, size),
@@ -987,7 +987,7 @@ export class WebAdapter extends Adapter {
     checkUser = (
         userName: string | undefined,
         password: string | undefined,
-        cb: (err: Error | null, userName?: string | false) => void,
+        cb: (err: Error | null, result?: { logged_in: boolean; user?: string }) => void,
     ): void => {
         userName = (userName || '')
             .toString()
@@ -1025,7 +1025,7 @@ export class WebAdapter extends Adapter {
             if (minutes) {
                 return cb(
                     new Error(`Too many errors. Try again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`),
-                    false,
+                    { logged_in: false },
                 );
             }
         }
@@ -1040,10 +1040,10 @@ export class WebAdapter extends Adapter {
             }
 
             if (success) {
-                return cb(null, userName);
+                return cb(null, { logged_in: true, user: userName });
             }
 
-            return cb(null, false);
+            return cb(null, { logged_in: false });
         });
     };
 
@@ -1247,14 +1247,18 @@ export class WebAdapter extends Adapter {
                     .toString()
                     .split(':');
 
-                this.checkUser(user, pass, async (_err: Error | null, user?: string | false): Promise<void> => {
-                    if (user) {
-                        const list = await this.getFoldersOfObject((query.adapter || '').toString());
-                        res.json({ result: list });
-                    } else {
-                        res.status(401).json({ error: 'Unauthorized' });
-                    }
-                });
+                this.checkUser(
+                    user,
+                    pass,
+                    async (_err: Error | null, result?: { logged_in: boolean; user?: string }): Promise<void> => {
+                        if (result?.logged_in) {
+                            const list = await this.getFoldersOfObject((query.adapter || '').toString());
+                            res.json({ result: list });
+                        } else {
+                            res.status(401).json({ error: 'Unauthorized' });
+                        }
+                    },
+                );
             } else {
                 res.status(401).json({ error: 'Unauthorized' });
             }
@@ -2010,6 +2014,7 @@ export class WebAdapter extends Adapter {
             const socketSettings: SocketSettings = JSON.parse(JSON.stringify(this.config));
             // Authentication checked by server itself
             socketSettings.secret = this.secret;
+            socketSettings.language = this.config.language;
 
             // Used only for socket.io
             socketSettings.forceWebSockets = !!this.config.forceWebSockets;
@@ -2017,31 +2022,34 @@ export class WebAdapter extends Adapter {
             socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
 
             try {
-                let filePath = this.config.usePureWebSockets
-                    ? require.resolve(`iobroker.ws`)
-                    : require.resolve(`iobroker.socketio`);
+                let path = this.config.usePureWebSockets ? `iobroker.ws` : 'iobroker.socketio';
+                let filePath = require.resolve(path);
 
                 filePath = filePath.replace(/\\/g, '/');
                 // create a path to socket.js
                 const parts = filePath.split('/');
                 parts.pop(); // main.js
-                if (existsSync(`${parts.join('/')}/dist/lib/socket.js`)) {
-                    parts.push('dist');
+                if (filePath.replace(/\\/g, '/').endsWith('/dist/main.js')) {
+                    path += '/dist/lib/socket.js';
+                } else {
+                    path += '/lib/socket.js';
                 }
-                parts.push('lib');
-                parts.push('socket.js');
 
-                let IOSocket = await import(parts.join('/'));
-                if (IOSocket.default) {
-                    IOSocket = IOSocket.default;
+                let pack: any = await import(path);
+                if (pack.default) {
+                    pack = pack.default;
                 }
+                if (pack.Socket) {
+                    pack = pack.Socket;
+                }
+                const IOSocket = pack as typeof IOSocketClass;
 
                 // const IOSocket = require('./lib/socket.js'); // DEBUG
                 this.webServer.io = new IOSocket(
-                    this.webServer.server,
+                    this.webServer.server as Server,
                     socketSettings,
                     this,
-                    this.store,
+                    this.store!,
                     this.checkUser,
                 );
             } catch (err) {
@@ -2081,7 +2089,13 @@ export class WebAdapter extends Adapter {
                     // Start web-extension
                     this.extensions[instance].obj = new extAPI(
                         this.webServer.server,
-                        { secure: this.config.secure, port: this.config.port },
+                        {
+                            secure: this.config.secure,
+                            port: this.config.port,
+                            language: this.config.language,
+                            defaultUser: this.config.defaultUser,
+                            auth: this.config.auth,
+                        },
                         this,
                         this.extensions[instance].config,
                         this.webServer.app,
@@ -2386,6 +2400,7 @@ export class WebAdapter extends Adapter {
 
     async main(): Promise<void> {
         let ext: ioBroker.InstanceObject[] | undefined;
+
         try {
             ext = await this.getExtensionsAndSettings();
         } catch (err) {

@@ -23,11 +23,17 @@ declare class ExtAPI {
 
     constructor(
         webServer: Server,
-        settings: { secure: boolean; port: number | string },
+        settings: {
+            secure: boolean;
+            port: number | string;
+            defaultUser?: string;
+            auth?: boolean;
+            language?: ioBroker.Languages;
+        },
         adapter: ioBroker.Adapter,
         config: ioBroker.InstanceObject,
-        app: Express,
-        io: SocketIO,
+        app?: Express,
+        io?: SocketIO,
     );
 
     welcomePage?(): LocalMultipleLinkEntry;

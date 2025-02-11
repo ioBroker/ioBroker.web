@@ -269,7 +269,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             unload: callback => this.onUnload(callback),
             message: obj => this.onMessage(obj),
             stateChange: (id, state) => this.onStateChange(id, state),
-            ready: () => this.main(),
+            ready: () => this.onReady(),
             objectChange: (id, obj) => this.onObjectChange(id, obj),
             fileChange: (id, fileName, size) => this.onFileChange(id, fileName, size),
         });
@@ -872,7 +872,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 minutes = 0;
             }
             if (minutes) {
-                return cb(new Error(`Too many errors. Try again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`), false);
+                return cb(new Error(`Too many errors. Try again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`), { logged_in: false });
             }
         }
         void this.checkPassword(userName, password || '', (success) => {
@@ -885,9 +885,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                 delete this.bruteForce[userName];
             }
             if (success) {
-                return cb(null, userName);
+                return cb(null, { logged_in: true, user: userName });
             }
-            return cb(null, false);
+            return cb(null, { logged_in: false });
         });
     };
     initAuth() {
@@ -1067,8 +1067,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                 const [user, pass] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64')
                     .toString()
                     .split(':');
-                this.checkUser(user, pass, async (_err, user) => {
-                    if (user) {
+                this.checkUser(user, pass, async (_err, result) => {
+                    if (result?.logged_in) {
                         const list = await this.getFoldersOfObject((query.adapter || '').toString());
                         res.json({ result: list });
                     }
@@ -1669,27 +1669,32 @@ class WebAdapter extends adapter_core_1.Adapter {
             const socketSettings = JSON.parse(JSON.stringify(this.config));
             // Authentication checked by server itself
             socketSettings.secret = this.secret;
+            socketSettings.language = this.language;
             // Used only for socket.io
             socketSettings.forceWebSockets = !!this.config.forceWebSockets;
             // Used only for socket.io
             socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
             try {
-                let filePath = this.config.usePureWebSockets
-                    ? require.resolve(`iobroker.ws`)
-                    : require.resolve(`iobroker.socketio`);
+                let path = this.config.usePureWebSockets ? `iobroker.ws` : 'iobroker.socketio';
+                let filePath = require.resolve(path);
                 filePath = filePath.replace(/\\/g, '/');
                 // create a path to socket.js
                 const parts = filePath.split('/');
                 parts.pop(); // main.js
-                if ((0, node_fs_1.existsSync)(`${parts.join('/')}/dist/lib/socket.js`)) {
-                    parts.push('dist');
+                if (filePath.replace(/\\/g, '/').endsWith('/dist/main.js')) {
+                    path += '/dist/lib/socket.js';
                 }
-                parts.push('lib');
-                parts.push('socket.js');
-                let IOSocket = await import(parts.join('/'));
-                if (IOSocket.default) {
-                    IOSocket = IOSocket.default;
+                else {
+                    path += '/lib/socket.js';
                 }
+                let pack = await import(path);
+                if (pack.default) {
+                    pack = pack.default;
+                }
+                if (pack.Socket) {
+                    pack = pack.Socket;
+                }
+                const IOSocket = pack;
                 // const IOSocket = require('./lib/socket.js'); // DEBUG
                 this.webServer.io = new IOSocket(this.webServer.server, socketSettings, this, this.store, this.checkUser);
             }
@@ -1726,7 +1731,13 @@ class WebAdapter extends adapter_core_1.Adapter {
                     }
                     this.log.info(`Connecting extension "${this.extensions[instance].path}"`);
                     // Start web-extension
-                    this.extensions[instance].obj = new extAPI(this.webServer.server, { secure: this.config.secure, port: this.config.port }, this, this.extensions[instance].config, this.webServer.app, this.webServer.io);
+                    this.extensions[instance].obj = new extAPI(this.webServer.server, {
+                        secure: this.config.secure,
+                        port: this.config.port,
+                        language: this.lang,
+                        defaultUser: this.config.defaultUser,
+                        auth: this.config.auth,
+                    }, this, this.extensions[instance].config, this.webServer.app, this.webServer.io);
                     if (this.extensions[instance].obj?.waitForReady &&
                         typeof this.extensions[instance].obj.waitForReady === 'function') {
                         extensionPromises.push(new Promise(resolve => {

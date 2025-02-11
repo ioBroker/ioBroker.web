@@ -46,7 +46,10 @@ export declare class WebAdapter extends Adapter {
     };
     getInfoJs(): string;
     prepareLoginTemplate(): string;
-    checkUser: (userName: string | undefined, password: string | undefined, cb: (err: Error | null, userName?: string | false) => void) => void;
+    checkUser: (userName: string | undefined, password: string | undefined, cb: (err: Error | null, result?: {
+        logged_in: boolean;
+        user?: string;
+    }) => void) => void;
     initAuth(): void;
     /**
      * Send response to a byte ranges request
