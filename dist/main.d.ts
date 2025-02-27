@@ -2,7 +2,7 @@ import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
-import type { WebAdapterConfig } from './types';
+import type { WebAdapterConfig } from './types.d.ts';
 export type Server = HttpServer | HttpsServer;
 export declare class WebAdapter extends Adapter {
     config: WebAdapterConfig;
@@ -24,6 +24,9 @@ export declare class WebAdapter extends Adapter {
     private loginPage;
     private ownGroups;
     private ownUsers;
+    private templateDir;
+    private template404;
+    private I18n;
     constructor(options?: Partial<AdapterOptions>);
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void;
     onStateChange(id: string, state: ioBroker.State | null | undefined): void;
@@ -45,7 +48,6 @@ export declare class WebAdapter extends Adapter {
         [instance: `${string}.${number}`]: string;
     };
     getInfoJs(): string;
-    prepareLoginTemplate(): string;
     checkUser: (userName: string | undefined, password: string | undefined, cb: (err: Error | null, result?: {
         logged_in: boolean;
         user?: string;
@@ -64,6 +66,8 @@ export declare class WebAdapter extends Adapter {
     getFoldersOfObject(path: string | undefined): Promise<string[]>;
     processReadFolders(req: Request, res: Response): Promise<void>;
     getSocketUrl(obj?: ioBroker.InstanceObject): Promise<void>;
+    modifyIndexHtml(html: string): Promise<string>;
+    send404(res: Response, fileName: string, message?: string): void;
     initWebServer(): Promise<void>;
     main(): Promise<void>;
 }

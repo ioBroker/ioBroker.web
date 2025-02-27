@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Cannot get access token",
+  "enterLogin": "Login name",
+  "enterPassword": "Password",
+  "login": "Log in",
+  "loginTitle": "Web Login",
+  "ra_Change color theme": "Change color theme",
+  "staySignedIn": "Stay signed in",
+  "wrongPassword": "Wrong password or username"
+}

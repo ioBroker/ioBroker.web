@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Não é possível obter o token de acesso",
+  "enterLogin": "Nome de login",
+  "enterPassword": "Senha",
+  "login": "Conecte-se",
+  "loginTitle": "Login na Web",
+  "ra_Change color theme": "Alterar tema de cor",
+  "staySignedIn": "Permanecer conectado",
+  "wrongPassword": "Senha ou nome de usuário incorreto"
+}

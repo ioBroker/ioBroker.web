@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Не вдається отримати маркер доступу",
+  "enterLogin": "Ім'я для входу",
+  "enterPassword": "Пароль",
+  "login": "авторизуватися",
+  "loginTitle": "Веб-вхід",
+  "ra_Change color theme": "Змінити кольорову тему",
+  "staySignedIn": "Залишайтеся в системі",
+  "wrongPassword": "Неправильний пароль або ім'я користувача"
+}

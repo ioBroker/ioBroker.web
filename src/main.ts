@@ -16,16 +16,16 @@ import flash from 'connect-flash';
 
 import { Adapter, EXIT_CODES, commonTools, type AdapterOptions } from '@iobroker/adapter-core'; // Get common adapter utils
 import type { IOSocketClass } from 'iobroker.ws';
-import type { SocketSettings, Store } from '@iobroker/socket-classes';
-import { WebServer, checkPublicIP } from '@iobroker/webserver';
+import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/socket-classes';
+import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
-import type { ExtAPI, LocalLinkEntry, LocalMultipleLinkEntry, WebAdapterConfig } from './types';
+import type { ExtAPI, LocalLinkEntry, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
 
 const LOGIN_PAGE = '/login/index.html';
-const wwwDir = 'www';
+const wwwDir = '../www';
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\\s?]/g; // with space
 
 // copied from here: https://github.com/component/escape-html/blob/master/index.js
@@ -310,6 +310,13 @@ export class WebAdapter extends Adapter {
     private ownGroups: Record<`system.group.${string}`, ioBroker.GroupObject> | null = null;
     private ownUsers: Record<`system.user.${string}`, ioBroker.UserObject> | null = null;
 
+    private templateDir: string = '';
+    private template404: string = '';
+    private I18n: {
+        translate: (text: string, ...args: string[]) => string;
+        init: (rootDir: string, languageOrAdapter: ioBroker.Adapter | ioBroker.Languages) => Promise<void>;
+    } | null = null;
+
     public constructor(options: Partial<AdapterOptions> = {}) {
         super({
             ...options,
@@ -322,6 +329,8 @@ export class WebAdapter extends Adapter {
             fileChange: (id: string, fileName: string, size: number | null): void =>
                 this.onFileChange(id, fileName, size),
         });
+
+        import('@iobroker/i18n').then(i18n => (this.I18n = i18n));
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
@@ -603,6 +612,8 @@ export class WebAdapter extends Adapter {
         } else if (systemConfig?.common) {
             this.lang = systemConfig.common.language || 'en';
         }
+
+        await this.I18n?.init(__dirname, this.lang);
 
         await this.main();
     }
@@ -961,29 +972,6 @@ export class WebAdapter extends Adapter {
         return result.join(' ');
     }
 
-    prepareLoginTemplate(): string {
-        let def =
-            "            font: 13px/20px 'Lucida Grande', Tahoma, Verdana, sans-serif;\n" +
-            '            color: #404040;\n' +
-            '            background-color: #0ae;\n' +
-            '            background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));\n' +
-            '            background-image: -webkit-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: -moz-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: -ms-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: -o-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-size: 50px 50px;\n';
-
-        const template = readFileSync(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8');
-        if (this.config.loginBackgroundColor) {
-            def = `background-color: ${this.config.loginBackgroundColor};\n`;
-        }
-        if (this.config.loginBackgroundImage) {
-            def += `            background-image: url(../${this.namespace}/login-bg.png);\n`;
-        }
-        return template.replace('background: black;', def);
-    }
-
     checkUser = (
         userName: string | undefined,
         password: string | undefined,
@@ -1072,6 +1060,10 @@ export class WebAdapter extends Adapter {
         this.webServer.app.use(bodyParser.urlencoded({ extended: true }));
         this.webServer.app.use(bodyParser.json());
         this.webServer.app.use(bodyParser.text());
+
+        // Install oauth2 server
+        createOAuth2Server(this, { app: this.webServer.app, secure: this.config.secure, loginPage: LOGIN_PAGE });
+
         this.webServer.app.use(
             session({
                 secret: this.secret,
@@ -1124,7 +1116,7 @@ export class WebAdapter extends Adapter {
             (req.url || '').match(/\/socket\.io\.js(\?.*)?$/)
         ) {
             if (this.socketIoFile) {
-                res.contentType('text/javascript');
+                res.contentType('application/javascript');
                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                 res.status(200).send(this.socketIoFile);
                 return;
@@ -1136,8 +1128,8 @@ export class WebAdapter extends Adapter {
             ) {
                 let file: string;
                 // If debug version stored
-                if (existsSync(`${__dirname}/www/lib/js/ws.js`)) {
-                    file = `${__dirname}/www/lib/js/ws.js`;
+                if (existsSync(`${__dirname}/${wwwDir}/lib/js/ws.js`)) {
+                    file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 } else {
                     const pathToFile = require.resolve(`iobroker.ws`);
                     file = join(dirname(pathToFile), '/lib/socket.io.js');
@@ -1178,7 +1170,7 @@ export class WebAdapter extends Adapter {
             }
 
             if (this.socketIoFile) {
-                res.contentType('text/javascript');
+                res.contentType('application/javascript');
                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                 res.status(200).send(this.socketIoFile);
                 return;
@@ -1297,6 +1289,43 @@ export class WebAdapter extends Adapter {
         this.socketUrl = '';
     }
 
+    async modifyIndexHtml(html: string): Promise<string> {
+        const state = await this.getForeignStateAsync(`system.adapter.${this.namespace}.plugins.sentry.enabled`);
+
+        return html
+            .toString()
+            .replaceAll(`@@vendorPrefix@@`, this.vendorPrefix)
+            .replaceAll(`'@@disableDataReporting@@'`, state?.val ? 'true' : 'false')
+            .replaceAll(`"@@disableDataReporting@@"`, state?.val ? 'true' : 'false')
+            .replaceAll(`@@loadingBackgroundColor@@`, this.config.loadingBackgroundColor || '')
+            .replaceAll(
+                `@@loadingBackgroundImage@@`,
+                this.config.loadingBackgroundImage ? `files/${this.namespace}/loading-bg.png` : '',
+            )
+            .replaceAll(`'@@loadingHideLogo@@'`, this.config.loadingHideLogo ? 'true' : 'false')
+            .replaceAll(`"@@loadingHideLogo@@"`, this.config.loadingHideLogo ? 'true' : 'false')
+            .replaceAll(`@@loginLanguage@@`, this.lang || '')
+            .replaceAll(`@@loginOauth2@@`, this.config.loginNoOauth2 ? 'false' : 'true');
+    }
+
+    send404(res: Response, fileName: string, message?: string): void {
+        this.template404 =
+            this.template404 ||
+            readFileSync(`${__dirname}/${wwwDir}/404.html`)
+                .toString()
+                .replace('{{Go to Homepage}}', this.I18n?.translate('Go to Homepage') || 'Go to Homepage')
+                .replace('{{Refresh}}', this.I18n?.translate('Refresh') || 'Refresh');
+
+        res.setHeader('Content-Type', 'text/html');
+        res.status(404).send(
+            this.template404.replace(
+                '{{TEXT}}',
+                this.I18n?.translate('File %s not found', escapeHtml(fileName)) +
+                    (message && message !== '{}' ? `<br>${escapeHtml(message)}` : ''),
+            ),
+        );
+    }
+
     async initWebServer(): Promise<void> {
         this.subscribeForeignObjects('system.config');
 
@@ -1368,22 +1397,22 @@ export class WebAdapter extends Adapter {
                         'local',
                         (
                             err: any,
-                            user?: string | false | null,
+                            user?: { logged_in: boolean; user: string } | null,
                             /* info?: object | string | Array<string | undefined>,
                             status?: number | Array<number | undefined>, */
                         ): void => {
                             // replace user
-                            if (user && this.config.userListEnabled) {
+                            if (user?.user && this.config.userListEnabled) {
                                 // get the user group
-                                const longUser: `system.user.${string}` = user.startsWith('system.user.')
-                                    ? (user as `system.user.${string}`)
-                                    : `system.user.${user}`;
-                                user = '';
+                                const longUser: `system.user.${string}` = user.user.startsWith('system.user.')
+                                    ? (user.user as `system.user.${string}`)
+                                    : `system.user.${user.user}`;
+                                user.user = '';
                                 if (this.config.userListSettings.users.includes(longUser)) {
                                     if (this.config.userListSettings.accessAsUser) {
-                                        user = this.config.userListSettings.accessAsUser;
+                                        user.user = this.config.userListSettings.accessAsUser;
                                     } else {
-                                        user = longUser;
+                                        user.user = longUser;
                                     }
                                 } else {
                                     const groupId: string | undefined = this.ownGroups
@@ -1402,17 +1431,17 @@ export class WebAdapter extends Adapter {
                                         )
                                     ) {
                                         if (this.config.userListSettings.accessAsUser) {
-                                            user = this.config.userListSettings.accessAsUser;
+                                            user.user = this.config.userListSettings.accessAsUser;
                                         } else {
-                                            user = longUser;
+                                            user.user = longUser;
                                         }
                                     }
                                 }
-                                if (!user) {
+                                if (!user?.user) {
                                     this.log.warn(`User ${longUser} is not in the user list`);
                                 } else {
-                                    this.log.debug(`User ${longUser} threaded as ${user}`);
-                                    user = user.substring('system.user.'.length);
+                                    this.log.debug(`User ${longUser} threaded as ${user.user}`);
+                                    user.user = user.user.substring('system.user.'.length);
                                 }
                             }
 
@@ -1422,7 +1451,7 @@ export class WebAdapter extends Adapter {
                                     res.status(401).json({ error: 'cannot login user' });
                                     return;
                                 }
-                                if (!user) {
+                                if (!user?.user) {
                                     this.log.warn('User not found');
                                     res.status(401).json({ error: 'cannot login user' });
                                     return;
@@ -1433,13 +1462,13 @@ export class WebAdapter extends Adapter {
                                     res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
                                     return;
                                 }
-                                if (!user) {
+                                if (!user?.user) {
                                     res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
                                     return;
                                 }
                             }
 
-                            req.logIn(user, (err: Error | undefined): void => {
+                            req.logIn(user?.user, (err: Error | undefined): void => {
                                 if (req.url.includes('/loginApp')) {
                                     if (err) {
                                         this.log.warn(`Cannot login user: ${err}`);
@@ -1462,7 +1491,7 @@ export class WebAdapter extends Adapter {
                                     req.session.cookie.maxAge = ((this.config.ttl as number) || 3600) * 1000;
                                 }
                                 if (req.url.includes('/loginApp')) {
-                                    res.json({ result: 'ok', user });
+                                    res.json({ result: 'ok', user: user?.user });
                                 } else {
                                     res.redirect(redirect);
                                 }
@@ -1549,6 +1578,9 @@ export class WebAdapter extends Adapter {
                         redirect = parts.join('#');
                     }
 
+                    // User tries to authenticate with old method, so delete OAuth2 token
+                    res.clearCookie('access_token');
+
                     authenticate(req, res, next, redirect, req.body.origin || '?href=%2F');
                 });
 
@@ -1560,6 +1592,8 @@ export class WebAdapter extends Adapter {
                         req.body.stayloggedin === 'true' ||
                         req.body.stayloggedin === true ||
                         req.body.stayloggedin === 'on';
+
+                    res.clearCookie('access_token');
 
                     authenticate(req, res, next, '', req.body.origin || '?href=%2F');
                 });
@@ -1576,22 +1610,45 @@ export class WebAdapter extends Adapter {
                 });
 
                 // route middleware to make sure a user is logged in
-                this.webServer.app.use((req, res, next) => {
+                this.webServer.app.use((req, res, next): void => {
+                    const url = req.originalUrl.split('?')[0];
+
+                    const isAuthenticated =
+                        !this.config.auth ||
+                        (req.isAuthenticated && req.isAuthenticated()) ||
+                        (!req.isAuthenticated && req.user);
+
+                    if (url === '/auth') {
+                        // User can ask server if authentication enabled
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json({ auth: this.config.auth });
+                        return;
+                    }
+
                     // return favicon always
-                    if (req.originalUrl.endsWith('favicon.ico')) {
+                    if (!isAuthenticated && url.endsWith('favicon.ico')) {
                         res.set('Content-Type', 'image/x-icon');
-                        return res.send(readFileSync(`${__dirname}/${wwwDir}/login/favicon.ico`));
+                        res.send(readFileSync(`${__dirname}/${wwwDir}/login/favicon.ico`));
+                        return;
+                    }
+                    if (!isAuthenticated && url.endsWith('manifest.json')) {
+                        res.set('Content-Type', 'application/json');
+                        res.send(readFileSync(`${__dirname}/${wwwDir}/login/manifest.json`));
+                        return;
                     }
                     // if cache.manifest got back not 200, it makes an error
                     if (
-                        req.isAuthenticated() ||
-                        /web\.\d+\/login-bg\.png(\?.*)?$/.test(req.originalUrl) ||
-                        /cache\.manifest(\?.*)?$/.test(req.originalUrl) ||
-                        /^\/login\//.test(req.originalUrl) ||
-                        /\.ico(\?.*)?$/.test(req.originalUrl)
+                        isAuthenticated ||
+                        /web\.\d+\/login-bg\.png$/.test(url) ||
+                        url.endsWith('.ico') ||
+                        url.endsWith('manifest.json') ||
+                        url.endsWith('cache.manifest.json') ||
+                        url.startsWith('/login/')
                     ) {
-                        return next();
-                    } else if (
+                        next();
+                        return;
+                    }
+                    if (
                         this.config.basicAuth &&
                         typeof req.headers.authorization === 'string' &&
                         req.headers.authorization.startsWith('Basic')
@@ -1626,7 +1683,12 @@ export class WebAdapter extends Adapter {
 
                 // get user by session /cookie
                 this.webServer.app.get('/getUser', (req: Request, res: Response): void => {
-                    if (req.isAuthenticated()) {
+                    const isAuthenticated =
+                        !this.config.auth ||
+                        (req.isAuthenticated && req.isAuthenticated()) ||
+                        (!req.isAuthenticated && req.user);
+
+                    if (isAuthenticated) {
                         // parse cookie
                         const cookie: Record<string, string> = {};
                         const parts = (req.headers.cookie || '').split(';');
@@ -1634,6 +1696,33 @@ export class WebAdapter extends Adapter {
                             const [name, value] = item.split('=');
                             cookie[decodeURIComponent(name.trim())] = decodeURIComponent(value);
                         });
+
+                        let accessToken = cookie.access_token;
+                        if (!accessToken && req.headers.authorization?.startsWith('Bearer ')) {
+                            accessToken = req.headers.authorization.split(' ')[1];
+                        }
+                        if (!accessToken && req.query?.token) {
+                            accessToken = req.query.token as string;
+                        }
+
+                        // If access token is available, use it
+                        if (accessToken) {
+                            // read expiration from session
+                            this.store?.get(`a:${accessToken}`, (_err, accessSession) => {
+                                const tokens = accessSession as unknown as InternalStorageToken;
+                                if (tokens) {
+                                    // If refresh token is available, use it
+                                    res.send({
+                                        expires: new Date(tokens.aExp).toISOString(),
+                                        refreshExpires: new Date(tokens.rExp).toISOString(),
+                                        user: tokens.user,
+                                    });
+                                } else {
+                                    res.status(501).send('User not logged in.');
+                                }
+                            });
+                            return;
+                        }
 
                         if (cookie['connect.sid']) {
                             const sessionId = signature.unsign(
@@ -1669,7 +1758,11 @@ export class WebAdapter extends Adapter {
                                 res.status(501).send('User not logged in.');
                             }
                         } else {
-                            res.status(501).send('User not logged in.');
+                            if (!req.user) {
+                                res.status(501).send('User not logged in.');
+                            } else {
+                                res.send({ user: req.user });
+                            }
                         }
                     } else {
                         res.status(501).send('User not logged in.');
@@ -1678,7 +1771,12 @@ export class WebAdapter extends Adapter {
 
                 // todo
                 this.webServer.app.get('/prolongSession', (req: Request, res: Response, next: NextFunction): void => {
-                    if (req.isAuthenticated()) {
+                    const isAuthenticated =
+                        !this.config.auth ||
+                        (req.isAuthenticated && req.isAuthenticated()) ||
+                        (!req.isAuthenticated && req.user);
+
+                    if (isAuthenticated) {
                         req.session.touch();
                         const parts = (req.headers.cookie || '').split(';');
                         const cookie: Record<string, string> = {};
@@ -1823,9 +1921,7 @@ export class WebAdapter extends Adapter {
                                                 res.set('Cache-Control', 'no-cache');
                                                 res.status(200).send(obj);
                                             } else {
-                                                res.status(404).send(
-                                                    `404 Not found. File ${escapeHtml(fileName[0])} not found`,
-                                                );
+                                                this.send404(res, fileName[0]);
                                             }
                                         },
                                     );
@@ -1855,9 +1951,7 @@ export class WebAdapter extends Adapter {
                                                     );
                                                 }
                                             } else {
-                                                res.status(404).send(
-                                                    `404 Not found. File ${escapeHtml(fileName[0])} not found`,
-                                                );
+                                                this.send404(res, fileName[0]);
                                             }
                                         },
                                     );
@@ -2156,7 +2250,7 @@ export class WebAdapter extends Adapter {
                         url = url.substring(i - 1);
                     }
                     if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                        res.status(404).send('Not found');
+                        this.send404(res, url);
                         return;
                     }
 
@@ -2231,14 +2325,17 @@ export class WebAdapter extends Adapter {
                         }
                     } else {
                         if (id === 'login' && url === 'index.html') {
-                            this.loginPage ||= this.prepareLoginTemplate();
+                            this.loginPage ||= await this.modifyIndexHtml(
+                                readFileSync(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8'),
+                            );
                             const buffer = this.loginPage;
 
-                            if (
+                            const isAuthenticated =
                                 !this.config.auth ||
                                 (req.isAuthenticated && req.isAuthenticated()) ||
-                                this.isInWhiteList(req)
-                            ) {
+                                (!req.isAuthenticated && req.user);
+
+                            if (isAuthenticated || this.isInWhiteList(req)) {
                                 res.redirect(getRedirectPage(req));
                                 return;
                             }
@@ -2246,7 +2343,7 @@ export class WebAdapter extends Adapter {
                             if (buffer === null || buffer === undefined) {
                                 res.contentType('text/html');
                                 res.set('Cache-Control', 'no-cache');
-                                res.status(404).send(`File ${escapeHtml(url)} not found`);
+                                this.send404(res, url);
                             } else {
                                 // Store file in cache
                                 if (this.config.cache) {
@@ -2272,7 +2369,7 @@ export class WebAdapter extends Adapter {
                                         : url,
                                     {
                                         user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
-                                        noFileCache: noFileCache,
+                                        noFileCache,
                                     },
                                 );
                             } catch (err) {
@@ -2298,12 +2395,12 @@ export class WebAdapter extends Adapter {
 
                                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                                 res.set('Content-Type', 'text/html; charset=utf-8');
-                                const text = [
-                                    '<html>',
-                                    '<head><title>Directory</title>',
-                                    `<style>body { font-family: Arial, sans-serif; } td { padding: 5px; }</style>`,
-                                    `</head><body><h3>Directory ${req.url}</h3><table>`,
-                                ];
+                                this.templateDir ||= readFileSync(`${__dirname}/${wwwDir}/dir.html`)
+                                    .toString('utf8')
+                                    .replace('{{Directory}}', this.I18n?.translate('Directory') || 'Directory')
+                                    .replace('{{File Size}}', this.I18n?.translate('File Size') || 'File Size')
+                                    .replace('{{File Name}}', this.I18n?.translate('File Name') || 'File Name');
+                                const text = [];
 
                                 if (url !== '/') {
                                     const parts = url.split('/');
@@ -2330,48 +2427,21 @@ export class WebAdapter extends Adapter {
                                         `<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`,
                                     ),
                                 );
-                                text.push('</table></body></html>');
-                                res.status(200).send(text.join('\n'));
+                                res.status(200).send(
+                                    this.templateDir.replace('{{URL}}', req.url).replace('{{TABLE}}', text.join('\n')),
+                                );
                                 return;
                             }
 
                             if (!result || result.file === null || result.file === undefined || error) {
                                 res.contentType('text/html');
-                                res.status(404).send(
-                                    `File ${escapeHtml(url)} not found: ${escapeHtml(typeof error !== 'string' ? JSON.stringify(error) : error)}`,
-                                );
+                                this.send404(res, url, typeof error !== 'string' ? JSON.stringify(error) : error);
                             } else {
-                                result.mimeType = result.mimeType || lookup(url) || 'text/javascript';
+                                result.mimeType = result.mimeType || lookup(url) || 'application/javascript';
 
                                 // replace some important variables in HTML
                                 if (url === 'index.html' || url === 'edit.html') {
-                                    const state = await this.getForeignStateAsync(
-                                        `system.adapter.${this.namespace}.plugins.sentry.enabled`,
-                                    );
-
-                                    result.file = result.file
-                                        .toString()
-                                        .replaceAll(`@@vendorPrefix@@`, this.vendorPrefix)
-                                        .replaceAll(`'@@disableDataReporting@@'`, state?.val ? 'true' : 'false')
-                                        .replaceAll(`"@@disableDataReporting@@"`, state?.val ? 'true' : 'false')
-                                        .replaceAll(
-                                            `@@loadingBackgroundColor@@`,
-                                            this.config.loadingBackgroundColor || '',
-                                        )
-                                        .replaceAll(
-                                            `@@loadingBackgroundImage@@`,
-                                            this.config.loadingBackgroundImage
-                                                ? `files/${this.namespace}/loading-bg.png`
-                                                : '',
-                                        )
-                                        .replaceAll(
-                                            `'@@loadingHideLogo@@'`,
-                                            this.config.loadingHideLogo ? 'true' : 'false',
-                                        )
-                                        .replaceAll(
-                                            `"@@loadingHideLogo@@"`,
-                                            this.config.loadingHideLogo ? 'true' : 'false',
-                                        );
+                                    result.file = await this.modifyIndexHtml(result.file.toString('utf8'));
                                 }
 
                                 // Store file in cache

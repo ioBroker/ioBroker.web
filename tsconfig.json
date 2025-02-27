@@ -14,7 +14,7 @@
         "outDir": "./dist/",
         "removeComments": false,
         "module": "Node16",
-        "moduleResolution": "node16",
+        "moduleResolution": "nodenext",
         "esModuleInterop": true,
         // this is necessary for the automatic typing of the adapter config
         "resolveJsonModule": true,

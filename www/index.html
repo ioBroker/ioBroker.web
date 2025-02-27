@@ -1,172 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-    <title>ioBroker.web</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"       href="lib/img/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="lib/css/bootstrap.min.css" media="screen">
-    <link rel="stylesheet" href="lib/css/style.css">
+    <head>
+        <title>ioBroker.web</title>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+        <link
+            rel="icon"
+            href="lib/img/favicon.ico"
+            type="image/x-icon"
+        />
+        <link
+            rel="stylesheet"
+            href="lib/css/bootstrap.min.css"
+            media="screen"
+        />
+        <link
+            rel="stylesheet"
+            href="lib/css/style.css"
+        />
 
-    <script src="lib/js/jquery-1.11.2.min.js"></script>
-    <script src="lib/js/translate.js"></script>
-    <style>
-        .adapter-link{
-            width:  100%;
-            height: 100%;
-        }
-        .adapter-overlay {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.65) 0%,rgba(0, 0, 0, 0.34) 100%);
-            color: white;
-            line-height: 150px;
-        }
-        .adapter-footer {
-            height: 50px;
-            background-color: #ffffff;
-            color: #2e6ebd;
-            line-height: 50px;
-            text-transform: uppercase;
-        }
-        .adapter-main {
-            position: relative;
-            height: 150px;
-            width: 100%;
-            background: white;
-            background-size: 85%;
-            background-repeat: no-repeat;
-            background-position-x: 10px;
-            background-position-y: 10px;
-        }
-        .vertical-center-row-web {
-            background: #3399CC;
-            vertical-align: middle;
-            min-height: calc(100% - 8rem);
-            text-align: center;
-            border-radius: 0 0 1rem 1rem;
-            display: flex;
-            padding: 2em;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .adapter-tile {
-            display: inline-flex;
-            margin: 10px;
-            width: 150px;
-            min-width: 150px;
-            max-width: 150px;
-            height: 200px;
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-    </style>
-    <script>
-        var list = [];
-        systemDictionary = {
-            'welcome': {
-                "en": "Welcome to ioBroker.web",
-                "de": "Willkommen bei ioBroker.web",
-                "ru": "Добро пожаловать в ioBroker.web",
-                "pt": "Bem-vindo ao ioBroker.web",
-                "nl": "Welkom bij ioBroker.web",
-                "fr": "Bienvenue sur ioBroker.web",
-                "it": "Benvenuto in ioBroker.web",
-                "es": "Bienvenido a ioBroker.web",
-                "pl": "Witamy w ioBroker.web",
-                "zh-cn": "欢迎来到ioBroker.web"
-            },
-            'Directories': {'en': 'Directories', 'de': 'Verzeichnise', 'ru': 'Пути'},
-            'your are lost': {
-                'en': 'It seems to be you are lost. Here are some files, that you can open: ',
-                'de': 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann: ',
-                'ru': 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:',
-                "pt": "Parece que você está perdido. Aqui estão alguns arquivos que você pode abrir:",
-                "nl": "Het lijkt erop dat je verdwaald bent. Hier zijn enkele bestanden die u kunt openen:",
-                "fr": "Il semble que tu sois perdu. Voici quelques fichiers que vous pouvez ouvrir:",
-                "it": "Sembra che tu sia perso. Ecco alcuni file che puoi aprire:",
-                "es": "Parece ser que estás perdido. Aquí hay algunos archivos que puede abrir:",
-                "pl": "Wygląda na to, że jesteś zagubiony. Oto kilka plików, które możesz otworzyć:",
-                "zh-cn": "看来你迷路了。以下是一些您可以打开的文件："
-            },
-            "Sign out": {
-                "en": "Sign out",
-                "de": "Ausloggen",
-                "ru": "Выйти",
-                "pt": "Sair",
-                "nl": "Afmelden",
-                "fr": "Déconnexion",
-                "it": "disconnessione",
-                "es": "desconectar",
-                "pl": "Wyloguj się",
-                "zh-cn": "登出"
+        <script src="lib/js/jquery-1.11.2.min.js"></script>
+        <script src="lib/js/translate.js"></script>
+        <style>
+            .adapter-link {
+                width: 100%;
+                height: 100%;
             }
-        };
+            .adapter-overlay {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(to bottom, rgba(255, 255, 255, 0.65) 0%, rgba(0, 0, 0, 0.34) 100%);
+                color: white;
+                line-height: 150px;
+            }
+            .adapter-footer {
+                height: 50px;
+                background-color: #ffffff;
+                color: #2e6ebd;
+                line-height: 50px;
+                text-transform: uppercase;
+            }
+            .adapter-main {
+                position: relative;
+                height: 150px;
+                width: 100%;
+                background: white;
+                background-size: 85%;
+                background-repeat: no-repeat;
+                background-position-x: 10px;
+                background-position-y: 10px;
+            }
+            .vertical-center-row-web {
+                background: #3399cc;
+                vertical-align: middle;
+                min-height: calc(100% - 8rem);
+                text-align: center;
+                border-radius: 0 0 1rem 1rem;
+                display: flex;
+                padding: 2em;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .adapter-tile {
+                display: inline-flex;
+                margin: 10px;
+                width: 150px;
+                min-width: 150px;
+                max-width: 150px;
+                height: 200px;
+                border-radius: 10px;
+                overflow: hidden;
+                cursor: pointer;
+            }
+        </style>
+        <script>
+            let list = [];
+            systemDictionary = {
+                welcome: {
+                    en: 'Welcome to ioBroker.web',
+                    de: 'Willkommen bei ioBroker.web',
+                    ru: 'Добро пожаловать в ioBroker.web',
+                    pt: 'Bem-vindo ao ioBroker.web',
+                    nl: 'Welkom bij ioBroker.web',
+                    fr: 'Bienvenue sur ioBroker.web',
+                    it: 'Benvenuto in ioBroker.web',
+                    es: 'Bienvenido a ioBroker.web',
+                    pl: 'Witamy w ioBroker.web',
+                    uk: 'Ласкаво просимо до ioBroker.web',
+                    'zh-cn': '欢迎来到ioBroker.web',
+                },
+                Directories: { en: 'Directories', de: 'Verzeichnise', ru: 'Пути' },
+                'your are lost': {
+                    en: 'It seems to be you are lost. Here are some files, that you can open: ',
+                    de: 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann: ',
+                    ru: 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:',
+                    pt: 'Parece que você está perdido. Aqui estão alguns arquivos que você pode abrir:',
+                    nl: 'Het lijkt erop dat je verdwaald bent. Hier zijn enkele bestanden die u kunt openen:',
+                    fr: 'Il semble que tu sois perdu. Voici quelques fichiers que vous pouvez ouvrir:',
+                    it: 'Sembra che tu sia perso. Ecco alcuni file che puoi aprire:',
+                    es: 'Parece ser que estás perdido. Aquí hay algunos archivos que puede abrir:',
+                    pl: 'Wygląda na to, że jesteś zagubiony. Oto kilka plików, które możesz otworzyć:',
+                    uk: 'Схоже, що ви загубилися. Ось деякі файли, які ви можете відкрити:',
+                    'zh-cn': '看来你迷路了。以下是一些您可以打开的文件：',
+                },
+                'Sign out': {
+                    en: 'Sign out',
+                    de: 'Ausloggen',
+                    ru: 'Выйти',
+                    pt: 'Sair',
+                    nl: 'Afmelden',
+                    fr: 'Déconnexion',
+                    it: 'disconnessione',
+                    es: 'desconectar',
+                    pl: 'Wyloguj się',
+                    uk: 'Вийти',
+                    'zh-cn': '登出',
+                },
+            };
 
-        // Do not delete it. It will be used for dynamic generation:
-        // -- PLACE THE LIST HERE --
+            // Do not delete it. It will be used for dynamic generation:
+            // -- PLACE THE LIST HERE --
 
-        $(document).ready(function () {
-            translateAll();
-            if (document.location.href.indexOf('iobroker.net') === -1 &&
-                document.location.href.indexOf('iobroker.pro') === -1) {
-                $('.account-button').hide();
-                if (typeof authEnabled !== 'undefined' && authEnabled === false) {
-                    $('.logout-button').hide();
+            $(document).ready(function () {
+                translateAll();
+                if (
+                    !document.location.href.includes('iobroker.net') &&
+                    !document.location.href.includes('iobroker.pro')
+                ) {
+                    $('.account-button').hide();
+                    if (typeof authEnabled !== 'undefined' && authEnabled === false) {
+                        $('.logout-button').hide();
+                    }
                 }
-            }
 
-            $('.logo').click(function () {
-                window.location = '/';
+                $('.logo').click(function () {
+                    window.location = '/';
+                });
+                let text = '';
+                for (let i = 0; i < list.length; i++) {
+                    if (typeof list[i] === 'object' && list[i].localLink) {
+                        // pro tiles are not available on iobroker.net
+                        if (list[i].pro && document.location.href.match(/iobroker\.net/)) {
+                            continue;
+                        }
+                        if (!document.location.href.match(/iobroker\.(pro|net)/) && list[i].localLink) {
+                            list[i].link = list[i].localLink.replace('$host$', location.hostname);
+                        }
+                        let name = list[i].name || list[i].link;
+                        if (typeof name === 'object') {
+                            name = name[systemLang] || name.en;
+                        }
+
+                        text +=
+                            `<div class="adapter-tile" onclick="location.href = '${list[i].link}'"><div class="adapter-link" ><div class="adapter-main" style="background-image: url('${list[i].img}')"><div class="adapter-overlay"></div></div><div class="adapter-footer"><p>${name}${list[i].instance !== undefined ? '.' + list[i].instance : ''}</p></div></div></div>`;
+                    }
+                }
+                $('.vertical-center-row-web').html(text);
             });
-            var text = '';
-            for (var i = 0; i < list.length; i++) {
-                if (typeof list[i] === 'object') {
-                    // pro tiles are not available on iobroker.net
-                    if (list[i].pro && document.location.href.match(/iobroker\.net/)) {
-                        continue;
-                    }
-                    if (!document.location.href.match(/iobroker\.(pro|net)/) && list[i].localLink) {
-                        list[i].link = list[i].localLink.replace('$host$', location.hostname);
-                    }
-                    var name = (list[i].name || list[i].link);
-                    if (typeof name === 'object') {
-                        name = name[systemLang] || name.en;
-                    }
-
-                    text +=
-                        '<div class="adapter-tile" onclick="location.href = \'' + list[i].link + '\'">' +
-                        '<div class="adapter-link" >' +
-                        '<div class="adapter-main" style="background-image: url(\'' + list[i].img + '\')">' +
-                        '<div class="adapter-overlay"></div>' +
-                        '</div>' +
-                        '<div class="adapter-footer">' +
-                        '<p>' + name + (list[i].instance !== undefined ? '.' + list[i].instance : '') + '</p>' +
-                        '</div>' +
-                        '</div>' +
-                        '</div>';
-                }
-            }
-            $('.vertical-center-row-web').html(text);
-        });
-    </script>
-</head>
-<body>
-<div class="container">
-    <div class="layoutMain">
-        <div class="layoutHeader">
-            <div class="logo"></div>
-            <a class="logout-button translate" href="/logout" id="logout">Sign out</a>
-            <!--a class="login-button" href="/login">Login</a--><a class="account-button" href="/account" id="account" title="Edit profile"></a>
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="layoutMain">
+                <div class="layoutHeader">
+                    <div class="logo"></div>
+                    <a
+                        class="logout-button translate"
+                        href="/logout"
+                        id="logout"
+                        >Sign out</a
+                    >
+                    <!--a class="login-button" href="/login">Login</a--><a
+                        class="account-button"
+                        href="/account"
+                        id="account"
+                        title="Edit profile"
+                    ></a>
+                </div>
+                <div class="vertical-center-row-web"></div>
+            </div>
         </div>
-        <div class="vertical-center-row-web">
-        </div>
-    </div>
-</div>
-<div class="footer container">
-    <!--a(class="footer-link") Impressum>
+        <div class="footer container">
+            <!--a(class="footer-link") Impressum>
     <a class="footer-link" href="/policy">Privacy Notice</a-->
-</div>
-</body>
+        </div>
+    </body>
 </html>

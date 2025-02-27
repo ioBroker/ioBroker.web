@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link
+            rel="shortcut icon"
+            href="favicon.ico"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta
+            name="theme-color"
+            content="#000000"
+        />
+        <link
+            rel="manifest"
+            href="manifest.json"
+        />
+        <title>Web Login (ioBroker)</title>
+        <script>
+            window.loginLanguage  = '@@loginLanguage@@';
+            window.loginHideLogo  = '@@loginHideLogo@@';
+            window.loginMotto     = '@@loginMotto@@';
+            window.login          = '@@auth@@';
+            window.loginLogo      = '@@loginLogo@@';
+            window.loginLink      = '@@loginLink@@';
+            window.loginTitle     = '@@loginTitle@@';
+            window.loginBackgroundColor = '@@loginBackgroundColor@@';
+            window.loginBackgroundImage = '@@loginBackgroundImage@@';
+
+            window.vendorPrefix   = '@@vendorPrefix@@';
+            window.disableDataReporting = '@@disableDataReporting@@';
+
+            window.loadingBackgroundColor = '@@loadingBackgroundColor@@';
+            window.loadingBackgroundImage = '@@loadingBackgroundImage@@';
+            window.loadingHideLogo = '@@loadingHideLogo@@';
+            window.loginOauth2 = '@@loginOauth2@@';
+            if (window.loginLanguage === '@@loginLanguage@@') {
+                // Autodetect language
+                let lang = window.navigator.userLanguage || window.navigator.language;
+                lang = lang.substring(0, 2);
+                if (lang === 'zh') {
+                    lang = 'zh-cn';
+                } else if (lang !== 'de' && lang !== 'ru' && lang !== 'en' && lang !== 'nl' && lang !== 'it' && lang !== 'fr' && lang !== 'pt' && lang !== 'pl' && lang !== 'es' && lang !== 'uk') {
+                    lang = 'en';
+                }
+                window.loginLanguage = lang;
+            }
+        </script>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <script type="module" src="src/index.tsx"></script>
+    </body>
+</html>

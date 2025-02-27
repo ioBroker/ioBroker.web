@@ -20,7 +20,7 @@ const adapter_core_1 = require("@iobroker/adapter-core"); // Get common adapter 
 const webserver_1 = require("@iobroker/webserver");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
-const wwwDir = 'www';
+const wwwDir = '../www';
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\\s?]/g; // with space
 // copied from here: https://github.com/component/escape-html/blob/master/index.js
 const matchHtmlRegExp = /["'&<>]/;
@@ -262,6 +262,9 @@ class WebAdapter extends adapter_core_1.Adapter {
     loginPage = null;
     ownGroups = null;
     ownUsers = null;
+    templateDir = '';
+    template404 = '';
+    I18n = null;
     constructor(options = {}) {
         super({
             ...options,
@@ -273,6 +276,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             objectChange: (id, obj) => this.onObjectChange(id, obj),
             fileChange: (id, fileName, size) => this.onFileChange(id, fileName, size),
         });
+        import('@iobroker/i18n').then(i18n => (this.I18n = i18n));
     }
     onObjectChange(id, obj) {
         if (this.ownGroups && id.startsWith('system.group.')) {
@@ -511,6 +515,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         else if (systemConfig?.common) {
             this.lang = systemConfig.common.language || 'en';
         }
+        await this.I18n?.init(__dirname, this.lang);
         await this.main();
     }
     updatePreSettings(obj) {
@@ -812,26 +817,6 @@ class WebAdapter extends adapter_core_1.Adapter {
         });
         return result.join(' ');
     }
-    prepareLoginTemplate() {
-        let def = "            font: 13px/20px 'Lucida Grande', Tahoma, Verdana, sans-serif;\n" +
-            '            color: #404040;\n' +
-            '            background-color: #0ae;\n' +
-            '            background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.5, transparent), to(transparent));\n' +
-            '            background-image: -webkit-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: -moz-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: -ms-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: -o-linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-image: linear-gradient(rgba(255, 255, 255, .2) 50%, transparent 50%, transparent);\n' +
-            '            background-size: 50px 50px;\n';
-        const template = (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8');
-        if (this.config.loginBackgroundColor) {
-            def = `background-color: ${this.config.loginBackgroundColor};\n`;
-        }
-        if (this.config.loginBackgroundImage) {
-            def += `            background-image: url(../${this.namespace}/login-bg.png);\n`;
-        }
-        return template.replace('background: black;', def);
-    }
     checkUser = (userName, password, cb) => {
         userName = (userName || '')
             .toString()
@@ -905,6 +890,8 @@ class WebAdapter extends adapter_core_1.Adapter {
         this.webServer.app.use(body_parser_1.default.urlencoded({ extended: true }));
         this.webServer.app.use(body_parser_1.default.json());
         this.webServer.app.use(body_parser_1.default.text());
+        // Install oauth2 server
+        (0, webserver_1.createOAuth2Server)(this, { app: this.webServer.app, secure: this.config.secure, loginPage: LOGIN_PAGE });
         this.webServer.app.use((0, express_session_1.default)({
             secret: this.secret,
             saveUninitialized: true,
@@ -948,7 +935,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             (req.url || '').endsWith('socket.io.js') ||
             (req.url || '').match(/\/socket\.io\.js(\?.*)?$/)) {
             if (this.socketIoFile) {
-                res.contentType('text/javascript');
+                res.contentType('application/javascript');
                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                 res.status(200).send(this.socketIoFile);
                 return;
@@ -958,8 +945,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                 this.config.socketio.startsWith('system.adapter.ws.')) {
                 let file;
                 // If debug version stored
-                if ((0, node_fs_1.existsSync)(`${__dirname}/www/lib/js/ws.js`)) {
-                    file = `${__dirname}/www/lib/js/ws.js`;
+                if ((0, node_fs_1.existsSync)(`${__dirname}/${wwwDir}/lib/js/ws.js`)) {
+                    file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 }
                 else {
                     const pathToFile = require.resolve(`iobroker.ws`);
@@ -1005,7 +992,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 }
             }
             if (this.socketIoFile) {
-                res.contentType('text/javascript');
+                res.contentType('application/javascript');
                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                 res.status(200).send(this.socketIoFile);
                 return;
@@ -1112,6 +1099,31 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         this.socketUrl = '';
     }
+    async modifyIndexHtml(html) {
+        const state = await this.getForeignStateAsync(`system.adapter.${this.namespace}.plugins.sentry.enabled`);
+        return html
+            .toString()
+            .replaceAll(`@@vendorPrefix@@`, this.vendorPrefix)
+            .replaceAll(`'@@disableDataReporting@@'`, state?.val ? 'true' : 'false')
+            .replaceAll(`"@@disableDataReporting@@"`, state?.val ? 'true' : 'false')
+            .replaceAll(`@@loadingBackgroundColor@@`, this.config.loadingBackgroundColor || '')
+            .replaceAll(`@@loadingBackgroundImage@@`, this.config.loadingBackgroundImage ? `files/${this.namespace}/loading-bg.png` : '')
+            .replaceAll(`'@@loadingHideLogo@@'`, this.config.loadingHideLogo ? 'true' : 'false')
+            .replaceAll(`"@@loadingHideLogo@@"`, this.config.loadingHideLogo ? 'true' : 'false')
+            .replaceAll(`@@loginLanguage@@`, this.lang || '')
+            .replaceAll(`@@loginOauth2@@`, this.config.loginNoOauth2 ? 'false' : 'true');
+    }
+    send404(res, fileName, message) {
+        this.template404 =
+            this.template404 ||
+                (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/404.html`)
+                    .toString()
+                    .replace('{{Go to Homepage}}', this.I18n?.translate('Go to Homepage') || 'Go to Homepage')
+                    .replace('{{Refresh}}', this.I18n?.translate('Refresh') || 'Refresh');
+        res.setHeader('Content-Type', 'text/html');
+        res.status(404).send(this.template404.replace('{{TEXT}}', this.I18n?.translate('File %s not found', escapeHtml(fileName)) +
+            (message && message !== '{}' ? `<br>${escapeHtml(message)}` : '')));
+    }
     async initWebServer() {
         this.subscribeForeignObjects('system.config');
         this.config.ttl = parseInt(this.config.ttl, 10) || 3600;
@@ -1157,18 +1169,18 @@ class WebAdapter extends adapter_core_1.Adapter {
                 const authenticate = (req, res, next, redirect, origin) => {
                     passport_1.default.authenticate('local', (err, user) => {
                         // replace user
-                        if (user && this.config.userListEnabled) {
+                        if (user?.user && this.config.userListEnabled) {
                             // get the user group
-                            const longUser = user.startsWith('system.user.')
-                                ? user
-                                : `system.user.${user}`;
-                            user = '';
+                            const longUser = user.user.startsWith('system.user.')
+                                ? user.user
+                                : `system.user.${user.user}`;
+                            user.user = '';
                             if (this.config.userListSettings.users.includes(longUser)) {
                                 if (this.config.userListSettings.accessAsUser) {
-                                    user = this.config.userListSettings.accessAsUser;
+                                    user.user = this.config.userListSettings.accessAsUser;
                                 }
                                 else {
-                                    user = longUser;
+                                    user.user = longUser;
                                 }
                             }
                             else {
@@ -1180,19 +1192,19 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 if (groupId &&
                                     this.config.userListSettings.groups.includes(groupId)) {
                                     if (this.config.userListSettings.accessAsUser) {
-                                        user = this.config.userListSettings.accessAsUser;
+                                        user.user = this.config.userListSettings.accessAsUser;
                                     }
                                     else {
-                                        user = longUser;
+                                        user.user = longUser;
                                     }
                                 }
                             }
-                            if (!user) {
+                            if (!user?.user) {
                                 this.log.warn(`User ${longUser} is not in the user list`);
                             }
                             else {
-                                this.log.debug(`User ${longUser} threaded as ${user}`);
-                                user = user.substring('system.user.'.length);
+                                this.log.debug(`User ${longUser} threaded as ${user.user}`);
+                                user.user = user.user.substring('system.user.'.length);
                             }
                         }
                         if (req.url.includes('/loginApp')) {
@@ -1201,7 +1213,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 res.status(401).json({ error: 'cannot login user' });
                                 return;
                             }
-                            if (!user) {
+                            if (!user?.user) {
                                 this.log.warn('User not found');
                                 res.status(401).json({ error: 'cannot login user' });
                                 return;
@@ -1213,12 +1225,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
                                 return;
                             }
-                            if (!user) {
+                            if (!user?.user) {
                                 res.redirect(`/login/index.html${origin}${origin ? '&error' : '?error'}`);
                                 return;
                             }
                         }
-                        req.logIn(user, (err) => {
+                        req.logIn(user?.user, (err) => {
                             if (req.url.includes('/loginApp')) {
                                 if (err) {
                                     this.log.warn(`Cannot login user: ${err}`);
@@ -1243,7 +1255,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 req.session.cookie.maxAge = (this.config.ttl || 3600) * 1000;
                             }
                             if (req.url.includes('/loginApp')) {
-                                res.json({ result: 'ok', user });
+                                res.json({ result: 'ok', user: user?.user });
                             }
                             else {
                                 res.redirect(redirect);
@@ -1313,6 +1325,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                         parts[0] += `?${req.body.username}`;
                         redirect = parts.join('#');
                     }
+                    // User tries to authenticate with old method, so delete OAuth2 token
+                    res.clearCookie('access_token');
                     authenticate(req, res, next, redirect, req.body.origin || '?href=%2F');
                 });
                 // Login for applications to preserve cookie
@@ -1338,20 +1352,38 @@ class WebAdapter extends adapter_core_1.Adapter {
                 });
                 // route middleware to make sure a user is logged in
                 this.webServer.app.use((req, res, next) => {
+                    const url = req.originalUrl.split('?')[0];
+                    const isAuthenticated = !this.config.auth ||
+                        (req.isAuthenticated && req.isAuthenticated()) ||
+                        (!req.isAuthenticated && req.user);
+                    if (url === '/auth') {
+                        // User can ask server if authentication enabled
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json({ auth: this.config.auth });
+                        return;
+                    }
                     // return favicon always
-                    if (req.originalUrl.endsWith('favicon.ico')) {
+                    if (!isAuthenticated && url.endsWith('favicon.ico')) {
                         res.set('Content-Type', 'image/x-icon');
-                        return res.send((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/login/favicon.ico`));
+                        res.send((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/login/favicon.ico`));
+                        return;
+                    }
+                    if (!isAuthenticated && url.endsWith('manifest.json')) {
+                        res.set('Content-Type', 'application/json');
+                        res.send((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/login/manifest.json`));
+                        return;
                     }
                     // if cache.manifest got back not 200, it makes an error
-                    if (req.isAuthenticated() ||
-                        /web\.\d+\/login-bg\.png(\?.*)?$/.test(req.originalUrl) ||
-                        /cache\.manifest(\?.*)?$/.test(req.originalUrl) ||
-                        /^\/login\//.test(req.originalUrl) ||
-                        /\.ico(\?.*)?$/.test(req.originalUrl)) {
-                        return next();
+                    if (isAuthenticated ||
+                        /web\.\d+\/login-bg\.png$/.test(url) ||
+                        url.endsWith('.ico') ||
+                        url.endsWith('manifest.json') ||
+                        url.endsWith('cache.manifest.json') ||
+                        url.startsWith('/login/')) {
+                        next();
+                        return;
                     }
-                    else if (this.config.basicAuth &&
+                    if (this.config.basicAuth &&
                         typeof req.headers.authorization === 'string' &&
                         req.headers.authorization.startsWith('Basic')) {
                         // not logged in yet, and basic auth is active + header present
@@ -1375,7 +1407,10 @@ class WebAdapter extends adapter_core_1.Adapter {
                 });
                 // get user by session /cookie
                 this.webServer.app.get('/getUser', (req, res) => {
-                    if (req.isAuthenticated()) {
+                    const isAuthenticated = !this.config.auth ||
+                        (req.isAuthenticated && req.isAuthenticated()) ||
+                        (!req.isAuthenticated && req.user);
+                    if (isAuthenticated) {
                         // parse cookie
                         const cookie = {};
                         const parts = (req.headers.cookie || '').split(';');
@@ -1383,6 +1418,32 @@ class WebAdapter extends adapter_core_1.Adapter {
                             const [name, value] = item.split('=');
                             cookie[decodeURIComponent(name.trim())] = decodeURIComponent(value);
                         });
+                        let accessToken = cookie.access_token;
+                        if (!accessToken && req.headers.authorization?.startsWith('Bearer ')) {
+                            accessToken = req.headers.authorization.split(' ')[1];
+                        }
+                        if (!accessToken && req.query?.token) {
+                            accessToken = req.query.token;
+                        }
+                        // If access token is available, use it
+                        if (accessToken) {
+                            // read expiration from session
+                            this.store?.get(`a:${accessToken}`, (_err, accessSession) => {
+                                const tokens = accessSession;
+                                if (tokens) {
+                                    // If refresh token is available, use it
+                                    res.send({
+                                        expires: new Date(tokens.aExp).toISOString(),
+                                        refreshExpires: new Date(tokens.rExp).toISOString(),
+                                        user: tokens.user,
+                                    });
+                                }
+                                else {
+                                    res.status(501).send('User not logged in.');
+                                }
+                            });
+                            return;
+                        }
                         if (cookie['connect.sid']) {
                             const sessionId = cookie_signature_1.default.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), this.secret);
                             if (sessionId) {
@@ -1401,7 +1462,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                             }
                         }
                         else {
-                            res.status(501).send('User not logged in.');
+                            if (!req.user) {
+                                res.status(501).send('User not logged in.');
+                            }
+                            else {
+                                res.send({ user: req.user });
+                            }
                         }
                     }
                     else {
@@ -1410,7 +1476,10 @@ class WebAdapter extends adapter_core_1.Adapter {
                 });
                 // todo
                 this.webServer.app.get('/prolongSession', (req, res, next) => {
-                    if (req.isAuthenticated()) {
+                    const isAuthenticated = !this.config.auth ||
+                        (req.isAuthenticated && req.isAuthenticated()) ||
+                        (!req.isAuthenticated && req.user);
+                    if (isAuthenticated) {
                         req.session.touch();
                         const parts = (req.headers.cookie || '').split(';');
                         const cookie = {};
@@ -1513,7 +1582,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         res.status(200).send(obj);
                                     }
                                     else {
-                                        res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
+                                        this.send404(res, fileName[0]);
                                     }
                                 });
                             }
@@ -1540,7 +1609,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         }
                                     }
                                     else {
-                                        res.status(404).send(`404 Not found. File ${escapeHtml(fileName[0])} not found`);
+                                        this.send404(res, fileName[0]);
                                     }
                                 });
                             }
@@ -1669,7 +1738,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             const socketSettings = JSON.parse(JSON.stringify(this.config));
             // Authentication checked by server itself
             socketSettings.secret = this.secret;
-            socketSettings.language = this.language;
+            socketSettings.language = this.config.language;
             // Used only for socket.io
             socketSettings.forceWebSockets = !!this.config.forceWebSockets;
             // Used only for socket.io
@@ -1734,7 +1803,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     this.extensions[instance].obj = new extAPI(this.webServer.server, {
                         secure: this.config.secure,
                         port: this.config.port,
-                        language: this.lang,
+                        language: this.config.language,
                         defaultUser: this.config.defaultUser,
                         auth: this.config.auth,
                     }, this, this.extensions[instance].config, this.webServer.app, this.webServer.io);
@@ -1783,7 +1852,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         url = url.substring(i - 1);
                     }
                     if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                        res.status(404).send('Not found');
+                        this.send404(res, url);
                         return;
                     }
                     // If root directory requested
@@ -1850,18 +1919,19 @@ class WebAdapter extends adapter_core_1.Adapter {
                     }
                     else {
                         if (id === 'login' && url === 'index.html') {
-                            this.loginPage ||= this.prepareLoginTemplate();
+                            this.loginPage ||= await this.modifyIndexHtml((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8'));
                             const buffer = this.loginPage;
-                            if (!this.config.auth ||
+                            const isAuthenticated = !this.config.auth ||
                                 (req.isAuthenticated && req.isAuthenticated()) ||
-                                this.isInWhiteList(req)) {
+                                (!req.isAuthenticated && req.user);
+                            if (isAuthenticated || this.isInWhiteList(req)) {
                                 res.redirect(getRedirectPage(req));
                                 return;
                             }
                             if (buffer === null || buffer === undefined) {
                                 res.contentType('text/html');
                                 res.set('Cache-Control', 'no-cache');
-                                res.status(404).send(`File ${escapeHtml(url)} not found`);
+                                this.send404(res, url);
                             }
                             else {
                                 // Store file in cache
@@ -1886,7 +1956,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     ? url.substring(versionPrefix.length + 1)
                                     : url, {
                                     user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
-                                    noFileCache: noFileCache,
+                                    noFileCache,
                                 });
                             }
                             catch (err) {
@@ -1906,12 +1976,11 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 this.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
                                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                                 res.set('Content-Type', 'text/html; charset=utf-8');
-                                const text = [
-                                    '<html>',
-                                    '<head><title>Directory</title>',
-                                    `<style>body { font-family: Arial, sans-serif; } td { padding: 5px; }</style>`,
-                                    `</head><body><h3>Directory ${req.url}</h3><table>`,
-                                ];
+                                this.templateDir ||= (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/dir.html`).toString('utf8')
+                                    .replace('{{Directory}}', this.I18n?.translate('Directory') || 'Directory')
+                                    .replace('{{File Size}}', this.I18n?.translate('File Size') || 'File Size')
+                                    .replace('{{File Name}}', this.I18n?.translate('File Name') || 'File Name');
+                                const text = [];
                                 if (url !== '/') {
                                     const parts = url.split('/');
                                     parts.pop();
@@ -1930,30 +1999,18 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     return a.file.localeCompare(b.file);
                                 });
                                 files?.forEach(file => text.push(`<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
-                                text.push('</table></body></html>');
-                                res.status(200).send(text.join('\n'));
+                                res.status(200).send(this.templateDir.replace('{{URL}}', req.url).replace('{{TABLE}}', text.join('\n')));
                                 return;
                             }
                             if (!result || result.file === null || result.file === undefined || error) {
                                 res.contentType('text/html');
-                                res.status(404).send(`File ${escapeHtml(url)} not found: ${escapeHtml(typeof error !== 'string' ? JSON.stringify(error) : error)}`);
+                                this.send404(res, url, typeof error !== 'string' ? JSON.stringify(error) : error);
                             }
                             else {
-                                result.mimeType = result.mimeType || (0, mime_types_1.lookup)(url) || 'text/javascript';
+                                result.mimeType = result.mimeType || (0, mime_types_1.lookup)(url) || 'application/javascript';
                                 // replace some important variables in HTML
                                 if (url === 'index.html' || url === 'edit.html') {
-                                    const state = await this.getForeignStateAsync(`system.adapter.${this.namespace}.plugins.sentry.enabled`);
-                                    result.file = result.file
-                                        .toString()
-                                        .replaceAll(`@@vendorPrefix@@`, this.vendorPrefix)
-                                        .replaceAll(`'@@disableDataReporting@@'`, state?.val ? 'true' : 'false')
-                                        .replaceAll(`"@@disableDataReporting@@"`, state?.val ? 'true' : 'false')
-                                        .replaceAll(`@@loadingBackgroundColor@@`, this.config.loadingBackgroundColor || '')
-                                        .replaceAll(`@@loadingBackgroundImage@@`, this.config.loadingBackgroundImage
-                                        ? `files/${this.namespace}/loading-bg.png`
-                                        : '')
-                                        .replaceAll(`'@@loadingHideLogo@@'`, this.config.loadingHideLogo ? 'true' : 'false')
-                                        .replaceAll(`"@@loadingHideLogo@@"`, this.config.loadingHideLogo ? 'true' : 'false');
+                                    result.file = await this.modifyIndexHtml(result.file.toString('utf8'));
                                 }
                                 // Store file in cache
                                 if (this.config.cache) {

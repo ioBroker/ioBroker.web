@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "无法获取访问令牌",
+  "enterLogin": "登录名",
+  "enterPassword": "密码",
+  "login": "登录",
+  "loginTitle": "Web 登录",
+  "ra_Change color theme": "更改颜色主题",
+  "staySignedIn": "保持登录状态",
+  "wrongPassword": "密码或用户名错误"
+}

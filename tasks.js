@@ -1,5 +1,5 @@
 const { deleteFoldersRecursive, buildReact, npmInstall, patchHtmlFile, copyFiles } = require('@iobroker/build-tools');
-const { copyFileSync, existsSync } = require('node:fs');
+const { copyFileSync, existsSync, mkdirSync } = require('node:fs');
 
 async function copyAllFiles() {
     copyFiles(['src-admin/build/**/*', '!src-admin/build/index.html'], 'admin/');
@@ -8,8 +8,17 @@ async function copyAllFiles() {
     copyFileSync(`${__dirname}/src-admin/build/index.html`, `${__dirname}/admin/index_m.html`);
 }
 
+function buildLogin() {
+    deleteFoldersRecursive('www/login');
+    deleteFoldersRecursive('src-login/build');
+    return buildReact(`${__dirname}/src-login`, { rootDir: `${__dirname}/src-login`, vite: true })
+        .then(() => {
+            copyFiles(['src-login/build/**/*'], 'www/login/');
+        });
+}
+
 if (process.argv.includes('--0-clean')) {
-    deleteFoldersRecursive('admin', ['web.png']);
+    deleteFoldersRecursive('admin', ['web.png', 'web.svg']);
     deleteFoldersRecursive('src-admin/build');
 } else if (process.argv.includes('--1-npm')) {
     if (!existsSync(`${__dirname}/src-admin/node_modules`)) {
@@ -28,12 +37,23 @@ if (process.argv.includes('--0-clean')) {
         console.log(`Cannot copy: ${e}`);
         process.exit(2);
     });
+} else if (process.argv.includes('--4-login')) {
+    buildLogin().catch(e => {
+        console.log(`Cannot build login: ${e}`);
+        process.exit(2);
+    });
+} else if (process.argv.includes('--5-post-backend')) {
+    if (!existsSync(`${__dirname}/dist`)) {
+        mkdirSync(`${__dirname}/dist`);
+    }
+    copyFiles(['src/i18n/**/*'], 'dist/i18n/');
 } else {
-    deleteFoldersRecursive('admin', ['web.png']);
+    deleteFoldersRecursive('admin', ['web.png', 'web.svg']);
     deleteFoldersRecursive('src-admin/build');
     return npmInstall(`${__dirname}/src-admin`)
         .then(() => buildReact(`${__dirname}/src-admin`, { rootDir: `${__dirname}/src-admin`, vite: true }))
         .then(() => copyAllFiles())
+        .then(() => buildLogin())
         .catch(e => {
             console.log(`Cannot build: ${e}`);
             process.exit(2);

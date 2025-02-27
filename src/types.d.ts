@@ -93,6 +93,7 @@ export interface WebAdapterConfig {
     loadingHideLogo: boolean;
     loginBackgroundColor: string;
     loginBackgroundImage: boolean;
+    loginNoOauth2: boolean;
     port: number | string;
     secure: boolean;
     showFolderIndex: boolean;
