@@ -253,6 +253,8 @@ class WebAdapter extends adapter_core_1.Adapter {
     socketUrl = '';
     cache = {}; // cached web files
     ownSocket = false;
+    /** If socket instance is alive */
+    socketioAlive = false;
     lang = 'en';
     extensions = {};
     bruteForce = {};
@@ -346,6 +348,14 @@ class WebAdapter extends adapter_core_1.Adapter {
     }
     onStateChange(id, state) {
         this.webServer?.io?.publishAll('stateChange', id, state);
+        if (!this.ownSocket && id === `${this.config.socketio}.alive`) {
+            if (this.socketioAlive !== !!state?.val) {
+                this.socketioAlive = !!state?.val;
+                void this.getSocketUrl(undefined, state).then(() => {
+                    this.log.info(`SocketURL now "${this.socketUrl}"`);
+                });
+            }
+        }
         // inform extensions
         Object.keys(this.extensions).forEach(instance => {
             try {
@@ -503,6 +513,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             await this.getSocketUrl();
             // Listen for changes
             await this.subscribeForeignObjectsAsync(this.config.socketio);
+            await this.subscribeForeignStatesAsync(`${this.config.socketio}.alive`);
         }
         else {
             this.socketUrl = this.config.socketio;
@@ -1073,20 +1084,14 @@ class WebAdapter extends adapter_core_1.Adapter {
             res.json({ result: list });
         }
     }
-    async getSocketUrl(obj) {
+    async getSocketUrl(obj, state) {
         if (this.config.socketio?.match(/^system\.adapter\./)) {
             const socketInstance = obj ||
                 (await this.getForeignObjectAsync(this.config.socketio)) ||
                 undefined;
             if (socketInstance?.common && !socketInstance.common.enabled) {
-                let state = await this.getForeignStateAsync(`${this.config.socketio}.alive`);
-                if (state?.val) {
-                    this.socketUrl = `:${socketInstance.native.port}`;
-                    return;
-                }
-                // give 5 seconds to restart the adapter
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                state = await this.getForeignStateAsync(`${this.config.socketio}.alive`);
+                state ||= await this.getForeignStateAsync(`${this.config.socketio}.alive`);
+                this.socketioAlive = !!state?.val;
                 if (state?.val) {
                     this.socketUrl = `:${socketInstance.native.port}`;
                     return;
@@ -1337,6 +1342,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         req.body.stayloggedin === 'true' ||
                             req.body.stayloggedin === true ||
                             req.body.stayloggedin === 'on';
+                    res.clearCookie('access_token');
                     authenticate(req, res, next, '', req.body.origin || '?href=%2F');
                 });
                 this.webServer.app.get('/logout', (req, res) => {
@@ -1360,6 +1366,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                         // User can ask server if authentication enabled
                         res.setHeader('Content-Type', 'application/json');
                         res.json({ auth: this.config.auth });
+                        return;
+                    }
+                    if (url === '/name') {
+                        // User can ask server if authentication enabled
+                        res.setHeader('Content-Type', 'plain/text');
+                        res.send(this.namespace);
                         return;
                     }
                     // return favicon always
@@ -1976,7 +1988,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 this.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
                                 res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                                 res.set('Content-Type', 'text/html; charset=utf-8');
-                                this.templateDir ||= (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/dir.html`).toString('utf8')
+                                this.templateDir ||= (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/dir.html`)
+                                    .toString('utf8')
                                     .replace('{{Directory}}', this.I18n?.translate('Directory') || 'Directory')
                                     .replace('{{File Size}}', this.I18n?.translate('File Size') || 'File Size')
                                     .replace('{{File Name}}', this.I18n?.translate('File Name') || 'File Name');

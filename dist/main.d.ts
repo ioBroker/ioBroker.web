@@ -15,6 +15,8 @@ export declare class WebAdapter extends Adapter {
     private socketUrl;
     private readonly cache;
     private ownSocket;
+    /** If socket instance is alive */
+    private socketioAlive;
     private lang;
     private readonly extensions;
     private readonly bruteForce;
@@ -65,7 +67,7 @@ export declare class WebAdapter extends Adapter {
     isInWhiteList(req: Request): string;
     getFoldersOfObject(path: string | undefined): Promise<string[]>;
     processReadFolders(req: Request, res: Response): Promise<void>;
-    getSocketUrl(obj?: ioBroker.InstanceObject): Promise<void>;
+    getSocketUrl(obj?: ioBroker.InstanceObject, state?: ioBroker.State | null): Promise<void>;
     modifyIndexHtml(html: string): Promise<string>;
     send404(res: Response, fileName: string, message?: string): void;
     initWebServer(): Promise<void>;

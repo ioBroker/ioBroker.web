@@ -81,7 +81,7 @@ The web adapter supports OAuth2 authentication.
 To get the tokens, the user must call the URL:
 
 ```
-http://ip:8082/auth/token?grant_type=password&username=<user>&password=<password>&client_id=ioBroker&stayloggedin=<false/true>
+http://ip:8082//oauth/token?grant_type=password&username=<user>&password=<password>&client_id=ioBroker&stayloggedin=<false/true>
 ```
 
 `stayloggedin=true` means that the token will be stored in the browser and will be used for the next requests and is optional.
@@ -89,22 +89,11 @@ http://ip:8082/auth/token?grant_type=password&username=<user>&password=<password
 The answer is like:
 ```json
 {
-  "accessToken": "21f89e3eee32d3af08a71c1cc44ec72e0e3014a9",
-  "accessTokenExpiresAt": "2025-02-23T11:39:32.208Z",
-  "refreshToken": "66d35faa5d53ca8242cfe57367210e76b7ffded7",
-  "refreshTokenExpiresAt": "2025-03-25T10:39:32.208Z",
-  "user": {
-    "id": "admin"
-  },
-  "client": {
-    "id": "ioBroker",
-    "grants": [
-      "password",
-      "refresh_token"
-    ],
-    "accessTokenLifetime": 3600,
-    "refreshTokenLifetime": 2592000
-  }
+    "access_token": "21f89e3eee32d3af08a71c1cc44ec72e0e3014a9",
+    "expires_in": "2025-02-23T11:39:32.208Z",
+    "refresh_token": "66d35faa5d53ca8242cfe57367210e76b7ffded7",
+    "refresh_token_expires_in": "2025-03-25T10:39:32.208Z",
+    "token_type": "Bearer"
 }
 ```         
 More info could be found here: https://github.com/ioBroker/webserver?tab=readme-ov-file#oauth2-support
@@ -122,6 +111,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 * (@GermanBluefox) Migrated GUI to vite
 * (@GermanBluefox) Rewritten in TypeScript
 * (@GermanBluefox) Added OAuth2 support
+* (@GermanBluefox) Added new 404 and the directory list pages
 
 ### 6.3.1 (2024-09-23)
 * (@foxriver76) added new admin icon (svg)

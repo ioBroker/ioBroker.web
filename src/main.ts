@@ -297,6 +297,8 @@ export class WebAdapter extends Adapter {
     private socketUrl = '';
     private readonly cache: { [fileName: string]: { mimeType: string; buffer: Buffer } } = {}; // cached web files
     private ownSocket = false;
+    /** If socket instance is alive */
+    private socketioAlive = false;
     private lang: ioBroker.Languages = 'en';
     private readonly extensions: Record<string, { path: string; config: ioBroker.InstanceObject; obj?: ExtAPI }> = {};
     private readonly bruteForce: { [userName: string]: { errors: number; time: number } } = {};
@@ -408,6 +410,15 @@ export class WebAdapter extends Adapter {
 
     onStateChange(id: string, state: ioBroker.State | null | undefined): void {
         this.webServer?.io?.publishAll('stateChange', id, state);
+
+        if (!this.ownSocket && id === `${this.config.socketio}.alive`) {
+            if (this.socketioAlive !== !!state?.val) {
+                this.socketioAlive = !!state?.val;
+                void this.getSocketUrl(undefined, state).then(() => {
+                    this.log.info(`SocketURL now "${this.socketUrl}"`);
+                });
+            }
+        }
 
         // inform extensions
         Object.keys(this.extensions).forEach(instance => {
@@ -601,6 +612,7 @@ export class WebAdapter extends Adapter {
             await this.getSocketUrl();
             // Listen for changes
             await this.subscribeForeignObjectsAsync(this.config.socketio);
+            await this.subscribeForeignStatesAsync(`${this.config.socketio}.alive`);
         } else {
             this.socketUrl = this.config.socketio;
             this.ownSocket = this.socketUrl !== 'none';
@@ -1260,7 +1272,7 @@ export class WebAdapter extends Adapter {
         }
     }
 
-    async getSocketUrl(obj?: ioBroker.InstanceObject): Promise<void> {
+    async getSocketUrl(obj?: ioBroker.InstanceObject, state?: ioBroker.State | null): Promise<void> {
         if (this.config.socketio?.match(/^system\.adapter\./)) {
             const socketInstance: ioBroker.InstanceObject | undefined =
                 obj ||
@@ -1268,14 +1280,8 @@ export class WebAdapter extends Adapter {
                 undefined;
 
             if (socketInstance?.common && !socketInstance.common.enabled) {
-                let state = await this.getForeignStateAsync(`${this.config.socketio}.alive`);
-                if (state?.val) {
-                    this.socketUrl = `:${socketInstance.native.port}`;
-                    return;
-                }
-                // give 5 seconds to restart the adapter
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                state = await this.getForeignStateAsync(`${this.config.socketio}.alive`);
+                state ||= await this.getForeignStateAsync(`${this.config.socketio}.alive`);
+                this.socketioAlive = !!state?.val;
                 if (state?.val) {
                     this.socketUrl = `:${socketInstance.native.port}`;
                     return;
@@ -1622,6 +1628,13 @@ export class WebAdapter extends Adapter {
                         // User can ask server if authentication enabled
                         res.setHeader('Content-Type', 'application/json');
                         res.json({ auth: this.config.auth });
+                        return;
+                    }
+
+                    if (url === '/name') {
+                        // User can ask server if authentication enabled
+                        res.setHeader('Content-Type', 'plain/text');
+                        res.send(this.namespace);
                         return;
                     }
 

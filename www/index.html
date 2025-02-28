@@ -160,6 +160,16 @@
                 }
                 $('.vertical-center-row-web').html(text);
             });
+
+            function logout() {
+                window.localStorage.removeItem('refresh_token');
+                window.localStorage.removeItem('refresh_token_exp');
+                window.localStorage.removeItem('access_token_exp');
+                window.sessionStorage.removeItem('refresh_token');
+                window.sessionStorage.removeItem('refresh_token_exp');
+                window.sessionStorage.removeItem('access_token_exp');
+                window.location = '/logout';
+            }
         </script>
     </head>
     <body>
@@ -169,6 +179,7 @@
                     <div class="logo"></div>
                     <a
                         class="logout-button translate"
+                        onclick="logout()"
                         href="/logout"
                         id="logout"
                         >Sign out</a
