@@ -1,251 +1,256 @@
 {
-    "common": {
-        "name": "web",
-        "version": "6.3.1",
-        "titleLang": {
-            "en": "WEB server",
-            "de": "WEB-Server",
-            "ru": "Веб сервер",
-            "pt": "Servidor web",
-            "nl": "Web Server",
-            "fr": "Serveur Web",
-            "it": "Server web",
-            "es": "Servidor web",
-            "pl": "Serwer internetowy",
-            "uk": "Веб-сервер",
-            "zh-cn": "Web服务器"
-        },
-        "news": {
-            "6.3.1": {
-                "en": "added new admin icon (svg)",
-                "de": "neues admin-symbol (svg) hinzugefügt",
-                "ru": "добавлена новая иконка администратора (svg)",
-                "pt": "adicionado novo ícone de administrador (svg)",
-                "nl": "nieuw admin-pictogram toevoegen (svg)",
-                "fr": "ajout d'une nouvelle icône d'administration (svg)",
-                "it": "aggiunta nuova icona di amministratore (svg)",
-                "es": "nuevo icono de administración (svg)",
-                "pl": "dodano nową ikonę administratora (svg)",
-                "uk": "додано нову іконку адміністратора (снд)",
-                "zh-cn": "添加新管理员图标( svg)"
-            },
-            "6.3.0": {
-                "en": "Corrected call of getObjectView with null parameter\nupdated packages\nGUI was migrated to non-style framework",
-                "de": "Korrigierter Anruf von getObject Ansicht mit Null-Parameter\naktualisierte pakete\nGUI wurde zu nicht-style-Framework migriert",
-                "ru": "Исправленный звонок getObject Просмотр с нулевым параметром\nобновления пакетов\nGUI был перенесен в рамки, не связанные с стилем",
-                "pt": "Chamada correta de getObject Ver com parâmetro nulo\npacotes atualizados\nGUI foi migrado para o framework não-estilo",
-                "nl": "Gecorrigeerde aanroep van getObject Beeld met nul parameter\nbijgewerkte pakketten\nGUI is gemigreerd naar non-style framework",
-                "fr": "Appel corrigé de getObject Affichage avec paramètre null\npaquets mis à jour\nL'interface graphique a été migrée vers un cadre non style",
-                "it": "Chiamata corretta di getObject Visualizza con parametro null\npacchetti aggiornati\nGUI è stata migrata al framework non-stile",
-                "es": "Llamada corregida de getObject Ver con parámetro null\npaquetes actualizados\nGUI was migrated to non-style framework",
-                "pl": "Poprawione wywołanie getObject Widok z parametrem null\nzaktualizowane pakiety\nInterfejs GUI został przeniesiony na niestylowe ramy",
-                "uk": "Виправлений виклик getObject Перегляд з параметром null\nоновлені пакети\nГрафічний інтерфейс був мігрований в рамкову рамку",
-                "zh-cn": "已更正的调取对象 以无效参数查看\n更新软件包\nGUI 已迁移到非样式框架"
-            },
-            "6.2.6": {
-                "en": "Preparations for a custom loading background\nupdated packages",
-                "de": "Vorbereitungen für einen benutzerdefinierten Ladehintergrund\naktualisierte pakete",
-                "ru": "Подготовка к настраиваемой загрузке\nобновления пакетов",
-                "pt": "Preparações para um fundo de carregamento personalizado\npacotes atualizados",
-                "nl": "Voorbereidingen voor een aangepaste laadachtergrond\nbijgewerkte pakketten",
-                "fr": "Préparations pour un fond de chargement personnalisé\npaquets mis à jour",
-                "it": "Preparazioni per uno sfondo di caricamento personalizzato\npacchetti aggiornati",
-                "es": "Preparaciones para un fondo de carga personalizado\npaquetes actualizados",
-                "pl": "Preparaty do samodzielnego załadunku tła\nzaktualizowane pakiety",
-                "uk": "Підготовка до індивідуального завантаження фону\nоновлені пакети",
-                "zh-cn": "自定义加载背景的准备工作\n更新软件包"
-            },
-            "6.2.5": {
-                "en": "Just some packages were updates",
-                "de": "Nur einige Pakete waren Updates",
-                "ru": "Просто некоторые пакеты были обновления",
-                "pt": "Apenas alguns pacotes foram atualizações",
-                "nl": "Enkele pakketten waren updates",
-                "fr": "Juste quelques paquets étaient des mises à jour",
-                "it": "Solo alcuni pacchetti sono stati aggiornamenti",
-                "es": "Sólo algunos paquetes eran actualizaciones",
-                "pl": "Tylko kilka pakietów były aktualizacje",
-                "uk": "Просто деякі пакети були оновлені",
-                "zh-cn": "只是一些软件包是更新的"
-            },
-            "6.2.4": {
-                "en": "Extensions may block the web instance\nFixed directory listing",
-                "de": "Erweiterungen können die Web-Instanz blockieren\nBehobene Verzeichnisliste",
-                "ru": "Продления могут блокировать веб-экран\nФиксированный список каталогов",
-                "pt": "Extensões podem bloquear a instância da Web\nLista de diretórios fixos",
-                "nl": "Extensies kunnen de web instantie blokkeren\nVaste maplijst",
-                "fr": "Les extensions peuvent bloquer l'instance web\nListe des répertoires fixes",
-                "it": "Le estensioni possono bloccare l'istanza web\nElenco delle directory fisse",
-                "es": "Las extensiones pueden bloquear la instancia web\nListado de directorio fijo",
-                "pl": "Rozszerzenia mogą blokować instancję internetową\nStała lista katalogów",
-                "uk": "Розширення можуть блокувати веб-пристрою\nВиправлено список каталогів",
-                "zh-cn": "扩展名可能屏蔽网页实例\n固定目录列表"
-            },
-            "6.2.3": {
-                "en": "update websocket library to increase maximum file size from 100 MB to 500 MB",
-                "de": "websocket-Bibliothek aktualisieren, um die maximale Dateigröße von 100 MB auf 500 MB zu erhöhen",
-                "ru": "обновление библиотеки websocket для увеличения максимального размера файла от 100 МБ до 500 МБ",
-                "pt": "atualizar biblioteca websocket para aumentar o tamanho máximo do arquivo de 100 MB para 500 MB",
-                "nl": "update websocket bibliotheek om maximale bestandsmaat te verhogen van 100 MB tot 500 MB",
-                "fr": "mettre à jour la bibliothèque websocket pour augmenter la taille maximale de fichier de 100 MB à 500 MB",
-                "it": "aggiornare la libreria websocket per aumentare la dimensione massima del file da 100 MB a 500 MB",
-                "es": "actualizar la biblioteca websocket para aumentar el tamaño máximo del archivo de 100 MB a 500 MB",
-                "pl": "zaktualizowana biblioteka internetowa do zwiększenia rozmiaru pliku z 100 MB do 500 MB",
-                "uk": "оновлення бібліотеки websocket для збільшення максимального розміру файлу від 100 МБ до 500 МБ",
-                "zh-cn": "a. 更新的网站库图书馆,以增加最高档案数量,从100个到500个MB"
-            },
-            "6.2.2": {
-                "en": "Corrected the crash if authentication is enabled",
-                "de": "Korrigiert den Crash, wenn die Authentifizierung aktiviert ist",
-                "ru": "Исправлена ошибка, если авторизация включена",
-                "pt": "Corrigido o acidente se a autenticação estiver ativada",
-                "nl": "Vertaling:",
-                "fr": "Correction du crash si l'authentification est activée",
-                "it": "Corretto il crash se l'autenticazione è abilitata",
-                "es": "Corregido el accidente si la autenticación está habilitada",
-                "pl": "Poprawiona katastrofa, jeśli uwierzytelnianie jest możliwe",
-                "uk": "Виправлено помилку, якщо ввімкнено автентифікацію",
-                "zh-cn": "如果能够证明确证,便纠正了事故。"
-            }
-        },
-        "desc": {
-            "en": "Opens a webserver for other adapters",
-            "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
-            "ru": "Запускает веб сервер для 'ioBroker драйверов'",
-            "pt": "Abre um servidor web para outros adaptadores",
-            "nl": "Opent een webserver voor andere adapters",
-            "fr": "Ouvre un serveur web pour d'autres adaptateurs",
-            "it": "Apre un server web per altri adattatori",
-            "es": "Abre un servidor web para otros adaptadores",
-            "pl": "Otwiera serwer internetowy dla innych kart",
-            "uk": "Відкриває веб-сервер для інших адаптерів",
-            "zh-cn": "为其他适配器服务的web服务器"
-        },
-        "licenseInformation": {
-            "license": "MIT",
-            "type": "free"
-        },
-        "mode": "daemon",
-        "platform": "Javascript/Node.js",
-        "loglevel": "info",
-        "icon": "web.svg",
-        "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
-        "enabled": true,
-        "materialize": true,
-        "adminUI": {
-            "config": "materialize"
-        },
-        "messagebox": true,
-        "compact": true,
-        "keywords": ["web", "server", "www", "express"],
-        "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.svg",
-        "type": "general",
-        "stopBeforeUpdate": true,
-        "eraseOnUpload": true,
-        "webExtendable": true,
-        "connectionType": "local",
-        "dataSource": "push",
-        "localLink": "%web_protocol%://%ip%:%web_port%/",
-        "dependencies": [
-            {
-                "js-controller": ">=3.1.0"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.0"
-            }
-        ],
-        "authors": [
-            {
-                "name": "bluefox",
-                "email": "dogafox@gmail.com"
-            }
-        ],
-        "plugins": {
-            "sentry": {
-                "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
-            }
-        },
-        "tier": 3
+  "common": {
+    "name": "web",
+    "version": "7.0.0",
+    "titleLang": {
+      "en": "WEB server",
+      "de": "WEB-Server",
+      "ru": "Веб сервер",
+      "pt": "Servidor web",
+      "nl": "Web Server",
+      "fr": "Serveur Web",
+      "it": "Server web",
+      "es": "Servidor web",
+      "pl": "Serwer internetowy",
+      "uk": "Веб-сервер",
+      "zh-cn": "Web服务器"
     },
-    "native": {
-        "port": 8082,
-        "auth": false,
-        "secure": false,
-        "bind": "0.0.0.0",
-        "cache": false,
-        "socketio": "",
-        "usePureWebSockets": false,
-        "simpleapi": false,
-        "defaultUser": "admin",
-        "ttl": 3600,
-        "certPublic": "",
-        "certPrivate": "",
-        "certChained": "",
-        "addUserName": false,
-        "forceWebSockets": false,
-        "compatibilityV2": true,
-        "whiteListEnabled": false,
-        "loginBackgroundColor": "",
-        "loginBackgroundImage": false,
-        "loginOauth2": false,
-        "basicAuth": false,
-        "disableExtensions": false,
-        "disableStates": false,
-        "disableFilesObjects": false,
-        "defaultRedirect": "",
-        "staticAssetCacheMaxAge": 60,
-        "language": "",
-        "startDisabledExtensions": false,
-        "showFolderIndex": false,
-        "loadingBackgroundColor": "",
-        "loadingHideLogo": false,
-        "loadingBackgroundImage": false
+    "news": {
+      "7.0.0": {
+        "en": "[Breaking change] Removed simple-api as it could be connected as web-extension\nupdated packages\nremoved gulp in a build process\nMigrated GUI to vite\nRewritten in TypeScript\nAdded OAuth2 support\nAdded new 404 and the directory list pages",
+        "de": "(Breaking change) Entfernt simple-api, wie es als Bahnverspannung verbunden werden könnte\naktualisierte pakete\ngulp in einem build-prozess entfernt\nMigrated GUI to vite\nNeu geschrieben in TypeScript\nOAuth2 Unterstützung hinzugefügt\nNeue 404 und die Verzeichnislistenseiten hinzugefügt",
+        "ru": "[Прорыв перемен] Удаленный Simple-api, как его можно было бы подключить как веб-расширение\nобновленные пакеты\nудаленный глоток в процессе сборки\nИммигрировавший ГУИ поздравит\nПереписано в TypeScript\nПоддержка OAuth2\nДобавлены новые страницы 404 и список каталогов",
+        "pt": "[Breaking change] Removido simples-api como ele poderia ser conectado como web-extensão\npacotes atualizados\ngulp removido em um processo de compilação\nGUI migrado para vite\nReescrito em TypeScript\nAdicionado suporte OAuth2\nAdicionado novo 404 e a lista de diretórios",
+        "nl": "[Breaking change] Verwijderde eenvoudige-api als het kon worden aangesloten als web-extensie\nbijgewerkte pakketten\nverwijderde gulp in een bouwproces\nGUI migreren naar Vite\nHerschreven in TypeScript\nOAuth2-ondersteuning toegevoegd\nNieuwe 404 en de lijstpagina's toegevoegd",
+        "fr": "[Modifier] Supprimé simple-api car il pourrait être connecté comme web-extension\npaquets mis à jour\nenlèvement des goupilles dans un processus de construction\nL'interface graphique a migré pour voir\nRéécrit dans TypeScript\nAjout du support OAuth2\nAjout du nouveau 404 et des pages de la liste des répertoires",
+        "it": "[Modifica modifica] Rimuoveto api semplice in quanto potrebbe essere collegato come estensione web\npacchetti aggiornati\ngulp rimosso in un processo di costruzione\nGUI emigrata a vite\nRescritto in TypeScript\nAggiunto il supporto OAuth2\nAggiunto nuovo 404 e le pagine dell'elenco delle directory",
+        "es": "[Breaking change] Eliminado simple-api ya que podría ser conectado como web-extensión\npaquetes actualizados\ngolp eliminado en un proceso de construcción\nMigrated GUI to vite\nReescrito en TipoScript\nApoyo adicional OAuth2\nAñadido nuevo 404 y las páginas de lista de directorios",
+        "pl": "[Łamanie zmian] Usunięty simple- api, ponieważ może być podłączony jako web- extension\nzaktualizowane pakiety\nusunięto przełyk w procesie budowy\nMigrated GUI to vite\nPrzepisane w TypeScript\nDodano wsparcie OAuth2\nDodano nowe 404 i listę katalogów",
+        "uk": "[Перегляд змін] Видалено простий табір, оскільки він може бути підключений як веб-переглядач\nоновлені пакети\nвидалення гельпи в процесі будівництва\nМігратний графічний інтерфейс для vite\nЗаписатися в TypeScript\nДодано підтримку OAuth2\nДодано нові 404 та сторінки списку каталогів",
+        "zh-cn": "[震动变化]. 已删除的简单 api , 因为它可以作为网络扩展连接\n更新软件包\n在构建过程中移除 gulp\n将 GUI 标记为 vite\n在类型脚本中重写\n添加 OAuth2 支持\n新增了404页和目录列表页面"
+      },
+      "6.3.1": {
+        "en": "added new admin icon (svg)",
+        "de": "neues admin-symbol (svg) hinzugefügt",
+        "ru": "добавлена новая иконка администратора (svg)",
+        "pt": "adicionado novo ícone de administrador (svg)",
+        "nl": "nieuw admin-pictogram toevoegen (svg)",
+        "fr": "ajout d'une nouvelle icône d'administration (svg)",
+        "it": "aggiunta nuova icona di amministratore (svg)",
+        "es": "nuevo icono de administración (svg)",
+        "pl": "dodano nową ikonę administratora (svg)",
+        "uk": "додано нову іконку адміністратора (снд)",
+        "zh-cn": "添加新管理员图标( svg)"
+      },
+      "6.3.0": {
+        "en": "Corrected call of getObjectView with null parameter\nupdated packages\nGUI was migrated to non-style framework",
+        "de": "Korrigierter Anruf von getObject Ansicht mit Null-Parameter\naktualisierte pakete\nGUI wurde zu nicht-style-Framework migriert",
+        "ru": "Исправленный звонок getObject Просмотр с нулевым параметром\nобновления пакетов\nGUI был перенесен в рамки, не связанные с стилем",
+        "pt": "Chamada correta de getObject Ver com parâmetro nulo\npacotes atualizados\nGUI foi migrado para o framework não-estilo",
+        "nl": "Gecorrigeerde aanroep van getObject Beeld met nul parameter\nbijgewerkte pakketten\nGUI is gemigreerd naar non-style framework",
+        "fr": "Appel corrigé de getObject Affichage avec paramètre null\npaquets mis à jour\nL'interface graphique a été migrée vers un cadre non style",
+        "it": "Chiamata corretta di getObject Visualizza con parametro null\npacchetti aggiornati\nGUI è stata migrata al framework non-stile",
+        "es": "Llamada corregida de getObject Ver con parámetro null\npaquetes actualizados\nGUI was migrated to non-style framework",
+        "pl": "Poprawione wywołanie getObject Widok z parametrem null\nzaktualizowane pakiety\nInterfejs GUI został przeniesiony na niestylowe ramy",
+        "uk": "Виправлений виклик getObject Перегляд з параметром null\nоновлені пакети\nГрафічний інтерфейс був мігрований в рамкову рамку",
+        "zh-cn": "已更正的调取对象 以无效参数查看\n更新软件包\nGUI 已迁移到非样式框架"
+      },
+      "6.2.6": {
+        "en": "Preparations for a custom loading background\nupdated packages",
+        "de": "Vorbereitungen für einen benutzerdefinierten Ladehintergrund\naktualisierte pakete",
+        "ru": "Подготовка к настраиваемой загрузке\nобновления пакетов",
+        "pt": "Preparações para um fundo de carregamento personalizado\npacotes atualizados",
+        "nl": "Voorbereidingen voor een aangepaste laadachtergrond\nbijgewerkte pakketten",
+        "fr": "Préparations pour un fond de chargement personnalisé\npaquets mis à jour",
+        "it": "Preparazioni per uno sfondo di caricamento personalizzato\npacchetti aggiornati",
+        "es": "Preparaciones para un fondo de carga personalizado\npaquetes actualizados",
+        "pl": "Preparaty do samodzielnego załadunku tła\nzaktualizowane pakiety",
+        "uk": "Підготовка до індивідуального завантаження фону\nоновлені пакети",
+        "zh-cn": "自定义加载背景的准备工作\n更新软件包"
+      },
+      "6.2.5": {
+        "en": "Just some packages were updates",
+        "de": "Nur einige Pakete waren Updates",
+        "ru": "Просто некоторые пакеты были обновления",
+        "pt": "Apenas alguns pacotes foram atualizações",
+        "nl": "Enkele pakketten waren updates",
+        "fr": "Juste quelques paquets étaient des mises à jour",
+        "it": "Solo alcuni pacchetti sono stati aggiornamenti",
+        "es": "Sólo algunos paquetes eran actualizaciones",
+        "pl": "Tylko kilka pakietów były aktualizacje",
+        "uk": "Просто деякі пакети були оновлені",
+        "zh-cn": "只是一些软件包是更新的"
+      },
+      "6.2.4": {
+        "en": "Extensions may block the web instance\nFixed directory listing",
+        "de": "Erweiterungen können die Web-Instanz blockieren\nBehobene Verzeichnisliste",
+        "ru": "Продления могут блокировать веб-экран\nФиксированный список каталогов",
+        "pt": "Extensões podem bloquear a instância da Web\nLista de diretórios fixos",
+        "nl": "Extensies kunnen de web instantie blokkeren\nVaste maplijst",
+        "fr": "Les extensions peuvent bloquer l'instance web\nListe des répertoires fixes",
+        "it": "Le estensioni possono bloccare l'istanza web\nElenco delle directory fisse",
+        "es": "Las extensiones pueden bloquear la instancia web\nListado de directorio fijo",
+        "pl": "Rozszerzenia mogą blokować instancję internetową\nStała lista katalogów",
+        "uk": "Розширення можуть блокувати веб-пристрою\nВиправлено список каталогів",
+        "zh-cn": "扩展名可能屏蔽网页实例\n固定目录列表"
+      },
+      "6.2.3": {
+        "en": "update websocket library to increase maximum file size from 100 MB to 500 MB",
+        "de": "websocket-Bibliothek aktualisieren, um die maximale Dateigröße von 100 MB auf 500 MB zu erhöhen",
+        "ru": "обновление библиотеки websocket для увеличения максимального размера файла от 100 МБ до 500 МБ",
+        "pt": "atualizar biblioteca websocket para aumentar o tamanho máximo do arquivo de 100 MB para 500 MB",
+        "nl": "update websocket bibliotheek om maximale bestandsmaat te verhogen van 100 MB tot 500 MB",
+        "fr": "mettre à jour la bibliothèque websocket pour augmenter la taille maximale de fichier de 100 MB à 500 MB",
+        "it": "aggiornare la libreria websocket per aumentare la dimensione massima del file da 100 MB a 500 MB",
+        "es": "actualizar la biblioteca websocket para aumentar el tamaño máximo del archivo de 100 MB a 500 MB",
+        "pl": "zaktualizowana biblioteka internetowa do zwiększenia rozmiaru pliku z 100 MB do 500 MB",
+        "uk": "оновлення бібліотеки websocket для збільшення максимального розміру файлу від 100 МБ до 500 МБ",
+        "zh-cn": "a. 更新的网站库图书馆,以增加最高档案数量,从100个到500个MB"
+      }
     },
-    "instanceObjects": [
-        {
-            "_id": "",
-            "type": "meta",
-            "common": {
-                "name": "user files and images for background image",
-                "type": "meta.user"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connected",
-            "type": "state",
-            "common": {
-                "role": "state",
-                "name": "Info about connected socket clients",
-                "type": "string",
-                "read": true,
-                "write": false,
-                "def": ""
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If web server started",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
-    ]
+    "desc": {
+      "en": "Opens a webserver for other adapters",
+      "de": "Stellt webserver für 'ioBroker Adapter' zur Verfügung",
+      "ru": "Запускает веб сервер для 'ioBroker драйверов'",
+      "pt": "Abre um servidor web para outros adaptadores",
+      "nl": "Opent een webserver voor andere adapters",
+      "fr": "Ouvre un serveur web pour d'autres adaptateurs",
+      "it": "Apre un server web per altri adattatori",
+      "es": "Abre un servidor web para otros adaptadores",
+      "pl": "Otwiera serwer internetowy dla innych kart",
+      "uk": "Відкриває веб-сервер для інших адаптерів",
+      "zh-cn": "为其他适配器服务的web服务器"
+    },
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "mode": "daemon",
+    "platform": "Javascript/Node.js",
+    "loglevel": "info",
+    "icon": "web.svg",
+    "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
+    "enabled": true,
+    "materialize": true,
+    "adminUI": {
+      "config": "materialize"
+    },
+    "messagebox": true,
+    "compact": true,
+    "keywords": [
+      "web",
+      "server",
+      "www",
+      "express"
+    ],
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.web/master/admin/web.svg",
+    "type": "general",
+    "stopBeforeUpdate": true,
+    "eraseOnUpload": true,
+    "webExtendable": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "localLink": "%web_protocol%://%ip%:%web_port%/",
+    "dependencies": [
+      {
+        "js-controller": ">=3.1.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.0"
+      }
+    ],
+    "authors": [
+      {
+        "name": "bluefox",
+        "email": "dogafox@gmail.com"
+      }
+    ],
+    "plugins": {
+      "sentry": {
+        "dsn": "https://3acf24332d994549bfa3b86e06062c21@sentry.iobroker.net/16"
+      }
+    },
+    "tier": 3
+  },
+  "native": {
+    "port": 8082,
+    "auth": false,
+    "secure": false,
+    "bind": "0.0.0.0",
+    "cache": false,
+    "socketio": "",
+    "usePureWebSockets": false,
+    "simpleapi": false,
+    "defaultUser": "admin",
+    "ttl": 3600,
+    "certPublic": "",
+    "certPrivate": "",
+    "certChained": "",
+    "addUserName": false,
+    "forceWebSockets": false,
+    "compatibilityV2": true,
+    "whiteListEnabled": false,
+    "loginBackgroundColor": "",
+    "loginBackgroundImage": false,
+    "loginOauth2": false,
+    "basicAuth": false,
+    "disableExtensions": false,
+    "disableStates": false,
+    "disableFilesObjects": false,
+    "defaultRedirect": "",
+    "staticAssetCacheMaxAge": 60,
+    "language": "",
+    "startDisabledExtensions": false,
+    "showFolderIndex": false,
+    "loadingBackgroundColor": "",
+    "loadingHideLogo": false,
+    "loadingBackgroundImage": false
+  },
+  "instanceObjects": [
+    {
+      "_id": "",
+      "type": "meta",
+      "common": {
+        "name": "user files and images for background image",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connected",
+      "type": "state",
+      "common": {
+        "role": "state",
+        "name": "Info about connected socket clients",
+        "type": "string",
+        "read": true,
+        "write": false,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If web server started",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
