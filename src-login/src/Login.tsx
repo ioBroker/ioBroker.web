@@ -25,6 +25,7 @@ import {
     Utils,
     type ThemeType,
     ToggleThemeMenu,
+    Connection,
 } from '@iobroker/adapter-react-v5';
 
 import enLang from './i18n/en.json';
@@ -242,29 +243,8 @@ class Login extends Component<object, LoginState> {
             if (data?.access_token) {
                 const adapterName = await Login.getAdapterName();
 
-                const now = Date.now();
-                // Save expiration time of access token and refresh token
-                if (stayLoggedIn) {
-                    sessionStorage.removeItem('refresh_token_exp');
-                    sessionStorage.removeItem('access_token_exp');
-                    sessionStorage.removeItem('refresh_token');
-                    localStorage.setItem('access_token_exp', new Date(data.expires_in * 1000 + now).toISOString());
-                    localStorage.setItem(
-                        'refresh_token_exp',
-                        new Date(data.refresh_token_expires_in * 1000 + now).toISOString(),
-                    );
-                    localStorage.setItem('refresh_token', data.refresh_token);
-                } else {
-                    localStorage.removeItem('access_token_exp');
-                    localStorage.removeItem('refresh_token_exp');
-                    localStorage.removeItem('refresh_token');
-                    sessionStorage.setItem('access_token_exp', new Date(data.expires_in * 1000 + now).toISOString());
-                    sessionStorage.setItem(
-                        'refresh_token_exp',
-                        new Date(data.refresh_token_expires_in * 1000 + now).toISOString(),
-                    );
-                    sessionStorage.setItem('refresh_token', data.refresh_token);
-                }
+                // The next loaded page with socket will take the ownership of the tokens
+                Connection.saveTokensStatic(data, stayLoggedIn);
                 // Get href from origin
                 // Extract from the URL like "http://localhost:8084/login?href=http://localhost:63342/ioBroker.socketio/example/index.html?_ijt=nqn3c1on9q44elikut4rgr23j8&_ij_reload=RELOAD_ON_SAVE" the href
                 const urlObj = new URL(window.location.href);
@@ -286,52 +266,38 @@ class Login extends Component<object, LoginState> {
                 return true;
             }
         }
-        sessionStorage.removeItem('refresh_token_exp');
-        sessionStorage.removeItem('access_token_exp');
-        sessionStorage.removeItem('refresh_token');
-        localStorage.removeItem('access_token_exp');
-        localStorage.removeItem('refresh_token_exp');
-        localStorage.removeItem('refresh_token');
+        Connection.deleteTokensStatic();
 
         return false;
     }
 
     private authenticateWithRefreshToken(): boolean {
-        let refreshToken: string = window.sessionStorage.getItem('refresh_token') || '';
-        let refreshTokenExp: string | undefined;
-        let stayLoggedIn = false;
-        if (refreshToken) {
-            refreshTokenExp = window.sessionStorage.getItem('refresh_token_exp') || '';
-        } else {
-            refreshToken = window.localStorage.getItem('refresh_token') || '';
-            if (refreshToken) {
-                stayLoggedIn = true;
-                refreshTokenExp = window.localStorage.getItem('refresh_token_exp') || '';
-            }
-        }
+        const tokens = Connection.readTokens();
 
-        if (refreshToken && refreshTokenExp) {
-            const exp = new Date(refreshTokenExp);
-            if (exp.getTime() > Date.now()) {
-                void fetch('../oauth/token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `grant_type=refresh_token&refresh_token=${refreshToken}&stayloggedin=${stayLoggedIn}&client_id=ioBroker`,
-                })
-                    .then(async response => {
-                        await Login.processTokenAnswer(stayLoggedIn, response);
-                    })
-                    .catch(error => console.error(`Cannot fetch access token: ${error}`))
-                    .finally(() => {
-                        this.setState({
-                            inProcess: false,
-                            loggingIn: false,
-                        });
+        if (tokens?.refresh_token) {
+            void fetch('../oauth/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `grant_type=refresh_token&refresh_token=${tokens.refresh_token}&stayloggedin=${tokens.stayLoggedIn}&client_id=ioBroker`,
+            })
+                .then(async response => {
+                    await Login.processTokenAnswer(tokens.stayLoggedIn, response);
+
+                    this.setState({
+                        inProcess: false,
+                        loggingIn: false,
                     });
-                return true;
-            }
+                })
+                .catch(error => {
+                    console.error(`Cannot fetch access token: ${error}`);
+                    this.setState({
+                        inProcess: false,
+                        loggingIn: false,
+                    });
+                });
+            return true;
         }
 
         return false;
@@ -361,8 +327,8 @@ class Login extends Component<object, LoginState> {
                         width: '100%',
                         height: '100%',
                         display: 'flex',
-                        alignItems: 'center',
                         justifyContent: 'center',
+                        alignItems: 'center',
                     }}
                 >
                     ...
@@ -377,14 +343,15 @@ class Login extends Component<object, LoginState> {
                         alignItems="center"
                     >
                         {window.loginLogo && window.loginLogo !== '@@loginLogo@@' ? (
-                            <div
-                                style={{
+                            <Box
+                                sx={{
                                     height: 50,
                                     width: 102,
                                     lineHeight: '50px',
-                                    background: this.state.themeType === 'dark' ? '#000' : '#fff',
-                                    borderRadius: 5,
-                                    padding: 5,
+                                    backgroundColor: (theme: IobTheme) =>
+                                        theme.palette.mode === 'dark' ? '#000' : '#fff',
+                                    borderRadius: '5px',
+                                    padding: '5px',
                                 }}
                             >
                                 <img
@@ -392,7 +359,7 @@ class Login extends Component<object, LoginState> {
                                     alt="logo"
                                     style={{ maxWidth: '100%', maxHeight: '100%' }}
                                 />
-                            </div>
+                            </Box>
                         ) : window.loginHideLogo === 'false' || window.loginHideLogo === '@@loginHideLogo@@' ? (
                             <Logo color={this.state.themeType === 'dark' ? '#FFF' : '#000'} />
                         ) : null}
@@ -499,11 +466,11 @@ class Login extends Component<object, LoginState> {
                                                     headers: {
                                                         'Content-Type': 'application/x-www-form-urlencoded',
                                                     },
-                                                    body: `grant_type=password&username=${this.state.username}&password=${this.state.password}&stayloggedin=${this.state.stayLoggedIn}&origin=${origin}&client_id=ioBroker`,
+                                                    body: `grant_type=password&username=${this.state.username}&password=${this.state.password}&stayloggedin=${this.state.stayLoggedIn}&client_id=ioBroker`,
                                                 });
-                                                if (
-                                                    !(await Login.processTokenAnswer(this.state.stayLoggedIn, response))
-                                                ) {
+                                                if (await Login.processTokenAnswer(this.state.stayLoggedIn, response)) {
+                                                    this.setState({ inProcess: false });
+                                                } else {
                                                     this.setState({
                                                         inProcess: false,
                                                         error: I18n.t('wrongPassword'),

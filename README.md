@@ -105,7 +105,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 
 ## Changelog
 ### **WORK IN PROGRESS**
-* (@GermanBluefox) [Breaking change] Removed simple-api as it could be used as web-extension
+* (@GermanBluefox) [Breaking change] Removed simple-api as it could be connected as web-extension
 * (@GermanBluefox) updated packages
 * (@GermanBluefox) removed gulp in a build process
 * (@GermanBluefox) Migrated GUI to vite

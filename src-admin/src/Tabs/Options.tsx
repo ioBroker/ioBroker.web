@@ -299,7 +299,11 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     closeable
                                     storeId="web.basic_auth"
                                 >
-                                    {I18n.t('basic_authentication_info')}
+                                    {I18n.t('basic_authentication_info')
+                                        .split('\n')
+                                        .map((item, i) => (
+                                            <div key={i}>{item}</div>
+                                        ))}
                                 </InfoBox>
                             ) : null}
                             {native.auth ? (
@@ -318,13 +322,17 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     closeable
                                     storeId="web.basic_auth"
                                 >
-                                    {I18n.t('legacy_authentication_info')}
+                                    {I18n.t('legacy_authentication_info')
+                                        .split('\n')
+                                        .map((item, i) => (
+                                            <div key={i}>{item}</div>
+                                        ))}
                                 </InfoBox>
                             ) : null}
                             {native.auth && !native.basicAuth ? (
                                 <CustomCheckbox
-                                    title="legacy_authentication"
-                                    attr="loginNoOauth2"
+                                    title="oauth2_authentication"
+                                    attr="loginOauth2"
                                     style={{ marginTop: 10 }}
                                     native={native}
                                     onChange={onChange}
@@ -359,7 +367,11 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     closeable
                                     storeId="web.usePureWebSockets"
                                 >
-                                    {I18n.t('usePureWebSockets_info')}
+                                    {I18n.t('usePureWebSockets_info')
+                                        .split('\n')
+                                        .map((item, i) => (
+                                            <div key={i}>{item}</div>
+                                        ))}
                                 </InfoBox>
                             ) : null}
                             {!native.socketio ? (
@@ -378,7 +390,11 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     closeable
                                     storeId="web.forceWebSockets"
                                 >
-                                    {I18n.t('forceWebSockets_info')}
+                                    {I18n.t('forceWebSockets_info')
+                                        .split('\n')
+                                        .map((item, i) => (
+                                            <div key={i}>{item}</div>
+                                        ))}
                                 </InfoBox>
                             ) : null}
                             {(!native.socketio || native.socketio.startsWith('system.adapter.socket')) &&

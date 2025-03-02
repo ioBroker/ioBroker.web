@@ -189,7 +189,7 @@
         "whiteListEnabled": false,
         "loginBackgroundColor": "",
         "loginBackgroundImage": false,
-        "loginNoOauth2": false,
+        "loginOauth2": false,
         "basicAuth": false,
         "disableExtensions": false,
         "disableStates": false,

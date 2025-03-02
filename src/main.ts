@@ -1311,7 +1311,7 @@ export class WebAdapter extends Adapter {
             .replaceAll(`'@@loadingHideLogo@@'`, this.config.loadingHideLogo ? 'true' : 'false')
             .replaceAll(`"@@loadingHideLogo@@"`, this.config.loadingHideLogo ? 'true' : 'false')
             .replaceAll(`@@loginLanguage@@`, this.lang || '')
-            .replaceAll(`@@loginOauth2@@`, this.config.loginNoOauth2 ? 'false' : 'true');
+            .replaceAll(`@@loginOauth2@@`, this.config.loginOauth2 ? 'true' : 'false');
     }
 
     send404(res: Response, fileName: string, message?: string): void {
