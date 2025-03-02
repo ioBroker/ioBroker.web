@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Impossible d'obtenir le jeton d'accès",
+  "enterLogin": "Nom d'utilisateur",
+  "enterPassword": "Mot de passe",
+  "login": "Se connecter",
+  "loginTitle": "Connexion Web",
+  "ra_Change color theme": "Changer le thème de couleur",
+  "staySignedIn": "Rester connecté",
+  "wrongPassword": "Mot de passe ou nom d'utilisateur incorrect"
+}

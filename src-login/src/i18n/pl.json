@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Nie można uzyskać tokena dostępu",
+  "enterLogin": "Nazwa logowania",
+  "enterPassword": "Hasło",
+  "login": "Zaloguj się",
+  "loginTitle": "Logowanie przez sieć",
+  "ra_Change color theme": "Zmień motyw kolorów",
+  "staySignedIn": "Pozostań zalogowany",
+  "wrongPassword": "Nieprawidłowe hasło lub nazwa użytkownika"
+}

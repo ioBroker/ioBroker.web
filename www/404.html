@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
+    <style>
+        body {
+            background-color: #e0f7fa;
+            color: #007bb5;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 6em;
+            margin: 0;
+        }
+        p {
+            font-size: 1.5em;
+        }
+        a {
+            color: #007bb5;
+            text-decoration: none;
+            border: 2px solid #007bb5;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        a:hover {
+            background-color: #007bb5;
+            color: #e0f7fa;
+        }
+    </style>
+    <script>
+        function refresh() {
+            location.reload();
+        }
+        function goHome() {
+            let href = window.location.pathname;
+            if (href.split('/').length === 3) {
+                const path = href.split('/');
+                window.location.href = `/${path[1]}/`;
+            } else {
+                window.location.href = '/';
+            }
+        }
+        // What the document is loaded
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // detect theme, dark or light
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.style.backgroundColor = '#263238';
+                document.body.style.color = '#eceff1';
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>404</h1>
+    <p>{{TEXT}}</p>
+    <a onclick="goHome()">{{Go to Homepage}}</a>
+    <a onclick="refresh()">{{Refresh}}</a>
+</div>
+</body>
+</html>

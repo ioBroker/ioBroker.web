@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directory Listing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        h1 {
+            text-align: center;
+            color: #007bb5;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        td:nth-child(2) {
+            text-align: right;
+        }
+        .light th {
+            background-color: #007bb5;
+            color: #fff;
+        }
+        .light tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .light tr:hover {
+            background-color: #f1f1f1;
+        }
+        .dark th {
+            background-color: #38c3ff;
+            color: #111;
+        }
+        .dark tr:nth-child(even) {
+            background-color: #060606;
+        }
+        .dark tr:hover {
+            background-color: #0F0F0F;
+        }
+        .dark a {
+            color: #38c3ff;
+            text-decoration: none;
+        }
+        .light a {
+            color: #007bb5;
+            text-decoration: none;
+        }
+    </style>
+    <script>
+        function humanReadableSize(size) {
+            const i = Math.floor(Math.log(size) / Math.log(1024));
+            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+        }
+
+        // What the document is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // detect theme, dark or light
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.style.backgroundColor = '#263238';
+                document.body.style.color = '#eceff1';
+                document.getElementById('files').className = 'dark';
+            } else {
+                document.getElementById('files').className = 'light';
+                document.body.style.backgroundColor = '#FFF';
+                document.body.style.color = '#000';
+            }
+            // Make the size human readable
+            const rows = document.querySelectorAll('table tbody tr');
+            rows.forEach(row => {
+                const sizeCell = row.querySelector('td:nth-child(2)');
+                sizeCell.title = sizeCell.textContent;
+                const size = parseInt(sizeCell.textContent, 10);
+                if (!isNaN(size)) {
+                    sizeCell.textContent = humanReadableSize(size);
+                }
+            });
+
+            rows.forEach(row => {
+                const link = row.querySelector('td:first-child a');
+                if (link) {
+                    row.style.cursor = 'pointer';
+                    row.addEventListener('click', () => {
+                        window.location.href = link.href;
+                    });
+                }
+            });
+        });
+
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>{{Directory}} {{URL}}</h1>
+    <table id="files">
+        <thead>
+        <tr>
+            <th>{{File Name}}</th>
+            <th style="width: 100px">{{File Size}}</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{TABLE}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

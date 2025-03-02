@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Невозможно получить токен доступа",
+  "enterLogin": "Имя пользователя",
+  "enterPassword": "Пароль",
+  "login": "Авторизоваться",
+  "loginTitle": "Веб-логин",
+  "ra_Change color theme": "Изменить цветовую тему",
+  "staySignedIn": "Оставайтесь в системе",
+  "wrongPassword": "Неправильный пароль или имя пользователя"
+}

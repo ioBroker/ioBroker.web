@@ -1,0 +1,10 @@
+{
+  "cannotGetAccessToken": "Kan geen toegangstoken verkrijgen",
+  "enterLogin": "Inlognaam",
+  "enterPassword": "Wachtwoord",
+  "login": "Inloggen",
+  "loginTitle": "Web-inlog",
+  "ra_Change color theme": "Kleurenthema wijzigen",
+  "staySignedIn": "Blijf ingelogd",
+  "wrongPassword": "Verkeerd wachtwoord of gebruikersnaam"
+}
