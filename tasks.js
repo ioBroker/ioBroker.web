@@ -11,7 +11,8 @@ async function copyAllFiles() {
 function buildLogin() {
     deleteFoldersRecursive('www/login');
     deleteFoldersRecursive('src-login/build');
-    return buildReact(`${__dirname}/src-login`, { rootDir: `${__dirname}/src-login`, vite: true })
+    return npmInstall(`${__dirname}/src-login`)
+        .then(() => buildReact(`${__dirname}/src-login`, { rootDir: `${__dirname}/src-login`, vite: true }))
         .then(() => {
             copyFiles(['src-login/build/**/*'], 'www/login/');
         });
