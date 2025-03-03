@@ -104,7 +104,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.0.2 (2025-03-03)
 * (@GermanBluefox) Corrected the problem with the user rights
 
 ### 7.0.1 (2025-03-02)

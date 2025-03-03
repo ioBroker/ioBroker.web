@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.1",
+    "version": "7.0.2",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.2": {
+        "en": "Corrected the problem with the user rights",
+        "de": "Das Problem mit den Nutzerrechten korrigiert",
+        "ru": "Исправлена проблема с правами пользователя",
+        "pt": "Corrigido o problema com os direitos do usuário",
+        "nl": "Het probleem met de gebruikersrechten verhelpen",
+        "fr": "Correction du problème des droits d'utilisateur",
+        "it": "Corretto il problema con i diritti dell'utente",
+        "es": "Corregido el problema con los derechos del usuario",
+        "pl": "Naprawiono problem z prawami użytkownika",
+        "uk": "Виправлено проблему з правами користувачів",
+        "zh-cn": "纠正了用户权利的问题"
+      },
       "7.0.1": {
         "en": "[Breaking change] Removed simple-api as it could be connected as web-extension\nupdated packages\nremoved gulp in a build process\nMigrated GUI to vite\nRewritten in TypeScript\nAdded OAuth2 support\nAdded new 404 and the directory list pages",
         "de": "(Breaking change) Entfernt simple-api, wie es als Bahnverspannung verbunden werden könnte\naktualisierte pakete\ngulp in einem build-prozess entfernt\nMigrated GUI to vite\nNeu geschrieben in TypeScript\nOAuth2 Unterstützung hinzugefügt\nNeue 404 und die Verzeichnislistenseiten hinzugefügt",
@@ -93,19 +106,6 @@
         "pl": "Rozszerzenia mogą blokować instancję internetową\nStała lista katalogów",
         "uk": "Розширення можуть блокувати веб-пристрою\nВиправлено список каталогів",
         "zh-cn": "扩展名可能屏蔽网页实例\n固定目录列表"
-      },
-      "6.2.3": {
-        "en": "update websocket library to increase maximum file size from 100 MB to 500 MB",
-        "de": "websocket-Bibliothek aktualisieren, um die maximale Dateigröße von 100 MB auf 500 MB zu erhöhen",
-        "ru": "обновление библиотеки websocket для увеличения максимального размера файла от 100 МБ до 500 МБ",
-        "pt": "atualizar biblioteca websocket para aumentar o tamanho máximo do arquivo de 100 MB para 500 MB",
-        "nl": "update websocket bibliotheek om maximale bestandsmaat te verhogen van 100 MB tot 500 MB",
-        "fr": "mettre à jour la bibliothèque websocket pour augmenter la taille maximale de fichier de 100 MB à 500 MB",
-        "it": "aggiornare la libreria websocket per aumentare la dimensione massima del file da 100 MB a 500 MB",
-        "es": "actualizar la biblioteca websocket para aumentar el tamaño máximo del archivo de 100 MB a 500 MB",
-        "pl": "zaktualizowana biblioteka internetowa do zwiększenia rozmiaru pliku z 100 MB do 500 MB",
-        "uk": "оновлення бібліотеки websocket для збільшення максимального розміру файлу від 100 МБ до 500 МБ",
-        "zh-cn": "a. 更新的网站库图书馆,以增加最高档案数量,从100个到500个MB"
       }
     },
     "desc": {
