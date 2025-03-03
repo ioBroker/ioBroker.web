@@ -80,6 +80,25 @@ jobs:
     #        if: startsWith(runner.OS, 'windows')
     #        run: set DEBUG=testing:* & npm run test:integration
 
+    adapter-build:
+        if: contains(github.event.head_commit.message, '[skip ci]') == false
+
+        needs: [check-and-lint]
+
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js 22.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.x
+
+            - name: Install Dependencies
+              run: npm install
+
+            - name: Build
+              run: npm run build
+
     # Deploys the final package to NPM
     deploy:
         needs: [adapter-tests]
