@@ -16,19 +16,6 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-      "7.0.2": {
-        "en": "Corrected the problem with the user rights",
-        "de": "Das Problem mit den Nutzerrechten korrigiert",
-        "ru": "Исправлена проблема с правами пользователя",
-        "pt": "Corrigido o problema com os direitos do usuário",
-        "nl": "Het probleem met de gebruikersrechten verhelpen",
-        "fr": "Correction du problème des droits d'utilisateur",
-        "it": "Corretto il problema con i diritti dell'utente",
-        "es": "Corregido el problema con los derechos del usuario",
-        "pl": "Naprawiono problem z prawami użytkownika",
-        "uk": "Виправлено проблему з правами користувачів",
-        "zh-cn": "纠正了用户权利的问题"
-      },
       "7.0.1": {
         "en": "[Breaking change] Removed simple-api as it could be connected as web-extension\nupdated packages\nremoved gulp in a build process\nMigrated GUI to vite\nRewritten in TypeScript\nAdded OAuth2 support\nAdded new 404 and the directory list pages",
         "de": "(Breaking change) Entfernt simple-api, wie es als Bahnverspannung verbunden werden könnte\naktualisierte pakete\ngulp in einem build-prozess entfernt\nMigrated GUI to vite\nNeu geschrieben in TypeScript\nOAuth2 Unterstützung hinzugefügt\nNeue 404 und die Verzeichnislistenseiten hinzugefügt",
