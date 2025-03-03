@@ -2461,7 +2461,7 @@ export class WebAdapter extends Adapter {
                                 // Store file in cache
                                 if (this.config.cache) {
                                     this.cache[`${id}/${url}`] = {
-                                        buffer: Buffer.from(result.file),
+                                        buffer: Buffer.from(result.file as any),
                                         mimeType: result.mimeType,
                                     };
                                 }
@@ -2469,7 +2469,7 @@ export class WebAdapter extends Adapter {
                                 res.contentType(result.mimeType);
 
                                 if (req.headers.range) {
-                                    this.sendRange(req, res, Buffer.from(result.file));
+                                    this.sendRange(req, res, Buffer.from(result.file as any));
                                 } else {
                                     res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
                                     res.status(200).send(result.file);

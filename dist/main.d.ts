@@ -3,6 +3,7 @@ import type { Server as HttpsServer } from 'node:https';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import type { WebAdapterConfig } from './types.d.ts';
+import { Buffer } from "buffer";
 export type Server = HttpServer | HttpsServer;
 export declare class WebAdapter extends Adapter {
     config: WebAdapterConfig;

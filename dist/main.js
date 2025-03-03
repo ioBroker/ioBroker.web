@@ -18,6 +18,7 @@ const passport_local_1 = require("passport-local");
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common adapter utils
 const webserver_1 = require("@iobroker/webserver");
+const buffer_1 = require("buffer");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
 const wwwDir = '../www';
@@ -1062,7 +1063,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         if (this.config.auth) {
             // with basic authentication
             if (req.headers.authorization?.startsWith('Basic ')) {
-                const [user, pass] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64')
+                const [user, pass] = buffer_1.Buffer.from(req.headers.authorization.split(' ')[1], 'base64')
                     .toString()
                     .split(':');
                 this.checkUser(user, pass, async (_err, result) => {
@@ -1400,7 +1401,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         req.headers.authorization.startsWith('Basic')) {
                         // not logged in yet, and basic auth is active + header present
                         const b64auth = req.headers.authorization.split(' ')[1];
-                        const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+                        const [login, password] = buffer_1.Buffer.from(b64auth, 'base64').toString().split(':');
                         req.body = req.body || {};
                         req.body.username = login;
                         req.body.password = password;
@@ -1948,7 +1949,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                             else {
                                 // Store file in cache
                                 if (this.config.cache) {
-                                    this.cache[`${id}/${url}`] = { buffer: Buffer.from(buffer), mimeType: 'text/html' };
+                                    this.cache[`${id}/${url}`] = { buffer: buffer_1.Buffer.from(buffer), mimeType: 'text/html' };
                                 }
                                 res.set('Cache-Control', 'no-cache');
                                 res.contentType('text/html');
@@ -2028,13 +2029,13 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 // Store file in cache
                                 if (this.config.cache) {
                                     this.cache[`${id}/${url}`] = {
-                                        buffer: Buffer.from(result.file),
+                                        buffer: buffer_1.Buffer.from(result.file),
                                         mimeType: result.mimeType,
                                     };
                                 }
                                 res.contentType(result.mimeType);
                                 if (req.headers.range) {
-                                    this.sendRange(req, res, Buffer.from(result.file));
+                                    this.sendRange(req, res, buffer_1.Buffer.from(result.file));
                                 }
                                 else {
                                     res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
