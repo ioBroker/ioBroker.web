@@ -104,6 +104,9 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected the problem with the user rights
+
 ### 7.0.1 (2025-03-02)
 * (@GermanBluefox) [Breaking change] Removed simple-api as it could be connected as web-extension
 * (@GermanBluefox) updated packages
