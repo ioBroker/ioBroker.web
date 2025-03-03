@@ -60,7 +60,8 @@
     "axios": "^1.7.9",
     "chai": "^4.5.0",
     "mocha": "^11.1.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
