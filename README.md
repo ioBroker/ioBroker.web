@@ -104,6 +104,10 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected the login page
+* (@GermanBluefox) Removed the frequent debug output
+
 ### 7.0.3 (2025-03-03)
 * (@GermanBluefox) Corrected the problem with the user rights
 
