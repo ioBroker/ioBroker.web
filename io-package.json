@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.3",
+    "version": "7.0.4",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.4": {
+        "en": "Corrected the login page\nRemoved the frequent debug output",
+        "de": "Korrektur der Anmeldeseite\nEntfernen der häufigen Debug-Ausgabe",
+        "ru": "Исправлена страница login\nСнят частый вывод отладки",
+        "pt": "Corrigido a página de login\nRemovido a saída de depuração frequente",
+        "nl": "De aanmeldpagina corrigeren\nDe frequente debug-uitvoer is verwijderd",
+        "fr": "Correction de la page de connexion\nSupprimé la sortie de débogage fréquente",
+        "it": "Corretto la pagina di login\nRimozione dell'uscita di debug frequente",
+        "es": "Corregido la página de inicio de sesión\nEliminar la producción de depuración frecuente",
+        "pl": "Poprawiono stronę logowania\nUsunięto częste wyjście debugowania",
+        "uk": "Виправлено сторінку входу\nВилучено часте дебвуг",
+        "zh-cn": "更正登录页面\n删除频繁调试输出"
+      },
       "7.0.3": {
         "en": "Corrected the problem with the user rights",
         "de": "Das Problem mit den Nutzerrechten korrigiert",
@@ -93,19 +106,6 @@
         "pl": "Tylko kilka pakietów były aktualizacje",
         "uk": "Просто деякі пакети були оновлені",
         "zh-cn": "只是一些软件包是更新的"
-      },
-      "6.2.4": {
-        "en": "Extensions may block the web instance\nFixed directory listing",
-        "de": "Erweiterungen können die Web-Instanz blockieren\nBehobene Verzeichnisliste",
-        "ru": "Продления могут блокировать веб-экран\nФиксированный список каталогов",
-        "pt": "Extensões podem bloquear a instância da Web\nLista de diretórios fixos",
-        "nl": "Extensies kunnen de web instantie blokkeren\nVaste maplijst",
-        "fr": "Les extensions peuvent bloquer l'instance web\nListe des répertoires fixes",
-        "it": "Le estensioni possono bloccare l'istanza web\nElenco delle directory fisse",
-        "es": "Las extensiones pueden bloquear la instancia web\nListado de directorio fijo",
-        "pl": "Rozszerzenia mogą blokować instancję internetową\nStała lista katalogów",
-        "uk": "Розширення можуть блокувати веб-пристрою\nВиправлено список каталогів",
-        "zh-cn": "扩展名可能屏蔽网页实例\n固定目录列表"
       }
     },
     "desc": {
