@@ -16,19 +16,6 @@
       "zh-cn": "Web服务器"
     },
     "news": {
-      "7.0.5": {
-        "en": "Corrected the login for iobroker.visu app",
-        "de": "Korrigierte den Login für iobroker. Visu App",
-        "ru": "Исправлен логин для iobroker. visu приложение",
-        "pt": "Corrigido o login para iobroker. aplicativo visu",
-        "nl": "De aanmelding voor iobroker gecorrigeerd. visu app",
-        "fr": "Correction de la connexion pour iobroker. visu app",
-        "it": "Corretto il login per iobroker. app",
-        "es": "Corregido el login para iobroker. visu app",
-        "pl": "Poprawiłem logowanie dla iobrokera. visu app",
-        "uk": "Виправлено логін для iobroker. додаток Visu",
-        "zh-cn": "更正了 iobroster 的登录 。 虚拟应用"
-      },
       "7.0.4": {
         "en": "Corrected the login page\nRemoved the frequent debug output",
         "de": "Korrektur der Anmeldeseite\nEntfernen der häufigen Debug-Ausgabe",

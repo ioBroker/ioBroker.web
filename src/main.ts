@@ -2189,6 +2189,10 @@ export class WebAdapter extends Adapter {
                     if (extAPI.default) {
                         extAPI = extAPI.default;
                     }
+                    const className = (this.extensions[instance].path.split('/').pop() || '').split('.')[0];
+                    if (extAPI[className]) {
+                        extAPI = extAPI[className];
+                    }
 
                     this.log.info(`Connecting extension "${this.extensions[instance].path}"`);
 

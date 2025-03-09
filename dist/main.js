@@ -1810,6 +1810,10 @@ class WebAdapter extends adapter_core_1.Adapter {
                     if (extAPI.default) {
                         extAPI = extAPI.default;
                     }
+                    const className = (this.extensions[instance].path.split('/').pop() || '').split('.')[0];
+                    if (extAPI[className]) {
+                        extAPI = extAPI[className];
+                    }
                     this.log.info(`Connecting extension "${this.extensions[instance].path}"`);
                     // Start web-extension
                     this.extensions[instance].obj = new extAPI(this.webServer.server, {
