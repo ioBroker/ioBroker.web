@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.4",
+    "version": "7.0.5",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.5": {
+        "en": "Corrected the login for iobroker.visu app",
+        "de": "Korrigierte den Login für iobroker. Visu App",
+        "ru": "Исправлен логин для iobroker. visu приложение",
+        "pt": "Corrigido o login para iobroker. aplicativo visu",
+        "nl": "De aanmelding voor iobroker gecorrigeerd. visu app",
+        "fr": "Correction de la connexion pour iobroker. visu app",
+        "it": "Corretto il login per iobroker. app",
+        "es": "Corregido el login para iobroker. visu app",
+        "pl": "Poprawiłem logowanie dla iobrokera. visu app",
+        "uk": "Виправлено логін для iobroker. додаток Visu",
+        "zh-cn": "更正了 iobroster 的登录 。 虚拟应用"
+      },
       "7.0.4": {
         "en": "Corrected the login page\nRemoved the frequent debug output",
         "de": "Korrektur der Anmeldeseite\nEntfernen der häufigen Debug-Ausgabe",
@@ -93,19 +106,6 @@
         "pl": "Preparaty do samodzielnego załadunku tła\nzaktualizowane pakiety",
         "uk": "Підготовка до індивідуального завантаження фону\nоновлені пакети",
         "zh-cn": "自定义加载背景的准备工作\n更新软件包"
-      },
-      "6.2.5": {
-        "en": "Just some packages were updates",
-        "de": "Nur einige Pakete waren Updates",
-        "ru": "Просто некоторые пакеты были обновления",
-        "pt": "Apenas alguns pacotes foram atualizações",
-        "nl": "Enkele pakketten waren updates",
-        "fr": "Juste quelques paquets étaient des mises à jour",
-        "it": "Solo alcuni pacchetti sono stati aggiornamenti",
-        "es": "Sólo algunos paquetes eran actualizaciones",
-        "pl": "Tylko kilka pakietów były aktualizacje",
-        "uk": "Просто деякі пакети були оновлені",
-        "zh-cn": "只是一些软件包是更新的"
       }
     },
     "desc": {
