@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.5",
+    "version": "7.0.6",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.6": {
+        "en": "Corrected the login for iobroker.visu app\nCorrected load of TypeScript Web extensions",
+        "de": "Korrigierte den Login für iobroker. Visu App\nKorrigierte Belastung von TypeScript Web-Erweiterungen",
+        "ru": "Исправлен логин для iobroker. visu приложение\nИсправленная нагрузка TypeScript Веб-расширения",
+        "pt": "Corrigido o login para iobroker. aplicativo visu\nCarga correta do TypeScript Extensões Web",
+        "nl": "De aanmelding voor iobroker gecorrigeerd. visu app\nGecorrigeerde belasting van TypeScript Webextensies",
+        "fr": "Correction de la connexion pour iobroker. visu app\nCharge corrigée de TypeScript Extensions Web",
+        "it": "Corretto il login per iobroker. app\nCarico corretto di TypeScript Estensioni web",
+        "es": "Corregido el login para iobroker. visu app\nCarga corregida de TipoScript Extensiones web",
+        "pl": "Poprawiłem logowanie dla iobrokera. visu app\nPoprawione obciążenie TypeScript Rozszerzenia stron internetowych",
+        "uk": "Виправлено логін для iobroker. додаток Visu\nКорисне навантаження TypeScript Розширення веб",
+        "zh-cn": "更正了 iobroster 的登录 。 虚拟应用\n已校正类型脚本的负载 网络扩展"
+      },
       "7.0.4": {
         "en": "Corrected the login page\nRemoved the frequent debug output",
         "de": "Korrektur der Anmeldeseite\nEntfernen der häufigen Debug-Ausgabe",
