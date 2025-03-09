@@ -503,7 +503,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     onChange={onChange}
                                 />
                             ) : null}
-                            <div>
+                            <div style={{ marginTop: 20 }}>
                                 {I18n.t(
                                     'Simple API is now working as Web-Extension. Please create an instance and make settings there.',
                                 )}

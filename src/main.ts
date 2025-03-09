@@ -20,7 +20,7 @@ import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/sock
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalLinkEntry, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import {Buffer} from "buffer";
+import { Buffer } from 'buffer';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -1600,8 +1600,6 @@ export class WebAdapter extends Adapter {
                         req.body.stayloggedin === true ||
                         req.body.stayloggedin === 'on';
 
-                    res.clearCookie('access_token');
-
                     authenticate(req, res, next, '', req.body.origin || '?href=%2F');
                 });
 
@@ -2402,48 +2400,61 @@ export class WebAdapter extends Adapter {
                                         ? url.substring(versionPrefix.length + 1)
                                         : url;
 
-                                const files: ioBroker.ReadDirResult[] | undefined = await this.readDirAsync(id, path, {
-                                    user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
-                                });
-                                this.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
+                                try {
+                                    const files: ioBroker.ReadDirResult[] | undefined = await this.readDirAsync(
+                                        id,
+                                        path,
+                                        {
+                                            user: req.user
+                                                ? `system.user.${req.user as string}`
+                                                : this.config.defaultUser,
+                                        },
+                                    );
+                                    this.log.debug(`readDir ${id} (${path}): ${JSON.stringify(files)}`);
 
-                                res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
-                                res.set('Content-Type', 'text/html; charset=utf-8');
-                                this.templateDir ||= readFileSync(`${__dirname}/${wwwDir}/dir.html`)
-                                    .toString('utf8')
-                                    .replace('{{Directory}}', this.I18n?.translate('Directory') || 'Directory')
-                                    .replace('{{File Size}}', this.I18n?.translate('File Size') || 'File Size')
-                                    .replace('{{File Name}}', this.I18n?.translate('File Name') || 'File Name');
-                                const text = [];
+                                    res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
+                                    res.set('Content-Type', 'text/html; charset=utf-8');
+                                    this.templateDir ||= readFileSync(`${__dirname}/${wwwDir}/dir.html`)
+                                        .toString('utf8')
+                                        .replace('{{Directory}}', this.I18n?.translate('Directory') || 'Directory')
+                                        .replace('{{File Size}}', this.I18n?.translate('File Size') || 'File Size')
+                                        .replace('{{File Name}}', this.I18n?.translate('File Name') || 'File Name');
+                                    const text = [];
 
-                                if (url !== '/') {
-                                    const parts = url.split('/');
-                                    parts.pop();
-                                    text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
-                                }
+                                    if (url !== '/') {
+                                        const parts = url.split('/');
+                                        parts.pop();
+                                        text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                    }
 
-                                files?.sort((a, b) => {
-                                    if (a.isDir && b.isDir) {
+                                    files?.sort((a, b) => {
+                                        if (a.isDir && b.isDir) {
+                                            return a.file.localeCompare(b.file);
+                                        }
+                                        if (a.isDir) {
+                                            return -1;
+                                        }
+                                        if (b.isDir) {
+                                            return 1;
+                                        }
+
                                         return a.file.localeCompare(b.file);
-                                    }
-                                    if (a.isDir) {
-                                        return -1;
-                                    }
-                                    if (b.isDir) {
-                                        return 1;
-                                    }
+                                    });
 
-                                    return a.file.localeCompare(b.file);
-                                });
-
-                                files?.forEach(file =>
-                                    text.push(
-                                        `<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`,
-                                    ),
-                                );
-                                res.status(200).send(
-                                    this.templateDir.replace('{{URL}}', req.url).replace('{{TABLE}}', text.join('\n')),
-                                );
+                                    files?.forEach(file =>
+                                        text.push(
+                                            `<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`,
+                                        ),
+                                    );
+                                    res.status(200).send(
+                                        this.templateDir
+                                            .replace('{{URL}}', req.url)
+                                            .replace('{{TABLE}}', text.join('\n')),
+                                    );
+                                } catch (e) {
+                                    this.log.warn(`Cannot get folder index "${id}/${path}: ${e}`);
+                                    this.send404(res, url);
+                                }
                                 return;
                             }
 

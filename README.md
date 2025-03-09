@@ -104,6 +104,9 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Corrected the login for iobroker.visu app
+
 ### 7.0.4 (2025-03-04)
 * (@GermanBluefox) Corrected the login page
 * (@GermanBluefox) Removed the frequent debug output
