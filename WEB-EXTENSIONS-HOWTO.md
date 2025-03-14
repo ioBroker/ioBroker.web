@@ -11,7 +11,7 @@ If you're working with **dev-server** please note: dev-server does **not set the
 
 Forth, you should create a state object `info.extension` and set it to true / false at code level. This state will control admin display of adapter status.
 
-```
+```json
   "instanceObjects": [
     {
       "_id": "info",
@@ -53,7 +53,7 @@ Forth, you should create a state object `info.extension` and set it to true / fa
 
 
 Fifth, the file `lib/web.js` (or whatever) must exist, and it must export a class.
-```
+```js
 /**
  * Web extension example
  *
@@ -134,7 +134,7 @@ module.exports = ExtensionExample;
 ## Examples
 Following adapters support web-extensions:
 - Cameras: https://github.com/ioBroker/ioBroker.cameras/blob/master/lib/web.js
-- Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/lib/simpleapi.js#L73
+- Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/dist/lib/SimpleAPI.js#L73
 - Proxy: https://github.com/ioBroker/ioBroker.proxy/blob/master/lib/proxy.js#L20
 - Eufy-Security: https://github.com/bropat/ioBroker.eufy-security/blob/master/src/lib/web.ts (Typescript-implementation)
 - REST-API: https://github.com/ioBroker/ioBroker.rest-api/blob/master/src/lib/rest-api.js#L67
