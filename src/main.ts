@@ -2253,7 +2253,14 @@ export class WebAdapter extends Adapter {
 
                 // deliver web files from objectDB
                 this.webServer.app.use('/', async (req: Request, res: Response): Promise<void> => {
-                    let url = decodeURI(req.url);
+                    let url;
+                    try {
+                        url = decodeURI(req.url);
+                    } catch {
+                        //
+                        this.log.warn(`Cannot decode URI: "${req.url}"`);
+                        url = req.url;
+                    }
                     // remove all ../
                     // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
                     url = normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
