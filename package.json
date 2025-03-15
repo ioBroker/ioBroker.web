@@ -92,11 +92,5 @@
     "4-login": "node tasks --4-login",
     "5-post-backend": "node tasks --5-post-backend"
   },
-  "license": "MIT",
-  "maintainers": [
-    {
-      "name": "bluefox",
-      "email": "dogafox@gmail.com"
-    }
-  ]
+  "license": "MIT"
 }

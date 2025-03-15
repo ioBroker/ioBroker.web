@@ -104,6 +104,9 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Trying to catch an error by the web extension
+
 ### 7.0.6 (2025-03-09)
 * (@GermanBluefox) Corrected the login for iobroker.visu app
 * (@GermanBluefox) Corrected load of TypeScript Web extensions

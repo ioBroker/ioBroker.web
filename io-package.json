@@ -55,19 +55,6 @@
         "uk": "Виправлено проблему з правами користувачів",
         "zh-cn": "纠正了用户权利的问题"
       },
-      "7.0.1": {
-        "en": "[Breaking change] Removed simple-api as it could be connected as web-extension\nupdated packages\nremoved gulp in a build process\nMigrated GUI to vite\nRewritten in TypeScript\nAdded OAuth2 support\nAdded new 404 and the directory list pages",
-        "de": "(Breaking change) Entfernt simple-api, wie es als Bahnverspannung verbunden werden könnte\naktualisierte pakete\ngulp in einem build-prozess entfernt\nMigrated GUI to vite\nNeu geschrieben in TypeScript\nOAuth2 Unterstützung hinzugefügt\nNeue 404 und die Verzeichnislistenseiten hinzugefügt",
-        "ru": "[Прорыв перемен] Удаленный Simple-api, как его можно было бы подключить как веб-расширение\nобновленные пакеты\nудаленный глоток в процессе сборки\nИммигрировавший ГУИ поздравит\nПереписано в TypeScript\nПоддержка OAuth2\nДобавлены новые страницы 404 и список каталогов",
-        "pt": "[Breaking change] Removido simples-api como ele poderia ser conectado como web-extensão\npacotes atualizados\ngulp removido em um processo de compilação\nGUI migrado para vite\nReescrito em TypeScript\nAdicionado suporte OAuth2\nAdicionado novo 404 e a lista de diretórios",
-        "nl": "[Breaking change] Verwijderde eenvoudige-api als het kon worden aangesloten als web-extensie\nbijgewerkte pakketten\nverwijderde gulp in een bouwproces\nGUI migreren naar Vite\nHerschreven in TypeScript\nOAuth2-ondersteuning toegevoegd\nNieuwe 404 en de lijstpagina's toegevoegd",
-        "fr": "[Modifier] Supprimé simple-api car il pourrait être connecté comme web-extension\npaquets mis à jour\nenlèvement des goupilles dans un processus de construction\nL'interface graphique a migré pour voir\nRéécrit dans TypeScript\nAjout du support OAuth2\nAjout du nouveau 404 et des pages de la liste des répertoires",
-        "it": "[Modifica modifica] Rimuoveto api semplice in quanto potrebbe essere collegato come estensione web\npacchetti aggiornati\ngulp rimosso in un processo di costruzione\nGUI emigrata a vite\nRescritto in TypeScript\nAggiunto il supporto OAuth2\nAggiunto nuovo 404 e le pagine dell'elenco delle directory",
-        "es": "[Breaking change] Eliminado simple-api ya que podría ser conectado como web-extensión\npaquetes actualizados\ngolp eliminado en un proceso de construcción\nMigrated GUI to vite\nReescrito en TipoScript\nApoyo adicional OAuth2\nAñadido nuevo 404 y las páginas de lista de directorios",
-        "pl": "[Łamanie zmian] Usunięty simple- api, ponieważ może być podłączony jako web- extension\nzaktualizowane pakiety\nusunięto przełyk w procesie budowy\nMigrated GUI to vite\nPrzepisane w TypeScript\nDodano wsparcie OAuth2\nDodano nowe 404 i listę katalogów",
-        "uk": "[Перегляд змін] Видалено простий табір, оскільки він може бути підключений як веб-переглядач\nоновлені пакети\nвидалення гельпи в процесі будівництва\nМігратний графічний інтерфейс для vite\nЗаписатися в TypeScript\nДодано підтримку OAuth2\nДодано нові 404 та сторінки списку каталогів",
-        "zh-cn": "[震动变化]. 已删除的简单 api , 因为它可以作为网络扩展连接\n更新软件包\n在构建过程中移除 gulp\n将 GUI 标记为 vite\n在类型脚本中重写\n添加 OAuth2 支持\n新增了404页和目录列表页面"
-      },
       "6.3.1": {
         "en": "added new admin icon (svg)",
         "de": "neues admin-symbol (svg) hinzugefügt",
@@ -131,7 +118,6 @@
     "icon": "web.svg",
     "readme": "https://github.com/ioBroker/ioBroker.web/blob/master/README.md",
     "enabled": true,
-    "materialize": true,
     "adminUI": {
       "config": "materialize"
     },
@@ -150,15 +136,17 @@
     "webExtendable": true,
     "connectionType": "local",
     "dataSource": "push",
-    "localLink": "%web_protocol%://%ip%:%web_port%/",
+    "localLinks": {
+      "_default": "%web_protocol%://%ip%:%web_port%/"
+    },
     "dependencies": [
       {
-        "js-controller": ">=3.1.0"
+        "js-controller": ">=6.0.17"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=5.1.0"
+        "admin": ">=6.0.0"
       }
     ],
     "authors": [
