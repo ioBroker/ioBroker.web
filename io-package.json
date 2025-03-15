@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.6",
+    "version": "7.0.7",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.7": {
+        "en": "Trying to catch an error by the web extension",
+        "de": "Versuchen, einen Fehler durch die Web-Erweiterung zu fangen",
+        "ru": "Попытка поймать ошибку с помощью веб-расширения",
+        "pt": "Tentando pegar um erro pela extensão da web",
+        "nl": "Proberen een fout te vangen door de webextensie",
+        "fr": "Essayer d'attraper une erreur par l'extension web",
+        "it": "Cercando di prendere un errore dall'estensione web",
+        "es": "Intentando atrapar un error por la extensión web",
+        "pl": "Próba złapania błędu przez rozszerzenie sieci",
+        "uk": "Намагатися зловити помилку в Інтернеті",
+        "zh-cn": "尝试通过网络扩展获取错误"
+      },
       "7.0.6": {
         "en": "Corrected the login for iobroker.visu app\nCorrected load of TypeScript Web extensions",
         "de": "Korrigierte den Login für iobroker. Visu App\nKorrigierte Belastung von TypeScript Web-Erweiterungen",

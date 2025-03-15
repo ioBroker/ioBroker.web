@@ -1855,7 +1855,15 @@ class WebAdapter extends adapter_core_1.Adapter {
                 this.log.debug('Activating web files from objectDB');
                 // deliver web files from objectDB
                 this.webServer.app.use('/', async (req, res) => {
-                    let url = decodeURI(req.url);
+                    let url;
+                    try {
+                        url = decodeURI(req.url);
+                    }
+                    catch {
+                        //
+                        this.log.warn(`Cannot decode URI: "${req.url}"`);
+                        url = req.url;
+                    }
                     // remove all ../
                     // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
                     url = (0, node_path_1.normalize)(url.replace(/\\/g, '/')).replace(/\\/g, '/');

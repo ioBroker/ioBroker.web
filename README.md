@@ -104,7 +104,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.0.7 (2025-03-15)
 * (@GermanBluefox) Trying to catch an error by the web extension
 
 ### 7.0.6 (2025-03-09)
