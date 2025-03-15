@@ -41,7 +41,7 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.7.2",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/build-tools": "^2.0.15",
-    "@iobroker/eslint-config": "^2.0.0",
+    "@iobroker/eslint-config": "^2.0.1",
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/socket-classes": "^2.2.0",
     "@iobroker/types": "^7.0.6",
@@ -57,7 +57,7 @@
     "@types/passport": "^1.0.17",
     "@types/passport-local": "^1.0.38",
     "@types/xtend": "^4.0.6",
-    "axios": "^1.8.2",
+    "axios": "^1.8.3",
     "chai": "^4.5.0",
     "mocha": "^11.1.0",
     "typescript": "~5.8.2"
