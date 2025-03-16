@@ -71,6 +71,7 @@
   "public_certificate": "公共证书",
   "renew_certificates": "自动更新Let's Encrypt证书",
   "set_certificates": "首先在系统设置中（右上角）设置或加载证书。",
+  "show_admin_instances": "显示非 Web 实例",
   "show_folders": "显示文件夹内容",
   "simple_api": "内置'Simple-API'",
   "socket": "Socket.IO Instance (Optional): (被rickshaw或vis等适配器使用)",

@@ -333,7 +333,7 @@ export class WebAdapter extends Adapter {
                 this.onFileChange(id, fileName, size),
         });
 
-        import('@iobroker/i18n').then(i18n => (this.I18n = i18n));
+        void import('@iobroker/i18n').then(i18n => (this.I18n = i18n));
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
@@ -707,6 +707,7 @@ export class WebAdapter extends Adapter {
         // read all instances
         const instances = await this.getObjectViewAsync('system', 'instance', {});
         const adapters = await this.getObjectViewAsync('system', 'adapter', {});
+        // The list will be filled up in processOneWelcome
         const list: LocalMultipleLinkEntry[] = [];
         const mapInstances: Record<`system.adapter.${string}.${number}`, ioBroker.InstanceObject> = {};
         for (let r = 0; r < instances.rows.length; r++) {
@@ -872,6 +873,8 @@ export class WebAdapter extends Adapter {
 
         // if login
         text += `let authEnabled = ${this.config.auth && !this.config.basicAuth && !whiteListIp};\n`;
+
+        text = `showAdminInstances = ${!!this.config.showAdminInstances};\n${text}`;
 
         return this.indexHtml.replace('// -- PLACE THE LIST HERE --', text);
     }
@@ -2258,7 +2261,7 @@ export class WebAdapter extends Adapter {
                         url = decodeURI(req.url);
                     } catch {
                         //
-                        this.log.warn(`Cannot decode URI: "${req.url}"`);
+                        this.log.warn(`Cannot decode URI: "${req.url}`);
                         url = req.url;
                     }
                     // remove all ../

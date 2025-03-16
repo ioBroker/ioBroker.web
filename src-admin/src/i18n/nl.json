@@ -71,6 +71,7 @@
   "public_certificate": "Openbaar certificaat",
   "renew_certificates": "Gebruik deze instantie voor automatische update",
   "set_certificates": "Stel certificaten in of laad het eerst in de systeeminstellingen (rechtsboven).",
+  "show_admin_instances": "Niet-webinstanties weergeven",
   "show_folders": "Inhoud van mappen weergeven",
   "simple_api": "Ingebouwde 'Simple-API'",
   "socket": "Socket.IO Instance (Optional): (Gebruikt door adapters zoals riksja of vis)",

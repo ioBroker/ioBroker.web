@@ -71,6 +71,7 @@
   "public_certificate": "'Public' сертификат",
   "renew_certificates": "Обновлять сертификаты в этом экземпляре",
   "set_certificates": "Нужно выбрать сертификаты или сначала загрузить их в системных настройках.",
+  "show_admin_instances": "Показать не веб-примеры",
   "show_folders": "Показать содержимое папок",
   "simple_api": "Встроенный 'Simple-API'",
   "socket": "Socket.IO экземпляр (опционально): (Используется для Rickshaw или Vis)",

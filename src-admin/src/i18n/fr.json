@@ -71,6 +71,7 @@
   "public_certificate": "Certificat public",
   "renew_certificates": "Utilisez cette instance pour la mise à jour automatique",
   "set_certificates": "Définissez des certificats ou chargez-les d'abord dans les paramètres du système (en haut à droite).",
+  "show_admin_instances": "Afficher les instances non Web",
   "show_folders": "Afficher le contenu des dossiers",
   "simple_api": "Construire 'Simple-API'",
   "socket": "Socket.IO Instance (Optional): (Utilisé par des adaptateurs comme le pousse-pousse ou vis)",

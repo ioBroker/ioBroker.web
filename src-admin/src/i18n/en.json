@@ -71,6 +71,7 @@
     "public_certificate": "'Public' certificate",
     "renew_certificates": "Use this instance for automatic update",
     "set_certificates": "Set certificates or load it first in the system settings (right top).",
+    "show_admin_instances": "Show non-web instances",
     "show_folders": "Show folders content",
     "simple_api": "Built-in 'Simple-API'",
     "socket": "Socket.IO Instance (Optional): (Used by adapters like rickshaw or vis)",

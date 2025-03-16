@@ -71,6 +71,7 @@
   "public_certificate": "Certificado público",
   "renew_certificates": "Use esta instancia para la actualización automática",
   "set_certificates": "Establezca certificados o cárguelos primero en la configuración del sistema (arriba a la derecha).",
+  "show_admin_instances": "Mostrar instancias no web",
   "show_folders": "Mostrar el contenido de las carpetas",
   "simple_api": "Build-in 'Simple-API'",
   "socket": "Socket.IO Instance (Optional): (Utilizado por adaptadores como rickshaw o vis)",

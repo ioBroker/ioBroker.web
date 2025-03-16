@@ -78,6 +78,7 @@
         </style>
         <script>
             let list = [];
+            let showAdminInstances = false;
             systemDictionary = {
                 welcome: {
                     en: 'Welcome to ioBroker.web',
@@ -141,12 +142,12 @@
                 });
                 let text = '';
                 for (let i = 0; i < list.length; i++) {
-                    if (typeof list[i] === 'object' && list[i].localLink) {
-                        // pro tiles are not available on iobroker.net
+                    if (typeof list[i] === 'object' && (showAdminInstances || list[i].localLink)) {
+                        // "pro" tiles are not available on iobroker.net
                         if (list[i].pro && document.location.href.match(/iobroker\.net/)) {
                             continue;
                         }
-                        if (!document.location.href.match(/iobroker\.(pro|net)/) && list[i].localLink) {
+                        if (!document.location.href.match(/iobroker\.(pro|net)/) && list[i].localLink && typeof list[i].localLink === 'string') {
                             list[i].link = list[i].localLink.replace('$host$', location.hostname);
                         }
                         let name = list[i].name || list[i].link;

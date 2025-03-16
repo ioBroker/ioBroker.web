@@ -71,6 +71,7 @@
     "public_certificate": "Certyfikat publiczny",
     "renew_certificates": "Użyj tej instancji do automatycznej aktualizacji",
     "set_certificates": "Ustaw certyfikaty lub załaduj najpierw w ustawieniach systemu (prawy górny).",
+    "show_admin_instances": "Pokaż wystąpienia niebędące stroną internetową",
     "show_folders": "Pokaż zawartość folderów",
     "simple_api": "Wbuduj 'Proste API'",
     "socket": "Socket.IO Instance (Optional): (Używany przez adaptery takie jak riksza lub vis)",

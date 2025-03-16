@@ -93,6 +93,7 @@ export interface WebAdapterConfig {
     secure: boolean;
     showFolderIndex: boolean;
     socketio: `system.adapter.${string}.${number}` | '';
+    showAdminInstances: boolean;
     startDisabledExtensions: boolean;
     staticAssetCacheMaxAge: number | string;
     ttl: number | string;

@@ -176,6 +176,15 @@ class Additionally extends Component<AdditionallyProps> {
                             <FormHelperText>{I18n.t('only for this instance')}</FormHelperText>
                         </FormControl>
                     </div>
+                    <div>
+                        <CustomCheckbox
+                            title="show_admin_instances"
+                            attr="showAdminInstances"
+                            sx={styles.fontSize}
+                            native={native}
+                            onChange={onChange}
+                        />
+                    </div>
                 </div>
             </form>
         );

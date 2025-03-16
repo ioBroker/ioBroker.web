@@ -207,7 +207,8 @@
     "showFolderIndex": false,
     "loadingBackgroundColor": "",
     "loadingHideLogo": false,
-    "loadingBackgroundImage": false
+    "loadingBackgroundImage": false,
+    "showAdminInstances": false
   },
   "instanceObjects": [
     {
