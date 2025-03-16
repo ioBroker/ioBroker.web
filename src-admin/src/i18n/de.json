@@ -1,5 +1,6 @@
 {
     "Authentication_deactivated": "Die Authentifizierung wurde deaktiviert",
+    "CORS-settings": "CORS-Einstellungen",
     "Cache options": "Cache-Optionen",
     "Cancel": "Abbrechen",
     "Common": "Allgemein",
@@ -40,6 +41,7 @@
     "certificates": "Let's Encrypt Zertifikate",
     "chained_certificate": "Verkettetes Zertifikat",
     "color": "Hintergrundfarbe des Anmeldebildschirms",
+    "custom_cors_settings": "Benutzerdefinierte CORS-Einstellungen",
     "defaultRedirect": "Standardweiterleitungspfad",
     "delete": "Löschen",
     "disable_default": "Standardfunktionen deaktivieren",
@@ -70,6 +72,7 @@
     "private_certificate": "Privates Zertifikat",
     "public_certificate": "Öffentliches Zertifikat",
     "renew_certificates": "Diese Instanz für automatische Updates verwenden",
+    "reset_cors_settings": "CORS-Einstellungen auf Standard zurücksetzen",
     "set_certificates": "Zertifikate wählen bzw. Zertifikate in den Systemeinstellungen (oben rechts) hinterlegen.",
     "show_admin_instances": "Nicht-Web-Instanzen anzeigen",
     "show_folders": "Ordnerinhalt anzeigen",

@@ -1,5 +1,6 @@
 {
     "Authentication_deactivated": "Uwierzytelnianie zostało dezaktywowane",
+    "CORS-settings": "Ustawienia CORS",
     "Cache options": "Opcje pamięci podręcznej",
     "Cancel": "Odwołaj",
     "Common": "Wspólny",
@@ -40,6 +41,7 @@
     "certificates": "Let's Encrypt certyfikaty",
     "chained_certificate": "Przykuty certyfikat",
     "color": "Kolor tła ekranu logowania",
+    "custom_cors_settings": "Niestandardowe ustawienia CORS",
     "defaultRedirect": "Domyślna ścieżka przekierowania",
     "delete": "kasować",
     "disable_default": "Wyłącz funkcje domyślne",
@@ -70,6 +72,7 @@
     "private_certificate": "Prywatny certyfikat",
     "public_certificate": "Certyfikat publiczny",
     "renew_certificates": "Użyj tej instancji do automatycznej aktualizacji",
+    "reset_cors_settings": "Przywróć ustawienia CORS do domyślnych",
     "set_certificates": "Ustaw certyfikaty lub załaduj najpierw w ustawieniach systemu (prawy górny).",
     "show_admin_instances": "Pokaż wystąpienia niebędące stroną internetową",
     "show_folders": "Pokaż zawartość folderów",

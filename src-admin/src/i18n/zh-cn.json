@@ -1,5 +1,6 @@
 {
   "Authentication_deactivated": "身份认证机制已停用",
+  "CORS-settings": "CORS 设置",
   "Cache options": "缓存选项",
   "Cancel": "取消",
   "Common": "常见的",
@@ -40,6 +41,7 @@
   "certificates": "Let's Encrypt证书",
   "chained_certificate": "链式证书",
   "color": "登录界面的背景颜色",
+  "custom_cors_settings": "自定义 CORS 设置",
   "defaultRedirect": "默认重定向路径",
   "delete": "可删除",
   "disable_default": "禁用默认功能",
@@ -70,6 +72,7 @@
   "private_certificate": "私人证书",
   "public_certificate": "公共证书",
   "renew_certificates": "自动更新Let's Encrypt证书",
+  "reset_cors_settings": "将 CORS 设置设置为默认值",
   "set_certificates": "首先在系统设置中（右上角）设置或加载证书。",
   "show_admin_instances": "显示非 Web 实例",
   "show_folders": "显示文件夹内容",

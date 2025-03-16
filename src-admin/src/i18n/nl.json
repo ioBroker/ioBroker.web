@@ -1,5 +1,6 @@
 {
   "Authentication_deactivated": "Verificatie was gedeactiveerd",
+  "CORS-settings": "CORS-instellingen",
   "Cache options": "Cache-opties",
   "Cancel": "Annuleren",
   "Common": "Gewoon",
@@ -40,6 +41,7 @@
   "certificates": "Let's Encrypt certificaten",
   "chained_certificate": "Geketend certificaat",
   "color": "Achtergrondkleur van het inlogscherm",
+  "custom_cors_settings": "Aangepaste CORS-instellingen",
   "defaultRedirect": "Standaard omleidingspad",
   "delete": "verwijderen",
   "disable_default": "Schakel standaardfuncties uit",
@@ -70,6 +72,7 @@
   "private_certificate": "Privé certificaat",
   "public_certificate": "Openbaar certificaat",
   "renew_certificates": "Gebruik deze instantie voor automatische update",
+  "reset_cors_settings": "CORS-instellingen instellen op standaard",
   "set_certificates": "Stel certificaten in of laad het eerst in de systeeminstellingen (rechtsboven).",
   "show_admin_instances": "Niet-webinstanties weergeven",
   "show_folders": "Inhoud van mappen weergeven",

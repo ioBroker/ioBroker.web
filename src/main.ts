@@ -1985,8 +1985,34 @@ export class WebAdapter extends Adapter {
                 res.status(200).send(this.getInfoJs());
             });
 
-            // Enable CORS
-            if (this.config.socketio || this.common!.loglevel === 'debug') {
+            if (this.config.accessControlEnabled) {
+                this.webServer.app.use((req, res, next) => {
+                    res.header(
+                        'Access-Control-Allow-Origin',
+                        this.config.accessControlAllowOrigin || req.headers.origin,
+                    );
+                    res.header('Access-Control-Allow-Methods', this.config.accessControlAllowMethods);
+                    res.header('Access-Control-Allow-Headers', this.config.accessControlAllowHeaders);
+                    res.header(
+                        'Access-Control-Allow-Credentials',
+                        this.config.accessControlAllowCredentials ? 'true' : 'false',
+                    );
+                    if (this.config.accessControlExposeHeaders) {
+                        res.header('Access-Control-Expose-Headers', this.config.accessControlExposeHeaders);
+                    }
+                    if (this.config.accessControlMaxAge) {
+                        res.header('Access-Control-Max-Age', this.config.accessControlMaxAge.toString());
+                    }
+
+                    // intercept OPTIONS method
+                    if ('OPTIONS' === req.method) {
+                        res.status(200).send(200);
+                    } else {
+                        next();
+                    }
+                });
+            } else if (this.config.socketio || this.common!.loglevel === 'debug') {
+                // Enable CORS
                 this.webServer.app.use((req, res, next) => {
                     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
                     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');

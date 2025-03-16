@@ -1,5 +1,6 @@
 {
     "Authentication_deactivated": "Authentication was deactivated",
+    "CORS-settings": "CORS-settings",
     "Cache options": "Cache options",
     "Cancel": "Cancel",
     "Common": "Common",
@@ -40,6 +41,7 @@
     "certificates": "Let`s encrypt certificates",
     "chained_certificate": "Chained certificate",
     "color": "Background color of the login screen",
+    "custom_cors_settings": "Custom CORS settings",
     "defaultRedirect": "Default redirect path",
     "delete": "delete",
     "disable_default": "Disable Default Functions",
@@ -70,6 +72,7 @@
     "private_certificate": "Private certificate",
     "public_certificate": "'Public' certificate",
     "renew_certificates": "Use this instance for automatic update",
+    "reset_cors_settings": "Set CORS settings to default",
     "set_certificates": "Set certificates or load it first in the system settings (right top).",
     "show_admin_instances": "Show non-web instances",
     "show_folders": "Show folders content",

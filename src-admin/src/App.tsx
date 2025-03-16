@@ -10,6 +10,7 @@ import IpFilterList from './Tabs/IpFilterList';
 import Background from './Tabs/Background';
 import Additionally from './Tabs/Additionally';
 import UserList from './Tabs/UserList';
+import CORS from './Tabs/CORS';
 import { Toast } from './Components/Toast';
 
 import enLang from './i18n/en.json';
@@ -45,7 +46,7 @@ const styles: Record<string, any> = {
     }),
 };
 
-type TabName = 'options' | 'ipFilter' | 'userList' | 'additionally' | 'background';
+type TabName = 'options' | 'ipFilter' | 'userList' | 'additionally' | 'background' | 'CORS';
 
 const arrayTabName: {
     name: TabName;
@@ -76,6 +77,11 @@ const arrayTabName: {
         name: 'background',
         translate: 'background',
         index: 4,
+    },
+    {
+        name: 'CORS',
+        translate: 'CORS-settings',
+        index: 5,
     },
 ];
 
@@ -150,7 +156,9 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         theme={this.state.theme}
                         socket={this.socket}
                         native={native}
-                        onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                        onChange={(attr: string, value: any, cb?: () => void) =>
+                            this.updateNativeValue(attr, value, cb)
+                        }
                         instance={this.instance}
                         adapterName={this.adapterName}
                         themeType={this.state.themeType}
@@ -163,7 +171,9 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         key="userList"
                         socket={this.socket}
                         native={native}
-                        onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                        onChange={(attr: string, value: any, cb?: () => void) =>
+                            this.updateNativeValue(attr, value, cb)
+                        }
                     />
                 );
 
@@ -184,10 +194,23 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         key="background"
                         socket={this.socket}
                         native={native}
-                        onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                        onChange={(attr: string, value: any, cb?: () => void) =>
+                            this.updateNativeValue(attr, value, cb)
+                        }
                         instance={this.instance}
                     />
                 );
+            case 'CORS':
+                return (
+                    <CORS
+                        key="CORS"
+                        native={native}
+                        onChange={(attr: string, value: any, cb?: () => void) =>
+                            this.updateNativeValue(attr, value, cb)
+                        }
+                    />
+                );
+
             case 'options':
             default:
                 return (
@@ -198,7 +221,9 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         socket={this.socket}
                         native={native}
                         instance={this.instance}
-                        onChange={(attr, value, cb) => this.updateNativeValue(attr, value, cb)}
+                        onChange={(attr: string, value: any, cb?: () => void) =>
+                            this.updateNativeValue(attr, value, cb)
+                        }
                         onLoad={(native: WebAdapterConfig): void => this.setState({ native })}
                         lang={I18n.getLanguage()}
                     />

@@ -1,5 +1,6 @@
 {
   "Authentication_deactivated": "Аутентификация была отключена",
+  "CORS-settings": "CORS-настройки",
   "Cache options": "Параметры кэша",
   "Cancel": "Отмена",
   "Common": "Основные",
@@ -40,6 +41,7 @@
   "certificates": "Let`s encrypt сертификаты",
   "chained_certificate": "'Chained' сертификат",
   "color": "Цвет фона экрана входа в систему",
+  "custom_cors_settings": "Пользовательские настройки CORS",
   "defaultRedirect": "Путь перенаправления по умолчанию",
   "delete": "удалить",
   "disable_default": "Отключить функции по умолчанию",
@@ -70,6 +72,7 @@
   "private_certificate": "'Private' сертификат",
   "public_certificate": "'Public' сертификат",
   "renew_certificates": "Обновлять сертификаты в этом экземпляре",
+  "reset_cors_settings": "Установить настройки CORS по умолчанию",
   "set_certificates": "Нужно выбрать сертификаты или сначала загрузить их в системных настройках.",
   "show_admin_instances": "Показать не веб-примеры",
   "show_folders": "Показать содержимое папок",

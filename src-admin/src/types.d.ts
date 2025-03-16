@@ -66,6 +66,14 @@ export interface WhiteListSettings {
 }
 
 export interface WebAdapterConfig {
+    accessControlEnabled: boolean;
+    accessControlAllowOrigin: string;
+    accessControlAllowMethods: string;
+    accessControlAllowHeaders: string;
+    accessControlAllowCredentials: boolean;
+    accessControlExposeHeaders: string;
+    accessControlMaxAge: number;
+
     addUserName: boolean;
     auth: boolean;
     basicAuth: boolean;
