@@ -19,6 +19,7 @@ const connect_flash_1 = __importDefault(require("connect-flash"));
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common adapter utils
 const webserver_1 = require("@iobroker/webserver");
 const buffer_1 = require("buffer");
+const utils_1 = require("./lib/utils");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
 const wwwDir = '../www';
@@ -111,7 +112,7 @@ function getLinkVar(placeHolder, obj, attr, link) {
     }
     return link;
 }
-function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list) {
+function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list) {
     let ws;
     if (typeof welcomeScreen === 'string') {
         ws = {
@@ -150,29 +151,49 @@ function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, l
         // link = '%protocol%://%bind%:%port%'
         localLink = ws.link;
     }
-    if (ws.localLink) {
-        if (foundInstanceIDs.length > 1) {
-            foundInstanceIDs.forEach((id) => {
-                list.push({
-                    ...ws,
-                    localLink,
-                    name: ws.name,
-                    color: ws.color,
-                    pro: isPro,
-                    id: foundInstanceIDs[0],
-                    instance: parseInt(id.split('.').pop() || '', 10) || 0,
-                });
+    let hrefs = [];
+    // Replace in localLink the patterns
+    if (adapterObj.type === 'adapter') {
+        foundInstanceIDs.forEach((id) => {
+            const instance = parseInt(id.split('.').pop() || '0', 10);
+            const _hrefs = (0, utils_1.replaceLink)(localLink, adapterObj.common.name, instance, {
+                hostname,
+                // it cannot be void
+                instances,
+                hosts,
+                adminInstance: webNamespace,
             });
-        }
-        else {
-            list.push({ ...ws, localLink, pro: isPro, id: foundInstanceIDs[0] });
-        }
+            _hrefs.forEach(item => (item.instance = instance.toString()));
+            hrefs.push(..._hrefs);
+        });
     }
     else {
-        list.push({ ...ws, localLink, pro: isPro });
+        const instance = parseInt(adapterObj._id.split('.').pop() || '0', 10);
+        hrefs = (0, utils_1.replaceLink)(localLink, adapterObj.common.name, parseInt(adapterObj._id.split('.').pop() || '0', 10), {
+            hostname,
+            // it cannot be void
+            instances,
+            hosts,
+            adminInstance: webNamespace,
+        });
+        hrefs.forEach(item => (item.instance = instance.toString()));
     }
+    hrefs.forEach(item => (item.url = item.url.replace(`//${hostname}:`, '//$host$:')));
+    hrefs.forEach(item => {
+        list.push({
+            name: ws.name,
+            img: ws.img,
+            link: ws.link.includes('%') ? item.url : ws.link,
+            localLink: item.url,
+            color: ws.color,
+            order: ws.order,
+            pro: isPro,
+            id: `system.adapter.${adapterObj.common.name}.${item.instance ? parseInt(item.instance, 10) || 0 : 0}`,
+            instance: item.instance ? parseInt(item.instance, 10) || 0 : 0,
+        });
+    });
 }
-function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list) {
+function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list) {
     if (welcomeScreen) {
         if (Array.isArray(welcomeScreen)) {
             for (let w = 0; w < welcomeScreen.length; w++) {
@@ -188,7 +209,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
                 else {
                     ws = welcomeScreen[w];
                 }
-                processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, list);
+                processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list);
             }
         }
         else {
@@ -204,7 +225,7 @@ function processWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, list
             else {
                 ws = welcomeScreen;
             }
-            processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, list);
+            processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list);
         }
     }
 }
@@ -598,12 +619,19 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         return res;
     }
-    async getListOfAllAdapters(req) {
+    async getListOfAllAdapters(remoteIp) {
+        const config = {};
         // read all instances
         const instances = await this.getObjectViewAsync('system', 'instance', {});
         const adapters = await this.getObjectViewAsync('system', 'adapter', {});
+        const hosts = await this.getObjectViewAsync('system', 'host', {});
+        const webConfig = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
         // The list will be filled up in processOneWelcome
         const list = [];
+        const mapHosts = {};
+        for (let h = 0; h < hosts.rows.length; h++) {
+            mapHosts[hosts.rows[h].id] = hosts.rows[h].value;
+        }
         const mapInstances = {};
         for (let r = 0; r < instances.rows.length; r++) {
             mapInstances[instances.rows[r].id] = instances.rows[r].value;
@@ -641,23 +669,34 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 color: obj.common.localLinks[link].color || obj.common.color || '',
                                 // @ts-expect-error fixed in js-controller
                                 order: obj.common.localLinks[link].order,
-                            }, obj.common.localLinks[link].pro, obj, found, list);
+                            }, !!obj.common.localLinks[link].pro, obj, found, mapInstances, mapHosts, this.host, this.namespace, list);
                         }
                     }
                 }
                 try {
-                    processWelcome(obj.common.welcomeScreen, false, obj, found, list);
-                    processWelcome(obj.common.welcomeScreenPro, true, obj, found, list);
+                    processWelcome(obj.common.welcomeScreen, false, obj, found, mapInstances, mapHosts, this.host, this.namespace, list);
+                    processWelcome(obj.common.welcomeScreenPro, true, obj, found, mapInstances, mapHosts, this.host, this.namespace, list);
                 }
                 catch (e) {
                     this.log.warn(`Cannot process welcome screen for "${obj._id}": ${e}`);
                 }
             }
         }
-        if (!this.indexHtml && !(0, node_fs_1.existsSync)(`${__dirname}/${wwwDir}/index.html`)) {
-            return `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`;
-        }
-        this.indexHtml ||= (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/index.html`).toString();
+        const sameHost = `${webConfig.native.secure ? 'https' : 'http'}://$host$`;
+        const sameServer = `${webConfig.native.secure ? 'https' : 'http'}://$host$:${webConfig.native.port}/`;
+        list.forEach(item => {
+            item.link = item.link.replace(sameServer, '').replace(sameHost, '');
+            item.localLink = item.link.replace(sameServer, '').replace(sameHost, '');
+            if (item.name === 'Admin') {
+                item.link = 'admin/index.html';
+            }
+            if (!item.img?.includes('/') && item.id) {
+                // Add adapter prefix to the image: image.png => adapter/node-red/image.png
+                const parts = item.id.split('.');
+                parts.pop();
+                item.img = `adapter/${parts.pop()}/${item.img}`;
+            }
+        });
         // Remove duplicated entries
         const uniqueList = [];
         for (const link of list) {
@@ -671,6 +710,11 @@ class WebAdapter extends adapter_core_1.Adapter {
             if (!found) {
                 uniqueList.push(link);
             }
+        }
+        // Remove admin/index.html from the list
+        const adminIndex = uniqueList.findIndex(item => item.localLink === 'admin/index.html');
+        if (adminIndex !== -1) {
+            uniqueList.splice(adminIndex, 1);
         }
         // calculate localLinks
         for (const listItem of uniqueList) {
@@ -734,13 +778,27 @@ class WebAdapter extends adapter_core_1.Adapter {
             }
             return 0;
         });
-        let text = `systemLang = "${this.lang}";\n`;
-        text += `list = ${JSON.stringify(uniqueList, null, 2)};\n`;
-        const whiteListIp = this.isInWhiteList(req);
-        // if login
-        text += `let authEnabled = ${this.config.auth && !this.config.basicAuth && !whiteListIp};\n`;
-        text = `showAdminInstances = ${!!this.config.showAdminInstances};\n${text}`;
-        return this.indexHtml.replace('// -- PLACE THE LIST HERE --', text);
+        const whiteListIp = this.isInWhiteList(remoteIp);
+        config.systemLang = this.lang;
+        config.showAdminInstances = !!this.config.showAdminInstances;
+        config.authEnabled = this.config.auth && !this.config.basicAuth && !whiteListIp;
+        config.list = uniqueList;
+        return config;
+    }
+    async getIndexHtml(req) {
+        const config = await this.getListOfAllAdapters((req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString());
+        const lines = [
+            `showAdminInstances = ${config.showAdminInstances};`,
+            `systemLang = "${config.systemLang}";`,
+            `list = ${JSON.stringify(config.list, null, 2)};`,
+            // if login
+            `let authEnabled = ${config.authEnabled};`,
+        ];
+        if (!this.indexHtml && !(0, node_fs_1.existsSync)(`${__dirname}/${wwwDir}/index.html`)) {
+            return `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`;
+        }
+        this.indexHtml ||= (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/index.html`).toString();
+        return this.indexHtml.replace('// -- PLACE THE LIST HERE --', lines.join('\n'));
     }
     /**
      * Transform pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
@@ -1018,7 +1076,9 @@ class WebAdapter extends adapter_core_1.Adapter {
         next();
     }
     isInWhiteList(req) {
-        const remoteIp = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString();
+        const remoteIp = typeof req === 'string'
+            ? req
+            : (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString();
         if (!this.config.auth) {
             return remoteIp;
         }
@@ -1639,8 +1699,35 @@ class WebAdapter extends adapter_core_1.Adapter {
                 res.set('Cache-Control', 'no-cache');
                 res.status(200).send(this.getInfoJs());
             });
-            // Enable CORS
-            if (this.config.socketio || this.common.loglevel === 'debug') {
+            this.webServer.app.get('/config.json', async (req, res) => {
+                res.set('Content-Type', 'application/javascript');
+                res.set('Cache-Control', 'no-cache');
+                const config = await this.getListOfAllAdapters((req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString());
+                res.status(200).send(JSON.stringify(config, null, 2));
+            });
+            if (this.config.accessControlEnabled) {
+                this.webServer.app.use((req, res, next) => {
+                    res.header('Access-Control-Allow-Origin', this.config.accessControlAllowOrigin || req.headers.origin);
+                    res.header('Access-Control-Allow-Methods', this.config.accessControlAllowMethods);
+                    res.header('Access-Control-Allow-Headers', this.config.accessControlAllowHeaders);
+                    res.header('Access-Control-Allow-Credentials', this.config.accessControlAllowCredentials ? 'true' : 'false');
+                    if (this.config.accessControlExposeHeaders) {
+                        res.header('Access-Control-Expose-Headers', this.config.accessControlExposeHeaders);
+                    }
+                    if (this.config.accessControlMaxAge) {
+                        res.header('Access-Control-Max-Age', this.config.accessControlMaxAge.toString());
+                    }
+                    // intercept OPTIONS method
+                    if ('OPTIONS' === req.method) {
+                        res.status(200).send(200);
+                    }
+                    else {
+                        next();
+                    }
+                });
+            }
+            else if (this.config.socketio || this.common.loglevel === 'debug') {
+                // Enable CORS
                 this.webServer.app.use((req, res, next) => {
                     res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
                     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -1856,7 +1943,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             if (this.webServer.app && !this.config.disableFilesObjects) {
                 this.log.debug('Activating web files from objectDB');
                 // deliver web files from objectDB
-                this.webServer.app.use('/', async (req, res) => {
+                this.webServer.app.use(async (req, res) => {
                     let url;
                     try {
                         url = decodeURI(req.url);
@@ -1881,21 +1968,43 @@ class WebAdapter extends adapter_core_1.Adapter {
                         this.send404(res, url);
                         return;
                     }
+                    url = url.split('?')[0];
                     // If root directory requested
                     if (url === '/' || url === '/index.html') {
                         if (this.config.defaultRedirect) {
                             res.redirect(301, this.config.defaultRedirect);
                             return;
                         }
-                        this.getListOfAllAdapters(req)
-                            .then(data => res
+                        this.getIndexHtml(req)
+                            .then(html => res
                             .set('Content-Type', 'text/html')
                             .set('Cache-Control', 'no-cache')
                             .status(200)
-                            .send(data))
+                            .send(html))
                             .catch(err => res
                             .status(500)
                             .send(`500. Error${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`));
+                        return;
+                    }
+                    else if (url === '/logo.svg') {
+                        res.set('Content-Type', 'image/svg+xml')
+                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .status(200)
+                            .send((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${url}`));
+                        return;
+                    }
+                    else if (url === '/favicon.ico') {
+                        res.set('Content-Type', 'image/x-icon')
+                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .status(200)
+                            .send((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${url}`));
+                        return;
+                    }
+                    else if (url === '/manifest.json') {
+                        res.set('Content-Type', 'application/json')
+                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .status(200)
+                            .send((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${url}`));
                         return;
                     }
                     // add index.html

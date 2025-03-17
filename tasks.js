@@ -17,8 +17,21 @@ function buildLogin() {
             copyFiles(['src-login/build/**/*'], 'www/login/');
         });
 }
+function buildWww() {
+    deleteFoldersRecursive('src-www/build');
+    return npmInstall(`${__dirname}/src-www`)
+        .then(() => buildReact(`${__dirname}/src-www`, { rootDir: `${__dirname}/src-www`, vite: true }))
+        .then(() => {
+            copyFiles(['src-www/build/**/*'], 'www/');
+        });
+}
 
-if (process.argv.includes('--0-clean')) {
+if (process.argv.includes('--www')) {
+    buildWww().catch(e => {
+        console.log(`Cannot npm install: ${e}`);
+        process.exit(2);
+    });
+} else if (process.argv.includes('--0-clean')) {
     deleteFoldersRecursive('admin', ['web.png', 'web.svg']);
     deleteFoldersRecursive('src-admin/build');
 } else if (process.argv.includes('--1-npm')) {
@@ -55,6 +68,7 @@ if (process.argv.includes('--0-clean')) {
         .then(() => buildReact(`${__dirname}/src-admin`, { rootDir: `${__dirname}/src-admin`, vite: true }))
         .then(() => copyAllFiles())
         .then(() => buildLogin())
+        .then(() => buildWww())
         .catch(e => {
             console.log(`Cannot build: ${e}`);
             process.exit(2);

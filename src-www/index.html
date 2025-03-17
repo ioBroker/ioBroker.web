@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link
+            rel="shortcut icon"
+            href="favicon.ico"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <meta
+            name="theme-color"
+            content="#000000"
+        />
+        <link
+            rel="manifest"
+            href="manifest.json"
+        />
+        <title>Web Login (ioBroker)</title>
+        <script>
+            let list = [];
+            window.showAdminInstances = false;
+            window.systemDictionary = {
+                welcome: {
+                    en: 'Welcome to ioBroker.web',
+                    de: 'Willkommen bei ioBroker.web',
+                    ru: 'Добро пожаловать в ioBroker.web',
+                    pt: 'Bem-vindo ao ioBroker.web',
+                    nl: 'Welkom bij ioBroker.web',
+                    fr: 'Bienvenue sur ioBroker.web',
+                    it: 'Benvenuto in ioBroker.web',
+                    es: 'Bienvenido a ioBroker.web',
+                    pl: 'Witamy w ioBroker.web',
+                    uk: 'Ласкаво просимо до ioBroker.web',
+                    'zh-cn': '欢迎来到ioBroker.web',
+                },
+                Directories: { en: 'Directories', de: 'Verzeichnise', ru: 'Пути' },
+                'your are lost': {
+                    en: 'It seems to be you are lost. Here are some files, that you can open: ',
+                    de: 'Sieht so aus, als ob du verlaufen bist. Hier sind die Pfade, wohin man gehen kann: ',
+                    ru: 'Похоже, что кто-то потерялся. Вот пути по которым можно пойти:',
+                    pt: 'Parece que você está perdido. Aqui estão alguns arquivos que você pode abrir:',
+                    nl: 'Het lijkt erop dat je verdwaald bent. Hier zijn enkele bestanden die u kunt openen:',
+                    fr: 'Il semble que tu sois perdu. Voici quelques fichiers que vous pouvez ouvrir:',
+                    it: 'Sembra che tu sia perso. Ecco alcuni file che puoi aprire:',
+                    es: 'Parece ser que estás perdido. Aquí hay algunos archivos que puede abrir:',
+                    pl: 'Wygląda na to, że jesteś zagubiony. Oto kilka plików, które możesz otworzyć:',
+                    uk: 'Схоже, що ви загубилися. Ось деякі файли, які ви можете відкрити:',
+                    'zh-cn': '看来你迷路了。以下是一些您可以打开的文件：',
+                },
+                'Sign out': {
+                    en: 'Sign out',
+                    de: 'Ausloggen',
+                    ru: 'Выйти',
+                    pt: 'Sair',
+                    nl: 'Afmelden',
+                    fr: 'Déconnexion',
+                    it: 'disconnessione',
+                    es: 'desconectar',
+                    pl: 'Wyloguj się',
+                    uk: 'Вийти',
+                    'zh-cn': '登出',
+                },
+            };
+            // Do not delete it. It will be used for dynamic generation:
+            // -- PLACE THE LIST HERE --
+
+            window.list = list;
+            window.loginLanguage  = '@@loginLanguage@@';
+            window.loginHideLogo  = '@@loginHideLogo@@';
+            window.loginMotto     = '@@loginMotto@@';
+            window.login          = '@@auth@@';
+            window.loginLogo      = '@@loginLogo@@';
+            window.loginLink      = '@@loginLink@@';
+            window.loginTitle     = '@@loginTitle@@';
+            window.loginBackgroundColor = '@@loginBackgroundColor@@';
+            window.loginBackgroundImage = '@@loginBackgroundImage@@';
+
+            window.vendorPrefix   = '@@vendorPrefix@@';
+            window.disableDataReporting = '@@disableDataReporting@@';
+
+            window.loadingBackgroundColor = '@@loadingBackgroundColor@@';
+            window.loadingBackgroundImage = '@@loadingBackgroundImage@@';
+            window.loadingHideLogo = '@@loadingHideLogo@@';
+            window.loginOauth2 = '@@loginOauth2@@';
+            if (window.loginLanguage === '@@loginLanguage@@') {
+                // Autodetect language
+                let lang = window.navigator.userLanguage || window.navigator.language;
+                lang = lang.substring(0, 2);
+                if (lang === 'zh') {
+                    lang = 'zh-cn';
+                } else if (lang !== 'de' && lang !== 'ru' && lang !== 'en' && lang !== 'nl' && lang !== 'it' && lang !== 'fr' && lang !== 'pt' && lang !== 'pl' && lang !== 'es' && lang !== 'uk') {
+                    lang = 'en';
+                }
+                window.loginLanguage = lang;
+            }
+        </script>
+    </head>
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="root"></div>
+        <script type="module" src="src/index.tsx"></script>
+    </body>
+</html>

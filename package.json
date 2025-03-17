@@ -86,6 +86,7 @@
     "update-packages": "npx -y npm-check-updates --upgrade && cd src-admin && npx -y npm-check-updates --upgrade && cd ../src-login && npx -y npm-check-updates --upgrade",
     "npm": "npm i && cd src-admin && npm i -f && cd ../src-login && npm i -f",
     "0-clean": "node tasks --0-clean",
+    "www": "node tasks --www",
     "1-npm": "node tasks --1-npm",
     "2-build": "node tasks --2-build",
     "3-copy": "node tasks --3-copy",

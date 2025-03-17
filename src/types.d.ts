@@ -6,7 +6,8 @@ export type Server = HttpServer | HttpsServer;
 export interface LocalLinkEntry {
     id?: `system.adapter.${string}.${number}`;
     instance?: number;
-    localLink: string;
+    /** As it could be reached from the cloud */
+    link: string;
     name?: ioBroker.StringOrTranslated;
     pro: boolean;
     color?: string;
@@ -15,6 +16,7 @@ export interface LocalLinkEntry {
 }
 
 export interface LocalMultipleLinkEntry extends LocalLinkEntry {
+    /** As it could be reached from the local network */
     localLink: string | { [instance: string]: string };
 }
 

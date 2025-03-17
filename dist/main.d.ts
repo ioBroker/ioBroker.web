@@ -2,7 +2,7 @@ import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
-import type { WebAdapterConfig } from './types.d.ts';
+import type { LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
 import { Buffer } from 'buffer';
 export type Server = HttpServer | HttpsServer;
 export declare class WebAdapter extends Adapter {
@@ -39,7 +39,13 @@ export declare class WebAdapter extends Adapter {
     onReady(): Promise<void>;
     updatePreSettings(obj: ioBroker.InstanceObject): void;
     getExtensionsAndSettings(): Promise<ioBroker.InstanceObject[]>;
-    getListOfAllAdapters(req: Request): Promise<string>;
+    getListOfAllAdapters(remoteIp: string): Promise<{
+        systemLang: ioBroker.Languages;
+        showAdminInstances: boolean;
+        authEnabled: boolean;
+        list: LocalMultipleLinkEntry[];
+    }>;
+    getIndexHtml(req: Request): Promise<string>;
     /**
      * Transform pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
      *
@@ -65,7 +71,7 @@ export declare class WebAdapter extends Adapter {
      */
     sendRange(req: Request, res: Response, buffer: Buffer): void;
     getSocketIoFile(req: Request, res: Response, next: NextFunction | true): void;
-    isInWhiteList(req: Request): string;
+    isInWhiteList(req: Request | string): string;
     getFoldersOfObject(path: string | undefined): Promise<string[]>;
     processReadFolders(req: Request, res: Response): Promise<void>;
     getSocketUrl(obj?: ioBroker.InstanceObject, state?: ioBroker.State | null): Promise<void>;

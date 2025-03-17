@@ -21,6 +21,7 @@ import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserve
 
 import type { ExtAPI, LocalLinkEntry, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
 import { Buffer } from 'buffer';
+import { replaceLink } from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -127,7 +128,11 @@ function processOneWelcome(
     isPro: boolean,
     adapterObj: ioBroker.AdapterObject,
     foundInstanceIDs: `system.adapter.${string}.${number}`[],
-    list: LocalLinkEntry[],
+    instances: Record<`system.adapter.${string}.${number}`, ioBroker.InstanceObject>,
+    hosts: Record<`system.host.${string}`, ioBroker.HostObject>,
+    hostname: string,
+    webNamespace: string,
+    list: LocalMultipleLinkEntry[],
 ): void {
     let ws: {
         link: string;
@@ -173,26 +178,52 @@ function processOneWelcome(
         // link = '%protocol%://%bind%:%port%'
         localLink = ws.link;
     }
+    let hrefs: {
+        url: string;
+        port: number | undefined;
+        instance?: string;
+    }[] = [];
 
-    if (ws.localLink) {
-        if (foundInstanceIDs.length > 1) {
-            foundInstanceIDs.forEach((id: string): void => {
-                list.push({
-                    ...ws,
-                    localLink,
-                    name: ws.name,
-                    color: ws.color,
-                    pro: isPro,
-                    id: foundInstanceIDs[0],
-                    instance: parseInt(id.split('.').pop() || '', 10) || 0,
-                });
+    // Replace in localLink the patterns
+    if (adapterObj.type === 'adapter') {
+        foundInstanceIDs.forEach((id: string): void => {
+            const instance = parseInt(id.split('.').pop() || '0', 10);
+            const _hrefs = replaceLink(localLink, adapterObj.common.name, instance, {
+                hostname,
+                // it cannot be void
+                instances,
+                hosts,
+                adminInstance: webNamespace,
             });
-        } else {
-            list.push({ ...ws, localLink, pro: isPro, id: foundInstanceIDs[0] });
-        }
+            _hrefs.forEach(item => (item.instance = instance.toString()));
+            hrefs.push(..._hrefs);
+        });
     } else {
-        list.push({ ...ws, localLink, pro: isPro });
+        const instance = parseInt(adapterObj._id.split('.').pop() || '0', 10);
+        hrefs = replaceLink(localLink, adapterObj.common.name, parseInt(adapterObj._id.split('.').pop() || '0', 10), {
+            hostname,
+            // it cannot be void
+            instances,
+            hosts,
+            adminInstance: webNamespace,
+        });
+        hrefs.forEach(item => (item.instance = instance.toString()));
     }
+    hrefs.forEach(item => (item.url = item.url.replace(`//${hostname}:`, '//$host$:')));
+
+    hrefs.forEach(item => {
+        list.push({
+            name: ws.name,
+            img: ws.img,
+            link: ws.link.includes('%') ? item.url : ws.link,
+            localLink: item.url,
+            color: ws.color,
+            order: ws.order,
+            pro: isPro,
+            id: `system.adapter.${adapterObj.common.name}.${item.instance ? parseInt(item.instance, 10) || 0 : 0}`,
+            instance: item.instance ? parseInt(item.instance, 10) || 0 : 0,
+        });
+    });
 }
 
 function processWelcome(
@@ -200,7 +231,11 @@ function processWelcome(
     isPro: boolean,
     adapterObj: ioBroker.AdapterObject,
     foundInstanceIDs: `system.adapter.${string}.${number}`[],
-    list: LocalLinkEntry[],
+    instances: Record<`system.adapter.${string}.${number}`, ioBroker.InstanceObject>,
+    hosts: Record<`system.host.${string}`, ioBroker.HostObject>,
+    hostname: string,
+    webNamespace: string,
+    list: LocalMultipleLinkEntry[],
 ): void {
     if (welcomeScreen) {
         if (Array.isArray(welcomeScreen)) {
@@ -216,7 +251,17 @@ function processWelcome(
                 } else {
                     ws = welcomeScreen[w];
                 }
-                processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, list);
+                processOneWelcome(
+                    ws,
+                    isPro,
+                    adapterObj,
+                    foundInstanceIDs,
+                    instances,
+                    hosts,
+                    hostname,
+                    webNamespace,
+                    list,
+                );
             }
         } else {
             let ws: ioBroker.WelcomeScreenEntry;
@@ -230,7 +275,7 @@ function processWelcome(
             } else {
                 ws = welcomeScreen;
             }
-            processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, list);
+            processOneWelcome(ws, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list);
         }
     }
 }
@@ -703,12 +748,34 @@ export class WebAdapter extends Adapter {
         return res;
     }
 
-    async getListOfAllAdapters(req: Request): Promise<string> {
+    async getListOfAllAdapters(remoteIp: string): Promise<{
+        systemLang: ioBroker.Languages;
+        showAdminInstances: boolean;
+        authEnabled: boolean;
+        list: LocalMultipleLinkEntry[];
+    }> {
+        const config: {
+            systemLang: ioBroker.Languages;
+            showAdminInstances: boolean;
+            authEnabled: boolean;
+            list: LocalMultipleLinkEntry[];
+        } = {} as {
+            systemLang: ioBroker.Languages;
+            showAdminInstances: boolean;
+            authEnabled: boolean;
+            list: LocalMultipleLinkEntry[];
+        };
         // read all instances
         const instances = await this.getObjectViewAsync('system', 'instance', {});
         const adapters = await this.getObjectViewAsync('system', 'adapter', {});
+        const hosts = await this.getObjectViewAsync('system', 'host', {});
+        const webConfig = await this.getForeignObjectAsync(`system.adapter.${this.namespace}`);
         // The list will be filled up in processOneWelcome
         const list: LocalMultipleLinkEntry[] = [];
+        const mapHosts: Record<`system.host.${string}`, ioBroker.HostObject> = {};
+        for (let h = 0; h < hosts.rows.length; h++) {
+            mapHosts[hosts.rows[h].id] = hosts.rows[h].value;
+        }
         const mapInstances: Record<`system.adapter.${string}.${number}`, ioBroker.InstanceObject> = {};
         for (let r = 0; r < instances.rows.length; r++) {
             mapInstances[instances.rows[r].id] = instances.rows[r].value;
@@ -751,9 +818,13 @@ export class WebAdapter extends Adapter {
                                     // @ts-expect-error fixed in js-controller
                                     order: obj.common.localLinks[link].order,
                                 },
-                                obj.common.localLinks[link].pro,
+                                !!obj.common.localLinks[link].pro,
                                 obj,
                                 found,
+                                mapInstances,
+                                mapHosts,
+                                this.host!,
+                                this.namespace,
                                 list as LocalLinkEntry[],
                             );
                         }
@@ -761,19 +832,49 @@ export class WebAdapter extends Adapter {
                 }
 
                 try {
-                    processWelcome(obj.common.welcomeScreen, false, obj, found, list as LocalLinkEntry[]);
-                    processWelcome(obj.common.welcomeScreenPro, true, obj, found, list as LocalLinkEntry[]);
+                    processWelcome(
+                        obj.common.welcomeScreen,
+                        false,
+                        obj,
+                        found,
+                        mapInstances,
+                        mapHosts,
+                        this.host!,
+                        this.namespace,
+                        list,
+                    );
+                    processWelcome(
+                        obj.common.welcomeScreenPro,
+                        true,
+                        obj,
+                        found,
+                        mapInstances,
+                        mapHosts,
+                        this.host!,
+                        this.namespace,
+                        list,
+                    );
                 } catch (e) {
                     this.log.warn(`Cannot process welcome screen for "${obj._id}": ${e}`);
                 }
             }
         }
+        const sameHost = `${webConfig!.native.secure ? 'https' : 'http'}://$host$`;
+        const sameServer = `${webConfig!.native.secure ? 'https' : 'http'}://$host$:${webConfig!.native.port}/`;
 
-        if (!this.indexHtml && !existsSync(`${__dirname}/${wwwDir}/index.html`)) {
-            return `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`;
-        }
-
-        this.indexHtml ||= readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
+        list.forEach(item => {
+            item.link = item.link.replace(sameServer, '').replace(sameHost, '');
+            item.localLink = item.link.replace(sameServer, '').replace(sameHost, '');
+            if (item.name === 'Admin') {
+                item.link = 'admin/index.html';
+            }
+            if (!item.img?.includes('/') && item.id) {
+                // Add adapter prefix to the image: image.png => adapter/node-red/image.png
+                const parts = item.id.split('.');
+                parts.pop();
+                item.img = `adapter/${parts.pop()}/${item.img}`;
+            }
+        });
 
         // Remove duplicated entries
         const uniqueList = [];
@@ -788,6 +889,12 @@ export class WebAdapter extends Adapter {
             if (!found) {
                 uniqueList.push(link);
             }
+        }
+
+        // Remove admin/index.html from the list
+        const adminIndex = uniqueList.findIndex(item => item.localLink === 'admin/index.html');
+        if (adminIndex !== -1) {
+            uniqueList.splice(adminIndex, 1);
         }
 
         // calculate localLinks
@@ -866,17 +973,34 @@ export class WebAdapter extends Adapter {
             return 0;
         });
 
-        let text = `systemLang = "${this.lang}";\n`;
-        text += `list = ${JSON.stringify(uniqueList, null, 2)};\n`;
+        const whiteListIp = this.isInWhiteList(remoteIp);
 
-        const whiteListIp = this.isInWhiteList(req);
+        config.systemLang = this.lang;
+        config.showAdminInstances = !!this.config.showAdminInstances;
+        config.authEnabled = this.config.auth && !this.config.basicAuth && !whiteListIp;
+        config.list = uniqueList;
+        return config;
+    }
 
-        // if login
-        text += `let authEnabled = ${this.config.auth && !this.config.basicAuth && !whiteListIp};\n`;
+    async getIndexHtml(req: Request): Promise<string> {
+        const config = await this.getListOfAllAdapters(
+            (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString(),
+        );
 
-        text = `showAdminInstances = ${!!this.config.showAdminInstances};\n${text}`;
+        const lines = [
+            `showAdminInstances = ${config.showAdminInstances};`,
+            `systemLang = "${config.systemLang}";`,
+            `list = ${JSON.stringify(config.list, null, 2)};`,
+            // if login
+            `let authEnabled = ${config.authEnabled};`,
+        ];
 
-        return this.indexHtml.replace('// -- PLACE THE LIST HERE --', text);
+        if (!this.indexHtml && !existsSync(`${__dirname}/${wwwDir}/index.html`)) {
+            return `${__dirname}/${wwwDir}/index.html was not found or no access! Check the file or access rights or start the fixer: "curl -sL https://iobroker.net/fix.sh | bash -"`;
+        }
+        this.indexHtml ||= readFileSync(`${__dirname}/${wwwDir}/index.html`).toString();
+
+        return this.indexHtml.replace('// -- PLACE THE LIST HERE --', lines.join('\n'));
     }
 
     /**
@@ -1198,8 +1322,11 @@ export class WebAdapter extends Adapter {
         next();
     }
 
-    isInWhiteList(req: Request): string {
-        const remoteIp: string = (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString();
+    isInWhiteList(req: Request | string): string {
+        const remoteIp: string =
+            typeof req === 'string'
+                ? req
+                : (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString();
 
         if (!this.config.auth) {
             return remoteIp;
@@ -1985,6 +2112,15 @@ export class WebAdapter extends Adapter {
                 res.status(200).send(this.getInfoJs());
             });
 
+            this.webServer.app.get('/config.json', async (req: Request, res: Response): Promise<void> => {
+                res.set('Content-Type', 'application/javascript');
+                res.set('Cache-Control', 'no-cache');
+                const config = await this.getListOfAllAdapters(
+                    (req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString(),
+                );
+                res.status(200).send(JSON.stringify(config, null, 2));
+            });
+
             if (this.config.accessControlEnabled) {
                 this.webServer.app.use((req, res, next) => {
                     res.header(
@@ -2281,7 +2417,7 @@ export class WebAdapter extends Adapter {
                 this.log.debug('Activating web files from objectDB');
 
                 // deliver web files from objectDB
-                this.webServer.app.use('/', async (req: Request, res: Response): Promise<void> => {
+                this.webServer.app.use(async (req: Request, res: Response): Promise<void> => {
                     let url;
                     try {
                         url = decodeURI(req.url);
@@ -2305,6 +2441,7 @@ export class WebAdapter extends Adapter {
                         this.send404(res, url);
                         return;
                     }
+                    url = url.split('?')[0];
 
                     // If root directory requested
                     if (url === '/' || url === '/index.html') {
@@ -2312,19 +2449,37 @@ export class WebAdapter extends Adapter {
                             res.redirect(301, this.config.defaultRedirect);
                             return;
                         }
-                        this.getListOfAllAdapters(req)
-                            .then(data =>
+                        this.getIndexHtml(req)
+                            .then(html =>
                                 res
                                     .set('Content-Type', 'text/html')
                                     .set('Cache-Control', 'no-cache')
                                     .status(200)
-                                    .send(data),
+                                    .send(html),
                             )
                             .catch(err =>
                                 res
                                     .status(500)
                                     .send(`500. Error${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`),
                             );
+                        return;
+                    } else if (url === '/logo.svg') {
+                        res.set('Content-Type', 'image/svg+xml')
+                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .status(200)
+                            .send(readFileSync(`${__dirname}/${wwwDir}${url}`));
+                        return;
+                    } else if (url === '/favicon.ico') {
+                        res.set('Content-Type', 'image/x-icon')
+                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .status(200)
+                            .send(readFileSync(`${__dirname}/${wwwDir}${url}`));
+                        return;
+                    } else if (url === '/manifest.json') {
+                        res.set('Content-Type', 'application/json')
+                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .status(200)
+                            .send(readFileSync(`${__dirname}/${wwwDir}${url}`));
                         return;
                     }
 
