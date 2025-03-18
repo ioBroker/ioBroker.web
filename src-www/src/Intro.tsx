@@ -288,7 +288,7 @@ class Intro extends Component<object, LoginState> {
                     xl: 2,
                 }}
                 sx={Utils.getStyle(this.state.theme, styles.root)}
-                style={{ maxWidth: 500, width: '100%' }}
+                style={{ maxWidth: 350, width: '100%' }}
             >
                 <Link
                     href={item.link}
@@ -315,7 +315,7 @@ class Intro extends Component<object, LoginState> {
                         <CardActions style={styles.action}>
                             <Box
                                 sx={styles.colorOrange}
-                                style={{ flexGrow: 1 }}
+                                style={{ flexGrow: 1, textAlign: 'center' }}
                             >
                                 {item.name}
                             </Box>
