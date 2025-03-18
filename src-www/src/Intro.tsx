@@ -192,7 +192,8 @@ class Intro extends Component<object, LoginState> {
                 for (let i = 0; i < config.list.length; i++) {
                     if (
                         typeof config.list[i] === 'object' &&
-                        (config.showAdminInstances || config.list[i].localLink !== config.list[i].link)
+                        typeof config.list[i].localLink === 'string' &&
+                        (config.showAdminInstances || !(config.list[i].localLink as string).includes(':'))
                     ) {
                         if (config.list[i].localLink && typeof config.list[i].localLink === 'string') {
                             config.list[i].link = (config.list[i].localLink as string).replace(
@@ -200,6 +201,10 @@ class Intro extends Component<object, LoginState> {
                                 location.hostname,
                             );
                         }
+                        if (config.list[i].link.startsWith(':')) {
+                            config.list[i].link = `${location.protocol}//${location.hostname}${config.list[i].link}`;
+                        }
+
                         let name = config.list[i].name || config.list[i].localLink;
                         if (typeof name === 'object') {
                             name = name[config.systemLang] || name.en;
@@ -379,7 +384,7 @@ class Intro extends Component<object, LoginState> {
                             display: 'flex',
                             flexFlow: 'wrap',
                             overflow: 'auto',
-                            justifyContent: 'left',
+                            justifyContent: 'center',
                             width: 'calc(100% - 1rem)',
                             height: 'calc(100% - 1rem - 64px)',
                             marginTop: 64,

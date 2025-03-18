@@ -139,9 +139,19 @@ function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, i
             localLink = ws.localLinks;
         }
     }
-    else if (ws.localLink?.toString() === 'true' && adapterObj.common.localLink) {
-        // localLink = true
-        localLink = adapterObj.common.localLink;
+    else if (ws.localLink?.toString() === 'true') {
+        if (adapterObj.common.localLink) {
+            localLink = adapterObj.common.localLink;
+        }
+        else if (typeof adapterObj.common.localLinks?._default === 'string') {
+            localLink = adapterObj.common.localLinks._default;
+        }
+        else if (typeof adapterObj.common.localLinks?._default === 'object') {
+            localLink = adapterObj.common.localLinks._default.link;
+        }
+        else {
+            localLink = '';
+        }
     }
     else if (ws.localLink) {
         // localLink = '%protocol%://%bind%:%port%'
