@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.7",
+    "version": "7.0.8",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.8": {
+        "en": "Added settings for custom CORS headers\nAdded the possibility to show admin instances on the web welcome page\nImplemented the new index page",
+        "de": "Einstellungen für benutzerdefinierte CORS-Header hinzugefügt\nHinzugefügt die Möglichkeit, Admin-Instanzen auf der Web Willkommensseite anzeigen\nImplementiert die neue Indexseite",
+        "ru": "Добавлены настройки для пользовательских заголовков CORS\nДобавлена возможность показывать примеры администратора на веб-странице приветствия\nВнедрение новой индексной страницы",
+        "pt": "Configurações adicionadas para cabeçalhos CORS personalizados\nAdicionado a possibilidade de mostrar instâncias admin na página de boas-vindas da web\nImplementação da nova página de índice",
+        "nl": "Instellingen toegevoegd voor aangepaste CORS-koppen\nToegevoegd de mogelijkheid om admin instanties te tonen op de web welkomstpagina\nDe nieuwe indexpagina geïmplementeerd",
+        "fr": "Ajout de paramètres pour les en-têtes CORS personnalisés\nAjout de la possibilité d'afficher des instances administratives sur la page de bienvenue web\nMise en œuvre de la nouvelle page d'index",
+        "it": "Impostazioni aggiuntive per intestazioni CORS personalizzate\nAggiunto la possibilità di mostrare le istanze di amministratore sulla pagina web di benvenuto\nImplementato la nuova pagina indice",
+        "es": "Ajustes adicionales para los encabezados de CORS personalizados\nAñadido la posibilidad de mostrar instancias de administración en la página de bienvenida web\nAplicación de la nueva página de índice",
+        "pl": "Dodano ustawienia dla własnych nagłówków CORS\nDodano możliwość pokazania instancji admin na stronie powitania\nWdrożenie nowej strony indeksu",
+        "uk": "Додано налаштування для користувальницьких заголовків CORS\nДодано можливість показувати екземпляри адміністратора на сторінці веб-вітання\nРеалізовано нову сторінку індексу",
+        "zh-cn": "为自定义的 CORS 信头添加了设置\n增加了在欢迎网页上显示管理实例的可能性\n已执行新的索引页"
+      },
       "7.0.7": {
         "en": "Trying to catch an error by the web extension",
         "de": "Versuchen, einen Fehler durch die Web-Erweiterung zu fangen",
@@ -93,19 +106,6 @@
         "pl": "Poprawione wywołanie getObject Widok z parametrem null\nzaktualizowane pakiety\nInterfejs GUI został przeniesiony na niestylowe ramy",
         "uk": "Виправлений виклик getObject Перегляд з параметром null\nоновлені пакети\nГрафічний інтерфейс був мігрований в рамкову рамку",
         "zh-cn": "已更正的调取对象 以无效参数查看\n更新软件包\nGUI 已迁移到非样式框架"
-      },
-      "6.2.6": {
-        "en": "Preparations for a custom loading background\nupdated packages",
-        "de": "Vorbereitungen für einen benutzerdefinierten Ladehintergrund\naktualisierte pakete",
-        "ru": "Подготовка к настраиваемой загрузке\nобновления пакетов",
-        "pt": "Preparações para um fundo de carregamento personalizado\npacotes atualizados",
-        "nl": "Voorbereidingen voor een aangepaste laadachtergrond\nbijgewerkte pakketten",
-        "fr": "Préparations pour un fond de chargement personnalisé\npaquets mis à jour",
-        "it": "Preparazioni per uno sfondo di caricamento personalizzato\npacchetti aggiornati",
-        "es": "Preparaciones para un fondo de carga personalizado\npaquetes actualizados",
-        "pl": "Preparaty do samodzielnego załadunku tła\nzaktualizowane pakiety",
-        "uk": "Підготовка до індивідуального завантаження фону\nоновлені пакети",
-        "zh-cn": "自定义加载背景的准备工作\n更新软件包"
       }
     },
     "desc": {

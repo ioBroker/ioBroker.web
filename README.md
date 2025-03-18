@@ -104,7 +104,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.0.8 (2025-03-18)
 * (@GermanBluefox) Added settings for custom CORS headers
 * (@GermanBluefox) Added the possibility to show admin instances on the web welcome page
 * (@GermanBluefox) Implemented the new index page
