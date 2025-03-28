@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.8",
+    "version": "7.0.9",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "7.0.9": {
+        "en": "Corrected the loading of the material adapter",
+        "de": "Korrektur der Beladung des Materialadapters",
+        "ru": "Исправлена загрузка адаптера материала",
+        "pt": "Corrigido o carregamento do adaptador de material",
+        "nl": "De belasting van de materiaaladapter gecorrigeerd",
+        "fr": "Correction du chargement de l'adaptateur de matériau",
+        "it": "Corretto il carico dell'adattatore del materiale",
+        "es": "Corregido la carga del adaptador de material",
+        "pl": "Naprawiono załadunek adaptera materialnego",
+        "uk": "Виправлено завантаження адаптера матеріалу",
+        "zh-cn": "修正了材料适配器的装载"
+      },
       "7.0.8": {
         "en": "Added settings for custom CORS headers\nAdded the possibility to show admin instances on the web welcome page\nImplemented the new index page",
         "de": "Einstellungen für benutzerdefinierte CORS-Header hinzugefügt\nHinzugefügt die Möglichkeit, Admin-Instanzen auf der Web Willkommensseite anzeigen\nImplementiert die neue Indexseite",
@@ -93,19 +106,6 @@
         "pl": "dodano nową ikonę administratora (svg)",
         "uk": "додано нову іконку адміністратора (снд)",
         "zh-cn": "添加新管理员图标( svg)"
-      },
-      "6.3.0": {
-        "en": "Corrected call of getObjectView with null parameter\nupdated packages\nGUI was migrated to non-style framework",
-        "de": "Korrigierter Anruf von getObject Ansicht mit Null-Parameter\naktualisierte pakete\nGUI wurde zu nicht-style-Framework migriert",
-        "ru": "Исправленный звонок getObject Просмотр с нулевым параметром\nобновления пакетов\nGUI был перенесен в рамки, не связанные с стилем",
-        "pt": "Chamada correta de getObject Ver com parâmetro nulo\npacotes atualizados\nGUI foi migrado para o framework não-estilo",
-        "nl": "Gecorrigeerde aanroep van getObject Beeld met nul parameter\nbijgewerkte pakketten\nGUI is gemigreerd naar non-style framework",
-        "fr": "Appel corrigé de getObject Affichage avec paramètre null\npaquets mis à jour\nL'interface graphique a été migrée vers un cadre non style",
-        "it": "Chiamata corretta di getObject Visualizza con parametro null\npacchetti aggiornati\nGUI è stata migrata al framework non-stile",
-        "es": "Llamada corregida de getObject Ver con parámetro null\npaquetes actualizados\nGUI was migrated to non-style framework",
-        "pl": "Poprawione wywołanie getObject Widok z parametrem null\nzaktualizowane pakiety\nInterfejs GUI został przeniesiony na niestylowe ramy",
-        "uk": "Виправлений виклик getObject Перегляд з параметром null\nоновлені пакети\nГрафічний інтерфейс був мігрований в рамкову рамку",
-        "zh-cn": "已更正的调取对象 以无效参数查看\n更新软件包\nGUI 已迁移到非样式框架"
       }
     },
     "desc": {

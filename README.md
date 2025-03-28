@@ -104,7 +104,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
-### **WORK IN PROGRESS**
+### 7.0.9 (2025-03-28)
 * (@GermanBluefox) Corrected the loading of the material adapter
 
 ### 7.0.8 (2025-03-18)

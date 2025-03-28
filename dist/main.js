@@ -1230,7 +1230,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             */
             // replace socket.io
             this.webServer.app.use((req, res, next) => this.getSocketIoFile(req, res, next));
-            this.webServer.app.use((req, res, next) => {
+            this.webServer.app.use((req, _res, next) => {
                 if (req.url.includes('/socket.io/')) {
                     req.url = req.url.replace(/.*\/socket.io\//, '/socket.io/');
                 }
