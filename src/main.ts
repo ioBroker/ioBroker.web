@@ -1508,6 +1508,13 @@ export class WebAdapter extends Adapter {
                 this.getSocketIoFile(req, res, next),
             );
 
+            this.webServer.app.use((req: Request, _res: Response, next: NextFunction): void => {
+                if (req.url.includes('/socket.io/')) {
+                    req.url = req.url.replace(/.*\/socket.io\//, '/socket.io/');
+                }
+                next();
+            });
+
             // special end point for vis
             this.webServer.app.get(
                 '/visProjects',
@@ -2509,7 +2516,7 @@ export class WebAdapter extends Adapter {
                     urlParts.shift();
                     // Get ID
                     const id = urlParts.shift() || '';
-                    const versionPrefix = url[0];
+                    const versionPrefix = urlParts[0];
                     url = urlParts.join('/');
                     const pos = url.indexOf('?');
                     let noFileCache;
@@ -2520,7 +2527,7 @@ export class WebAdapter extends Adapter {
                     }
 
                     // get adapter name
-                    if (this.webByVersion[id]) {
+                    if (this.webByVersion[id] && !url.startsWith('socket.io/')) {
                         if (!versionPrefix || !versionPrefix.match(/^\d+\.\d+.\d+$/)) {
                             // redirect to version
                             res.set('location', `/${id}/${this.webByVersion[id]}/${url}`);
@@ -2529,7 +2536,7 @@ export class WebAdapter extends Adapter {
                         }
                     }
 
-                    if (this.config.cache && this.cache[`${id}/${url}`] && !noFileCache) {
+                    if (this.cache?.[`${id}/${url}`] && !noFileCache) {
                         res.contentType(this.cache[`${id}/${url}`].mimeType);
                         if (req.headers.range) {
                             this.sendRange(req, res, this.cache[`${id}/${url}`].buffer);
