@@ -22,7 +22,7 @@
     "@iobroker/adapter-core": "^3.2.3",
     "@iobroker/i18n": "^0.3.1",
     "@iobroker/webserver": "^1.2.0",
-    "body-parser": "^1.20.3",
+    "body-parser": "^2.2.0",
     "compression": "^1.8.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
