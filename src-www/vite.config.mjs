@@ -1,13 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { viteSingleFile } from 'vite-plugin-singlefile';
+// import { viteSingleFile } from 'vite-plugin-singlefile';
 
 export default defineConfig(() => {
     return {
         build: {
             outDir: 'build',
         },
-        plugins: [react(), viteSingleFile()],
+        // Because of the cloud, the single file plugin is disabled as the file is too big
+        plugins: [react() /*, viteSingleFile() */],
         base: './',
         server: {
             port: 3000,

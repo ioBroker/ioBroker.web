@@ -661,7 +661,7 @@ export class WebAdapter extends Adapter {
             (uuid?.native?.uuid?.length > 36 ? uuid!.native.uuid.substring(0, 2) : '');
 
         // information about connected socket.io adapter
-        if (this.config.socketio?.match(/^system\.adapter\./)) {
+        if (this.config.socketio?.startsWith('system.adapter.')) {
             await this.getSocketUrl();
             // Listen for changes
             await this.subscribeForeignObjectsAsync(this.config.socketio);
@@ -1411,7 +1411,7 @@ export class WebAdapter extends Adapter {
     }
 
     async getSocketUrl(obj?: ioBroker.InstanceObject, state?: ioBroker.State | null): Promise<void> {
-        if (this.config.socketio?.match(/^system\.adapter\./)) {
+        if (this.config.socketio?.startsWith('system.adapter.')) {
             const socketInstance: ioBroker.InstanceObject | undefined =
                 obj ||
                 ((await this.getForeignObjectAsync(this.config.socketio)) as ioBroker.InstanceObject | undefined) ||
@@ -2500,15 +2500,18 @@ export class WebAdapter extends Adapter {
                     // add index.html
                     url = url.replace(/\/($|\?|#)/, '/index.html$1');
 
-                    if (url.match(/^\/adapter\//)) {
+                    if (url.startsWith('/adapter/')) {
                         // add .admin to adapter name
                         url = url.replace(/^\/adapter\/([a-zA-Z0-9-_]+)\//, '/$1.admin/');
                     }
 
-                    if (url.match(/^\/lib\//)) {
+                    if (url.startsWith('/lib/')) {
                         url = `/${this.name}${url}`;
                     }
-                    if (url.match(/^\/admin\//)) {
+                    if (url.startsWith('/assets/')) {
+                        url = `/${this.name}${url}`;
+                    }
+                    if (url.startsWith('/admin/')) {
                         url = `/${this.name}${url}`;
                     }
                     const urlParts: string[] = url.split('/');
