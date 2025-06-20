@@ -1278,7 +1278,7 @@ export class WebAdapter extends Adapter {
                 if (existsSync(`${__dirname}/${wwwDir}/lib/js/ws.js`)) {
                     file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 } else {
-                    const pathToFile = require.resolve(`iobroker.ws`);
+                    const pathToFile = require.resolve('iobroker.ws');
                     file = join(dirname(pathToFile), '/lib/socket.io.js');
                 }
                 this.socketIoFile = readFileSync(file);
