@@ -1,10 +1,10 @@
 {
-  "cannotGetAccessToken": "Impossibile ottenere il token di accesso",
-  "enterLogin": "Nome di accesso",
-  "enterPassword": "Password",
-  "login": "Login",
-  "loginTitle": "Accesso Web",
-  "ra_Change color theme": "Cambia tema colore",
-  "staySignedIn": "Rimani connesso",
-  "wrongPassword": "Password o nome utente errati"
+    "cannotGetAccessToken": "Impossibile ottenere il token di accesso",
+    "enterLogin": "Nome di accesso",
+    "enterPassword": "Password",
+    "login": "Login",
+    "loginTitle": "Accesso Web",
+    "ra_Change color theme": "Cambia tema colore",
+    "staySignedIn": "Rimani connesso",
+    "wrongPassword": "Password o nome utente errati"
 }
