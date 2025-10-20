@@ -17,3 +17,6 @@ package-lock.json
 /www/lib/js/ws.js
 *.tgz
 .DS_Store
+
+#ignore .commitinfo created by ioBroker release script
+.commitinfo
