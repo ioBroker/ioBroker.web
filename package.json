@@ -31,7 +31,7 @@
     "express-session": "^1.18.1",
     "iobroker.socketio": "^7.0.8",
     "iobroker.ws": "^3.0.19",
-    "mime-types": "^2.1.35",
+    "mime-types": "^3.0.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "xtend": "^4.0.2"
