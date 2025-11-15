@@ -1,8 +1,8 @@
 {
-  "Directory": "Довідник",
-  "File %s not found": "Файл %s не знайдено",
-  "File Name": "Ім'я файлу",
-  "File Size": "Розмір файлу",
-  "Go to Homepage": "Перейти на домашню сторінку",
-  "Refresh": "Оновити"
+    "Directory": "Довідник",
+    "File %s not found": "Файл %s не знайдено",
+    "File Name": "Ім'я файлу",
+    "File Size": "Розмір файлу",
+    "Go to Homepage": "Перейти на домашню сторінку",
+    "Refresh": "Оновити"
 }

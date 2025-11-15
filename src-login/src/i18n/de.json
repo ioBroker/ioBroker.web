@@ -1,10 +1,10 @@
 {
-  "cannotGetAccessToken": "Zugriffstoken kann nicht abgerufen werden",
-  "enterLogin": "Anmeldename",
-  "enterPassword": "Passwort",
-  "login": "Einloggen",
-  "loginTitle": "Web-Anmeldung",
-  "ra_Change color theme": "Farbdesign ändern",
-  "staySignedIn": "Angemeldet bleiben",
-  "wrongPassword": "Falsches Passwort oder falscher Benutzername"
+    "cannotGetAccessToken": "Zugriffstoken kann nicht abgerufen werden",
+    "enterLogin": "Anmeldename",
+    "enterPassword": "Passwort",
+    "login": "Einloggen",
+    "loginTitle": "Web-Anmeldung",
+    "ra_Change color theme": "Farbdesign ändern",
+    "staySignedIn": "Angemeldet bleiben",
+    "wrongPassword": "Falsches Passwort oder falscher Benutzername"
 }
