@@ -9,13 +9,14 @@ export default [
                     allowDefaultProject: ['*.mjs'],
                 },
                 tsconfigRootDir: import.meta.dirname,
-                project: './tsconfig.json',
             },
         },
     },
     {
         ignores: [
             'src-admin/**/*',
+            'src-login/**/*',
+            'src-www/**/*',
             'admin/**/*',
             'node_modules/**/*',
             'test/**/*',

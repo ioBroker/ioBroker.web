@@ -677,7 +677,6 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 link: obj.common.localLinks[link].link,
                                 img: obj.common.localLinks[link].icon || obj.common.icon || '',
                                 color: obj.common.localLinks[link].color || obj.common.color || '',
-                                // @ts-expect-error fixed in js-controller
                                 order: obj.common.localLinks[link].order,
                             }, !!obj.common.localLinks[link].pro, obj, found, mapInstances, mapHosts, this.host, this.namespace, list);
                         }
@@ -1031,7 +1030,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 }
                 else {
-                    const pathToFile = require.resolve(`iobroker.ws`);
+                    const pathToFile = require.resolve('iobroker.ws');
                     file = (0, node_path_1.join)((0, node_path_1.dirname)(pathToFile), '/lib/socket.io.js');
                 }
                 this.socketIoFile = (0, node_fs_1.readFileSync)(file);
@@ -2172,7 +2171,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 this.send404(res, url, typeof error !== 'string' ? JSON.stringify(error) : error);
                             }
                             else {
-                                result.mimeType = result.mimeType || (0, mime_types_1.lookup)(url) || 'application/javascript';
+                                result.mimeType ||= (0, mime_types_1.lookup)(url) || 'application/javascript';
                                 // replace some important variables in HTML
                                 if (url === 'index.html' || url === 'edit.html') {
                                     result.file = await this.modifyIndexHtml(result.file.toString('utf8'));

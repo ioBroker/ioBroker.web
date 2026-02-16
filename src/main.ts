@@ -19,7 +19,7 @@ import type { IOSocketClass } from 'iobroker.ws';
 import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/socket-classes';
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
-import type { ExtAPI, LocalLinkEntry, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
+import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
 import { Buffer } from 'buffer';
 import { replaceLink } from './lib/utils';
 
@@ -822,7 +822,6 @@ export class WebAdapter extends Adapter {
                                     link: obj.common.localLinks[link].link,
                                     img: obj.common.localLinks[link].icon || obj.common.icon || '',
                                     color: obj.common.localLinks[link].color || obj.common.color || '',
-                                    // @ts-expect-error fixed in js-controller
                                     order: obj.common.localLinks[link].order,
                                 },
                                 !!obj.common.localLinks[link].pro,
@@ -832,7 +831,7 @@ export class WebAdapter extends Adapter {
                                 mapHosts,
                                 this.host!,
                                 this.namespace,
-                                list as LocalLinkEntry[],
+                                list,
                             );
                         }
                     }
@@ -2605,8 +2604,8 @@ export class WebAdapter extends Adapter {
                                 req.url.endsWith('/')
                             ) {
                                 url = url.replace(/\/?index.html$/, '');
-                                // show folder index
 
+                                // show folder index
                                 const path: string =
                                     this.webByVersion[id] && versionPrefix
                                         ? url.substring(versionPrefix.length + 1)
@@ -2674,7 +2673,7 @@ export class WebAdapter extends Adapter {
                                 res.contentType('text/html');
                                 this.send404(res, url, typeof error !== 'string' ? JSON.stringify(error) : error);
                             } else {
-                                result.mimeType = result.mimeType || lookup(url) || 'application/javascript';
+                                result.mimeType ||= lookup(url) || 'application/javascript';
 
                                 // replace some important variables in HTML
                                 if (url === 'index.html' || url === 'edit.html') {
