@@ -1907,6 +1907,10 @@ class WebAdapter extends adapter_core_1.Adapter {
                 const parts = filePath.split('/');
                 parts.pop(); // main.js
                 if (filePath.replace(/\\/g, '/').endsWith('/build/main.js')) {
+                    path += '/build/lib/socket.js';
+                }
+                else if (filePath.replace(/\\/g, '/').endsWith('/dist/main.js')) {
+                    // 2026.02.17 TODO: remove it after some time, because we will not publish dist anymore
                     path += '/dist/lib/socket.js';
                 }
                 else {

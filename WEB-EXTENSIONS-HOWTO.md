@@ -134,7 +134,7 @@ module.exports = ExtensionExample;
 ## Examples
 Following adapters support web-extensions:
 - Cameras: https://github.com/ioBroker/ioBroker.cameras/blob/master/lib/web.js
-- Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/dist/lib/SimpleAPI.js#L73
+- Simple-api: https://github.com/ioBroker/ioBroker.simple-api/blob/master/build/lib/SimpleAPI.js#L73
 - Proxy: https://github.com/ioBroker/ioBroker.proxy/blob/master/lib/proxy.js#L20
 - Eufy-Security: https://github.com/bropat/ioBroker.eufy-security/blob/master/src/lib/web.ts (Typescript-implementation)
 - REST-API: https://github.com/ioBroker/ioBroker.rest-api/blob/master/src/lib/rest-api.js#L67
