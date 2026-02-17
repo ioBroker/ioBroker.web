@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "7.0.9",
+    "version": "8.0.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "8.0.0": {
+        "en": "Updated packages. Minimal Node.js version is now 20.0.0\nRemoved binary states\nAdded possibility to write values via `/state/` endpoint with `POST`",
+        "de": "Aktualisierte Pakete. Minimal Node.js Version ist jetzt 20.0.0\nEntfernte binäre Zustände\nMöglichkeit zum Schreiben von Werten über `/state/` Endpoint mit `POST`",
+        "ru": "Обновленные пакеты. Минимальная версия Node.js теперь 20.0.0\nУдаленные бинарные состояния\nДобавлена возможность записи значений через \"/state/\" конечную точку с \"POST\"",
+        "pt": "Pacotes actualizados. Versão mínima Node.js é agora 20.0.0\nEstado binário removido\nAdicionada possibilidade de escrever valores através de `/state/` endpoint com `POST`",
+        "nl": "Bijgewerkte pakketten. Minimale Node.js versie is nu 20.0.0\nBinaire toestanden verwijderd\nToegevoegde mogelijkheid om waarden te schrijven via het eindpunt van de staat of de staat met het doel van de POST",
+        "fr": "Mise à jour des paquets. La version Minimal Node.js est maintenant 20.0.0\nÉtats binaires supprimés\nAjout de la possibilité d'écrire des valeurs via le paramètre `/state/` avec `POST`",
+        "it": "Pacchetti aggiornati. La versione Minimal Node.js è ora 20.0.0\nStati binari rimossi\nAggiunta possibilità di scrivere valori tramite `/state/` endpoint con `POST`",
+        "es": "Paquetes actualizados. Minimal Node.js versión es ahora 20.0.0\nEstados binarios eliminados\nSe agregó la posibilidad de escribir valores a través del punto final `/estado/` con `POST`",
+        "pl": "Aktualizacja pakietów. Minimal Node.js wersja jest teraz 20.0.0\nUsunięte stany binarne\nDodano możliwość zapisu wartości przez '/ stan /' punkt końcowy z 'POST'",
+        "uk": "Оновлені пакети. Версія Minimal Node.js тепер 20.0.0\nВилучені бінарні штати\nДодано можливість написати значення через `/state/` endpoint з `POST`",
+        "zh-cn": "更新的软件包 。 最小节点.js版本现在是20.0.0\n删除二进制状态\n增加通过`/状态/ ' 结尾写入“POST”值的可能性"
+      },
       "7.0.9": {
         "en": "Corrected the loading of the material adapter",
         "de": "Korrektur der Beladung des Materialadapters",
@@ -93,19 +106,6 @@
         "pl": "Naprawiono problem z prawami użytkownika",
         "uk": "Виправлено проблему з правами користувачів",
         "zh-cn": "纠正了用户权利的问题"
-      },
-      "6.3.1": {
-        "en": "added new admin icon (svg)",
-        "de": "neues admin-symbol (svg) hinzugefügt",
-        "ru": "добавлена новая иконка администратора (svg)",
-        "pt": "adicionado novo ícone de administrador (svg)",
-        "nl": "nieuw admin-pictogram toevoegen (svg)",
-        "fr": "ajout d'une nouvelle icône d'administration (svg)",
-        "it": "aggiunta nuova icona di amministratore (svg)",
-        "es": "nuevo icono de administración (svg)",
-        "pl": "dodano nową ikonę administratora (svg)",
-        "uk": "додано нову іконку адміністратора (снд)",
-        "zh-cn": "添加新管理员图标( svg)"
       }
     },
     "desc": {
