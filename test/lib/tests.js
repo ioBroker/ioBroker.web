@@ -242,16 +242,17 @@ const tests = (protocol, port) => ({
         this.timeout(4000);
         // First POST a value
         axios
-            .post(`${protocol}://localhost:${port}/state/system.adapter.web.0.alive`, 'true', {
+            .post(`${protocol}://localhost:${port}/state/system.adapter.web.0.cpu`, '180', {
                 headers: { 'Content-Type': 'text/plain' },
             })
             .then(response => {
                 assert.strictEqual(response.status, 200);
                 // Then GET the value to verify it was set
-                return axios(`${protocol}://localhost:${port}/state/system.adapter.web.0.alive`);
+                return axios(`${protocol}://localhost:${port}/state/system.adapter.web.0.cpu`);
             })
             .then(response => {
                 assert.strictEqual(response.status, 200);
+                assert.strictEqual(response.data, 180);
                 done();
             })
             .catch(error => assert.ok(!error));
