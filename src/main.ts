@@ -2142,7 +2142,7 @@ export class WebAdapter extends Adapter {
                 });
             }
 
-            this.webServer.app.get('*/_socket/info.js', (req: Request, res: Response): void => {
+            this.webServer.app.get(/.*\/_socket\/info\.js/, (req: Request, res: Response): void => {
                 res.set('Content-Type', 'application/javascript');
                 res.set('Cache-Control', 'no-cache');
                 res.status(200).send(this.getInfoJs());

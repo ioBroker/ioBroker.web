@@ -1658,17 +1658,17 @@ class WebAdapter extends adapter_core_1.Adapter {
             if (!this.config.disableStates) {
                 this.log.debug('Activating states & socket info');
                 // Init read from states
-                this.webServer.app.get('/state/*', async (req, res) => {
+                this.webServer.app.get('/state/:stateId', async (req, res) => {
                     try {
-                        const stateName = req.url.split('/', 3)[2].split('?', 2);
-                        const obj = await this.getForeignObjectAsync(stateName[0], {
+                        const stateName = req.params.stateId;
+                        const obj = await this.getForeignObjectAsync(stateName, {
                             user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
                         });
                         if (!obj) {
-                            this.send404(res, stateName[0]);
+                            this.send404(res, stateName);
                         }
                         else {
-                            const state = await this.getForeignStateAsync(stateName[0], {
+                            const state = await this.getForeignStateAsync(stateName, {
                                 user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
                             });
                             if (state !== null && state !== undefined) {
@@ -1688,7 +1688,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 }
                             }
                             else {
-                                this.send404(res, stateName[0]);
+                                this.send404(res, stateName);
                             }
                         }
                     }
@@ -1696,14 +1696,18 @@ class WebAdapter extends adapter_core_1.Adapter {
                         res.status(500).send(`500. Error${e}`);
                     }
                 });
-                this.webServer.app.post('/state/*', async (req, res) => {
+                this.webServer.app.post('/state/:stateId', async (req, res) => {
                     try {
-                        const stateName = req.url.split('/', 3)[2].split('?', 2);
-                        const obj = await this.getForeignObjectAsync(stateName[0], {
+                        const stateName = req.params.stateId;
+                        if (!stateName.trim()) {
+                            res.status(422).send(`NO state found`);
+                            return;
+                        }
+                        const obj = await this.getForeignObjectAsync(stateName, {
                             user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
                         });
                         if (!obj) {
-                            this.send404(res, stateName[0]);
+                            this.send404(res, stateName);
                         }
                         else {
                             // Read post
@@ -1736,8 +1740,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         data.val === 'AN' ||
                                         data.val === 'an';
                             }
-                            await this.setForeignStateAsync(stateName[0], data);
-                            res.status(200).send({ id: stateName[0] });
+                            await this.setForeignStateAsync(stateName, data);
+                            res.status(200).send({ id: stateName });
                         }
                     }
                     catch (e) {
@@ -1745,7 +1749,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     }
                 });
             }
-            this.webServer.app.get('*/_socket/info.js', (req, res) => {
+            this.webServer.app.get(/.*\/_socket\/info\.js/, (req, res) => {
                 res.set('Content-Type', 'application/javascript');
                 res.set('Cache-Control', 'no-cache');
                 res.status(200).send(this.getInfoJs());
