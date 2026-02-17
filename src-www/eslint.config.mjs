@@ -14,7 +14,7 @@ export default [
         languageOptions: {
             parserOptions: {
                 projectService: {
-                    allowDefaultProject: ['*.mjs'],
+                    allowDefaultProject: ['*.mjs', 'vite.config.mjs'],
                 },
                 tsconfigRootDir: import.meta.dirname,
             },

@@ -6,14 +6,6 @@ admin/i18n/*/flat.txt
 admin/i18n/flat.txt
 admin/i18n/*/translations.json
 iob_npm.done
-package-lock.json
-/lib/socketIO.js
-/lib/socket.js
-/lib/socketWS.js
-/lib/socketCommands.js
-/lib/socketCommon.js
-/lib/ws.js
-/lib/passportSocket.js
 /www/lib/js/ws.js
 *.tgz
 .DS_Store

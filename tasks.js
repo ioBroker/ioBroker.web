@@ -57,10 +57,10 @@ if (process.argv.includes('--www')) {
         process.exit(2);
     });
 } else if (process.argv.includes('--5-post-backend')) {
-    if (!existsSync(`${__dirname}/dist`)) {
-        mkdirSync(`${__dirname}/dist`);
+    if (!existsSync(`${__dirname}/build`)) {
+        mkdirSync(`${__dirname}/build`);
     }
-    copyFiles(['src/i18n/**/*'], 'dist/i18n/');
+    copyFiles(['src/i18n/**/*'], 'build/i18n/');
 } else {
     deleteFoldersRecursive('admin', ['web.png', 'web.svg']);
     deleteFoldersRecursive('src-admin/build');

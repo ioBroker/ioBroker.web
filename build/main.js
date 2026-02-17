@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebAdapter = void 0;
+exports.readBodyAsync = readBodyAsync;
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
 const express_session_1 = __importDefault(require("express-session"));
@@ -270,6 +271,22 @@ function extractPreSetting(obj, attr) {
         return extractPreSetting(obj[attr], parts.join('.'));
     }
     return null;
+}
+async function readBodyAsync(req, options) {
+    const limit = options?.limit ?? 1_000_000;
+    const chunks = [];
+    let length = 0;
+    for await (const chunk of req) {
+        const buf = buffer_1.Buffer.isBuffer(chunk) ? chunk : buffer_1.Buffer.from(chunk);
+        length += buf.length;
+        if (length > limit) {
+            const err = new Error('Payload Too Large');
+            err.code = 'PAYLOAD_TOO_LARGE';
+            throw err;
+        }
+        chunks.push(buf);
+    }
+    return buffer_1.Buffer.concat(chunks);
 }
 class WebAdapter extends adapter_core_1.Adapter {
     indexHtml = '';
@@ -677,7 +694,6 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 link: obj.common.localLinks[link].link,
                                 img: obj.common.localLinks[link].icon || obj.common.icon || '',
                                 color: obj.common.localLinks[link].color || obj.common.color || '',
-                                // @ts-expect-error fixed in js-controller
                                 order: obj.common.localLinks[link].order,
                             }, !!obj.common.localLinks[link].pro, obj, found, mapInstances, mapHosts, this.host, this.namespace, list);
                         }
@@ -1031,7 +1047,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 }
                 else {
-                    const pathToFile = require.resolve(`iobroker.ws`);
+                    const pathToFile = require.resolve('iobroker.ws');
                     file = (0, node_path_1.join)((0, node_path_1.dirname)(pathToFile), '/lib/socket.io.js');
                 }
                 this.socketIoFile = (0, node_fs_1.readFileSync)(file);
@@ -1053,7 +1069,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     try {
                         // try to get socket.io-client
                         const dir = require.resolve('socket.io-client');
-                        const fileDir = (0, node_path_1.join)((0, node_path_1.dirname)(dir), '../dist/');
+                        const fileDir = (0, node_path_1.join)((0, node_path_1.dirname)(dir), '../build/');
                         if ((0, node_fs_1.existsSync)(`${fileDir}socket.io.min.js`)) {
                             this.socketIoFile = (0, node_fs_1.readFileSync)(`${fileDir}socket.io.min.js`);
                         }
@@ -1642,68 +1658,87 @@ class WebAdapter extends adapter_core_1.Adapter {
             if (!this.config.disableStates) {
                 this.log.debug('Activating states & socket info');
                 // Init read from states
-                this.webServer.app.get('/state/*', (req, res) => {
+                this.webServer.app.get('/state/*', async (req, res) => {
                     try {
-                        const fileName = req.url.split('/', 3)[2].split('?', 2);
-                        void this.getForeignObject(fileName[0], (err, obj) => {
-                            let contentType = 'text/plain';
-                            if (obj?.common?.type === 'file') {
-                                contentType = (0, mime_types_1.lookup)(fileName[0]);
-                            }
-                            if (obj?.common?.type === 'file') {
-                                // @ts-expect-error deprecated
-                                const getForeignBinaryState = this.getForeignBinaryState || this.getBinaryState;
-                                getForeignBinaryState.call(this, fileName[0], {
-                                    user: req.user
-                                        ? `system.user.${req.user}`
-                                        : this.config.defaultUser,
-                                }, (err, obj) => {
-                                    if (!err && obj !== null && obj !== undefined) {
-                                        if (obj &&
-                                            typeof obj === 'object' &&
-                                            obj.val !== undefined &&
-                                            obj.ack !== undefined) {
-                                            res.set('Content-Type', 'application/json');
-                                        }
-                                        else {
-                                            res.set('Content-Type', contentType || 'text/plain');
-                                        }
-                                        res.set('Cache-Control', 'no-cache');
-                                        res.status(200).send(obj);
-                                    }
-                                    else {
-                                        this.send404(res, fileName[0]);
-                                    }
-                                });
+                        const stateName = req.url.split('/', 3)[2].split('?', 2);
+                        const obj = await this.getForeignObjectAsync(stateName[0], {
+                            user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
+                        });
+                        if (!obj) {
+                            this.send404(res, stateName[0]);
+                        }
+                        else {
+                            const state = await this.getForeignStateAsync(stateName[0], {
+                                user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
+                            });
+                            if (state !== null && state !== undefined) {
+                                res.set('Content-Type', 'text/plain');
+                                res.set('Cache-Control', 'no-cache');
+                                if (stateName[1]?.includes('json')) {
+                                    res.status(200).send(JSON.stringify(state));
+                                }
+                                else {
+                                    res.status(200).send(state.val === undefined
+                                        ? 'undefined'
+                                        : state.val === null
+                                            ? 'null'
+                                            : typeof state.val === 'object'
+                                                ? JSON.stringify(state.val)
+                                                : state.val.toString());
+                                }
                             }
                             else {
-                                void this.getForeignState(fileName[0], {
-                                    user: req.user
-                                        ? `system.user.${req.user}`
-                                        : this.config.defaultUser,
-                                }, (err, obj) => {
-                                    if (!err && obj !== null && obj !== undefined) {
-                                        res.set('Content-Type', 'text/plain');
-                                        res.set('Cache-Control', 'no-cache');
-                                        if (fileName[1]?.includes('json')) {
-                                            res.status(200).send(JSON.stringify(obj));
-                                        }
-                                        else {
-                                            res.status(200).send(obj.val === undefined
-                                                ? 'undefined'
-                                                : obj.val === null
-                                                    ? 'null'
-                                                    : typeof obj.val === 'object'
-                                                        ? JSON.stringify(obj.val)
-                                                        : obj.val.toString());
-                                        }
-                                    }
-                                    else {
-                                        this.send404(res, fileName[0]);
-                                    }
-                                });
+                                this.send404(res, stateName[0]);
                             }
+                        }
+                    }
+                    catch (e) {
+                        res.status(500).send(`500. Error${e}`);
+                    }
+                });
+                this.webServer.app.post('/state/*', async (req, res) => {
+                    try {
+                        const stateName = req.url.split('/', 3)[2].split('?', 2);
+                        const obj = await this.getForeignObjectAsync(stateName[0], {
+                            user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
                         });
+                        if (!obj) {
+                            this.send404(res, stateName[0]);
+                        }
+                        else {
+                            // Read post
+                            const body = await readBodyAsync(req);
+                            let data;
+                            try {
+                                const maybeObject = JSON.parse(body.toString());
+                                if (maybeObject.val !== undefined) {
+                                    data = maybeObject;
+                                }
+                                else {
+                                    data = { val: body.toString() };
+                                }
+                            }
+                            catch {
+                                // not an object
+                                data = { val: body.toString() };
+                            }
+                            if (obj.common.type === 'number') {
+                                data.val = parseFloat(data.val);
+                            }
+                            else if (obj.common.type === 'boolean') {
+                                data.val =
+                                    data.val === true ||
+                                        data.val === 'true' ||
+                                        data.val === 1 ||
+                                        data.val === '1' ||
+                                        data.val === 'ON' ||
+                                        data.val === 'on' ||
+                                        data.val === 'AN' ||
+                                        data.val === 'an';
+                            }
+                            await this.setForeignStateAsync(stateName[0], data);
+                            res.status(200).send({ id: stateName[0] });
+                        }
                     }
                     catch (e) {
                         res.status(500).send(`500. Error${e}`);
@@ -1867,7 +1902,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 // create a path to socket.js
                 const parts = filePath.split('/');
                 parts.pop(); // main.js
-                if (filePath.replace(/\\/g, '/').endsWith('/dist/main.js')) {
+                if (filePath.replace(/\\/g, '/').endsWith('/build/main.js')) {
                     path += '/dist/lib/socket.js';
                 }
                 else {
@@ -2172,7 +2207,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 this.send404(res, url, typeof error !== 'string' ? JSON.stringify(error) : error);
                             }
                             else {
-                                result.mimeType = result.mimeType || (0, mime_types_1.lookup)(url) || 'application/javascript';
+                                result.mimeType ||= (0, mime_types_1.lookup)(url) || 'application/javascript';
                                 // replace some important variables in HTML
                                 if (url === 'index.html' || url === 'edit.html') {
                                     result.file = await this.modifyIndexHtml(result.file.toString('utf8'));
