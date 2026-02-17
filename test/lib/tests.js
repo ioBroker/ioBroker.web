@@ -170,6 +170,92 @@ const tests = (protocol, port) => ({
             })
             .catch(error => assert.ok(!error));
     },
+
+    'POST state that exists with plain value': function (done) {
+        this.timeout(2000);
+        axios
+            .post(`${protocol}://localhost:${port}/state/system.adapter.web.0.cpu`, '100', {
+                headers: { 'Content-Type': 'text/plain' },
+            })
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                assert.ok(response.data.id);
+                assert.strictEqual(response.data.id, 'system.adapter.web.0.cpu');
+                done();
+            })
+            .catch(error => assert.ok(!error));
+    },
+
+    'POST state that exists with JSON object': function (done) {
+        this.timeout(2000);
+        axios
+            .post(
+                `${protocol}://localhost:${port}/state/system.adapter.web.0.cpu`,
+                { val: 100 },
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                },
+            )
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                assert.ok(response.data.id);
+                assert.strictEqual(response.data.id, 'system.adapter.web.0.cpu');
+                done();
+            })
+            .catch(error => assert.ok(!error));
+    },
+
+    'POST state that exists with JSON object including ack': function (done) {
+        this.timeout(2000);
+        axios
+            .post(
+                `${protocol}://localhost:${port}/state/system.adapter.web.0.cpu`,
+                { val: true, ack: true },
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                },
+            )
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                assert.ok(response.data.id);
+                assert.strictEqual(response.data.id, 'system.adapter.web.0.cpu');
+                done();
+            })
+            .catch(error => assert.ok(!error));
+    },
+
+    'POST state that does not exist': function (done) {
+        this.timeout(2000);
+        axios
+            .post(`${protocol}://localhost:${port}/state/system.adapter.web.1.cpu`, 'true', {
+                validateStatus: () => true,
+                headers: { 'Content-Type': 'text/plain' },
+            })
+            .then(response => {
+                assert.strictEqual(response.status, 404);
+                done();
+            })
+            .catch(error => assert.ok(!error));
+    },
+
+    'POST state and verify value was set': function (done) {
+        this.timeout(4000);
+        // First POST a value
+        axios
+            .post(`${protocol}://localhost:${port}/state/system.adapter.web.0.alive`, 'true', {
+                headers: { 'Content-Type': 'text/plain' },
+            })
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                // Then GET the value to verify it was set
+                return axios(`${protocol}://localhost:${port}/state/system.adapter.web.0.alive`);
+            })
+            .then(response => {
+                assert.strictEqual(response.status, 200);
+                done();
+            })
+            .catch(error => assert.ok(!error));
+    },
 });
 
 module.exports = tests;

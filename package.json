@@ -73,7 +73,7 @@
     ],
     "scripts": {
         "test": "npm run test:integration",
-        "test:integration": "mocha --exit",
+        "test:integration": "mocha test/testNoAuthSSL.js test/testNoAuthNoSSL.js --exit",
         "test:package": "mocha test/testPackageFiles.js --exit",
         "prepublishOnly": "node tasks",
         "build-backend": "tsc -p tsconfig.build.json && node tasks --5-post-backend",

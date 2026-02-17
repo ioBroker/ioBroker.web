@@ -2057,16 +2057,16 @@ export class WebAdapter extends Adapter {
             if (!this.config.disableStates) {
                 this.log.debug('Activating states & socket info');
                 // Init read from states
-                this.webServer.app.get('/state/*', async (req: Request, res: Response): Promise<void> => {
+                this.webServer.app.get('/state/:stateId', async (req: Request, res: Response): Promise<void> => {
                     try {
-                        const stateName = req.url.split('/', 3)[2].split('?', 2);
-                        const obj = await this.getForeignObjectAsync(stateName[0], {
+                        const stateName = req.params.stateId as string;
+                        const obj = await this.getForeignObjectAsync(stateName, {
                             user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
                         });
                         if (!obj) {
-                            this.send404(res, stateName[0]);
+                            this.send404(res, stateName);
                         } else {
-                            const state = await this.getForeignStateAsync(stateName[0], {
+                            const state = await this.getForeignStateAsync(stateName, {
                                 user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
                             });
                             if (state !== null && state !== undefined) {
@@ -2086,21 +2086,25 @@ export class WebAdapter extends Adapter {
                                     );
                                 }
                             } else {
-                                this.send404(res, stateName[0]);
+                                this.send404(res, stateName);
                             }
                         }
                     } catch (e) {
                         res.status(500).send(`500. Error${e}`);
                     }
                 });
-                this.webServer.app.post('/state/*', async (req: Request, res: Response): Promise<void> => {
+                this.webServer.app.post('/state/:stateId', async (req: Request, res: Response): Promise<void> => {
                     try {
-                        const stateName = req.url.split('/', 3)[2].split('?', 2);
-                        const obj = await this.getForeignObjectAsync(stateName[0], {
+                        const stateName = req.params.stateId as string;
+                        if (!stateName.trim()) {
+                            res.status(422).send(`NO state found`);
+                            return;
+                        }
+                        const obj = await this.getForeignObjectAsync(stateName, {
                             user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
                         });
                         if (!obj) {
-                            this.send404(res, stateName[0]);
+                            this.send404(res, stateName);
                         } else {
                             // Read post
                             const body = await readBodyAsync(req);
@@ -2129,8 +2133,8 @@ export class WebAdapter extends Adapter {
                                     data.val === 'AN' ||
                                     data.val === 'an';
                             }
-                            await this.setForeignStateAsync(stateName[0], data);
-                            res.status(200).send({ id: stateName[0] });
+                            await this.setForeignStateAsync(stateName, data);
+                            res.status(200).send({ id: stateName });
                         }
                     } catch (e) {
                         res.status(500).send(`500. Error${e}`);
