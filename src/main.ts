@@ -1,4 +1,4 @@
-import { IncomingMessage, type Server as HttpServer } from 'node:http';
+import type { IncomingMessage, Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, dirname, normalize } from 'node:path';
