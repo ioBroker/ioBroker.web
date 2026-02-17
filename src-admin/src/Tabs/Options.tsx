@@ -4,7 +4,7 @@ import { LinearProgress, Dialog, DialogTitle, DialogContent, DialogActions, Butt
 
 import { Security } from '@mui/icons-material';
 
-import { Logo, I18n, type AdminConnection, type ThemeType } from '@iobroker/adapter-react-v5';
+import { Logo, I18n, type AdminConnection, type ThemeType, InfoBox } from '@iobroker/adapter-react-v5';
 
 import { Toast } from '../Components/Toast';
 import { CustomModal } from '../Components/CustomModal';
@@ -12,7 +12,6 @@ import { CustomSelect } from '../Components/CustomSelect';
 import { CustomInput } from '../Components/CustomInput';
 import { CustomCheckbox } from '../Components/CustomCheckbox';
 import type { WebAdapterConfig } from '../types';
-import InfoBox from '@iobroker/adapter-react-v5/build/Components/InfoBox';
 
 const styles: Record<string, any> = {
     blockWrapper: {

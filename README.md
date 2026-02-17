@@ -58,6 +58,19 @@ http://IP:8082/vis-2.0/javascript.picture.png =>
 [IMAGE]
 ```
 
+From version 8.0.0 you can also write values via HTTP post request:
+
+```
+[POST] http://IP:8082/state/javascript.0.myVariable => true
+```
+Or as JSON object with additional parameters:
+```
+[POST] http://IP:8082/state/javascript.0.myVariable =>
+{"val": true, "ack": false}
+```
+
+Note: the option "Disable states and socket info" must be deactivated in the web adapter settings to use this feature.
+
 ## "Basic Authentication" option
 Allows Login via Basic Authentication by sending `401` Unauthorized with a `WWW-Authenticate` header.
 This can be used for applications like *FullyBrowser*. When entering the wrong credentials once, you will be redirected 
@@ -106,6 +119,8 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 ## Changelog
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Updated packages. Minimal Node.js version is now 20.0.0
+* (@GermanBluefox) Removed binary states
+* (@GermanBluefox) Added possibility to write values via `/state/` endpoint with `POST`
 
 ### 7.0.9 (2025-03-28)
 * (@GermanBluefox) Corrected the loading of the material adapter

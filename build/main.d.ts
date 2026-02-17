@@ -1,10 +1,13 @@
-import type { Server as HttpServer } from 'node:http';
+import { IncomingMessage, type Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import type { LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
 import { Buffer } from 'buffer';
 export type Server = HttpServer | HttpsServer;
+export declare function readBodyAsync(req: IncomingMessage, options?: {
+    limit?: number;
+}): Promise<Buffer>;
 export declare class WebAdapter extends Adapter {
     config: WebAdapterConfig;
     private indexHtml;

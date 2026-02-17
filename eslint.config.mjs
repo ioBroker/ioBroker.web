@@ -24,7 +24,7 @@ export default [
             'tasks.js',
             'tmp/**/*',
             'www/**/*',
-            'dist/**/*',
+            'build/**/*',
             '.**/*',
         ],
     },

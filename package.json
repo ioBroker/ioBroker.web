@@ -63,13 +63,13 @@
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
   },
-  "main": "dist/main.js",
+  "main": "build/main.js",
   "files": [
     "admin/",
     "www/",
     "io-package.json",
     "LICENSE",
-    "dist/"
+    "build/"
   ],
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit",
