@@ -217,7 +217,7 @@ class App extends GenericApp<GenericAppProps, AppState> {
                     <Options
                         key="options"
                         themeType={this.state.themeType}
-                        common={this.common!}
+                        common={this.common || ({} as ioBroker.InstanceCommon)}
                         socket={this.socket}
                         native={native}
                         instance={this.instance}

@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: '22.x'
           # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
+          install-command: 'npm run npm'
           lint: true
 
   # Runs adapter tests on all supported node versions and OSes
