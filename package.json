@@ -30,7 +30,7 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "iobroker.socketio": "^7.0.8",
-    "iobroker.ws": "^3.0.19",
+    "iobroker.ws": "^4.0.0",
     "mime-types": "^3.0.2",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
