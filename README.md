@@ -117,8 +117,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
-
-### **WORK IN PROGRESS**
+### 8.1.0 (2026-04-13)
 * (@GermanBluefox) Updated packages.
 * (@GermanBluefox) Corrected potential errors
 
