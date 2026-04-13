@@ -44,7 +44,7 @@
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/legacy-testing": "^2.0.2",
     "@iobroker/socket-classes": "^2.3.1",
-    "@iobroker/types": "^7.1.0",
+    "@iobroker/types": "^7.1.1",
     "@types/body-parser": "^1.19.6",
     "@types/compression": "^1.8.1",
     "@types/connect-flash": "^0.0.40",
