@@ -58,7 +58,7 @@
     "@types/passport-local": "^1.0.38",
     "@types/xtend": "^4.0.6",
     "axios": "^1.15.0",
-    "typescript": "~5.9.3"
+    "typescript": "~6.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
