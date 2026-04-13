@@ -251,7 +251,7 @@ function getRedirectPage(req) {
         if (parts.length > 1 && parts[1]) {
             redirect = decodeURIComponent(parts[1]);
             // if some invalid characters in redirect
-            if (redirect.match(/[^-_a-zA-Z0-9&%?./]/)) {
+            if (redirect.match(/[^-_a-zA-Z0-9&%?./]/) || redirect.startsWith('//') || redirect.includes('://')) {
                 redirect = '../';
             }
         }
@@ -315,7 +315,6 @@ class WebAdapter extends adapter_core_1.Adapter {
     ownUsers = null;
     templateDir = '';
     template404 = '';
-    I18n = null;
     constructor(options = {}) {
         super({
             ...options,
@@ -327,7 +326,6 @@ class WebAdapter extends adapter_core_1.Adapter {
             objectChange: (id, obj) => this.onObjectChange(id, obj),
             fileChange: (id, fileName, size) => this.onFileChange(id, fileName, size),
         });
-        void import('@iobroker/i18n').then(i18n => (this.I18n = i18n));
     }
     onObjectChange(id, obj) {
         if (this.ownGroups && id.startsWith('system.group.')) {
@@ -575,7 +573,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         else if (systemConfig?.common) {
             this.lang = systemConfig.common.language || 'en';
         }
-        await this.I18n?.init(__dirname, this.lang);
+        await adapter_core_1.I18n.init(__dirname, this.lang);
         await this.main();
     }
     updatePreSettings(obj) {
@@ -712,7 +710,16 @@ class WebAdapter extends adapter_core_1.Adapter {
         const sameServer = `${webConfig.native.secure ? 'https' : 'http'}://$host$:${webConfig.native.port}/`;
         list.forEach(item => {
             item.link = item.link.replace(sameServer, '').replace(sameHost, '');
-            item.localLink = item.link.replace(sameServer, '').replace(sameHost, '');
+            if (typeof item.localLink === 'string') {
+                item.localLink = item.localLink.replace(sameServer, '').replace(sameHost, '');
+            }
+            else if (item.localLink) {
+                Object.keys(item.localLink).forEach(key => {
+                    item.localLink[key] = item.localLink[key]
+                        .replace(sameServer, '')
+                        .replace(sameHost, '');
+                });
+            }
             if (item.name === 'Admin') {
                 item.link = 'admin/index.html';
             }
@@ -1212,10 +1219,10 @@ class WebAdapter extends adapter_core_1.Adapter {
             this.template404 ||
                 (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/404.html`)
                     .toString()
-                    .replace('{{Go to Homepage}}', this.I18n?.translate('Go to Homepage') || 'Go to Homepage')
-                    .replace('{{Refresh}}', this.I18n?.translate('Refresh') || 'Refresh');
+                    .replace('{{Go to Homepage}}', adapter_core_1.I18n.translate('Go to Homepage') || 'Go to Homepage')
+                    .replace('{{Refresh}}', adapter_core_1.I18n.translate('Refresh') || 'Refresh');
         res.setHeader('Content-Type', 'text/html');
-        res.status(404).send(this.template404.replace('{{TEXT}}', this.I18n?.translate('File %s not found', escapeHtml(fileName)) +
+        res.status(404).send(this.template404.replace('{{TEXT}}', adapter_core_1.I18n.translate('File %s not found', escapeHtml(fileName)) +
             (message && message !== '{}' ? `<br>${escapeHtml(message)}` : '')));
     }
     async initWebServer() {
@@ -1453,9 +1460,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 // route middleware to make sure a user is logged in
                 this.webServer.app.use((req, res, next) => {
                     const url = req.originalUrl.split('?')[0];
-                    const isAuthenticated = !this.config.auth ||
-                        (req.isAuthenticated && req.isAuthenticated()) ||
-                        (!req.isAuthenticated && req.user);
+                    const isAuthenticated = !this.config.auth || req.isAuthenticated?.() || (!req.isAuthenticated && req.user);
                     if (url === '/auth') {
                         // User can ask server if authentication enabled
                         res.setHeader('Content-Type', 'application/json');
@@ -1513,16 +1518,14 @@ class WebAdapter extends adapter_core_1.Adapter {
                 });
                 // get user by session /cookie
                 this.webServer.app.get('/getUser', (req, res) => {
-                    const isAuthenticated = !this.config.auth ||
-                        (req.isAuthenticated && req.isAuthenticated()) ||
-                        (!req.isAuthenticated && req.user);
+                    const isAuthenticated = !this.config.auth || req.isAuthenticated?.() || (!req.isAuthenticated && req.user);
                     if (isAuthenticated) {
                         // parse cookie
                         const cookie = {};
                         const parts = (req.headers.cookie || '').split(';');
                         parts.forEach(item => {
                             const [name, value] = item.split('=');
-                            cookie[decodeURIComponent(name.trim())] = decodeURIComponent(value);
+                            cookie[decodeURIComponent(name.trim())] = decodeURIComponent(value || '');
                         });
                         let accessToken = cookie.access_token;
                         if (!accessToken && req.headers.authorization?.startsWith('Bearer ')) {
@@ -1582,9 +1585,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 });
                 // todo
                 this.webServer.app.get('/prolongSession', (req, res, next) => {
-                    const isAuthenticated = !this.config.auth ||
-                        (req.isAuthenticated && req.isAuthenticated()) ||
-                        (!req.isAuthenticated && req.user);
+                    const isAuthenticated = !this.config.auth || req.isAuthenticated?.() || (!req.isAuthenticated && req.user);
                     if (isAuthenticated) {
                         req.session.touch();
                         const parts = (req.headers.cookie || '').split(';');
@@ -1600,9 +1601,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                                     if (obj) {
                                         const expires = new Date();
-                                        // expires.setMilliseconds(expires.getMilliseconds() + req.session.cookie.maxAge);
+                                        expires.setMilliseconds(expires.getMilliseconds() + (req.session.cookie.maxAge || 0));
                                         obj.cookie.expires = expires.toISOString();
-                                        console.log(`Session ${req.session.id} expires on ${obj.cookie.expires}`);
+                                        this.log.debug(`Session ${req.session.id} expires on ${obj.cookie.expires}`);
                                         this.store?.set(req.session.id, obj);
                                         //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
                                         res.send({ expires: obj.cookie.expires, user: obj.passport.user });
@@ -1639,9 +1640,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                             '').toString();
                         let whiteListIp;
                         if (this.config.whiteListSettings) {
-                            let whiteListIp = this.webServer?.io?.getWhiteListIpForAddress(remoteIp, this.config.whiteListSettings);
+                            whiteListIp =
+                                this.webServer?.io?.getWhiteListIpForAddress(remoteIp, this.config.whiteListSettings) ||
+                                    undefined;
                             if (!whiteListIp && this.webServer.io && remoteIp === '::1') {
-                                whiteListIp = this.webServer.io.getWhiteListIpForAddress('localhost', this.config.whiteListSettings);
+                                whiteListIp =
+                                    this.webServer.io.getWhiteListIpForAddress('localhost', this.config.whiteListSettings) || undefined;
                             }
                             this.log.silly(`whiteListIp ${whiteListIp}`);
                         }
@@ -1674,7 +1678,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                             if (state !== null && state !== undefined) {
                                 res.set('Content-Type', 'text/plain');
                                 res.set('Cache-Control', 'no-cache');
-                                if (stateName[1]?.includes('json')) {
+                                if (req.query.json !== undefined) {
                                     res.status(200).send(JSON.stringify(state));
                                 }
                                 else {
@@ -1693,7 +1697,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         }
                     }
                     catch (e) {
-                        res.status(500).send(`500. Error${e}`);
+                        res.status(500).send(`500. Error: ${e}`);
                     }
                 });
                 this.webServer.app.post('/state/:stateId', async (req, res) => {
@@ -1745,7 +1749,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         }
                     }
                     catch (e) {
-                        res.status(500).send(`500. Error${e}`);
+                        res.status(500).send(`500. Error: ${e}`);
                     }
                 });
             }
@@ -1755,7 +1759,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 res.status(200).send(this.getInfoJs());
             });
             this.webServer.app.get('/config.json', async (req, res) => {
-                res.set('Content-Type', 'application/javascript');
+                res.set('Content-Type', 'application/json');
                 res.set('Cache-Control', 'no-cache');
                 const config = await this.getListOfAllAdapters((req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString());
                 res.status(200).send(JSON.stringify(config, null, 2));
@@ -2042,7 +2046,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                             .send(html))
                             .catch(err => res
                             .status(500)
-                            .send(`500. Error${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`));
+                            .send(`500. Error: ${escapeHtml(typeof err !== 'string' ? err.toString() : err)}`));
                         return;
                     }
                     else if (url === '/logo.svg') {
@@ -2118,9 +2122,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         if (id === 'login' && url === 'index.html') {
                             this.loginPage ||= await this.modifyIndexHtml((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8'));
                             const buffer = this.loginPage;
-                            const isAuthenticated = !this.config.auth ||
-                                (req.isAuthenticated && req.isAuthenticated()) ||
-                                (!req.isAuthenticated && req.user);
+                            const isAuthenticated = !this.config.auth || req.isAuthenticated?.() || (!req.isAuthenticated && req.user);
                             if (isAuthenticated || this.isInWhiteList(req)) {
                                 res.redirect(getRedirectPage(req));
                                 return;
@@ -2178,9 +2180,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     res.set('Content-Type', 'text/html; charset=utf-8');
                                     this.templateDir ||= (0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}/dir.html`)
                                         .toString('utf8')
-                                        .replace('{{Directory}}', this.I18n?.translate('Directory') || 'Directory')
-                                        .replace('{{File Size}}', this.I18n?.translate('File Size') || 'File Size')
-                                        .replace('{{File Name}}', this.I18n?.translate('File Name') || 'File Name');
+                                        .replace('{{Directory}}', adapter_core_1.I18n.translate('Directory') || 'Directory')
+                                        .replace('{{File Size}}', adapter_core_1.I18n.translate('File Size') || 'File Size')
+                                        .replace('{{File Name}}', adapter_core_1.I18n.translate('File Name') || 'File Name');
                                     const text = [];
                                     if (url !== '/') {
                                         const parts = url.split('/');
@@ -2199,9 +2201,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         }
                                         return a.file.localeCompare(b.file);
                                     });
-                                    files?.forEach(file => text.push(`<tr><td><a href="./${file.file}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${file.file}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
+                                    files?.forEach(file => text.push(`<tr><td><a href="./${encodeURIComponent(file.file)}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${escapeHtml(file.file)}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
                                     res.status(200).send(this.templateDir
-                                        .replace('{{URL}}', req.url)
+                                        .replace('{{URL}}', escapeHtml(req.url))
                                         .replace('{{TABLE}}', text.join('\n')));
                                 }
                                 catch (e) {
