@@ -117,6 +117,9 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 -->
 
 ## Changelog
+### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
+
 ### 8.1.0 (2026-04-13)
 * (@GermanBluefox) Updated packages.
 * (@GermanBluefox) Corrected potential errors
