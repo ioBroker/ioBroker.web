@@ -238,6 +238,8 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 ### 5.4.0 (2022-12-22)
 * (bluefox) Used a new version of socket classes
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 The MIT License (MIT)
 
