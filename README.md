@@ -74,26 +74,37 @@ Note: the option "Disable states and socket info" must be deactivated in the web
 ## Access objects
 You can read objects (including patterns with wildcards) via HTTP GET request. The response is **always a JSON array**, because the pattern may match multiple objects.
 
+By default each returned object contains only `_id`, `type` and `common`. Use the `extended` and/or `native` query flags to ask for more.
+
+When the `depth` query is used and a matching object lives deeper than the requested level, a synthetic placeholder is returned at exactly that depth:
+```json
+{ "_id": "0_userdata.0", "type": "virtual" }
+```
+This lets a tree browser see that content exists below an intermediate path even when that path itself has no real ioBroker object. Virtuals deliberately omit `common` to keep payloads small — the display name can be derived from `_id`. A real object at the same ID always wins over its virtual placeholder.
+
 ```
 http://IP:8082/object/0_userdata.0.branch.* =>
-[ { "_id": "0_userdata.0.branch.a", "type": "state", ... }, ... ]
+[ { "_id": "0_userdata.0.branch.a", "type": "state", "common": { ... } }, ... ]
 ```
 
 Supported query parameters:
 
 | Parameter    | Description                                                                                                                                                                                                    |
 |--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `type`       | Filter by object type (e.g. `state`, `channel`, `device`, `folder`, `enum`, `instance`, ...).                                                                                                                  |
+| `type`       | Filter by object type (e.g. `state`, `channel`, `device`, `folder`, `enum`, `instance`, ...). **Defaults to `state`** when omitted. Pass `all` to query objects of every type.                                |
 | `commonType` | Filter by `common.type` of the object (`number`, `string`, `boolean`, `mixed`, `array`, `object`).                                                                                                             |
-| `depth`      | Absolute maximum number of dot-separated parts in the object ID. For example, to fetch only the direct children of `0_userdata.0.branch` (which has 3 parts), request `/object/0_userdata.0.branch.*?depth=4`. |
-| `native`     | By default the `native` part of each object is **stripped** from the response. Pass `?native` or `?native=true` to include it.                                                                                 |
+| `depth`      | Absolute maximum number of dot-separated parts in the object ID. For example, to fetch only the direct children of `0_userdata.0.branch` (which has 3 parts), request `/object/0_userdata.0.branch.*?depth=4`. `depth=1` is silently clamped to `depth=2` (ioBroker objects exist at 1 level or 3+ levels — the 2-level "instance" entries like `0_userdata.0` are what a root-level tree browser actually wants). Any real single-segment objects are dropped from the response for the same reason. |
+| `extended`   | Pass `?extended` or `?extended=true` to additionally include system attributes such as `acl`, `from`, `ts`, `user`, `enums`, `_rev`.                                                                           |
+| `native`     | Pass `?native` or `?native=true` to additionally include the `native` part of each object.                                                                                                                     |
+| `system`     | By default objects under `system.*` and `script.*` are **hidden**. Pass `?system` or `?system=true` to include them.                                                                                            |
 
 Examples:
 ```
-[GET] http://IP:8082/object/0_userdata.0.branch.*?depth=4
+[GET] http://IP:8082/object/0_userdata.0.branch.*?depth=4&type=all
 [GET] http://IP:8082/object/0_userdata.0.*?type=state
 [GET] http://IP:8082/object/0_userdata.0.*?type=state&commonType=boolean
 [GET] http://IP:8082/object/system.adapter.web.0?native=true
+[GET] http://IP:8082/object/system.adapter.web.0?extended=true&native=true
 [GET] http://IP:8082/object/system.adapter.web.0
 ```
 
@@ -144,7 +155,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth` and `native` query parameters to read objects (wildcards supported). The `native` part is omitted by default.
+* (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: "virtual"` placeholders so a tree browser can see content exists below.
 * (@GermanBluefox) Added `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off
 
 ## Changelog
