@@ -114,6 +114,15 @@ class Additionally extends Component<AdditionallyProps> {
                     </div>
                     <div>
                         <CustomCheckbox
+                            title="disable_objects"
+                            attr="disableObjects"
+                            sx={styles.fontSize}
+                            native={native}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div>
+                        <CustomCheckbox
                             title="disable_files"
                             attr="disableFilesObjects"
                             sx={styles.fontSize}

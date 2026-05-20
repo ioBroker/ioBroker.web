@@ -2144,6 +2144,68 @@ export class WebAdapter extends Adapter {
                 });
             }
 
+            if (!this.config.disableObjects) {
+                this.log.debug('Activating objects endpoint');
+                // Read objects (pattern may contain wildcards). Always returns an array.
+                // Query parameters:
+                //   type       - filter by object type (state, channel, device, folder, ...)
+                //   commonType - filter by common.type (number, string, boolean, mixed, array, object)
+                //   depth      - absolute maximum number of dot-separated parts in the object ID
+                //                (e.g. for "0_userdata.0.branch.*" pass depth=4 to get only direct children)
+                //   native     - if present (or "true"), include the `native` part of objects (omitted by default)
+                this.webServer.app.get('/object/:objectId', async (req: Request, res: Response): Promise<void> => {
+                    try {
+                        const objectId = req.params.objectId as string;
+                        if (!objectId.trim()) {
+                            res.status(422).send(`No object ID provided`);
+                            return;
+                        }
+                        const type = (req.query.type as ioBroker.ObjectType | undefined) || undefined;
+                        const commonType = (req.query.commonType as ioBroker.CommonType | undefined) || undefined;
+                        const depthParam = req.query.depth as string | undefined;
+                        const nativeParam = req.query.native as string | undefined;
+                        const includeNative = nativeParam !== undefined && nativeParam !== 'false' && nativeParam !== '0';
+                        let depth = NaN;
+                        if (depthParam !== undefined) {
+                            depth = parseInt(depthParam, 10);
+                            if (isNaN(depth) || depth < 1) {
+                                res.status(422).send(`Invalid depth value`);
+                                return;
+                            }
+                        }
+
+                        const options = {
+                            user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
+                        };
+                        const objects = type
+                            ? await this.getForeignObjectsAsync(objectId, type, null, options)
+                            : await this.getForeignObjectsAsync(objectId, undefined as unknown as ioBroker.ObjectType, null, options);
+
+                        let result: ioBroker.AnyObject[] = Object.values(objects || {});
+                        if (depth) {
+                            result = result.filter(obj => obj._id.split('.').length <= depth);
+                        }
+                        if (commonType) {
+                            result = result.filter(
+                                obj => (obj.common as { type?: ioBroker.CommonType })?.type === commonType,
+                            );
+                        }
+                        if (!includeNative) {
+                            result = result.map(obj => {
+                                const { native: _native, ...rest } = obj as ioBroker.AnyObject & { native?: unknown };
+                                return rest as ioBroker.AnyObject;
+                            });
+                        }
+
+                        res.set('Content-Type', 'application/json');
+                        res.set('Cache-Control', 'no-cache');
+                        res.status(200).send(JSON.stringify(result));
+                    } catch (e) {
+                        res.status(500).send(`500. Error: ${e}`);
+                    }
+                });
+            }
+
             this.webServer.app.get(/.*\/_socket\/info\.js/, (req: Request, res: Response): void => {
                 res.set('Content-Type', 'application/javascript');
                 res.set('Cache-Control', 'no-cache');

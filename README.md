@@ -71,6 +71,34 @@ Or as JSON object with additional parameters:
 
 Note: the option "Disable states and socket info" must be deactivated in the web adapter settings to use this feature.
 
+## Access objects
+You can read objects (including patterns with wildcards) via HTTP GET request. The response is **always a JSON array**, because the pattern may match multiple objects.
+
+```
+http://IP:8082/object/0_userdata.0.branch.* =>
+[ { "_id": "0_userdata.0.branch.a", "type": "state", ... }, ... ]
+```
+
+Supported query parameters:
+
+| Parameter    | Description                                                                                                                                                                                                    |
+|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`       | Filter by object type (e.g. `state`, `channel`, `device`, `folder`, `enum`, `instance`, ...).                                                                                                                  |
+| `commonType` | Filter by `common.type` of the object (`number`, `string`, `boolean`, `mixed`, `array`, `object`).                                                                                                             |
+| `depth`      | Absolute maximum number of dot-separated parts in the object ID. For example, to fetch only the direct children of `0_userdata.0.branch` (which has 3 parts), request `/object/0_userdata.0.branch.*?depth=4`. |
+| `native`     | By default the `native` part of each object is **stripped** from the response. Pass `?native` or `?native=true` to include it.                                                                                 |
+
+Examples:
+```
+[GET] http://IP:8082/object/0_userdata.0.branch.*?depth=4
+[GET] http://IP:8082/object/0_userdata.0.*?type=state
+[GET] http://IP:8082/object/0_userdata.0.*?type=state&commonType=boolean
+[GET] http://IP:8082/object/system.adapter.web.0?native=true
+[GET] http://IP:8082/object/system.adapter.web.0
+```
+
+Note: the option "Disable objects delivery" must be deactivated in the web adapter settings to use this feature.
+
 ## "Basic Authentication" option
 Allows Login via Basic Authentication by sending `401` Unauthorized with a `WWW-Authenticate` header.
 This can be used for applications like *FullyBrowser*. When entering the wrong credentials once, you will be redirected 
@@ -115,6 +143,9 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth` and `native` query parameters to read objects (wildcards supported). The `native` part is omitted by default.
+* (@GermanBluefox) Added `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off
 
 ## Changelog
 ### 8.1.0 (2026-04-13)

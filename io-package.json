@@ -197,6 +197,7 @@
     "disableExtensions": false,
     "disableFilesObjects": false,
     "disableStates": false,
+    "disableObjects": false,
     "forceWebSockets": false,
     "language": "",
     "loadingBackgroundColor": "",

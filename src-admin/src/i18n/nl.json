@@ -47,6 +47,7 @@
     "disable_default": "Schakel standaardfuncties uit",
     "disable_extensions": "Verwerking van extensies uitschakelen",
     "disable_files": "Serveer geen webbestanden vanuit objectDB",
+    "disable_objects": "Bezorging van objecten uitschakelen (/object/<ID>)",
     "disable_states": "Schakel statussen en socketinformatie uit",
     "domain_name": "Poort om het domein te controleren",
     "encryption": "Secure (HTTPS)",
