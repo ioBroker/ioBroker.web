@@ -154,11 +154,10 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 8.2.0 (2026-05-21)
 * (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: "virtual"` placeholders so a tree browser can see content exists below.
 * (@GermanBluefox) Added `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off
 
-## Changelog
 ### 8.1.0 (2026-04-13)
 * (@GermanBluefox) Updated packages.
 * (@GermanBluefox) Corrected potential errors

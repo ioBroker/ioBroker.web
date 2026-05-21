@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "8.1.0",
+    "version": "8.2.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "8.2.0": {
+        "en": "Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: \"virtual\"` placeholders so a tree browser can see content exists below.\nAdded `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off",
+        "de": "Hinzugefügt `/object/<ID>` GET Endpoint mit `type`, `commonType`, `tiefe`, `extended`, `native` und `system` Abfrageparameter, um Objekte zu lesen (wildcards unterstützt). Standardmäßig werden nur ` id`, `type` und `common` zurückgegeben, Type defaults to `state` und Objekte unter `system.* / `script.*` versteckt. Mit \"Tiefe\" ergeben tiefere Spiele synthetischen Typ: \"virtueller\" Platzhalter, so dass ein Baum-Browser unten Inhalte sehen kann.\nHinzugefügt `Disable Objects Delivery` Einstellung, um die `/object/<ID>` Endpunkt auf/aus zu drehen",
+        "ru": "Добавлена '/object/<ID>' конечная точка GET с параметрами 'type', 'commonType', 'depth', 'extended', 'native' и 'system' для считывания объектов (поддерживаемые дикие карты). По умолчанию возвращаются только « id», «type» и «common», по умолчанию типы «state», а объекты в «system.*» / «script.*» скрыты. С «глубокими» более глубокие совпадения дают синтетический «тип»: «виртуальные» заполнители, чтобы браузер дерева мог видеть контент, существующий ниже.\nДобавлена настройка «Доставка отключаемых объектов» для включения/выключения конечной точки «/объект/<ID>»",
+        "pt": "Adicionado `/object/<ID>` GET endpoint com `type`, `commonType`, `profundish`, `extended`, `native' e `system' para parâmetros de consulta para ler objetos (wildcards suportados). Por padrão, somente ` id`, `type` e `common` são retornados, digite padrões para `state` e objetos sob `system.*` / `script.*' estão ocultos. Com 'profundidade', partidas mais profundas produzem tipo 'sintético: \"virtual\" 'placeholders para que um navegador de árvore possa ver conteúdo existe abaixo.\nAdicionado `Desable objects delivery` configuration to turn the `/object/<ID>` endpoint on/off",
+        "nl": "Voegde  Standaard worden alleen  Met de diepere matches rendement synthetisch type: \"virtuele\".\nToegevoegde levering van objecten uitschakelen om het eindpunt aan/uit te zetten",
+        "fr": "Ajouté `/object/<ID>` GET endpoint with `type`, `commonType`, `profondeur`, `extension`, `native` et `system` pour lire des objets (wildcards supportés). Par défaut, seuls ` id`, `type` et `common` sont retournés, les caractères par défaut à `state` et les objets sous `system.*` / `script.*` sont cachés. Avec `profondeur`, des allumettes plus profondes donnent synthétique `type: \"virtuel\"` placeholders de sorte qu`un navigateur arbore peut voir le contenu existe ci-dessous.\nAjout du paramètre `Disable objects delivery` pour activer/désactiver le paramètre `/objet/<ID>`",
+        "it": "Aggiunto `/object/ <ID>` GET endpoint con `type`, `commonType`, `profondità`, `extended`, `native` e `system` query parametri per leggere oggetti (wildcards supportato). Per impostazione predefinita vengono restituiti solo ` id`, `type` e `common`, digitare defaults a `state` e oggetti sotto `system.*` / `script.*` sono nascosti. Con `profondità`, le partite più profonde producono il `tipo sintetico: \"virtuale\" ` segnaposto in modo che un browser albero possa vedere i contenuti esiste di seguito.\nAggiunto `Disable oggetti consegna` impostazione per girare il `/object/ <ID> ` endpoint on/off",
+        "es": "Añadido \"/objeto/traducido \" GET endpoint with `type ' , `commonType`, ` profunda ' , `extended`, `native ' and `system` query parameters to read objects (wildcards supported). Por defecto sólo ` id`, `type` y `common` son devueltos, escriba los defectos a `state`, y los objetos bajo `sistema.*` / `script.*` están ocultos. Con los fósforos más profundos producen los marcadores de posición \"virtuales\" sintéticos para que un navegador de árboles pueda ver el contenido a continuación.\nAñadido \" Desactivar la entrega de objetos \" para activar/desactivar el punto final \" / objeto/",
+        "pl": "Dodano '/ object / < ID >' GET enclimate with 'type', 'common Type', 'depth', 'extended', 'native' i 'systemowe' parametry zapytania do odczytu obiektów (obsługiwane karty WildCards). Domyślnie zwraca się tylko '_ id', 'type' i 'common', wpisuje domyślne wartości 'state' i obiekty pod 'system'. *'/' script.* 'są ukryte. Dzięki' głębokości ', głębsze dopasowania dają syntetyczny' typ: 'wirtualne' 'uchwyty, dzięki czemu przeglądarka drzewa może zobaczyć zawartość istnieje poniżej. \nDodano 'Wyłącz dostarczanie obiektów', aby włączyć '/ obiekt / < ID >'",
+        "uk": "Додано `/object/<ID>` GET кінцеву точку з `типом`, `commonType`, `глибин`, `extended`, `native` та `system``````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````````` За замовчуванням тільки ` id`, `type` і `common`` повертаються, типу за замовчуванням до `state`, а об’єкти під `system.*`````` / `script.*````````````` З `глибиною`, глибше відповідає виходу синтетичного `типу: \"віртуальні\" резиденти, які можуть бачити вміст нижче.\nДодано налаштування доставки `Disable об'єктів для перетворення `/object/<ID>` endpoint on/off",
+        "zh-cn": "添加了“/object/<ID>`QQ” ,并加上了“类型”、“共同类型”、“深度”、“扩展”、“本土”和“系统”查询参数,以读取对象(支持 wildcards)。 默认情况下,返回的只有`d'、`type'和`common'、`state'的默认类型以及`system.*`/`script.*`下的对象。 有了`深度',更深的匹配产生合成的`类型':`虚拟'的占位符,这样一棵树的浏览器可以看到下面的内容.\n添加“ 交付” 设置以打开“ / 对象/ < IDQQ” 端点"
+      },
       "8.1.0": {
         "en": "Updated packages.\nCorrected potential errors",
         "de": "Aktualisierte Pakete.\nKorrigierte potenzielle Fehler",
@@ -93,19 +106,6 @@
         "pl": "Poprawiłem logowanie dla iobrokera. visu app\nPoprawione obciążenie TypeScript Rozszerzenia stron internetowych",
         "uk": "Виправлено логін для iobroker. додаток Visu\nКорисне навантаження TypeScript Розширення веб",
         "zh-cn": "更正了 iobroster 的登录 。 虚拟应用\n已校正类型脚本的负载 网络扩展"
-      },
-      "7.0.4": {
-        "en": "Corrected the login page\nRemoved the frequent debug output",
-        "de": "Korrektur der Anmeldeseite\nEntfernen der häufigen Debug-Ausgabe",
-        "ru": "Исправлена страница login\nСнят частый вывод отладки",
-        "pt": "Corrigido a página de login\nRemovido a saída de depuração frequente",
-        "nl": "De aanmeldpagina corrigeren\nDe frequente debug-uitvoer is verwijderd",
-        "fr": "Correction de la page de connexion\nSupprimé la sortie de débogage fréquente",
-        "it": "Corretto la pagina di login\nRimozione dell'uscita di debug frequente",
-        "es": "Corregido la página de inicio de sesión\nEliminar la producción de depuración frecuente",
-        "pl": "Poprawiono stronę logowania\nUsunięto częste wyjście debugowania",
-        "uk": "Виправлено сторінку входу\nВилучено часте дебвуг",
-        "zh-cn": "更正登录页面\n删除频繁调试输出"
       }
     },
     "desc": {
