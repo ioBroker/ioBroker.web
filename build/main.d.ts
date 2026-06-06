@@ -58,6 +58,7 @@ export declare class WebAdapter extends Adapter {
     resolveLink(link: string, instanceObj: ioBroker.InstanceObject | undefined, instancesMap: Record<string, ioBroker.InstanceObject>): string | {
         [instance: `${string}.${number}`]: string;
     };
+    getSocketPath(): string;
     getInfoJs(): string;
     checkUser: (userName: string | undefined, password: string | undefined, cb: (err: Error | null, result?: {
         logged_in: boolean;

@@ -905,9 +905,23 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         return result || link;
     }
+    getSocketPath() {
+        let rootPath = (this.config.rootPath || '').trim();
+        if (!rootPath || rootPath === '/') {
+            return '';
+        }
+        if (!rootPath.startsWith('/')) {
+            rootPath = `/${rootPath}`;
+        }
+        if (!rootPath.endsWith('/')) {
+            rootPath += '/';
+        }
+        return rootPath;
+    }
     getInfoJs() {
         const result = [
             `var socketUrl = "${this.socketUrl}";`,
+            `var socketPath = "${this.getSocketPath()}";`,
             `var socketSession = "";`,
             `window._authIoBroker = ${this.config.auth};`,
             `window.sysLang = "${this.lang}";`,
