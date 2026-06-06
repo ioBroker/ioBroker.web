@@ -151,6 +151,15 @@ class Additionally extends Component<AdditionallyProps> {
                             helperText={I18n.t('This path will be opened if no path specified')}
                         />
                     </div>
+                    <div>
+                        <TextField
+                            variant="standard"
+                            value={native.rootPath || ''}
+                            onChange={e => onChange('rootPath', e.target.value)}
+                            label={I18n.t('rootPath')}
+                            helperText={I18n.t('rootPath_hint')}
+                        />
+                    </div>
                     <h4>{I18n.t('Cache options')}</h4>
                     <div>
                         <TextField

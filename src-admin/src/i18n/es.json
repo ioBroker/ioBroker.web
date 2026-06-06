@@ -74,6 +74,8 @@
     "public_certificate": "Certificado público",
     "renew_certificates": "Use esta instancia para la actualización automática",
     "reset_cors_settings": "Establecer la configuración de CORS a la predeterminada",
+    "rootPath": "Ruta raíz",
+    "rootPath_hint": "Prefijo de ruta URL pública cuando web se ejecuta detrás de un proxy inverso (p. ej. /web/). Se utiliza para conexiones WebSocket. Déjelo vacío si web se accede desde la raíz del dominio.",
     "set_certificates": "Establezca certificados o cárguelos primero en la configuración del sistema (arriba a la derecha).",
     "show_admin_instances": "Mostrar instancias no web",
     "show_folders": "Mostrar el contenido de las carpetas",

@@ -74,6 +74,8 @@
     "public_certificate": "公共证书",
     "renew_certificates": "自动更新Let's Encrypt证书",
     "reset_cors_settings": "将 CORS 设置设置为默认值",
+    "rootPath": "根路径",
+    "rootPath_hint": "当 web 在反向代理后运行时使用的公共 URL 路径前缀（例如 /web/）。用于 WebSocket 连接。如果 web 在域名根目录下访问，请留空。",
     "set_certificates": "首先在系统设置中（右上角）设置或加载证书。",
     "show_admin_instances": "显示非 Web 实例",
     "show_folders": "显示文件夹内容",

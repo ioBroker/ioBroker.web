@@ -106,6 +106,7 @@ export interface WebAdapterConfig {
     loginBackgroundImage: boolean;
     loginOauth2: boolean;
     port: number | string;
+    rootPath: string;
     secure: boolean;
     showFolderIndex: boolean;
     socketio: `system.adapter.${string}.${number}` | '';

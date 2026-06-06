@@ -74,6 +74,8 @@
     "public_certificate": "Öffentliches Zertifikat",
     "renew_certificates": "Diese Instanz für automatische Updates verwenden",
     "reset_cors_settings": "CORS-Einstellungen auf Standard zurücksetzen",
+    "rootPath": "Root-Pfad",
+    "rootPath_hint": "Öffentlicher URL-Pfad-Präfix, wenn web hinter einem Reverse-Proxy betrieben wird (z.B. /web/). Wird für WebSocket-Verbindungen verwendet. Leer lassen, wenn web direkt unter der Domain erreichbar ist.",
     "set_certificates": "Zertifikate wählen bzw. Zertifikate in den Systemeinstellungen (oben rechts) hinterlegen.",
     "show_admin_instances": "Nicht-Web-Instanzen anzeigen",
     "show_folders": "Ordnerinhalt anzeigen",
