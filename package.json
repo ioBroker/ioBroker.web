@@ -42,7 +42,7 @@
     "@iobroker/build-tools": "^3.0.1",
     "@iobroker/eslint-config": "^2.2.0",
     "@iobroker/legacy-testing": "^2.0.2",
-    "@iobroker/socket-classes": "^2.3.2",
+    "@iobroker/socket-classes": "^2.3.4",
     "@iobroker/types": "^7.1.2",
     "@tsconfig/node20": "^20.1.9",
     "@types/body-parser": "^1.19.6",
