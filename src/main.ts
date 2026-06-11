@@ -20,7 +20,7 @@ import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/sock
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { replaceLink } from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
@@ -650,7 +650,7 @@ export class WebAdapter extends Adapter {
             if (!systemConfig?.native?.secret) {
                 systemConfig.native = systemConfig.native || {};
                 const buf: Buffer = await new Promise<Buffer>(resolve =>
-                    require('crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
+                    require('node:crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
                 );
                 this.secret = buf.toString('hex');
                 await this.extendForeignObjectAsync('system.config', { native: { secret: this.secret } });
