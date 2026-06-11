@@ -95,6 +95,7 @@ export interface WebAdapterConfig {
     disableExtensions: boolean;
     disableFilesObjects: boolean;
     disableStates: boolean;
+    disableObjects: boolean;
     doNotCheckPublicIP: boolean;
     forceWebSockets: boolean;
     language: ioBroker.Languages;

@@ -47,6 +47,7 @@
     "disable_default": "Desativar funções padrão",
     "disable_extensions": "Desative o manuseio de extensões",
     "disable_files": "Não veicular arquivos da web de objectDB",
+    "disable_objects": "Desativar entrega de objetos (/object/<ID>)",
     "disable_states": "Desative estados e informações de soquete",
     "domain_name": "Porta para verificar o domínio",
     "encryption": "Seguro (HTTPS)",

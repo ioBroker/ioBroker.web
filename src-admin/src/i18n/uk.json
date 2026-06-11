@@ -47,6 +47,7 @@
     "disable_default": "Вимкнути функції за замовчуванням",
     "disable_extensions": "Вимкнути обробку розширень",
     "disable_files": "Не обслуговуйте веб-файли зі сховища ioBroker",
+    "disable_objects": "Вимкнути доставку об'єктів (/object/<ID>)",
     "disable_states": "Вимкнути інформацію про стани та сокет",
     "domain_name": "Порт для перевірки домену",
     "encryption": "Безпечний (HTTPS)",

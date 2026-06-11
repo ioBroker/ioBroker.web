@@ -32,7 +32,6 @@ export declare class WebAdapter extends Adapter {
     private ownUsers;
     private templateDir;
     private template404;
-    private I18n;
     constructor(options?: Partial<AdapterOptions>);
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void;
     onStateChange(id: string, state: ioBroker.State | null | undefined): void;
