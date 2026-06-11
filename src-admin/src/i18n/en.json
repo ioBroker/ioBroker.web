@@ -47,6 +47,7 @@
     "disable_default": "Disable Default Functions",
     "disable_extensions": "Disable extension handling",
     "disable_files": "Do not serve web files from ioBroker storage",
+    "disable_objects": "Disable objects delivery (/object/<ID>)",
     "disable_states": "Disable states and socket info",
     "domain_name": "Port to check the domain",
     "encryption": "Secure (HTTPS)",

@@ -47,6 +47,7 @@
     "disable_default": "Отключить функции по умолчанию",
     "disable_extensions": "Отключить обработку расширений",
     "disable_files": "Не обслуживать веб-файлы из objectDB",
+    "disable_objects": "Отключить доставку объектов (/object/<ID>)",
     "disable_states": "Отключить состояния и информацию о сокете",
     "domain_name": "Порт для проверки доменного имени",
     "encryption": "Шифрование (HTTPS)",

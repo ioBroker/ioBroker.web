@@ -1,4 +1,4 @@
-import type { Server as HttpServer } from 'http';
+import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 
 export type Server = HttpServer | HttpsServer;
@@ -95,6 +95,7 @@ export interface WebAdapterConfig {
     disableExtensions: boolean;
     disableFilesObjects: boolean;
     disableStates: boolean;
+    disableObjects: boolean;
     doNotCheckPublicIP: boolean;
     forceWebSockets: boolean;
     language: ioBroker.Languages;
