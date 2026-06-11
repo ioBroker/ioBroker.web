@@ -47,6 +47,7 @@
     "disable_default": "Standardfunktionen deaktivieren",
     "disable_extensions": "Erweiterungsbehandlung deaktivieren",
     "disable_files": "Webdateien aus dem ioBroker-Speicherbereich nicht bereitstellen",
+    "disable_objects": "Objektzustellung deaktivieren (/object/<ID>)",
     "disable_states": "Zustände und Socket Informationen deaktivieren",
     "domain_name": "Port um die Domain zu prüfen",
     "encryption": "Verschlüsselte Verbindung (HTTPS)",
