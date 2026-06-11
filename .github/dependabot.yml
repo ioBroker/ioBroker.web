@@ -21,6 +21,10 @@ updates:
       cronjob: '50 1 10 * *'
     open-pull-requests-limit: 15
     versioning-strategy: 'increase'
+    ignore:
+      - dependency-name: '@types/node'
+        update-types:
+          - 'version-update:semver-major'
     cooldown:
       default-days: 7
 
@@ -32,5 +36,9 @@ updates:
       cronjob: '50 1 10 * *'
     open-pull-requests-limit: 15
     versioning-strategy: 'increase'
+    ignore:
+      - dependency-name: '@types/node'
+        update-types:
+          - 'version-update:semver-major'
     cooldown:
       default-days: 7
