@@ -20,7 +20,7 @@ import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/sock
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { replaceLink } from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
@@ -650,7 +650,7 @@ export class WebAdapter extends Adapter {
             if (!systemConfig?.native?.secret) {
                 systemConfig.native = systemConfig.native || {};
                 const buf: Buffer = await new Promise<Buffer>(resolve =>
-                    require('crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
+                    require('node:crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
                 );
                 this.secret = buf.toString('hex');
                 await this.extendForeignObjectAsync('system.config', { native: { secret: this.secret } });
@@ -2138,6 +2138,182 @@ export class WebAdapter extends Adapter {
                             await this.setForeignStateAsync(stateName, data);
                             res.status(200).send({ id: stateName });
                         }
+                    } catch (e) {
+                        res.status(500).send(`500. Error: ${e}`);
+                    }
+                });
+            }
+
+            if (!this.config.disableObjects) {
+                this.log.debug('Activating objects endpoint');
+                // Read objects (pattern may contain wildcards). Always returns an array.
+                // By default only `_id`, `type` and `common` are returned for each object.
+                // When `depth` is set and a matching object lives deeper than `depth`, a synthetic
+                // entry `{ _id, type: "virtual" }` is emitted at exactly `depth` so a tree browser
+                // can see that content exists below an intermediate path even when the intermediate
+                // ID itself has no real object. Virtuals omit `common` to keep payloads small —
+                // the client can derive the display name from `_id`.
+                // Query parameters:
+                //   type       - filter by object type (state, channel, device, folder, ...).
+                //                Defaults to "state" when omitted. Pass "all" to query objects of every type.
+                //   commonType - filter by common.type (number, string, boolean, mixed, array, object)
+                //   depth      - absolute maximum number of dot-separated parts in the object ID
+                //                (e.g. for "0_userdata.0.branch.*" pass depth=4 to get only direct children)
+                //   extended   - if present (or "true"), include additional system attributes
+                //                (acl, from, ts, user, enums, _rev, ...)
+                //   native     - if present (or "true"), include the `native` part of objects
+                //   system     - if present (or "true"), include objects under `system.*` and
+                //                `script.*` namespaces (hidden by default)
+                this.webServer.app.get('/object/:objectId', async (req: Request, res: Response): Promise<void> => {
+                    try {
+                        const objectId = req.params.objectId as string;
+                        if (!objectId.trim()) {
+                            res.status(422).send(`No object ID provided`);
+                            return;
+                        }
+                        // When no `type` is given we default to "state" (consistent with the underlying
+                        // js-controller API). Use `type=all` to query objects of every type.
+                        const rawType = (req.query.type as string | undefined) || 'state';
+                        const allTypes = rawType === 'all';
+                        const type = allTypes ? undefined : (rawType as ioBroker.ObjectType);
+                        const commonType = (req.query.commonType as ioBroker.CommonType | undefined) || undefined;
+                        const depthParam = req.query.depth as string | undefined;
+                        const isTruthyFlag = (v: string | undefined): boolean =>
+                            v !== undefined && v !== 'false' && v !== '0';
+                        const includeNative = isTruthyFlag(req.query.native as string | undefined);
+                        const includeExtended = isTruthyFlag(req.query.extended as string | undefined);
+                        const includeSystem = isTruthyFlag(req.query.system as string | undefined);
+                        let depth = NaN;
+                        if (depthParam !== undefined) {
+                            depth = parseInt(depthParam, 10);
+                            if (isNaN(depth) || depth < 1) {
+                                res.status(422).send(`Invalid depth value`);
+                                return;
+                            }
+                            // ioBroker objects exist at 1 level (rare top-level containers like
+                            // "0_userdata" or "system") or at 3+ levels (actual data). Level-2 IDs
+                            // (e.g. "0_userdata.0", "alias.0", "javascript.0") are conceptual
+                            // "instance" entry points. So a tree browser asking for `depth=1` really
+                            // wants the 2-level entries — clamp accordingly.
+                            if (depth < 2) {
+                                depth = 2;
+                            }
+                        }
+
+                        const options = {
+                            user: req.user ? `system.user.${req.user as string}` : this.config.defaultUser,
+                        };
+                        let objects: Record<string, ioBroker.AnyObject>;
+                        if (!allTypes) {
+                            // single type (default: "state"): use the view-backed fast path
+                            objects = (await this.getForeignObjectsAsync(
+                                objectId,
+                                type as ioBroker.ObjectType,
+                                null,
+                                options,
+                            )) as Record<string, ioBroker.AnyObject>;
+                        } else if (!objectId.includes('*')) {
+                            // exact ID without wildcards: single-object lookup across all types
+                            const obj = await this.getForeignObjectAsync(objectId, options);
+                            objects = obj ? { [objectId]: obj as ioBroker.AnyObject } : {};
+                        } else {
+                            // wildcard pattern across all object types — getForeignObjectsAsync would
+                            // collapse to type=state, so use getObjectList here and pattern-match manually.
+                            const starIdx = objectId.indexOf('*');
+                            const prefix = objectId.substring(0, starIdx);
+                            const regex = new RegExp(
+                                `^${objectId.replace(/[.\\^$|?+()[\]{}]/g, '\\$&').replace(/\*/g, '.*')}$`,
+                            );
+                            const list = await this.getObjectListAsync(
+                                {
+                                    startkey: prefix,
+                                    endkey: `${prefix}香`,
+                                    include_docs: true,
+                                },
+                                options,
+                            );
+                            objects = {};
+                            for (const row of list?.rows || []) {
+                                if (row?.value && regex.test(row.id)) {
+                                    objects[row.id] = row.value as ioBroker.AnyObject;
+                                }
+                            }
+                        }
+
+                        let result: ioBroker.AnyObject[] = Object.values(objects);
+                        // ioBroker root entries are always >= 2 segments (e.g. "0_userdata.0",
+                        // "alias.0"); drop the rare single-segment container objects so a tree
+                        // browser doesn't render redundant root nodes.
+                        result = result.filter(obj => obj._id.includes('.'));
+                        if (!includeSystem) {
+                            // hide system internals (system.*, script.*) unless ?system is set
+                            result = result.filter(
+                                obj => !obj._id.startsWith('system.') && !obj._id.startsWith('script.'),
+                            );
+                        }
+                        if (depth) {
+                            // Split into real (parts <= depth) and ancestors of deeper objects.
+                            // For deeper objects, emit a synthetic { type: 'virtual' } placeholder at
+                            // exactly depth so a tree browser knows there is content below.
+                            const real = new Map<string, ioBroker.AnyObject>();
+                            const virtuals = new Map<string, ioBroker.AnyObject>();
+                            for (const obj of result) {
+                                const parts = obj._id.split('.');
+                                if (parts.length <= depth) {
+                                    real.set(obj._id, obj);
+                                } else {
+                                    const ancestorId = parts.slice(0, depth).join('.');
+                                    if (!virtuals.has(ancestorId)) {
+                                        // Virtuals carry only `_id` and `type` — the client can derive
+                                        // the display name from `_id` if needed. Keeping them minimal
+                                        // saves bandwidth when a tree has many sparse branches.
+                                        virtuals.set(ancestorId, {
+                                            _id: ancestorId,
+                                            type: 'virtual',
+                                        } as unknown as ioBroker.AnyObject);
+                                    }
+                                }
+                            }
+                            // a real object at the ancestor ID wins over the virtual placeholder
+                            for (const id of real.keys()) {
+                                virtuals.delete(id);
+                            }
+                            result = [...real.values(), ...virtuals.values()];
+                        }
+                        if (commonType) {
+                            // virtual placeholders have no common.type — keep them so the tree
+                            // browser can still show that something exists below.
+                            result = result.filter(
+                                obj =>
+                                    obj.type === ('virtual' as ioBroker.ObjectType) ||
+                                    (obj.common as { type?: ioBroker.CommonType })?.type === commonType,
+                            );
+                        }
+                        if (!includeExtended || !includeNative) {
+                            result = result.map(obj => {
+                                const full = obj as ioBroker.AnyObject & Record<string, unknown>;
+                                if (includeExtended) {
+                                    // strip only `native`
+                                    const { native: _native, ...rest } = full;
+                                    return rest as unknown as ioBroker.AnyObject;
+                                }
+                                // default view: only _id, type, common (+ native if requested)
+                                const slim: Record<string, unknown> = {
+                                    _id: full._id,
+                                    type: full.type,
+                                    common: full.common,
+                                };
+                                if (includeNative) {
+                                    slim.native = full.native;
+                                }
+                                return slim as unknown as ioBroker.AnyObject;
+                            });
+                        }
+                        result.sort((a, b) => (a._id < b._id ? -1 : a._id > b._id ? 1 : 0));
+
+                        res.set('Content-Type', 'application/json');
+                        res.set('Cache-Control', 'no-cache');
+                        res.status(200).send(JSON.stringify(result));
                     } catch (e) {
                         res.status(500).send(`500. Error: ${e}`);
                     }

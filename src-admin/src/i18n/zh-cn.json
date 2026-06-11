@@ -47,6 +47,7 @@
     "disable_default": "禁用默认功能",
     "disable_extensions": "禁用扩展处理：",
     "disable_files": "不要提供来自objectDB的Web文件",
+    "disable_objects": "禁用对象传递（/object/<ID>）",
     "disable_states": "禁用状态和套接字信息",
     "domain_name": "自动更新证书使用的端口",
     "encryption": "安全访问 (HTTPS)",

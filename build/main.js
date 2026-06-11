@@ -1753,6 +1753,166 @@ class WebAdapter extends adapter_core_1.Adapter {
                     }
                 });
             }
+            if (!this.config.disableObjects) {
+                this.log.debug('Activating objects endpoint');
+                // Read objects (pattern may contain wildcards). Always returns an array.
+                // By default only `_id`, `type` and `common` are returned for each object.
+                // When `depth` is set and a matching object lives deeper than `depth`, a synthetic
+                // entry `{ _id, type: "virtual" }` is emitted at exactly `depth` so a tree browser
+                // can see that content exists below an intermediate path even when the intermediate
+                // ID itself has no real object. Virtuals omit `common` to keep payloads small —
+                // the client can derive the display name from `_id`.
+                // Query parameters:
+                //   type       - filter by object type (state, channel, device, folder, ...).
+                //                Defaults to "state" when omitted. Pass "all" to query objects of every type.
+                //   commonType - filter by common.type (number, string, boolean, mixed, array, object)
+                //   depth      - absolute maximum number of dot-separated parts in the object ID
+                //                (e.g. for "0_userdata.0.branch.*" pass depth=4 to get only direct children)
+                //   extended   - if present (or "true"), include additional system attributes
+                //                (acl, from, ts, user, enums, _rev, ...)
+                //   native     - if present (or "true"), include the `native` part of objects
+                //   system     - if present (or "true"), include objects under `system.*` and
+                //                `script.*` namespaces (hidden by default)
+                this.webServer.app.get('/object/:objectId', async (req, res) => {
+                    try {
+                        const objectId = req.params.objectId;
+                        if (!objectId.trim()) {
+                            res.status(422).send(`No object ID provided`);
+                            return;
+                        }
+                        // When no `type` is given we default to "state" (consistent with the underlying
+                        // js-controller API). Use `type=all` to query objects of every type.
+                        const rawType = req.query.type || 'state';
+                        const allTypes = rawType === 'all';
+                        const type = allTypes ? undefined : rawType;
+                        const commonType = req.query.commonType || undefined;
+                        const depthParam = req.query.depth;
+                        const isTruthyFlag = (v) => v !== undefined && v !== 'false' && v !== '0';
+                        const includeNative = isTruthyFlag(req.query.native);
+                        const includeExtended = isTruthyFlag(req.query.extended);
+                        const includeSystem = isTruthyFlag(req.query.system);
+                        let depth = NaN;
+                        if (depthParam !== undefined) {
+                            depth = parseInt(depthParam, 10);
+                            if (isNaN(depth) || depth < 1) {
+                                res.status(422).send(`Invalid depth value`);
+                                return;
+                            }
+                            // ioBroker objects exist at 1 level (rare top-level containers like
+                            // "0_userdata" or "system") or at 3+ levels (actual data). Level-2 IDs
+                            // (e.g. "0_userdata.0", "alias.0", "javascript.0") are conceptual
+                            // "instance" entry points. So a tree browser asking for `depth=1` really
+                            // wants the 2-level entries — clamp accordingly.
+                            if (depth < 2) {
+                                depth = 2;
+                            }
+                        }
+                        const options = {
+                            user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
+                        };
+                        let objects;
+                        if (!allTypes) {
+                            // single type (default: "state"): use the view-backed fast path
+                            objects = (await this.getForeignObjectsAsync(objectId, type, null, options));
+                        }
+                        else if (!objectId.includes('*')) {
+                            // exact ID without wildcards: single-object lookup across all types
+                            const obj = await this.getForeignObjectAsync(objectId, options);
+                            objects = obj ? { [objectId]: obj } : {};
+                        }
+                        else {
+                            // wildcard pattern across all object types — getForeignObjectsAsync would
+                            // collapse to type=state, so use getObjectList here and pattern-match manually.
+                            const starIdx = objectId.indexOf('*');
+                            const prefix = objectId.substring(0, starIdx);
+                            const regex = new RegExp(`^${objectId.replace(/[.\\^$|?+()[\]{}]/g, '\\$&').replace(/\*/g, '.*')}$`);
+                            const list = await this.getObjectListAsync({
+                                startkey: prefix,
+                                endkey: `${prefix}香`,
+                                include_docs: true,
+                            }, options);
+                            objects = {};
+                            for (const row of list?.rows || []) {
+                                if (row?.value && regex.test(row.id)) {
+                                    objects[row.id] = row.value;
+                                }
+                            }
+                        }
+                        let result = Object.values(objects);
+                        // ioBroker root entries are always >= 2 segments (e.g. "0_userdata.0",
+                        // "alias.0"); drop the rare single-segment container objects so a tree
+                        // browser doesn't render redundant root nodes.
+                        result = result.filter(obj => obj._id.includes('.'));
+                        if (!includeSystem) {
+                            // hide system internals (system.*, script.*) unless ?system is set
+                            result = result.filter(obj => !obj._id.startsWith('system.') && !obj._id.startsWith('script.'));
+                        }
+                        if (depth) {
+                            // Split into real (parts <= depth) and ancestors of deeper objects.
+                            // For deeper objects, emit a synthetic { type: 'virtual' } placeholder at
+                            // exactly depth so a tree browser knows there is content below.
+                            const real = new Map();
+                            const virtuals = new Map();
+                            for (const obj of result) {
+                                const parts = obj._id.split('.');
+                                if (parts.length <= depth) {
+                                    real.set(obj._id, obj);
+                                }
+                                else {
+                                    const ancestorId = parts.slice(0, depth).join('.');
+                                    if (!virtuals.has(ancestorId)) {
+                                        // Virtuals carry only `_id` and `type` — the client can derive
+                                        // the display name from `_id` if needed. Keeping them minimal
+                                        // saves bandwidth when a tree has many sparse branches.
+                                        virtuals.set(ancestorId, {
+                                            _id: ancestorId,
+                                            type: 'virtual',
+                                        });
+                                    }
+                                }
+                            }
+                            // a real object at the ancestor ID wins over the virtual placeholder
+                            for (const id of real.keys()) {
+                                virtuals.delete(id);
+                            }
+                            result = [...real.values(), ...virtuals.values()];
+                        }
+                        if (commonType) {
+                            // virtual placeholders have no common.type — keep them so the tree
+                            // browser can still show that something exists below.
+                            result = result.filter(obj => obj.type === 'virtual' ||
+                                obj.common?.type === commonType);
+                        }
+                        if (!includeExtended || !includeNative) {
+                            result = result.map(obj => {
+                                const full = obj;
+                                if (includeExtended) {
+                                    // strip only `native`
+                                    const { native: _native, ...rest } = full;
+                                    return rest;
+                                }
+                                // default view: only _id, type, common (+ native if requested)
+                                const slim = {
+                                    _id: full._id,
+                                    type: full.type,
+                                    common: full.common,
+                                };
+                                if (includeNative) {
+                                    slim.native = full.native;
+                                }
+                                return slim;
+                            });
+                        }
+                        result.sort((a, b) => (a._id < b._id ? -1 : a._id > b._id ? 1 : 0));
+                        res.set('Content-Type', 'application/json');
+                        res.set('Cache-Control', 'no-cache');
+                        res.status(200).send(JSON.stringify(result));
+                    }
+                    catch (e) {
+                        res.status(500).send(`500. Error: ${e}`);
+                    }
+                });
+            }
             this.webServer.app.get(/.*\/_socket\/info\.js/, (req, res) => {
                 res.set('Content-Type', 'application/javascript');
                 res.set('Cache-Control', 'no-cache');

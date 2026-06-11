@@ -78,6 +78,7 @@ Three independent Vite + React apps, each with their own `package.json` and `nod
 
 - `GET /state/:stateId` - Read state value (returns plain value or JSON)
 - `POST /state/:stateId` - Write state value (accepts text/plain or JSON body)
+- `GET /object/:objectId` - Read objects (pattern with wildcards supported); always returns an array. By default each object contains only `_id`, `type`, `common`. Query params: `type` (filter by object type — defaults to `state`; pass `all` for every type), `commonType` (filter by `common.type`), `depth` (absolute max dot-separated parts in IDs — with this set, deeper matches yield synthetic `type: "virtual"` placeholders at exactly that depth), `extended` (include `acl`, `from`, `ts`, `user`, `enums`, `_rev`, ...), `native` (include `native` part), `system` (include `system.*` / `script.*` namespaces — hidden by default). Disabled by `disableObjects` config option.
 - `GET /adapter/:name/*` - Serve other adapter's admin files
 - `GET /` - Welcome page (index.html with injected settings)
 - `GET /config.json` - Web adapter settings for frontend consumption
