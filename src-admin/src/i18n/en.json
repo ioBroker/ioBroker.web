@@ -74,6 +74,8 @@
     "public_certificate": "'Public' certificate",
     "renew_certificates": "Use this instance for automatic update",
     "reset_cors_settings": "Set CORS settings to default",
+    "rootPath": "Root path",
+    "rootPath_hint": "Public URL path prefix when web is served behind a reverse proxy (e.g. /web/). Used for WebSocket connections. Leave empty if web is accessed at the domain root.",
     "set_certificates": "Set certificates or load it first in the system settings (right top).",
     "show_admin_instances": "Show non-web instances",
     "show_folders": "Show folders content",

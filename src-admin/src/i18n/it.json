@@ -74,6 +74,8 @@
     "public_certificate": "Certificato pubblico",
     "renew_certificates": "Utilizza questa istanza per l'aggiornamento automatico",
     "reset_cors_settings": "Imposta le impostazioni CORS come predefinite",
+    "rootPath": "Percorso root",
+    "rootPath_hint": "Prefisso del percorso URL pubblico quando web è servito dietro un reverse proxy (ad es. /web/). Utilizzato per le connessioni WebSocket. Lasciare vuoto se web è accessibile dalla radice del dominio.",
     "set_certificates": "Imposta i certificati o caricali prima nelle impostazioni di sistema (in alto a destra).",
     "show_admin_instances": "Mostra istanze non web",
     "show_folders": "Mostra il contenuto delle cartelle",

@@ -74,6 +74,8 @@
     "public_certificate": "Openbaar certificaat",
     "renew_certificates": "Gebruik deze instantie voor automatische update",
     "reset_cors_settings": "CORS-instellingen instellen op standaard",
+    "rootPath": "Root-pad",
+    "rootPath_hint": "Openbaar URL-padprefix wanneer web achter een reverse proxy draait (bijv. /web/). Wordt gebruikt voor WebSocket-verbindingen. Laat leeg als web direct op het domein wordt benaderd.",
     "set_certificates": "Stel certificaten in of laad het eerst in de systeeminstellingen (rechtsboven).",
     "show_admin_instances": "Niet-webinstanties weergeven",
     "show_folders": "Inhoud van mappen weergeven",
