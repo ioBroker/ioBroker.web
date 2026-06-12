@@ -3,7 +3,7 @@ import type { Server as HttpsServer } from 'node:https';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import type { LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 export type Server = HttpServer | HttpsServer;
 export declare function readBodyAsync(req: IncomingMessage, options?: {
     limit?: number;
@@ -19,7 +19,7 @@ export declare class WebAdapter extends Adapter {
     private socketUrl;
     private readonly cache;
     private ownSocket;
-    /** If socket instance is alive */
+    /** If the socket instance is alive */
     private socketioAlive;
     private lang;
     private readonly extensions;
@@ -49,7 +49,7 @@ export declare class WebAdapter extends Adapter {
     }>;
     getIndexHtml(req: Request): Promise<string>;
     /**
-     * Transform pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
+     * Transform a pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
      *
      * @param link Pattern
      * @param instanceObj Current instance object

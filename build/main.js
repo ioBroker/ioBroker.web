@@ -19,7 +19,7 @@ const passport_local_1 = require("passport-local");
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common adapter utils
 const webserver_1 = require("@iobroker/webserver");
-const buffer_1 = require("buffer");
+const node_buffer_1 = require("node:buffer");
 const utils_1 = require("./lib/utils");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
@@ -277,7 +277,7 @@ async function readBodyAsync(req, options) {
     const chunks = [];
     let length = 0;
     for await (const chunk of req) {
-        const buf = buffer_1.Buffer.isBuffer(chunk) ? chunk : buffer_1.Buffer.from(chunk);
+        const buf = node_buffer_1.Buffer.isBuffer(chunk) ? chunk : node_buffer_1.Buffer.from(chunk);
         length += buf.length;
         if (length > limit) {
             const err = new Error('Payload Too Large');
@@ -286,7 +286,7 @@ async function readBodyAsync(req, options) {
         }
         chunks.push(buf);
     }
-    return buffer_1.Buffer.concat(chunks);
+    return node_buffer_1.Buffer.concat(chunks);
 }
 class WebAdapter extends adapter_core_1.Adapter {
     indexHtml = '';
@@ -302,7 +302,7 @@ class WebAdapter extends adapter_core_1.Adapter {
     socketUrl = '';
     cache = {}; // cached web files
     ownSocket = false;
-    /** If socket instance is alive */
+    /** If the socket instance is alive */
     socketioAlive = false;
     lang = 'en';
     extensions = {};
@@ -534,7 +534,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         if (systemConfig) {
             if (!systemConfig?.native?.secret) {
                 systemConfig.native = systemConfig.native || {};
-                const buf = await new Promise(resolve => require('crypto').randomBytes(24, (_err, buf) => resolve(buf)));
+                const buf = await new Promise(resolve => require('node:crypto').randomBytes(24, (_err, buf) => resolve(buf)));
                 this.secret = buf.toString('hex');
                 await this.extendForeignObjectAsync('system.config', { native: { secret: this.secret } });
             }
@@ -834,7 +834,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         return this.indexHtml.replace('// -- PLACE THE LIST HERE --', lines.join('\n'));
     }
     /**
-     * Transform pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
+     * Transform a pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
      *
      * @param link Pattern
      * @param instanceObj Current instance object
@@ -1172,7 +1172,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         if (this.config.auth) {
             // with basic authentication
             if (req.headers.authorization?.startsWith('Basic ')) {
-                const [user, pass] = buffer_1.Buffer.from(req.headers.authorization.split(' ')[1], 'base64')
+                const [user, pass] = node_buffer_1.Buffer.from(req.headers.authorization.split(' ')[1], 'base64')
                     .toString()
                     .split(':');
                 this.checkUser(user, pass, async (_err, result) => {
@@ -1385,7 +1385,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     })(req, res, next);
                 };
                 /**
-                 * Auto Logon if possible else it will redirect or return Basic Auth information if activated
+                 * Auto Logon if possible, else it will redirect or return Basic Auth information if activated
                  *
                  * @param req request object
                  * @param res response object
@@ -1513,7 +1513,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         req.headers.authorization.startsWith('Basic')) {
                         // not logged in yet, and basic auth is active + header present
                         const b64auth = req.headers.authorization.split(' ')[1];
-                        const [login, password] = buffer_1.Buffer.from(b64auth, 'base64').toString().split(':');
+                        const [login, password] = node_buffer_1.Buffer.from(b64auth, 'base64').toString().split(':');
                         req.body = req.body || {};
                         req.body.username = login;
                         req.body.password = password;
@@ -1770,7 +1770,7 @@ class WebAdapter extends adapter_core_1.Adapter {
             if (!this.config.disableObjects) {
                 this.log.debug('Activating objects endpoint');
                 // Read objects (pattern may contain wildcards). Always returns an array.
-                // By default only `_id`, `type` and `common` are returned for each object.
+                // By default, only `_id`, `type` and `common` are returned for each object.
                 // When `depth` is set and a matching object lives deeper than `depth`, a synthetic
                 // entry `{ _id, type: "virtual" }` is emitted at exactly `depth` so a tree browser
                 // can see that content exists below an intermediate path even when the intermediate
@@ -1864,7 +1864,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         if (depth) {
                             // Split into real (parts <= depth) and ancestors of deeper objects.
                             // For deeper objects, emit a synthetic { type: 'virtual' } placeholder at
-                            // exactly depth so a tree browser knows there is content below.
+                            //  the exact depth so a tree browser knows there is content below.
                             const real = new Map();
                             const virtuals = new Map();
                             for (const obj of result) {
@@ -2190,7 +2190,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         this.log.warn(`Cannot decode URI: "${req.url}`);
                         url = req.url;
                     }
-                    // remove all ../
+                    // remove all "../"
                     // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
                     url = (0, node_path_1.normalize)(url.replace(/\\/g, '/')).replace(/\\/g, '/');
                     // remove '////' at start and let only one
@@ -2309,7 +2309,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                             else {
                                 // Store file in cache
                                 if (this.config.cache) {
-                                    this.cache[`${id}/${url}`] = { buffer: buffer_1.Buffer.from(buffer), mimeType: 'text/html' };
+                                    this.cache[`${id}/${url}`] = { buffer: node_buffer_1.Buffer.from(buffer), mimeType: 'text/html' };
                                 }
                                 res.set('Cache-Control', 'no-cache');
                                 res.contentType('text/html');
@@ -2399,13 +2399,13 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 // Store file in cache
                                 if (this.config.cache) {
                                     this.cache[`${id}/${url}`] = {
-                                        buffer: buffer_1.Buffer.from(result.file),
+                                        buffer: node_buffer_1.Buffer.from(result.file),
                                         mimeType: result.mimeType,
                                     };
                                 }
                                 res.contentType(result.mimeType);
                                 if (req.headers.range) {
-                                    this.sendRange(req, res, buffer_1.Buffer.from(result.file));
+                                    this.sendRange(req, res, node_buffer_1.Buffer.from(result.file));
                                 }
                                 else {
                                     res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);

@@ -74,7 +74,7 @@ Note: the option "Disable states and socket info" must be deactivated in the web
 ## Access objects
 You can read objects (including patterns with wildcards) via HTTP GET request. The response is **always a JSON array**, because the pattern may match multiple objects.
 
-By default each returned object contains only `_id`, `type` and `common`. Use the `extended` and/or `native` query flags to ask for more.
+By default, each returned object contains only `_id`, `type` and `common`. Use the `extended` and/or `native` query flags to ask for more.
 
 When the `depth` query is used and a matching object lives deeper than the requested level, a synthetic placeholder is returned at exactly that depth:
 ```json
@@ -89,14 +89,14 @@ http://IP:8082/object/0_userdata.0.branch.* =>
 
 Supported query parameters:
 
-| Parameter    | Description                                                                                                                                                                                                    |
-|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `type`       | Filter by object type (e.g. `state`, `channel`, `device`, `folder`, `enum`, `instance`, ...). **Defaults to `state`** when omitted. Pass `all` to query objects of every type.                                |
-| `commonType` | Filter by `common.type` of the object (`number`, `string`, `boolean`, `mixed`, `array`, `object`).                                                                                                             |
+| Parameter    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `type`       | Filter by object type (e.g. `state`, `channel`, `device`, `folder`, `enum`, `instance`, ...). **Defaults to `state`** when omitted. Pass `all` to query objects of every type.                                                                                                                                                                                                                                                                                                                        |
+| `commonType` | Filter by `common.type` of the object (`number`, `string`, `boolean`, `mixed`, `array`, `object`).                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `depth`      | Absolute maximum number of dot-separated parts in the object ID. For example, to fetch only the direct children of `0_userdata.0.branch` (which has 3 parts), request `/object/0_userdata.0.branch.*?depth=4`. `depth=1` is silently clamped to `depth=2` (ioBroker objects exist at 1 level or 3+ levels — the 2-level "instance" entries like `0_userdata.0` are what a root-level tree browser actually wants). Any real single-segment objects are dropped from the response for the same reason. |
-| `extended`   | Pass `?extended` or `?extended=true` to additionally include system attributes such as `acl`, `from`, `ts`, `user`, `enums`, `_rev`.                                                                           |
-| `native`     | Pass `?native` or `?native=true` to additionally include the `native` part of each object.                                                                                                                     |
-| `system`     | By default objects under `system.*` and `script.*` are **hidden**. Pass `?system` or `?system=true` to include them.                                                                                            |
+| `extended`   | Pass `?extended` or `?extended=true` to additionally include system attributes such as `acl`, `from`, `ts`, `user`, `enums`, `_rev`.                                                                                                                                                                                                                                                                                                                                                                  |
+| `native`     | Pass `?native` or `?native=true` to additionally include the `native` part of each object.                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `system`     | By default objects under `system.*` and `script.*` are **hidden**. Pass `?system` or `?system=true` to include them.                                                                                                                                                                                                                                                                                                                                                                                  |
 
 Examples:
 ```
@@ -154,8 +154,11 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@SimonFischer04) Added rootPath option to support the running behind a reverse proxy
+
 ### 8.2.0 (2026-05-21)
-* (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: "virtual"` placeholders so a tree browser can see content exists below.
+* (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default, only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: "virtual"` placeholders so a tree browser can see content exists below.
 * (@GermanBluefox) Added `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off
 
 ### 8.1.0 (2026-04-13)
