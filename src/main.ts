@@ -20,7 +20,7 @@ import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/sock
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { replaceLink } from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
@@ -367,7 +367,7 @@ export class WebAdapter extends Adapter {
     private socketUrl = '';
     private readonly cache: { [fileName: string]: { mimeType: string; buffer: Buffer<ArrayBuffer> } } = {}; // cached web files
     private ownSocket = false;
-    /** If socket instance is alive */
+    /** If the socket instance is alive */
     private socketioAlive = false;
     private lang: ioBroker.Languages = 'en';
     private readonly extensions: Record<string, { path: string; config: ioBroker.InstanceObject; obj?: ExtAPI }> = {};
@@ -650,7 +650,7 @@ export class WebAdapter extends Adapter {
             if (!systemConfig?.native?.secret) {
                 systemConfig.native = systemConfig.native || {};
                 const buf: Buffer = await new Promise<Buffer>(resolve =>
-                    require('crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
+                    require('node:crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
                 );
                 this.secret = buf.toString('hex');
                 await this.extendForeignObjectAsync('system.config', { native: { secret: this.secret } });
@@ -1031,7 +1031,7 @@ export class WebAdapter extends Adapter {
     }
 
     /**
-     * Transform pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
+     * Transform a pattern like %protocol%://%web.0_bind%:%port into https://192.168.1.1:8081
      *
      * @param link Pattern
      * @param instanceObj Current instance object
@@ -1687,7 +1687,7 @@ export class WebAdapter extends Adapter {
                 };
 
                 /**
-                 * Auto Logon if possible else it will redirect or return Basic Auth information if activated
+                 * Auto Logon if possible, else it will redirect or return Basic Auth information if activated
                  *
                  * @param req request object
                  * @param res response object
@@ -2162,7 +2162,7 @@ export class WebAdapter extends Adapter {
             if (!this.config.disableObjects) {
                 this.log.debug('Activating objects endpoint');
                 // Read objects (pattern may contain wildcards). Always returns an array.
-                // By default only `_id`, `type` and `common` are returned for each object.
+                // By default, only `_id`, `type` and `common` are returned for each object.
                 // When `depth` is set and a matching object lives deeper than `depth`, a synthetic
                 // entry `{ _id, type: "virtual" }` is emitted at exactly `depth` so a tree browser
                 // can see that content exists below an intermediate path even when the intermediate
@@ -2269,7 +2269,7 @@ export class WebAdapter extends Adapter {
                         if (depth) {
                             // Split into real (parts <= depth) and ancestors of deeper objects.
                             // For deeper objects, emit a synthetic { type: 'virtual' } placeholder at
-                            // exactly depth so a tree browser knows there is content below.
+                            //  the exact depth so a tree browser knows there is content below.
                             const real = new Map<string, ioBroker.AnyObject>();
                             const virtuals = new Map<string, ioBroker.AnyObject>();
                             for (const obj of result) {
@@ -2658,7 +2658,7 @@ export class WebAdapter extends Adapter {
                         this.log.warn(`Cannot decode URI: "${req.url}`);
                         url = req.url;
                     }
-                    // remove all ../
+                    // remove all "../"
                     // important: Linux does not normalize "\" but fs.readFile accepts it as '/'
                     url = normalize(url.replace(/\\/g, '/')).replace(/\\/g, '/');
                     // remove '////' at start and let only one
