@@ -216,7 +216,7 @@
     "startDisabledExtensions": false,
     "staticAssetCacheMaxAge": 60,
     "ttl": 3600,
-    "usePureWebSockets": false,
+    "usePureWebSockets": true,
     "whiteListEnabled": false
   },
   "instanceObjects": [

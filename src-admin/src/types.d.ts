@@ -115,4 +115,5 @@ export interface WebAdapterConfig {
     };
     whiteListEnabled: boolean;
     whiteListSettings?: Record<string, WhiteListSettings>;
+    rootPath: string;
 }

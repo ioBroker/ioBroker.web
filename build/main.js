@@ -7,6 +7,8 @@ exports.WebAdapter = void 0;
 exports.readBodyAsync = readBodyAsync;
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
+const node_buffer_1 = require("node:buffer");
+const node_crypto_1 = require("node:crypto");
 const express_session_1 = __importDefault(require("express-session"));
 const express_1 = __importDefault(require("express"));
 const mime_types_1 = require("mime-types");
@@ -18,8 +20,9 @@ const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = require("passport-local");
 const connect_flash_1 = __importDefault(require("connect-flash"));
 const adapter_core_1 = require("@iobroker/adapter-core"); // Get common adapter utils
+const ws_server_library_1 = require("@iobroker/ws-server-library");
+const socketio_server_1 = require("@iobroker/socketio-server");
 const webserver_1 = require("@iobroker/webserver");
-const node_buffer_1 = require("node:buffer");
 const utils_1 = require("./lib/utils");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
@@ -534,7 +537,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         if (systemConfig) {
             if (!systemConfig?.native?.secret) {
                 systemConfig.native = systemConfig.native || {};
-                const buf = await new Promise(resolve => require('node:crypto').randomBytes(24, (_err, buf) => resolve(buf)));
+                const buf = await new Promise(resolve => (0, node_crypto_1.randomBytes)(24, (_err, buf) => resolve(buf)));
                 this.secret = buf.toString('hex');
                 await this.extendForeignObjectAsync('system.config', { native: { secret: this.secret } });
             }
@@ -1068,8 +1071,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 }
                 else {
-                    const pathToFile = require.resolve('iobroker.ws');
-                    file = (0, node_path_1.join)((0, node_path_1.dirname)(pathToFile), '/lib/socket.io.js');
+                    file = require.resolve('@iobroker/ws-server-library/socket.io.js');
                 }
                 this.socketIoFile = (0, node_fs_1.readFileSync)(file);
             }
@@ -1077,8 +1079,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 // try to get a file from iobroker.socketio adapter
                 let file;
                 try {
-                    const dir = require.resolve(`iobroker.socketio`);
-                    file = (0, node_path_1.join)((0, node_path_1.dirname)(dir), '/lib/socket.io.js');
+                    file = require.resolve('@iobroker/socketio-server/socket.io.js');
                 }
                 catch {
                     // ignore
@@ -1827,7 +1828,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         let objects;
                         if (!allTypes) {
                             // single type (default: "state"): use the view-backed fast path
-                            objects = (await this.getForeignObjectsAsync(objectId, type, null, options));
+                            objects = await this.getForeignObjectsAsync(objectId, type, null, options);
                         }
                         else if (!objectId.includes('*')) {
                             // exact ID without wildcards: single-object lookup across all types
@@ -2078,32 +2079,12 @@ class WebAdapter extends adapter_core_1.Adapter {
             // Used only for socket.io
             socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
             try {
-                let path = this.config.usePureWebSockets ? `iobroker.ws` : 'iobroker.socketio';
-                let filePath = require.resolve(path);
-                filePath = filePath.replace(/\\/g, '/');
-                // create a path to socket.js
-                const parts = filePath.split('/');
-                parts.pop(); // main.js
-                if (filePath.replace(/\\/g, '/').endsWith('/build/main.js')) {
-                    path += '/build/lib/socket.js';
-                }
-                else if (filePath.replace(/\\/g, '/').endsWith('/dist/main.js')) {
-                    // 2026.02.17 TODO: remove it after some time, because we will not publish dist anymore
-                    path += '/dist/lib/socket.js';
+                if (this.config.usePureWebSockets) {
+                    this.webServer.io = new ws_server_library_1.IOSocketClass(this.webServer.server, socketSettings, this, this.store, this.checkUser);
                 }
                 else {
-                    path += '/lib/socket.js';
+                    this.webServer.io = new socketio_server_1.IOSocketClass(this.webServer.server, socketSettings, this, this.store, this.checkUser);
                 }
-                let pack = await import(path);
-                if (pack.default) {
-                    pack = pack.default;
-                }
-                if (pack.Socket) {
-                    pack = pack.Socket;
-                }
-                const IOSocket = pack;
-                // const IOSocket = require('./lib/socket.js'); // DEBUG
-                this.webServer.io = new IOSocket(this.webServer.server, socketSettings, this, this.store, this.checkUser);
             }
             catch (err) {
                 this.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');

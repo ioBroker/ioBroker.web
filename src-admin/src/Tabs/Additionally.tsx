@@ -83,7 +83,7 @@ const LANGUAGES: { value: ioBroker.Languages | ''; label: string; translate?: bo
 
 interface AdditionallyProps {
     native: WebAdapterConfig;
-    onChange: (attr: string, value: any) => void;
+    onChange: (attr: string | boolean, value?: any) => void;
 }
 
 class Additionally extends Component<AdditionallyProps> {

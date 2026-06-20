@@ -345,13 +345,14 @@ class Login extends Component<object, LoginState> {
                         {window.loginLogo && window.loginLogo !== '@@loginLogo@@' ? (
                             <Box
                                 sx={{
+                                    backgroundColor: theme => (theme.palette.mode === 'dark' ? '#000' : '#fff'),
+                                }}
+                                style={{
                                     height: 50,
                                     width: 102,
                                     lineHeight: '50px',
-                                    backgroundColor: (theme: IobTheme) =>
-                                        theme.palette.mode === 'dark' ? '#000' : '#fff',
-                                    borderRadius: '5px',
-                                    padding: '5px',
+                                    borderRadius: 5,
+                                    padding: 5,
                                 }}
                             >
                                 <img

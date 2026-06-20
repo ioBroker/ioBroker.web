@@ -1,9 +1,9 @@
 import type { IncomingMessage, Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
+import { Buffer } from 'node:buffer';
 import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import type { LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { Buffer } from 'node:buffer';
 export type Server = HttpServer | HttpsServer;
 export declare function readBodyAsync(req: IncomingMessage, options?: {
     limit?: number;

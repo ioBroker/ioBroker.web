@@ -2,6 +2,8 @@ import type { IncomingMessage, Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, dirname, normalize } from 'node:path';
+import { Buffer } from 'node:buffer';
+import { randomBytes } from 'node:crypto';
 
 import session from 'express-session';
 import express, { type Express, type NextFunction, type Request, type Response } from 'express';
@@ -15,12 +17,12 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import flash from 'connect-flash';
 
 import { Adapter, EXIT_CODES, commonTools, type AdapterOptions, I18n } from '@iobroker/adapter-core'; // Get common adapter utils
-import type { IOSocketClass } from 'iobroker.ws';
+import { IOSocketClass as IOSocketClassWs } from '@iobroker/ws-server-library';
+import { IOSocketClass as IOSocketClassSocketIo } from '@iobroker/socketio-server';
 import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/socket-classes';
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { Buffer } from 'node:buffer';
 import { replaceLink } from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
@@ -346,7 +348,7 @@ export async function readBodyAsync(req: IncomingMessage, options?: { limit?: nu
 
 interface WebStructure {
     server: null | (Server & { __server: WebStructure });
-    io: null | IOSocketClass;
+    io: null | IOSocketClassWs | IOSocketClassSocketIo;
     app: Express | null;
 }
 
@@ -438,7 +440,7 @@ export class WebAdapter extends Adapter {
         }
 
         if (obj?.common?.webPreSettings && obj.type === 'instance') {
-            this.updatePreSettings(obj as ioBroker.InstanceObject);
+            this.updatePreSettings(obj);
         }
 
         if (!this.ownSocket && id === this.config.socketio) {
@@ -650,7 +652,7 @@ export class WebAdapter extends Adapter {
             if (!systemConfig?.native?.secret) {
                 systemConfig.native = systemConfig.native || {};
                 const buf: Buffer = await new Promise<Buffer>(resolve =>
-                    require('node:crypto').randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
+                    randomBytes(24, (_err: Error | null, buf: Buffer): void => resolve(buf)),
                 );
                 this.secret = buf.toString('hex');
                 await this.extendForeignObjectAsync('system.config', { native: { secret: this.secret } });
@@ -1313,16 +1315,14 @@ export class WebAdapter extends Adapter {
                 if (existsSync(`${__dirname}/${wwwDir}/lib/js/ws.js`)) {
                     file = `${__dirname}/${wwwDir}/lib/js/ws.js`;
                 } else {
-                    const pathToFile = require.resolve('iobroker.ws');
-                    file = join(dirname(pathToFile), '/lib/socket.io.js');
+                    file = require.resolve('@iobroker/ws-server-library/socket.io.js');
                 }
                 this.socketIoFile = readFileSync(file);
             } else {
                 // try to get a file from iobroker.socketio adapter
                 let file: string | undefined;
                 try {
-                    const dir = require.resolve(`iobroker.socketio`);
-                    file = join(dirname(dir), '/lib/socket.io.js');
+                    file = require.resolve('@iobroker/socketio-server/socket.io.js');
                 } catch {
                     // ignore
                 }
@@ -2221,16 +2221,16 @@ export class WebAdapter extends Adapter {
                         let objects: Record<string, ioBroker.AnyObject>;
                         if (!allTypes) {
                             // single type (default: "state"): use the view-backed fast path
-                            objects = (await this.getForeignObjectsAsync(
+                            objects = await this.getForeignObjectsAsync(
                                 objectId,
                                 type as ioBroker.ObjectType,
                                 null,
                                 options,
-                            )) as Record<string, ioBroker.AnyObject>;
+                            );
                         } else if (!objectId.includes('*')) {
                             // exact ID without wildcards: single-object lookup across all types
                             const obj = await this.getForeignObjectAsync(objectId, options);
-                            objects = obj ? { [objectId]: obj as ioBroker.AnyObject } : {};
+                            objects = obj ? { [objectId]: obj } : {};
                         } else {
                             // wildcard pattern across all object types — getForeignObjectsAsync would
                             // collapse to type=state, so use getObjectList here and pattern-match manually.
@@ -2250,7 +2250,7 @@ export class WebAdapter extends Adapter {
                             objects = {};
                             for (const row of list?.rows || []) {
                                 if (row?.value && regex.test(row.id)) {
-                                    objects[row.id] = row.value as ioBroker.AnyObject;
+                                    objects[row.id] = row.value;
                                 }
                             }
                         }
@@ -2522,39 +2522,23 @@ export class WebAdapter extends Adapter {
             socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
 
             try {
-                let path = this.config.usePureWebSockets ? `iobroker.ws` : 'iobroker.socketio';
-                let filePath = require.resolve(path);
-
-                filePath = filePath.replace(/\\/g, '/');
-                // create a path to socket.js
-                const parts = filePath.split('/');
-                parts.pop(); // main.js
-                if (filePath.replace(/\\/g, '/').endsWith('/build/main.js')) {
-                    path += '/build/lib/socket.js';
-                } else if (filePath.replace(/\\/g, '/').endsWith('/dist/main.js')) {
-                    // 2026.02.17 TODO: remove it after some time, because we will not publish dist anymore
-                    path += '/dist/lib/socket.js';
+                if (this.config.usePureWebSockets) {
+                    this.webServer.io = new IOSocketClassWs(
+                        this.webServer.server as Server,
+                        socketSettings,
+                        this,
+                        this.store!,
+                        this.checkUser,
+                    );
                 } else {
-                    path += '/lib/socket.js';
+                    this.webServer.io = new IOSocketClassSocketIo(
+                        this.webServer.server as Server,
+                        socketSettings,
+                        this,
+                        this.store!,
+                        this.checkUser,
+                    );
                 }
-
-                let pack: any = await import(path);
-                if (pack.default) {
-                    pack = pack.default;
-                }
-                if (pack.Socket) {
-                    pack = pack.Socket;
-                }
-                const IOSocket = pack as typeof IOSocketClass;
-
-                // const IOSocket = require('./lib/socket.js'); // DEBUG
-                this.webServer.io = new IOSocket(
-                    this.webServer.server as Server,
-                    socketSettings,
-                    this,
-                    this.store!,
-                    this.checkUser,
-                );
             } catch (err) {
                 this.log.error('Initialization of integrated socket.io failed. Please reinstall the web adapter.');
                 if (err.message) {

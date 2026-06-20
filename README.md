@@ -148,12 +148,16 @@ The answer is like:
     "token_type": "Bearer"
 }
 ```         
-More info could be found here: https://github.com/ioBroker/webserver?tab=readme-ov-file#oauth2-support
+More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov-file#oauth2-support
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+#### **WORK IN PROGRESS**
+* (@GermanBluefox) Used libraries for socket communication instead of adapters
+* (@GermanBluefox) Migrated to TS 6
+
 ### 8.3.0 (2026-06-12)
 * (@SimonFischer04) Added rootPath option to support the running behind a reverse proxy
 
@@ -166,7 +170,7 @@ More info could be found here: https://github.com/ioBroker/webserver?tab=readme-
 * (@GermanBluefox) Corrected potential errors
 
 ### 8.0.0 (2026-02-18)
-* (@GermanBluefox) Updated packages. Minimal Node.js version is now 20.0.0
+* (@GermanBluefox) Updated packages. The minimal Node.js version is now 20.0.0
 * (@GermanBluefox) Removed binary states
 * (@GermanBluefox) Added possibility to write values via `/state/` endpoint with `POST`
 

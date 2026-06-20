@@ -61,7 +61,7 @@ const styles: Record<string, any> = {
 interface BackgroundProps {
     native: WebAdapterConfig;
     instance: number;
-    onChange: (attr: string, value: any, cb?: () => void) => void;
+    onChange: (attr: string | boolean, value?: any, cb?: () => void) => void;
     socket: AdminConnection;
 }
 

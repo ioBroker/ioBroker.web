@@ -65,7 +65,7 @@ interface OptionsProps {
     native: WebAdapterConfig;
     instance: number;
     onLoad: (native: WebAdapterConfig) => void;
-    onChange: (attr: string, value: any, cb?: () => void) => void;
+    onChange: (attr: string | boolean, value?: any, cb?: () => void) => void;
     socket: AdminConnection;
     themeType: ThemeType;
     lang: ioBroker.Languages;

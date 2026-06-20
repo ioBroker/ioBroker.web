@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
+// @ts-expect-error css has no types
 import './index.css';
 import Intro from './Intro';
 import * as serviceWorker from './serviceWorker';

@@ -369,7 +369,7 @@ export default class IpFilterList extends Component<WhiteListProps, WhiteListSta
                     </div>
                 </div>
                 {el !== 'default'
-                    ? ['object', 'state', 'file'].map((element: 'object' | 'state' | 'file', indexEl) => {
+                    ? ['object', 'state', 'file'].map((element, indexEl) => {
                           const newTableHeadArr = [...IpFilterList.tableHeadArr].splice(
                               indexEl === 0 ? 0 : 4,
                               indexEl === 0 ? 4 : 5,
@@ -383,11 +383,16 @@ export default class IpFilterList extends Component<WhiteListProps, WhiteListSta
                                   <TableHead>
                                       <TableRow>
                                           <TableCell
-                                              sx={(theme: IobTheme) => ({
-                                                  background: theme.palette.mode === 'dark' ? '#333' : '#EEE',
+                                              sx={theme => ({
+                                                  backgroundColor: theme.palette.mode === 'dark' ? '#333' : '#EEE',
                                               })}
                                               align="center"
-                                              colSpan={Object.keys(whiteListSettings[el][element] || {}).length}
+                                              colSpan={
+                                                  Object.keys(
+                                                      whiteListSettings[el][element as 'object' | 'state' | 'file'] ||
+                                                          {},
+                                                  ).length
+                                              }
                                           >
                                               {I18n.t(['object', 'status', 'file'][indexEl])}
                                           </TableCell>
@@ -405,30 +410,36 @@ export default class IpFilterList extends Component<WhiteListProps, WhiteListSta
                                   </TableHead>
                                   <TableBody>
                                       <TableRow>
-                                          {Object.keys(whiteListSettings[el][element] || {}).map(
-                                              (attr: 'read' | 'list' | 'write' | 'delete') => (
-                                                  <TableCell
-                                                      key={`${element}_${attr}_mini_check`}
-                                                      align="center"
-                                                  >
-                                                      <CustomCheckbox
-                                                          table
-                                                          checked={whiteListSettings[el][element][attr]}
-                                                          attr={attr}
-                                                          native={this.props.native}
-                                                          groupStyle={{ alignItems: 'center' }}
-                                                          style={styles.checkBoxStyle}
-                                                          onChange={e => {
-                                                              const newObj = JSON.parse(
-                                                                  JSON.stringify(whiteListSettings),
-                                                              );
-                                                              newObj[el][element][attr] = e;
-                                                              this.props.onChange('whiteListSettings', newObj);
-                                                          }}
-                                                      />
-                                                  </TableCell>
-                                              ),
-                                          )}
+                                          {Object.keys(
+                                              whiteListSettings[el][element as 'object' | 'state' | 'file'] || {},
+                                          ).map((attr: string) => (
+                                              <TableCell
+                                                  key={`${element}_${attr}_mini_check`}
+                                                  align="center"
+                                              >
+                                                  <CustomCheckbox
+                                                      table
+                                                      checked={
+                                                          whiteListSettings[el][element as 'object' | 'state' | 'file'][
+                                                              attr as 'read' | 'list' | 'write' | 'delete'
+                                                          ]
+                                                      }
+                                                      attr={attr}
+                                                      native={this.props.native}
+                                                      groupStyle={{ alignItems: 'center' }}
+                                                      style={styles.checkBoxStyle}
+                                                      onChange={e => {
+                                                          const newObj: Record<string, WhiteListSettings> = JSON.parse(
+                                                              JSON.stringify(whiteListSettings),
+                                                          );
+                                                          newObj[el][element as 'object' | 'state' | 'file'][
+                                                              attr as 'read' | 'list' | 'write' | 'delete'
+                                                          ] = e as boolean;
+                                                          this.props.onChange('whiteListSettings', newObj);
+                                                      }}
+                                                  />
+                                              </TableCell>
+                                          ))}
                                       </TableRow>
                                   </TableBody>
                               </Table>
@@ -537,38 +548,40 @@ export default class IpFilterList extends Component<WhiteListProps, WhiteListSta
                                 >
                                     {this.userSelect(el, { marginTop: -1 })}
                                 </TableCell>
-                                {['object', 'state', 'file'].map(
-                                    (elProperty: 'object' | 'state' | 'file', indexProperty) =>
-                                        Object.keys(whiteListSettings[el][elProperty] || {}).map(
-                                            (attr: 'read' | 'list' | 'write' | 'delete'): React.JSX.Element => (
-                                                <TableCell
-                                                    sx={indexProperty % 2 ? styles.backgroundTheme : undefined}
-                                                    style={{
-                                                        borderBottom:
-                                                            indexProperty % 2 ? '1px solid #afafaf' : undefined,
-                                                        alignItems: 'center',
+                                {['object', 'state', 'file'].map((elProperty, indexProperty) =>
+                                    Object.keys(
+                                        whiteListSettings[el][elProperty as 'object' | 'state' | 'file'] || {},
+                                    ).map(
+                                        (attr: string): React.JSX.Element => (
+                                            <TableCell
+                                                sx={indexProperty % 2 ? styles.backgroundTheme : undefined}
+                                                style={{
+                                                    borderBottom: indexProperty % 2 ? '1px solid #afafaf' : undefined,
+                                                    alignItems: 'center',
+                                                }}
+                                                key={`${elProperty}_${attr}_max`}
+                                                align="center"
+                                            >
+                                                <CustomCheckbox
+                                                    table
+                                                    checked={
+                                                        whiteListSettings[el][
+                                                            elProperty as 'object' | 'state' | 'file'
+                                                        ][attr as 'read' | 'list' | 'write' | 'delete']
+                                                    }
+                                                    attr={attr}
+                                                    native={this.props.native}
+                                                    groupStyle={{ alignItems: 'center' }}
+                                                    style={styles.checkBoxStyle}
+                                                    onChange={e => {
+                                                        const newObj = JSON.parse(JSON.stringify(whiteListSettings));
+                                                        newObj[el][elProperty][attr] = e;
+                                                        this.props.onChange('whiteListSettings', newObj);
                                                     }}
-                                                    key={`${elProperty}_${attr}_max`}
-                                                    align="center"
-                                                >
-                                                    <CustomCheckbox
-                                                        table
-                                                        checked={whiteListSettings[el][elProperty][attr]}
-                                                        attr={attr}
-                                                        native={this.props.native}
-                                                        groupStyle={{ alignItems: 'center' }}
-                                                        style={styles.checkBoxStyle}
-                                                        onChange={e => {
-                                                            const newObj = JSON.parse(
-                                                                JSON.stringify(whiteListSettings),
-                                                            );
-                                                            newObj[el][elProperty][attr] = e;
-                                                            this.props.onChange('whiteListSettings', newObj);
-                                                        }}
-                                                    />
-                                                </TableCell>
-                                            ),
+                                                />
+                                            </TableCell>
                                         ),
+                                    ),
                                 )}
                             </TableRow>
                         ),
