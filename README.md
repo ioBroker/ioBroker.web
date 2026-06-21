@@ -154,7 +154,7 @@ More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-#### **WORK IN PROGRESS**
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Used libraries for socket communication instead of adapters
 * (@GermanBluefox) Migrated to TS 6
 
