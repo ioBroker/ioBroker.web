@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "8.3.0",
+    "version": "9.0.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.0.0": {
+        "en": "Used libraries for socket communication instead of adapters\nMigrated to TS 6",
+        "de": "Für die Socket-Kommunikation wurden Bibliotheken anstelle von Adaptern verwendet.\nMigration zu TS 6",
+        "ru": "Вместо адаптеров использовались библиотеки для сокетной связи.\nПеренесено на TS 6",
+        "pt": "Utilizou bibliotecas para comunicação por socket em vez de adaptadores.\nMigrado para TS 6",
+        "nl": "Gebruikte bibliotheken voor socketcommunicatie in plaats van adapters.\nGemigreerd naar TS 6",
+        "fr": "Utilisation de bibliothèques pour la communication par socket au lieu d'adaptateurs\nMigré vers TS 6",
+        "it": "Sono state utilizzate librerie per la comunicazione tramite socket anziché adattatori.\nMigrazione a TS 6",
+        "es": "Se utilizaron bibliotecas para la comunicación por sockets en lugar de adaptadores.\nMigrado a TS 6",
+        "pl": "Używane biblioteki do komunikacji gniazdowej zamiast adapterów\nMigracja do TS 6",
+        "uk": "Використані бібліотеки для зв'язку сокетів замість адаптерів\nПеренесено на TS 6",
+        "zh-cn": "使用库进行套接字通信，而不是使用适配器。\n已迁移至 TS 6"
+      },
       "8.3.0": {
         "en": "Added rootPath option to support the running behind a reverse proxy",
         "de": "Option rootPath hinzugefügt, um das Laufen hinter einem Reverse-Proxy zu unterstützen",
@@ -93,19 +106,6 @@
         "pl": "Dodano ustawienia dla własnych nagłówków CORS\nDodano możliwość pokazania instancji admin na stronie powitania\nWdrożenie nowej strony indeksu",
         "uk": "Додано налаштування для користувальницьких заголовків CORS\nДодано можливість показувати екземпляри адміністратора на сторінці веб-вітання\nРеалізовано нову сторінку індексу",
         "zh-cn": "为自定义的 CORS 信头添加了设置\n增加了在欢迎网页上显示管理实例的可能性\n已执行新的索引页"
-      },
-      "7.0.7": {
-        "en": "Trying to catch an error by the web extension",
-        "de": "Versuchen, einen Fehler durch die Web-Erweiterung zu fangen",
-        "ru": "Попытка поймать ошибку с помощью веб-расширения",
-        "pt": "Tentando pegar um erro pela extensão da web",
-        "nl": "Proberen een fout te vangen door de webextensie",
-        "fr": "Essayer d'attraper une erreur par l'extension web",
-        "it": "Cercando di prendere un errore dall'estensione web",
-        "es": "Intentando atrapar un error por la extensión web",
-        "pl": "Próba złapania błędu przez rozszerzenie sieci",
-        "uk": "Намагатися зловити помилку в Інтернеті",
-        "zh-cn": "尝试通过网络扩展获取错误"
       }
     },
     "desc": {

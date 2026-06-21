@@ -154,7 +154,7 @@ More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.0.0 (2026-06-21)
 * (@GermanBluefox) Used libraries for socket communication instead of adapters
 * (@GermanBluefox) Migrated to TS 6
 
@@ -173,9 +173,6 @@ More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov
 * (@GermanBluefox) Updated packages. The minimal Node.js version is now 20.0.0
 * (@GermanBluefox) Removed binary states
 * (@GermanBluefox) Added possibility to write values via `/state/` endpoint with `POST`
-
-### 7.0.9 (2025-03-28)
-* (@GermanBluefox) Corrected the loading of the material adapter
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
