@@ -1,9 +1,19 @@
 import React from 'react';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 
-import { AppBar, Tabs, Tab } from '@mui/material';
+import { AppBar, Tabs, Tab, CssBaseline } from '@mui/material';
 
-import { I18n, Loader, AdminConnection, GenericApp, type IobTheme } from '@iobroker/adapter-react-v5';
+import {
+    I18n,
+    Loader,
+    AdminConnection,
+    GenericApp,
+    type IobTheme,
+    ScrollbarStyles,
+    type GenericAppProps,
+    type GenericAppSettings,
+    type GenericAppState,
+} from '@iobroker/gui-components';
 
 import Options from './Tabs/Options';
 import IpFilterList from './Tabs/IpFilterList';
@@ -24,7 +34,6 @@ import esLang from './i18n/es.json';
 import plLang from './i18n/pl.json';
 import ukLang from './i18n/uk.json';
 import zhCnLang from './i18n/zh-cn.json';
-import type { GenericAppProps, GenericAppSettings, GenericAppState } from '@iobroker/adapter-react-v5/build/types';
 import type { WebAdapterConfig } from './types';
 
 const styles: Record<string, any> = {
@@ -194,8 +203,8 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         key="background"
                         socket={this.socket}
                         native={native}
-                        onChange={(attr: string, value: any, cb?: () => void) =>
-                            this.updateNativeValue(attr, value, cb)
+                        onChange={(attr: string | boolean, value?: any, cb?: () => void): void =>
+                            this.updateNativeValue(attr as string, value, cb)
                         }
                         instance={this.instance}
                     />
@@ -221,8 +230,8 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         socket={this.socket}
                         native={native}
                         instance={this.instance}
-                        onChange={(attr: string, value: any, cb?: () => void) =>
-                            this.updateNativeValue(attr, value, cb)
+                        onChange={(attr: string | boolean, value?: any, cb?: () => void): void =>
+                            this.updateNativeValue(attr as string, value, cb)
                         }
                         onLoad={(native: WebAdapterConfig): void => this.setState({ native })}
                         lang={I18n.getLanguage()}
@@ -245,7 +254,11 @@ class App extends GenericApp<GenericAppProps, AppState> {
             return (
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={this.state.theme}>
-                        <Loader themeType={themeType} />
+                        <CssBaseline />
+                        <Loader
+                            themeType={themeType}
+                            backgroundColor={theme.palette.background.default}
+                        />
                     </ThemeProvider>
                 </StyledEngineProvider>
             );
@@ -254,6 +267,8 @@ class App extends GenericApp<GenericAppProps, AppState> {
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
+                    <CssBaseline />
+                    <ScrollbarStyles theme={this.state.theme} />
                     <Toast
                         message={toast}
                         onClose={() => this.setState({ toast: '' })}

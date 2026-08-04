@@ -3,7 +3,7 @@ import Dropzone from 'react-dropzone';
 
 import { Box } from '@mui/material';
 
-import { type AdminConnection, I18n } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n } from '@iobroker/gui-components';
 
 import { Toast } from '../Components/Toast';
 import { CustomCheckbox } from '../Components/CustomCheckbox';

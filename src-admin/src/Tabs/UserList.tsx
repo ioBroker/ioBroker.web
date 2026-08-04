@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { MenuItem, Paper, Select, Checkbox } from '@mui/material';
 
-import { TextWithIcon, I18n, type AdminConnection } from '@iobroker/adapter-react-v5';
+import { TextWithIcon, I18n, type AdminConnection } from '@iobroker/gui-components';
 
 import { CustomCheckbox } from '../Components/CustomCheckbox';
 import { Toast } from '../Components/Toast';
@@ -89,8 +89,8 @@ export default class UserList extends Component<UserListProps, UserListState> {
                                     value={native.userListSettings.accessAsUser || '_'}
                                     onChange={e => {
                                         const _userListSettings = JSON.parse(JSON.stringify(native.userListSettings));
-                                        _userListSettings.accessAsUser =
-                                            e.target.value === '_' || !e.target.value ? '' : e.target.value;
+                                        const value = e.target.value as string;
+                                        _userListSettings.accessAsUser = !value || value === '_' ? '' : value;
                                         onChange('userListSettings', _userListSettings);
                                     }}
                                     renderValue={item => {

@@ -1012,8 +1012,28 @@ class WebAdapter extends adapter_core_1.Adapter {
         this.webServer.app.use(body_parser_1.default.urlencoded({ extended: true }));
         this.webServer.app.use(body_parser_1.default.json());
         this.webServer.app.use(body_parser_1.default.text());
-        // Install oauth2 server
-        (0, webserver_1.createOAuth2Server)(this, { app: this.webServer.app, secure: this.config.secure, loginPage: LOGIN_PAGE });
+        // Install oauth2 server. With `oauth` enabled it additionally serves the browser-based
+        // authorization code flow, which third-party clients (and web extensions such as `mcp`)
+        // need in order to be authorized without handling the user's password themselves.
+        (0, webserver_1.createOAuth2Server)(this, {
+            app: this.webServer.app,
+            secure: this.config.secure,
+            loginPage: LOGIN_PAGE,
+            authorizationCode: !!this.config.auth && !!this.config.oauth,
+            baseUrl: this.config.publicUrl || undefined,
+            dynamicClientRegistration: this.config.oauthDynamicRegistration !== false,
+            productName: 'ioBroker',
+        });
+        if (this.config.oauth && !this.config.auth) {
+            this.log.warn('OAuth is configured but ignored: it requires authentication to be enabled');
+        }
+        else if (this.config.oauth) {
+            this.log.info('OAuth is enabled: clients can be authorized through a browser login at /oauth/authorize');
+            if (!this.config.secure && !this.config.publicUrl?.startsWith('https://')) {
+                this.log.warn('OAuth without HTTPS: remote clients refuse plain http:// and will not be able to connect. ' +
+                    'Enable SSL or put this server behind an https reverse proxy and set the public URL.');
+            }
+        }
         this.webServer.app.use((0, express_session_1.default)({
             secret: this.secret,
             saveUninitialized: true,
@@ -1025,6 +1045,34 @@ class WebAdapter extends adapter_core_1.Adapter {
         this.webServer.app.use(passport_1.default.initialize());
         this.webServer.app.use(passport_1.default.session());
         this.webServer.app.use((0, connect_flash_1.default)());
+    }
+    /**
+     * Externally reachable base URL, without a trailing slash. Behind a reverse proxy the
+     * request-derived value is wrong, which is what the `publicUrl` setting is for.
+     *
+     * @param req - request object
+     */
+    getPublicBaseUrl(req) {
+        if (this.config.publicUrl) {
+            return this.config.publicUrl.replace(/\/+$/, '');
+        }
+        return `${req.protocol}://${req.get('host') || 'localhost'}`;
+    }
+    /**
+     * Build the `WWW-Authenticate` challenge for an unauthenticated API request.
+     *
+     * The `resource_metadata` link is what lets a client discover the authorization server on its
+     * own (RFC 9728). Its path is derived from the requested resource, so a request to `/mcp` is
+     * pointed at `/.well-known/oauth-protected-resource/mcp` — the document that the web extension
+     * owning that path publishes. When no such document exists, clients fall back to the server-wide
+     * metadata at the origin root.
+     *
+     * @param req - request object
+     * @param url - requested path without the query string
+     */
+    buildBearerChallenge(req, url) {
+        const resourcePath = url.replace(/\/+$/, '');
+        return `Bearer realm="ioBroker", resource_metadata="${this.getPublicBaseUrl(req)}/.well-known/oauth-protected-resource${resourcePath}"`;
     }
     /**
      * Send response to a byte ranges request
@@ -1505,7 +1553,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                         url.endsWith('.ico') ||
                         url.endsWith('manifest.json') ||
                         url.endsWith('cache.manifest.json') ||
-                        url.startsWith('/login/')) {
+                        url.startsWith('/login/') ||
+                        // OAuth discovery documents must be readable without credentials — that is the
+                        // whole point of them. The authorization server metadata is registered before
+                        // this middleware, but the per-resource documents come from web extensions,
+                        // which are only activated later and would otherwise be shadowed here.
+                        (this.config.oauth && url.startsWith('/.well-known/oauth-'))) {
                         next();
                         return;
                     }
@@ -1525,6 +1578,13 @@ class WebAdapter extends adapter_core_1.Adapter {
                         const origin = req.body.origin || '?href=%2F';
                         const redirect = req.originalUrl;
                         authenticate(req, res, next, redirect, origin);
+                    }
+                    else if (this.config.oauth && !(req.headers.accept || '').includes('text/html')) {
+                        // An API client cannot do anything with an HTML login page. Answer with the
+                        // OAuth challenge instead so it can discover where to authorize itself
+                        // (RFC 9728). Browsers, which do ask for text/html, still get the login page.
+                        res.set('WWW-Authenticate', this.buildBearerChallenge(req, url));
+                        res.status(401).json({ error: 'unauthorized' });
                     }
                     else {
                         // not logged in yet, redirect, auto login or send 401 if basicAuth activated

@@ -14,7 +14,7 @@ import {
 
 import { Delete as DeleteIcon, AddCircle as AddCircleIcon } from '@mui/icons-material';
 
-import { type AdminConnection, I18n, type IobTheme, type ThemeType, Utils } from '@iobroker/adapter-react-v5';
+import { type AdminConnection, I18n, type IobTheme, type ThemeType, Utils } from '@iobroker/gui-components';
 
 import { CustomCheckbox } from '../Components/CustomCheckbox';
 import { CustomInput } from '../Components/CustomInput';

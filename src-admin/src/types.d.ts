@@ -98,6 +98,12 @@ export interface WebAdapterConfig {
     loginBackgroundColor: string;
     loginBackgroundImage: boolean;
     loginOauth2: boolean;
+    /** Offer the browser-based OAuth2 authorization code flow with PKCE for third-party clients */
+    oauth: boolean;
+    /** Externally reachable base URL, required behind a reverse proxy */
+    publicUrl: string;
+    /** Let clients register themselves via RFC 7591 */
+    oauthDynamicRegistration: boolean;
     port: number | string;
     secure: boolean;
     showFolderIndex: boolean;

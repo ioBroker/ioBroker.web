@@ -5,7 +5,8 @@ import {
     Button,
     Paper,
     Toolbar,
-    Grid2,
+    Grid,
+    Stack,
     CardContent,
     CardMedia,
     Box,
@@ -14,6 +15,7 @@ import {
     CardActions,
     Divider,
     IconButton,
+    CssBaseline,
 } from '@mui/material';
 import { Logout, Launch } from '@mui/icons-material';
 
@@ -25,7 +27,8 @@ import {
     Utils,
     type ThemeType,
     ToggleThemeMenu,
-} from '@iobroker/adapter-react-v5';
+    ScrollbarStyles,
+} from '@iobroker/gui-components';
 
 import enLang from './i18n/en.json';
 import deLang from './i18n/de.json';
@@ -278,7 +281,7 @@ class Intro extends Component<object, LoginState> {
 
     renderCard(item: CardConfig, i: number): JSX.Element {
         return (
-            <Grid2
+            <Grid
                 key={i}
                 size={{
                     xs: 12,
@@ -298,18 +301,16 @@ class Intro extends Component<object, LoginState> {
                 >
                     <Card sx={styles.card}>
                         <CardContent style={styles.content}>
-                            <Grid2
-                                container
+                            <Stack
                                 direction="column"
-                                wrap="nowrap"
-                                style={styles.contentGrid}
+                                style={{ ...styles.contentGrid, flexWrap: 'nowrap' }}
                             >
                                 <CardMedia
                                     style={styles.img}
                                     component="img"
                                     image={item.img}
                                 />
-                            </Grid2>
+                            </Stack>
                         </CardContent>
                         <Divider />
                         <CardActions style={styles.action}>
@@ -332,7 +333,7 @@ class Intro extends Component<object, LoginState> {
                         </CardActions>
                     </Card>
                 </Link>
-            </Grid2>
+            </Grid>
         );
     }
 
@@ -342,6 +343,8 @@ class Intro extends Component<object, LoginState> {
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
+                    <CssBaseline />
+                    <ScrollbarStyles theme={this.state.theme} />
                     <AppBar
                         style={{ backgroundColor: this.state.theme.palette.mode === 'dark' ? undefined : '#f0f0f0' }}
                     >

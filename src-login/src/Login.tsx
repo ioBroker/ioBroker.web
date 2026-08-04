@@ -6,11 +6,12 @@ import {
     Button,
     Checkbox,
     CircularProgress,
+    CssBaseline,
     FormControlLabel,
-    Grid2,
     IconButton,
     Link,
     Paper,
+    Stack,
     TextField,
     Typography,
 } from '@mui/material';
@@ -25,8 +26,9 @@ import {
     Utils,
     type ThemeType,
     ToggleThemeMenu,
+    ScrollbarStyles,
     Connection,
-} from '@iobroker/adapter-react-v5';
+} from '@iobroker/gui-components';
 
 import enLang from './i18n/en.json';
 import deLang from './i18n/de.json';
@@ -142,9 +144,9 @@ interface LoginState {
     themeType: ThemeType;
 }
 
-class Login extends Component<object, LoginState> {
-    private readonly formRef: React.RefObject<HTMLFormElement>;
-    private readonly passwordRef: React.RefObject<HTMLInputElement>;
+export default class Login extends Component<object, LoginState> {
+    private readonly formRef: React.RefObject<HTMLFormElement | null>;
+    private readonly passwordRef: React.RefObject<HTMLInputElement | null>;
 
     constructor(props: object) {
         super(props);
@@ -337,10 +339,9 @@ class Login extends Component<object, LoginState> {
         } else {
             content = (
                 <Paper sx={styles.paper}>
-                    <Grid2
-                        container
+                    <Stack
                         direction="column"
-                        alignItems="center"
+                        sx={{ alignItems: 'center' }}
                     >
                         {window.loginLogo && window.loginLogo !== '@@loginLogo@@' ? (
                             <Box
@@ -489,7 +490,7 @@ class Login extends Component<object, LoginState> {
                                 </Button>
                             }
                         </form>
-                    </Grid2>
+                    </Stack>
                     <Box style={styles.marginTop}>
                         <Typography
                             variant="body2"
@@ -528,6 +529,8 @@ class Login extends Component<object, LoginState> {
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
+                    <CssBaseline />
+                    <ScrollbarStyles theme={this.state.theme} />
                     {this.state.themeName !== 'PT' && this.state.themeName !== 'DX' ? (
                         <ToggleThemeMenu
                             t={I18n.t}
@@ -548,5 +551,3 @@ class Login extends Component<object, LoginState> {
         );
     }
 }
-
-export default Login;

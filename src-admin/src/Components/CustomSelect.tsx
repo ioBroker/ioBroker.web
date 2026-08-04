@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FormControl, FormHelperText, Input, MenuItem, Select } from '@mui/material';
 
-import { I18n, Utils, Icon, type ThemeType } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Icon, type ThemeType } from '@iobroker/gui-components';
 import type { WebAdapterConfig } from '../../../src/types';
 
 const styles: Record<string, React.CSSProperties> = {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 interface CustomModalProps {
     open: boolean;
