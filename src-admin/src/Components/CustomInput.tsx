@@ -2,7 +2,7 @@ import React from 'react';
 
 import { FormControl, FormHelperText, TextField } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 import type { WebAdapterConfig } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {

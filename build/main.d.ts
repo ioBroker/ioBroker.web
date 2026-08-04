@@ -66,6 +66,26 @@ export declare class WebAdapter extends Adapter {
     }) => void) => void;
     initAuth(): void;
     /**
+     * Externally reachable base URL, without a trailing slash. Behind a reverse proxy the
+     * request-derived value is wrong, which is what the `publicUrl` setting is for.
+     *
+     * @param req - request object
+     */
+    private getPublicBaseUrl;
+    /**
+     * Build the `WWW-Authenticate` challenge for an unauthenticated API request.
+     *
+     * The `resource_metadata` link is what lets a client discover the authorization server on its
+     * own (RFC 9728). Its path is derived from the requested resource, so a request to `/mcp` is
+     * pointed at `/.well-known/oauth-protected-resource/mcp` — the document that the web extension
+     * owning that path publishes. When no such document exists, clients fall back to the server-wide
+     * metadata at the origin root.
+     *
+     * @param req - request object
+     * @param url - requested path without the query string
+     */
+    private buildBearerChallenge;
+    /**
      * Send response to a byte ranges request
      *
      * @param req - request object

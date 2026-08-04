@@ -2,7 +2,7 @@ import React, { type ChangeEvent, useState } from 'react';
 
 import { TextField, Button, Box } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 const styles: Record<string, any> = {
     root: {

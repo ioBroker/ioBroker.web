@@ -3,10 +3,10 @@ const setup = require('@iobroker/legacy-testing');
 const tests = require('./lib/tests');
 
 let objects = null;
-let states  = null;
+let states = null;
 
-process.env.HTTPS_PROXY   = '';
-process.env.HTTP_PROXY    = '';
+process.env.HTTPS_PROXY = '';
+process.env.HTTP_PROXY = '';
 // process.env.JS_CONTROLLER_VERSION = '5.0.5-alpha.0-20230617-464b0fd6';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -43,7 +43,7 @@ describe.skip(`Test WEB(SSL)`, () => {
         setup.setupController(async () => {
             const config = await setup.getAdapterConfig();
             // enable adapter
-            config.common.enabled  = true;
+            config.common.enabled = true;
             config.common.loglevel = 'debug';
 
             if (!config.native) {
@@ -51,18 +51,18 @@ describe.skip(`Test WEB(SSL)`, () => {
                 config.native = pack.native;
             }
 
-            config.native.port        = 18803;
-            config.native.secure      = true;
-            config.native.cache       = false;
+            config.native.port = 18803;
+            config.native.secure = true;
+            config.native.cache = false;
             config.native.showFolderIndex = true;
-            config.native.certPublic  = config.native.secure ? 'defaultPublic' : '';
+            config.native.certPublic = config.native.secure ? 'defaultPublic' : '';
             config.native.certPrivate = config.native.secure ? 'defaultPrivate' : '';
 
             await setup.setAdapterConfig(config.common, config.native);
 
             setup.startController(true, null, null, (_objects, _states) => {
                 objects = _objects;
-                states  = _states;
+                states = _states;
                 _done();
             });
         });

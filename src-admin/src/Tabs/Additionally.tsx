@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { FormControl, TextField, MenuItem, FormHelperText, InputLabel, Select } from '@mui/material';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/gui-components';
 
 import { CustomCheckbox } from '../Components/CustomCheckbox';
 import type { WebAdapterConfig } from '../../../src/types';

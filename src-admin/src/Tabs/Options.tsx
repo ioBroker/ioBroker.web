@@ -4,7 +4,7 @@ import { LinearProgress, Dialog, DialogTitle, DialogContent, DialogActions, Butt
 
 import { Security } from '@mui/icons-material';
 
-import { Logo, I18n, type AdminConnection, type ThemeType, InfoBox } from '@iobroker/adapter-react-v5';
+import { Logo, I18n, type AdminConnection, type ThemeType, InfoBox } from '@iobroker/gui-components';
 
 import { Toast } from '../Components/Toast';
 import { CustomModal } from '../Components/CustomModal';
@@ -332,6 +332,58 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                 <CustomCheckbox
                                     title="oauth2_authentication"
                                     attr="loginOauth2"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
+                            {native.auth ? (
+                                <CustomCheckbox
+                                    title="oauth_authorization_code"
+                                    attr="oauth"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
+                            {native.auth && native.oauth ? (
+                                <InfoBox
+                                    style={{ marginTop: 20 }}
+                                    type="info"
+                                    closeable
+                                    storeId="web.oauth_authorization_code"
+                                >
+                                    {I18n.t('oauth_authorization_code_info')
+                                        .split('\n')
+                                        .map((item, i) => (
+                                            <div key={i}>{item}</div>
+                                        ))}
+                                </InfoBox>
+                            ) : null}
+                            {native.auth &&
+                            native.oauth &&
+                            !native.secure &&
+                            !native.publicUrl?.startsWith('https://') ? (
+                                <InfoBox
+                                    style={{ marginTop: 20 }}
+                                    type="warning"
+                                >
+                                    {I18n.t('oauth_https_warning')}
+                                </InfoBox>
+                            ) : null}
+                            {native.auth && native.oauth ? (
+                                <CustomInput
+                                    title="public_url"
+                                    attr="publicUrl"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
+                            {native.auth && native.oauth ? (
+                                <CustomCheckbox
+                                    title="oauth_dynamic_registration"
+                                    attr="oauthDynamicRegistration"
                                     style={{ marginTop: 10 }}
                                     native={native}
                                     onChange={onChange}

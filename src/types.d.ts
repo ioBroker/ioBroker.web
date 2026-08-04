@@ -105,6 +105,20 @@ export interface WebAdapterConfig {
     loginBackgroundColor: string;
     loginBackgroundImage: boolean;
     loginOauth2: boolean;
+    /**
+     * Offer the browser-based OAuth2 authorization code flow with PKCE, so third-party clients
+     * (e.g. MCP clients, or web extensions serving them) can be authorized without ever seeing the
+     * user's ioBroker password. Requires {@link auth}.
+     */
+    oauth: boolean;
+    /**
+     * Externally reachable base URL of this server without a trailing slash, e.g.
+     * `https://iobroker.example.com`. Required behind a reverse proxy: the URLs published for OAuth
+     * discovery must be the ones the client can actually reach.
+     */
+    publicUrl: string;
+    /** Let clients register themselves via RFC 7591 (default: true). */
+    oauthDynamicRegistration: boolean;
     port: number | string;
     rootPath: string;
     secure: boolean;
