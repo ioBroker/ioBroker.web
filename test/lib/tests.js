@@ -1,19 +1,26 @@
 const axios = require('axios');
 const assert = require('node:assert');
 
+// `mime-types` >= 3 returns the WHATWG standard `text/javascript`, older versions
+// returned the now obsolete `application/javascript`. Both are valid for JS files.
+const JS_CONTENT_TYPES = ['text/javascript', 'application/javascript'];
+
 const tests = (protocol, port) => ({
     'read lib/js file': function (done) {
-        this.timeout(30000);
+        this.timeout(40000);
         console.log(`${protocol}://localhost:${port}/adapter/web/index_m.html`);
         console.log(`${protocol}://localhost:${port}/lib/js/selectID.js`);
         setTimeout(() => {
             axios(`${protocol}://localhost:${port}/lib/js/selectID.js`)
                 .then(response => {
                     assert.strictEqual(response.status, 200);
-                    assert.strictEqual(response.headers['content-type'].split(';')[0], 'application/javascript');
+                    assert.ok(
+                        JS_CONTENT_TYPES.includes(response.headers['content-type'].split(';')[0]),
+                        `Unexpected content-type: ${response.headers['content-type']}`,
+                    );
                     done();
                 })
-                .catch(error => assert.ok(!error));
+                .catch(done);
         }, 29000);
     },
 
@@ -25,7 +32,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.headers['content-type'].split(';')[0], 'text/css');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'read png file': function (done) {
@@ -36,7 +43,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.headers['content-type'].split(';')[0], 'image/png');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'read admin file': function (done) {
@@ -47,7 +54,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 200);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'read state that exists': function (done) {
@@ -57,9 +64,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 200);
                 done();
             })
-            .catch(error => {
-                assert.ok(!error);
-            });
+            .catch(done);
     },
 
     'read state that not exists': function (done) {
@@ -69,7 +74,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'read file that does not exist': function (done) {
@@ -79,7 +84,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read index.html': function (done) {
         this.timeout(2000);
@@ -89,7 +94,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.headers['content-type'].split(';')[0], 'text/html');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read /': function (done) {
         this.timeout(2000);
@@ -99,7 +104,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.headers['content-type'].split(';')[0], 'text/html');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read /..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd': function (done) {
         this.timeout(2000);
@@ -110,7 +115,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'read //..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd': function (done) {
@@ -122,7 +127,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'read /..%5cREADME.md': function (done) {
@@ -132,7 +137,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read /..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
@@ -141,7 +146,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read ////..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
@@ -150,7 +155,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read \\..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
@@ -159,7 +164,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
     'read /web/..%5c..%5cREADME.md': function (done) {
         this.timeout(2000);
@@ -168,7 +173,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'POST state that exists with plain value': function (done) {
@@ -183,7 +188,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.data.id, 'system.adapter.web.0.cpu');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'POST state that exists with JSON object': function (done) {
@@ -202,7 +207,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.data.id, 'system.adapter.web.0.cpu');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'POST state that exists with JSON object including ack': function (done) {
@@ -221,7 +226,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.data.id, 'system.adapter.web.0.cpu');
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'POST state that does not exist': function (done) {
@@ -235,7 +240,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.status, 404);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 
     'POST state and verify value was set': function (done) {
@@ -255,7 +260,7 @@ const tests = (protocol, port) => ({
                 assert.strictEqual(response.data, 180);
                 done();
             })
-            .catch(error => assert.ok(!error));
+            .catch(done);
     },
 });
 

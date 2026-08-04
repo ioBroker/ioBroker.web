@@ -14,7 +14,7 @@ function initTests() {
     const _tests = tests('https', 18803);
     for (const test in _tests) {
         if (_tests.hasOwnProperty(test)) {
-            it(`Test WEB: ${test}`, _tests[test]);
+            it(`Test WEB(SSL): ${test}`, _tests[test]);
         }
     }
 }
@@ -35,7 +35,7 @@ function checkConnectionOfAdapter(cb, counter) {
     });
 }
 
-describe.skip(`Test WEB(SSL)`, () => {
+describe(`Test WEB(SSL)`, () => {
     before(`Test WEB(SSL): Start js-controller`, function (_done) {
         this.timeout(600000); // because of first install from npm
         setup.adapterStarted = false;
@@ -69,13 +69,14 @@ describe.skip(`Test WEB(SSL)`, () => {
     });
 
     it(`Test WEB(SSL): Check if adapter started`, done => {
-        checkConnectionOfAdapter(() => setTimeout(() => done(), 2000));
-    }).timeout(10000);
+        checkConnectionOfAdapter(error => setTimeout(() => done(error && new Error(error)), 2000));
+        // checkConnectionOfAdapter polls up to 20 times with 1s pause, so the timeout must exceed 20s + 2s settle
+    }).timeout(30000);
 
     initTests();
 
     after(`Test WEB(SSL): Stop js-controller`, function (done) {
-        this.timeout(6000);
+        this.timeout(9000);
 
         setup.stopController(normalTerminated => {
             console.log(`Adapter normal terminated: ${normalTerminated}`);

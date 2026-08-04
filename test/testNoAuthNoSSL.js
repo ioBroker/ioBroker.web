@@ -69,8 +69,9 @@ describe('Test WEB', function () {
     });
 
     it('Test WEB: Check if adapter started', done => {
-        checkConnectionOfAdapter(() => setTimeout(() => done(), 2000));
-    }).timeout(10000);
+        checkConnectionOfAdapter(error => setTimeout(() => done(error && new Error(error)), 2000));
+        // checkConnectionOfAdapter polls up to 20 times with 1s pause, so the timeout must exceed 20s + 2s settle
+    }).timeout(30000);
 
     initTests();
 
