@@ -10,7 +10,6 @@ import {
     IconButton,
     TableRow,
     Box,
-    type SxProps,
 } from '@mui/material';
 
 import { Delete as DeleteIcon, AddCircle as AddCircleIcon } from '@mui/icons-material';
