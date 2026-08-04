@@ -174,7 +174,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.0 (2026-08-04)
 * (@GermanBluefox) Added the OAuth2 authorization code flow with PKCE, so third-party clients (e.g. MCP clients) can be authorized without seeing the user's password
 * (@GermanBluefox) Unauthenticated non-HTML requests now get a `401` challenge instead of a login redirect when OAuth is enabled
 * (@GermanBluefox) Updated `@iobroker/webserver` to 2.0.1
@@ -193,11 +193,6 @@ This is off by default. When enabled:
 ### 8.1.0 (2026-04-13)
 * (@GermanBluefox) Updated packages.
 * (@GermanBluefox) Corrected potential errors
-
-### 8.0.0 (2026-02-18)
-* (@GermanBluefox) Updated packages. The minimal Node.js version is now 20.0.0
-* (@GermanBluefox) Removed binary states
-* (@GermanBluefox) Added possibility to write values via `/state/` endpoint with `POST`
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

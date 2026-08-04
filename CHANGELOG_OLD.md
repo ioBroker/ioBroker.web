@@ -1,4 +1,9 @@
 # Older changes
+## 8.0.0 (2026-02-18)
+* (@GermanBluefox) Updated packages. The minimal Node.js version is now 20.0.0
+* (@GermanBluefox) Removed binary states
+* (@GermanBluefox) Added possibility to write values via `/state/` endpoint with `POST`
+
 ## 7.0.9 (2025-03-28)
 * (@GermanBluefox) Corrected the loading of the material adapter
 
