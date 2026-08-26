@@ -1305,6 +1305,66 @@ class WebAdapter extends adapter_core_1.Adapter {
             this.webServer.app = (0, express_1.default)();
             this.webServer.app.use((0, compression_1.default)());
             this.webServer.app.disable('x-powered-by');
+            // In front of every route below: an Express middleware only ever sees a request that the
+            // routes registered before it passed on, and routes such as `/oauth/token` answer without
+            // calling next(). Registered further down, this would leave those answers - the whole OAuth2
+            // server among them - without a single CORS header.
+            if (this.config.accessControlEnabled) {
+                this.webServer.app.use((req, res, next) => {
+                    // Falls back to the requesting origin, so an unset option still allows every
+                    // origin. Without one there is no cross-origin request to answer.
+                    const origin = this.config.accessControlAllowOrigin || req.headers.origin;
+                    if (origin) {
+                        res.header('Access-Control-Allow-Origin', origin);
+                        if (origin !== '*') {
+                            // The answer depends on the origin, so a shared cache must not hand
+                            // it to a different one.
+                            res.vary('Origin');
+                        }
+                    }
+                    if (this.config.accessControlAllowMethods) {
+                        res.header('Access-Control-Allow-Methods', this.config.accessControlAllowMethods);
+                    }
+                    if (this.config.accessControlAllowHeaders) {
+                        res.header('Access-Control-Allow-Headers', this.config.accessControlAllowHeaders);
+                    }
+                    res.header('Access-Control-Allow-Credentials', this.config.accessControlAllowCredentials ? 'true' : 'false');
+                    if (this.config.accessControlExposeHeaders) {
+                        res.header('Access-Control-Expose-Headers', this.config.accessControlExposeHeaders);
+                    }
+                    if (this.config.accessControlMaxAge) {
+                        res.header('Access-Control-Max-Age', this.config.accessControlMaxAge.toString());
+                    }
+                    // intercept OPTIONS method
+                    if ('OPTIONS' === req.method) {
+                        res.status(200).send(200);
+                    }
+                    else {
+                        next();
+                    }
+                });
+            }
+            else if (this.config.socketio || this.common.loglevel === 'debug') {
+                // Enable CORS
+                this.webServer.app.use((req, res, next) => {
+                    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+                    if (req.headers.origin) {
+                        // The answer depends on the origin, so a shared cache must not hand it to
+                        // a different one.
+                        res.vary('Origin');
+                    }
+                    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+                    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, *');
+                    res.header('Access-Control-Allow-Credentials', 'true');
+                    // intercept OPTIONS method
+                    if ('OPTIONS' === req.method) {
+                        res.status(200).send(200);
+                    }
+                    else {
+                        next();
+                    }
+                });
+            }
             // enable use of i-frames together with HTTPS
             // todo find the admin port and bind and use it here "ALLOW-FROM ipbind:port"
             // try to add "Content-Security-Policy: frame-ancestors 'self' example.com *.example.net ;"
@@ -1999,43 +2059,6 @@ class WebAdapter extends adapter_core_1.Adapter {
                 const config = await this.getListOfAllAdapters((req.headers['x-forwarded-for'] || req.connection.remoteAddress || '').toString());
                 res.status(200).send(JSON.stringify(config, null, 2));
             });
-            if (this.config.accessControlEnabled) {
-                this.webServer.app.use((req, res, next) => {
-                    res.header('Access-Control-Allow-Origin', this.config.accessControlAllowOrigin || req.headers.origin);
-                    res.header('Access-Control-Allow-Methods', this.config.accessControlAllowMethods);
-                    res.header('Access-Control-Allow-Headers', this.config.accessControlAllowHeaders);
-                    res.header('Access-Control-Allow-Credentials', this.config.accessControlAllowCredentials ? 'true' : 'false');
-                    if (this.config.accessControlExposeHeaders) {
-                        res.header('Access-Control-Expose-Headers', this.config.accessControlExposeHeaders);
-                    }
-                    if (this.config.accessControlMaxAge) {
-                        res.header('Access-Control-Max-Age', this.config.accessControlMaxAge.toString());
-                    }
-                    // intercept OPTIONS method
-                    if ('OPTIONS' === req.method) {
-                        res.status(200).send(200);
-                    }
-                    else {
-                        next();
-                    }
-                });
-            }
-            else if (this.config.socketio || this.common.loglevel === 'debug') {
-                // Enable CORS
-                this.webServer.app.use((req, res, next) => {
-                    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-                    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-                    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, *');
-                    res.header('Access-Control-Allow-Credentials', 'true');
-                    // intercept OPTIONS method
-                    if ('OPTIONS' === req.method) {
-                        res.status(200).send(200);
-                    }
-                    else {
-                        next();
-                    }
-                });
-            }
             const appOptions = {};
             if (this.config.cache) {
                 appOptions.maxAge = 30758400000; // one year
