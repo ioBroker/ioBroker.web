@@ -174,7 +174,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.1 (2026-08-26)
 * (@GermanBluefox) Fixed the CORS headers missing on every route that answers without passing the request on - the whole OAuth2 server among them. Retrieving a token from a browser on another origin failed with `No Access-Control-Allow-Origin header is present`. The CORS middleware is now registered in front of all routes instead of behind them
 * (@GermanBluefox) A reflected origin is now sent together with `Vary: Origin`, and an unset origin, method or header list no longer ends up as the literal string `undefined` in the response
 
@@ -193,10 +193,6 @@ This is off by default. When enabled:
 ### 8.2.0 (2026-05-21)
 * (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default, only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: "virtual"` placeholders so a tree browser can see content exists below.
 * (@GermanBluefox) Added `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off
-
-### 8.1.0 (2026-04-13)
-* (@GermanBluefox) Updated packages.
-* (@GermanBluefox) Corrected potential errors
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

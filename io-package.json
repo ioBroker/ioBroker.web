@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.0",
+    "version": "9.1.1",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.1": {
+        "en": "Fixed the CORS headers missing on every route that answers without passing the request on - the whole OAuth2 server among them. Retrieving a token from a browser on another origin failed with `No Access-Control-Allow-Origin header is present`. The CORS middleware is now registered in front of all routes instead of behind them\nA reflected origin is now sent together with `Vary: Origin`, and an unset origin, method or header list no longer ends up as the literal string `undefined` in the response",
+        "de": "Die fehlenden CORS-Header wurden für alle Routen behoben, die Anfragen beantworten, ohne sie weiterzuleiten – dies betrifft den gesamten OAuth2-Server. Das Abrufen eines Tokens von einem Browser einer anderen Domain schlug mit der Fehlermeldung „Kein Access-Control-Allow-Origin-Header vorhanden“ fehl. Die CORS-Middleware ist nun vor allen Routen anstatt dahinter registriert.\nEin reflektierter Ursprung wird nun zusammen mit `Vary: Origin` gesendet, und ein nicht festgelegter Ursprung, eine nicht festgelegte Methode oder Headerliste wird nicht mehr als die Zeichenkette `undefined` in der Antwort zurückgegeben.",
+        "ru": "Исправлена ошибка отсутствия заголовков CORS на каждом маршруте, который отвечает без передачи запроса дальше — в том числе и на всем сервере OAuth2. Получение токена из браузера с другого источника завершалось ошибкой «Заголовок Access-Control-Allow-Origin отсутствует». Теперь промежуточное ПО CORS регистрируется перед всеми маршрутами, а не за ними.\nТеперь отраженный источник отправляется вместе с `Vary: Origin`, и неустановленный источник, метод или список заголовков больше не отображаются в ответе в виде строкового значения `undefined`.",
+        "pt": "Corrigido o problema dos cabeçalhos CORS ausentes em todas as rotas que respondiam sem encaminhar a solicitação — incluindo todo o servidor OAuth2. A recuperação de um token de um navegador em outra origem falhava com o erro `No Access-Control-Allow-Origin header is present`. O middleware CORS agora está registrado antes de todas as rotas, em vez de depois delas.\nAgora, uma origem refletida é enviada juntamente com `Vary: Origin`, e uma origem, método ou lista de cabeçalhos não definida não resulta mais na string literal `undefined` na resposta.",
+        "nl": "De CORS-headers die ontbraken op elke route die antwoordde zonder het verzoek door te geven, zijn nu verholpen - inclusief de volledige OAuth2-server. Het ophalen van een token vanuit een browser op een andere oorsprong mislukte met de foutmelding `No Access-Control-Allow-Origin header is present`. De CORS-middleware is nu vóór alle routes geregistreerd in plaats van erachter.\nEen gereflecteerde oorsprong wordt nu samen met `Vary: Origin` verzonden, en een niet-ingestelde oorsprong, methode of headerlijst resulteert niet langer in de letterlijke tekenreeks `undefined` in het antwoord.",
+        "fr": "Correction du problème d'en-têtes CORS manquants sur toutes les routes répondant sans transmettre la requête, y compris le serveur OAuth2. La récupération d'un jeton depuis un navigateur d'une autre origine échouait avec l'erreur « L'en-tête Access-Control-Allow-Origin est absent ». Le middleware CORS est désormais enregistré en amont de toutes les routes, et non plus en aval.\nL'origine réfléchie est désormais envoyée avec `Vary: Origin`, et une origine, une méthode ou une liste d'en-têtes non définie ne se retrouve plus sous la forme de la chaîne littérale `undefined` dans la réponse.",
+        "it": "Risolto il problema delle intestazioni CORS mancanti su ogni percorso che risponde senza inoltrare la richiesta, incluso l'intero server OAuth2. Il recupero di un token da un browser su un'origine diversa non riusciva con l'errore \"Nessuna intestazione Access-Control-Allow-Origin presente\". Il middleware CORS è ora registrato prima di tutti i percorsi anziché dopo.\nUn'origine riflessa viene ora inviata insieme a `Vary: Origin`, e un'origine, un metodo o un elenco di intestazioni non impostati non risultano più nella stringa letterale `undefined` nella risposta.",
+        "es": "Se corrigió el problema de los encabezados CORS que faltaban en todas las rutas que respondían sin pasar la solicitud, incluido todo el servidor OAuth2. La recuperación de un token desde un navegador en otro origen fallaba con el error `No Access-Control-Allow-Origin header is present`. El middleware CORS ahora está registrado delante de todas las rutas en lugar de detrás de ellas.\nAhora se envía un origen reflejado junto con `Vary: Origin`, y un origen, método o lista de encabezados no definidos ya no termina como la cadena literal `undefined` en la respuesta.",
+        "pl": "Naprawiono brak nagłówków CORS na każdej trasie, która odpowiada bez przekazywania żądania – w tym na całym serwerze OAuth2. Pobieranie tokenu z przeglądarki z innego źródła kończyło się niepowodzeniem z komunikatem „Brak nagłówka Access-Control-Allow-Origin”. Oprogramowanie pośredniczące CORS jest teraz rejestrowane przed wszystkimi trasami, a nie za nimi.\nOdbite pochodzenie jest teraz wysyłane razem z poleceniem „Vary: Origin”, a nieustawione pochodzenie, metoda lub lista nagłówków nie kończą się już jako ciąg literowy „undefined” w odpowiedzi",
+        "uk": "Виправлено відсутність заголовків CORS на кожному маршруті, який відповідає без передачі запиту далі – серед них весь сервер OAuth2. Отримання токена з браузера на іншому походженні завершилося невдачею з повідомленням «Немає заголовка Access-Control-Allow-Origin». Проміжне програмне забезпечення CORS тепер реєструється перед усіма маршрутами, а не за ними.\nВідображене походження тепер надсилається разом із `Vary: Origin`, а невстановлене походження, метод або список заголовків більше не завершуються як літерал `undefined` у відповіді.",
+        "zh-cn": "修复了所有响应路由（包括整个 OAuth2 服务器）缺少 CORS 标头的问题，这些路由均未将请求转发给其他服务器。从其他源的浏览器检索令牌失败，并显示“缺少 Access-Control-Allow-Origin 标头”的错误。现在，CORS 中间件已注册到所有路由的前端，而不是后端。\n现在，反射源会与 `Vary: Origin` 一起发送，未设置的源、方法或标头列表不再会在响应中显示为字符串 `undefined`。"
+      },
       "9.1.0": {
         "en": "Added the OAuth2 authorization code flow with PKCE, so third-party clients (e.g. MCP clients) can be authorized without seeing the user's password\nUnauthenticated non-HTML requests now get a `401` challenge instead of a login redirect when OAuth is enabled\nUpdated `@iobroker/webserver` to 2.0.1",
         "de": "Der OAuth2-Autorisierungscode-Flow wurde mit PKCE hinzugefügt, sodass Drittanbieter-Clients (z. B. MCP-Clients) autorisiert werden können, ohne das Benutzerpasswort einzusehen.\nNicht authentifizierte Nicht-HTML-Anfragen erhalten nun eine `401`-Fehlermeldung anstelle einer Weiterleitung zum Anmeldevorgang, wenn OAuth aktiviert ist.\n`@iobroker/webserver` wurde auf Version 2.0.1 aktualisiert.",
@@ -93,19 +106,6 @@
         "pl": "Aktualizacja pakietów. Minimal Node.js wersja jest teraz 20.0.0\nUsunięte stany binarne\nDodano możliwość zapisu wartości przez '/ stan /' punkt końcowy z 'POST'",
         "uk": "Оновлені пакети. Версія Minimal Node.js тепер 20.0.0\nВилучені бінарні штати\nДодано можливість написати значення через `/state/` endpoint з `POST`",
         "zh-cn": "更新的软件包 。 最小节点.js版本现在是20.0.0\n删除二进制状态\n增加通过`/状态/ ' 结尾写入“POST”值的可能性"
-      },
-      "7.0.9": {
-        "en": "Corrected the loading of the material adapter",
-        "de": "Korrektur der Beladung des Materialadapters",
-        "ru": "Исправлена загрузка адаптера материала",
-        "pt": "Corrigido o carregamento do adaptador de material",
-        "nl": "De belasting van de materiaaladapter gecorrigeerd",
-        "fr": "Correction du chargement de l'adaptateur de matériau",
-        "it": "Corretto il carico dell'adattatore del materiale",
-        "es": "Corregido la carga del adaptador de material",
-        "pl": "Naprawiono załadunek adaptera materialnego",
-        "uk": "Виправлено завантаження адаптера матеріалу",
-        "zh-cn": "修正了材料适配器的装载"
       }
     },
     "desc": {

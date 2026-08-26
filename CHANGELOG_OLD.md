@@ -1,4 +1,8 @@
 # Older changes
+## 8.1.0 (2026-04-13)
+* (@GermanBluefox) Updated packages.
+* (@GermanBluefox) Corrected potential errors
+
 ## 8.0.0 (2026-02-18)
 * (@GermanBluefox) Updated packages. The minimal Node.js version is now 20.0.0
 * (@GermanBluefox) Removed binary states
