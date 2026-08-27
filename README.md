@@ -181,7 +181,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.2 (2026-08-27)
 * (@GermanBluefox) Added the setting `acmeChallenge` (enabled by default): the web server answers the ACME HTTP-01 challenges published by the acme adapter, so the acme adapter no longer has to stop this instance to get at port 80
 
 ### 9.1.1 (2026-08-26)
@@ -199,10 +199,6 @@ This is off by default. When enabled:
 
 ### 8.3.0 (2026-06-12)
 * (@SimonFischer04) Added rootPath option to support the running behind a reverse proxy
-
-### 8.2.0 (2026-05-21)
-* (@GermanBluefox) Added `/object/<ID>` GET endpoint with `type`, `commonType`, `depth`, `extended`, `native` and `system` query parameters to read objects (wildcards supported). By default, only `_id`, `type` and `common` are returned, type defaults to `state`, and objects under `system.*` / `script.*` are hidden. With `depth`, deeper matches yield synthetic `type: "virtual"` placeholders so a tree browser can see content exists below.
-* (@GermanBluefox) Added `Disable objects delivery` setting to turn the `/object/<ID>` endpoint on/off
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

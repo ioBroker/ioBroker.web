@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.1",
+    "version": "9.1.2",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.2": {
+        "en": "Added the setting `acmeChallenge` (enabled by default): the web server answers the ACME HTTP-01 challenges published by the acme adapter, so the acme adapter no longer has to stop this instance to get at port 80",
+        "de": "Die Einstellung `acmeChallenge` wurde hinzugefügt (standardmäßig aktiviert): Der Webserver beantwortet die vom ACME-Adapter veröffentlichten ACME HTTP-01-Herausforderungen, sodass der ACME-Adapter diese Instanz nicht mehr stoppen muss, um Port 80 zu erreichen.",
+        "ru": "Добавлен параметр `acmeChallenge` (включен по умолчанию): веб-сервер отвечает на HTTP-запросы ACME HTTP-01, публикуемые адаптером acme, поэтому адаптеру acme больше не нужно останавливать этот экземпляр для доступа к порту 80.",
+        "pt": "Adicionada a configuração `acmeChallenge` (ativada por padrão): o servidor web responde aos desafios ACME HTTP-01 publicados pelo adaptador acme, portanto o adaptador acme não precisa mais interromper esta instância para acessar a porta 80.",
+        "nl": "De instelling `acmeChallenge` is toegevoegd (standaard ingeschakeld): de webserver beantwoordt de ACME HTTP-01-uitdagingen die door de acme-adapter worden gepubliceerd, waardoor de acme-adapter deze instantie niet langer hoeft te stoppen om toegang te krijgen tot poort 80.",
+        "fr": "Ajout du paramètre `acmeChallenge` (activé par défaut) : le serveur web répond aux défis ACME HTTP-01 publiés par l’adaptateur ACME, ce qui évite à ce dernier d’interrompre l’accès au port 80.",
+        "it": "Aggiunta l'impostazione `acmeChallenge` (abilitata per impostazione predefinita): il server web risponde alle sfide ACME HTTP-01 pubblicate dall'adattatore ACME, quindi l'adattatore ACME non deve più arrestare questa istanza per accedere alla porta 80.",
+        "es": "Se agregó la configuración `acmeChallenge` (habilitada por defecto): el servidor web responde a los desafíos ACME HTTP-01 publicados por el adaptador acme, por lo que el adaptador acme ya no tiene que detener esta instancia para acceder al puerto 80.",
+        "pl": "Dodano ustawienie `acmeChallenge` (domyślnie włączone): serwer WWW odpowiada na wyzwania ACME HTTP-01 publikowane przez adapter Acme, dzięki czemu adapter Acme nie musi już zatrzymywać tej instancji, aby uzyskać dostęp do portu 80",
+        "uk": "Додано параметр `acmeChallenge` (увімкнено за замовчуванням): веб-сервер відповідає на запити ACME HTTP-01, опубліковані адаптером acme, тому адаптеру acme більше не потрібно зупиняти цей екземпляр, щоб отримати доступ до порту 80.",
+        "zh-cn": "新增了 `acmeChallenge` 设置（默认启用）：Web 服务器会响应 ACME 适配器发布的 ACME HTTP-01 质询，因此 ACME 适配器无需再停止此实例即可访问 80 端口。"
+      },
       "9.1.1": {
         "en": "Fixed the CORS headers missing on every route that answers without passing the request on - the whole OAuth2 server among them. Retrieving a token from a browser on another origin failed with `No Access-Control-Allow-Origin header is present`. The CORS middleware is now registered in front of all routes instead of behind them\nA reflected origin is now sent together with `Vary: Origin`, and an unset origin, method or header list no longer ends up as the literal string `undefined` in the response",
         "de": "Die fehlenden CORS-Header wurden für alle Routen behoben, die Anfragen beantworten, ohne sie weiterzuleiten – dies betrifft den gesamten OAuth2-Server. Das Abrufen eines Tokens von einem Browser einer anderen Domain schlug mit der Fehlermeldung „Kein Access-Control-Allow-Origin-Header vorhanden“ fehl. Die CORS-Middleware ist nun vor allen Routen anstatt dahinter registriert.\nEin reflektierter Ursprung wird nun zusammen mit `Vary: Origin` gesendet, und ein nicht festgelegter Ursprung, eine nicht festgelegte Methode oder Headerliste wird nicht mehr als die Zeichenkette `undefined` in der Antwort zurückgegeben.",
@@ -93,19 +106,6 @@
         "pl": "Aktualizacja pakietów.\nSkorygowane potencjalne błędy",
         "uk": "Оновлені пакети.\nВиправлено можливі помилки",
         "zh-cn": "更新的软件包 .\n更正的潜在错误"
-      },
-      "8.0.0": {
-        "en": "Updated packages. Minimal Node.js version is now 20.0.0\nRemoved binary states\nAdded possibility to write values via `/state/` endpoint with `POST`",
-        "de": "Aktualisierte Pakete. Minimal Node.js Version ist jetzt 20.0.0\nEntfernte binäre Zustände\nMöglichkeit zum Schreiben von Werten über `/state/` Endpoint mit `POST`",
-        "ru": "Обновленные пакеты. Минимальная версия Node.js теперь 20.0.0\nУдаленные бинарные состояния\nДобавлена возможность записи значений через \"/state/\" конечную точку с \"POST\"",
-        "pt": "Pacotes actualizados. Versão mínima Node.js é agora 20.0.0\nEstado binário removido\nAdicionada possibilidade de escrever valores através de `/state/` endpoint com `POST`",
-        "nl": "Bijgewerkte pakketten. Minimale Node.js versie is nu 20.0.0\nBinaire toestanden verwijderd\nToegevoegde mogelijkheid om waarden te schrijven via het eindpunt van de staat of de staat met het doel van de POST",
-        "fr": "Mise à jour des paquets. La version Minimal Node.js est maintenant 20.0.0\nÉtats binaires supprimés\nAjout de la possibilité d'écrire des valeurs via le paramètre `/state/` avec `POST`",
-        "it": "Pacchetti aggiornati. La versione Minimal Node.js è ora 20.0.0\nStati binari rimossi\nAggiunta possibilità di scrivere valori tramite `/state/` endpoint con `POST`",
-        "es": "Paquetes actualizados. Minimal Node.js versión es ahora 20.0.0\nEstados binarios eliminados\nSe agregó la posibilidad de escribir valores a través del punto final `/estado/` con `POST`",
-        "pl": "Aktualizacja pakietów. Minimal Node.js wersja jest teraz 20.0.0\nUsunięte stany binarne\nDodano możliwość zapisu wartości przez '/ stan /' punkt końcowy z 'POST'",
-        "uk": "Оновлені пакети. Версія Minimal Node.js тепер 20.0.0\nВилучені бінарні штати\nДодано можливість написати значення через `/state/` endpoint з `POST`",
-        "zh-cn": "更新的软件包 。 最小节点.js版本现在是20.0.0\n删除二进制状态\n增加通过`/状态/ ' 结尾写入“POST”值的可能性"
       }
     },
     "desc": {
