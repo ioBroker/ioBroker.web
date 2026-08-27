@@ -27,6 +27,8 @@
     "Warning": "Внимание!",
     "White list will be disabled. Please confirm.": "Белый список будет отключен. Пожалуйста подтвердите.",
     "Writeable": "Записываемый",
+    "acme_challenge": "Отвечать на запросы ACME HTTP-01",
+    "acme_challenge_hint": "Отдавать токены, публикуемые адаптером acme, по пути /.well-known/acme-challenge/, чтобы адаптеру acme не нужно было останавливать этот экземпляр ради порта 80.",
     "additionally": "Дополнительно",
     "after authentication": "после аутентификации",
     "authentication": "Аутентификация",

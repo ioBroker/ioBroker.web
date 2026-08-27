@@ -2068,6 +2068,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                     app: this.webServer.app,
                     adapter: this,
                     secure: this.config.secure,
+                    // instances created before this option existed have no value, and answering the
+                    // challenges is the default, so only an explicit `false` switches it off
+                    acmeChallenge: this.config.acmeChallenge !== false,
                 });
                 this.webServer.server = (await webserver.init());
             }

@@ -143,6 +143,15 @@ class App extends GenericApp<GenericAppProps, AppState> {
         return 0;
     }
 
+    onPrepareLoad(settings: WebAdapterConfig, encryptedNative?: string[]): void {
+        super.onPrepareLoad(settings, encryptedNative);
+        // instances created before this option existed have no value, and the web server answers
+        // the ACME challenges by default, so the checkbox must start checked for them too
+        if (settings.acmeChallenge === undefined) {
+            settings.acmeChallenge = true;
+        }
+    }
+
     onPrepareSave(settings: WebAdapterConfig): boolean {
         super.onPrepareSave(settings);
         const { secure, certPublic, certPrivate } = this.state.native;

@@ -27,6 +27,8 @@
     "Warning": "Atenção!",
     "White list will be disabled. Please confirm.": "A lista branca será desativada. Por favor confirme.",
     "Writeable": "Gravável",
+    "acme_challenge": "Responder aos desafios ACME HTTP-01",
+    "acme_challenge_hint": "Fornecer os tokens publicados pelo adaptador acme em /.well-known/acme-challenge/, para que o adaptador acme não precise parar esta instância para obter a porta 80.",
     "additionally": "Avançado",
     "after authentication": "após autenticação",
     "authentication": "Autenticação",

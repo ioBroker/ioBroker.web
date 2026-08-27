@@ -519,6 +519,14 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     />
                                 </div>
                             ) : null}
+                            <CustomCheckbox
+                                title="acme_challenge"
+                                help={I18n.t('acme_challenge_hint')}
+                                attr="acmeChallenge"
+                                style={{ marginTop: 10 }}
+                                native={native}
+                                onChange={onChange}
+                            />
                             {!native.auth ? (
                                 <CustomSelect
                                     title="users"

@@ -183,6 +183,7 @@
     "accessControlAllowCredentials": true,
     "accessControlExposeHeaders": "",
     "accessControlMaxAge": 86400,
+    "acmeChallenge": true,
     "addUserName": false,
     "auth": false,
     "basicAuth": false,

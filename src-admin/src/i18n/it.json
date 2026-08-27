@@ -27,6 +27,8 @@
     "Warning": "Avvertimento!",
     "White list will be disabled. Please confirm.": "La lista bianca sarà disabilitata. Si prega di confermare.",
     "Writeable": "Scrivibile",
+    "acme_challenge": "Rispondi alle sfide ACME HTTP-01",
+    "acme_challenge_hint": "Fornisce i token pubblicati dall'adattatore acme in /.well-known/acme-challenge/, così l'adattatore acme non deve fermare questa istanza per ottenere la porta 80.",
     "additionally": "Avanzate",
     "after authentication": "dopo l'autenticazione",
     "authentication": "Autenticazione",

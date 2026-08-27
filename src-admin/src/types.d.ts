@@ -74,6 +74,12 @@ export interface WebAdapterConfig {
     accessControlExposeHeaders: string;
     accessControlMaxAge: number;
 
+    /**
+     * Answer ACME HTTP-01 challenges published by the acme adapter under
+     * `/.well-known/acme-challenge/`, so the acme adapter does not have to stop this instance to
+     * get at port 80. Enabled by default; switch it off to keep that path entirely to the app.
+     */
+    acmeChallenge: boolean;
     addUserName: boolean;
     auth: boolean;
     basicAuth: boolean;

@@ -27,6 +27,8 @@
     "Warning": "Warning!",
     "White list will be disabled. Please confirm.": "White list will be disabled. Please confirm.",
     "Writeable": "Writeable",
+    "acme_challenge": "Answer ACME HTTP-01 challenges",
+    "acme_challenge_hint": "Serve the tokens published by the acme adapter under /.well-known/acme-challenge/, so the acme adapter does not have to stop this instance to get port 80.",
     "additionally": "Advanced",
     "after authentication": "after authentication",
     "authentication": "Authentication",

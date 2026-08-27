@@ -27,6 +27,8 @@
     "Warning": "Warnung!",
     "White list will be disabled. Please confirm.": "Weiße Liste wird deaktiviert. Bitte bestätigen.",
     "Writeable": "Beschreibbar",
+    "acme_challenge": "ACME-HTTP-01-Anfragen beantworten",
+    "acme_challenge_hint": "Liefert die vom acme-Adapter veröffentlichten Tokens unter /.well-known/acme-challenge/ aus, damit der acme-Adapter diese Instanz nicht stoppen muss, um Port 80 zu bekommen.",
     "additionally": "Extra",
     "after authentication": "nach der Authentifizierung",
     "authentication": "Authentifikation",

@@ -27,6 +27,8 @@
     "Warning": "Attention!",
     "White list will be disabled. Please confirm.": "La liste blanche sera désactivée. Veuillez confirmer.",
     "Writeable": "Inscriptible",
+    "acme_challenge": "Répondre aux défis ACME HTTP-01",
+    "acme_challenge_hint": "Servir les jetons publiés par l'adaptateur acme sous /.well-known/acme-challenge/, afin que l'adaptateur acme n'ait pas à arrêter cette instance pour obtenir le port 80.",
     "additionally": "Avancée",
     "after authentication": "après authentification",
     "authentication": "Authentification",

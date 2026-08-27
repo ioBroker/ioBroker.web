@@ -53,13 +53,13 @@
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.19.0",
     "@types/mime-types": "^3.0.1",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.4.0",
     "@types/passport": "^1.0.17",
     "@types/passport-local": "^1.0.38",
     "@types/xtend": "^4.0.6",
     "axios": "^1.20.0",
     "mocha": "^11.8.0",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"

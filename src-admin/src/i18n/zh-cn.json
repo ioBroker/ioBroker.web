@@ -27,6 +27,8 @@
     "Warning": "警告!",
     "White list will be disabled. Please confirm.": "白名单将被禁用。请确认。",
     "Writeable": "可写",
+    "acme_challenge": "响应 ACME HTTP-01 验证",
+    "acme_challenge_hint": "在 /.well-known/acme-challenge/ 下提供 acme 适配器发布的令牌，这样 acme 适配器就不必停止此实例来占用 80 端口。",
     "additionally": "高级",
     "after authentication": "认证后",
     "authentication": "认证机制",

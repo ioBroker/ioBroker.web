@@ -22,6 +22,13 @@ You can set the option *Force Web-Sockets* to force using only web-sockets trans
 ## Let's Encrypt Certificates
 Read [here](https://github.com/ioBroker/ioBroker.admin#lets-encrypt-certificates)
 
+A certificate authority validates an HTTP-01 challenge on port 80, so on a host with one public IP that
+request lands on whatever adapter holds that port. With **Answer ACME HTTP-01 challenges** enabled
+(`acmeChallenge`, the default) this instance serves the tokens the `acme` adapter published under
+`/.well-known/acme-challenge/`, and the `acme` adapter does not have to stop it to get at the port.
+Only a request for a published token is answered here, everything else is passed on untouched. Switch
+the option off to keep that path entirely to the web application.
+
 ## Extensions
 Web driver supports extensions. 
 The extension is URL handler, that will be called if such URL request appears.
@@ -174,6 +181,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Added the setting `acmeChallenge` (enabled by default): the web server answers the ACME HTTP-01 challenges published by the acme adapter, so the acme adapter no longer has to stop this instance to get at port 80
+
 ### 9.1.1 (2026-08-26)
 * (@GermanBluefox) Fixed the CORS headers missing on every route that answers without passing the request on - the whole OAuth2 server among them. Retrieving a token from a browser on another origin failed with `No Access-Control-Allow-Origin header is present`. The CORS middleware is now registered in front of all routes instead of behind them
 * (@GermanBluefox) A reflected origin is now sent together with `Vary: Origin`, and an unset origin, method or header list no longer ends up as the literal string `undefined` in the response

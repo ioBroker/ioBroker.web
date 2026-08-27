@@ -27,6 +27,8 @@
     "Warning": "Waarschuwing!",
     "White list will be disabled. Please confirm.": "Witte lijst wordt uitgeschakeld. Bevestig alstublieft.",
     "Writeable": "Beschrijfbaar",
+    "acme_challenge": "ACME HTTP-01-uitdagingen beantwoorden",
+    "acme_challenge_hint": "Lever de door de acme-adapter gepubliceerde tokens uit onder /.well-known/acme-challenge/, zodat de acme-adapter deze instantie niet hoeft te stoppen om poort 80 te krijgen.",
     "additionally": "Geavanceerd",
     "after authentication": "na authenticatie",
     "authentication": "Authenticatie",
