@@ -181,7 +181,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.3 (2026-08-28)
 * (@GermanBluefox) Updated packages
 
 ### 9.1.2 (2026-08-27)
@@ -199,9 +199,6 @@ This is off by default. When enabled:
 ### 9.0.0 (2026-06-21)
 * (@GermanBluefox) Used libraries for socket communication instead of adapters
 * (@GermanBluefox) Migrated to TS 6
-
-### 8.3.0 (2026-06-12)
-* (@SimonFischer04) Added rootPath option to support the running behind a reverse proxy
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
