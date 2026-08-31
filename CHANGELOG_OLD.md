@@ -1,4 +1,8 @@
 # Older changes
+## 9.0.0 (2026-06-21)
+* (@GermanBluefox) Used libraries for socket communication instead of adapters
+* (@GermanBluefox) Migrated to TS 6
+
 ## 8.3.0 (2026-06-12)
 * (@SimonFischer04) Added rootPath option to support the running behind a reverse proxy
 

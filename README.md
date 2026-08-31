@@ -181,7 +181,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.4 (2026-08-31)
 * (@GermanBluefox) Updated packages
 
 ### 9.1.3 (2026-08-28)
@@ -198,10 +198,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) Added the OAuth2 authorization code flow with PKCE, so third-party clients (e.g. MCP clients) can be authorized without seeing the user's password
 * (@GermanBluefox) Unauthenticated non-HTML requests now get a `401` challenge instead of a login redirect when OAuth is enabled
 * (@GermanBluefox) Updated `@iobroker/webserver` to 2.0.1
-
-### 9.0.0 (2026-06-21)
-* (@GermanBluefox) Used libraries for socket communication instead of adapters
-* (@GermanBluefox) Migrated to TS 6
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
