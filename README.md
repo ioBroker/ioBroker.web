@@ -1,4 +1,5 @@
-![Logo](admin/web.svg)
+<img src="admin/web.svg" width="100" height="100" />
+
 # ioBroker.web
 
 ![Number of Installations](http://iobroker.live/badges/web-installed.svg)
