@@ -450,7 +450,12 @@ export default class Login extends Component<object, LoginState> {
                                 id="origin"
                                 type="hidden"
                                 name="origin"
-                                value={window.location.pathname + window.location.search.replace('&error', '')}
+                                // the browser carries the fragment of the originally requested URL over to this page
+                                value={
+                                    window.location.pathname +
+                                    window.location.search.replace('&error', '') +
+                                    window.location.hash
+                                }
                             />
                             {
                                 <Button

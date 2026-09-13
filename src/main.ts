@@ -290,25 +290,26 @@ function processWelcome(
 }
 
 function getRedirectPage(req: Request): string {
-    let redirect = '../';
-    let parts;
     const body: { origin?: string } = req.body || {};
-    // const isDev = req.url.includes('?dev&');
+    let href: string | null = null;
 
-    const origin = body.origin || '?href=%2F';
-
-    if (origin) {
-        parts = origin.split('=');
-        if (parts.length > 1 && parts[1]) {
-            redirect = decodeURIComponent(parts[1]);
-            // if some invalid characters in redirect
-            if (redirect.match(/[^-_a-zA-Z0-9&%?./]/) || redirect.startsWith('//') || redirect.includes('://')) {
-                redirect = '../';
-            }
+    if (body.origin) {
+        // the login form posts its own URL back, so the target sits in its query string
+        const q = body.origin.indexOf('?');
+        if (q !== -1) {
+            href = new URLSearchParams(body.origin.substring(q + 1)).get('href');
         }
+    } else if (typeof req.query?.href === 'string') {
+        // an already authenticated user opening the login page carries it in the query
+        href = req.query.href;
     }
 
-    return redirect;
+    // only a path on this very server - never another origin
+    if (!href || !href.startsWith('/') || href.startsWith('//') || href.includes('\\')) {
+        return '../';
+    }
+
+    return href;
 }
 
 function extractPreSetting(obj: Record<string, any>, attr: string): string | number | boolean | null {
