@@ -150,6 +150,10 @@ class App extends GenericApp<GenericAppProps, AppState> {
         if (settings.acmeChallenge === undefined) {
             settings.acmeChallenge = true;
         }
+        // same for HTTP/2, which the web server speaks by default on a secure connection
+        if (settings.http2 === undefined) {
+            settings.http2 = true;
+        }
     }
 
     onPrepareSave(settings: WebAdapterConfig): boolean {
@@ -248,6 +252,7 @@ class App extends GenericApp<GenericAppProps, AppState> {
                         }
                         onLoad={(native: WebAdapterConfig): void => this.setState({ native })}
                         lang={I18n.getLanguage()}
+                        changed={this.state.changed}
                     />
                 );
         }

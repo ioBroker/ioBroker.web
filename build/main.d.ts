@@ -32,6 +32,25 @@ export declare class WebAdapter extends Adapter {
     private ownUsers;
     private templateDir;
     private template404;
+    /** Devices of a visu app whose objects were checked once - see applyRemoteCommand(). */
+    private readonly checkedRemoteDevices;
+    /**
+     * The one id a visu app posts its telemetry to: `cloud.<X>.remote.command`.
+     *
+     * Everything else is written as it is asked for - this is the only id whose content is taken
+     * apart, and the only one that is created without the request saying how. Naming the adapter
+     * keeps it that way: no other `<something>.<X>.remote.command` falls into this branch.
+     */
+    private static readonly REMOTE_COMMAND;
+    /**
+     * The states a visu app reports into, when it stores its values in `vis.<X>` rather than
+     * through the cloud adapter: `vis.<X>.<device>.<field>`.
+     *
+     * These six fields are all an app has to report, so they are all that can be created here -
+     * and they are created from the definitions below, not from anything the request carries. A
+     * client writing a value has no business deciding what an object in the tree looks like.
+     */
+    private static readonly VIS_STATE;
     constructor(options?: Partial<AdapterOptions>);
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void;
     onStateChange(id: string, state: ioBroker.State | null | undefined): void;
@@ -99,6 +118,44 @@ export declare class WebAdapter extends Adapter {
     processReadFolders(req: Request, res: Response): Promise<void>;
     getSocketUrl(obj?: ioBroker.InstanceObject, state?: ioBroker.State | null): Promise<void>;
     modifyIndexHtml(html: string): Promise<string>;
+    /**
+     * Turns the command a visu app writes into states of its own - the job the cloud adapter does
+     * in its own `onStateChange`.
+     *
+     * The app posts one line into `cloud.X.remote.command`:
+     * `{"value": "42", "deviceName": "tablet", "name": "batteryLevel"}`, and the cloud adapter
+     * makes `cloud.X.devices.tablet.batteryLevel` out of it. An installation that has the adapter
+     * stopped - or only installed for the remote access it is not using at the moment - reported
+     * nothing at all, although the value had arrived here. It is done here instead when the
+     * adapter is not running, so the app does not depend on it.
+     *
+     * Nothing happens for any other state, and nothing happens while the adapter itself runs:
+     * both writing the same states would only be a race for the same values.
+     *
+     * @param stateName the state that was just written
+     * @param value what was written into it
+     * @param user the user the request is running as
+     */
+    private applyRemoteCommand;
+    /**
+     * The definition of one state a visu app reports into, or null when the id is not one of
+     * them. The device name is read out of the id, so the states read like the ones the app
+     * created itself before.
+     *
+     * @param id the full state id, e.g. `vis.0.tablet.battery.level`
+     */
+    private static visStateCommon;
+    /**
+     * Creates the state a visu app reports into, together with the device it belongs to, so the
+     * values show up as one device with an online indicator rather than as loose ids.
+     *
+     * @param stateId the state to create, already known to be one of [VIS_STATE]
+     * @param common its definition
+     * @param user the user the request is running as
+     */
+    private createVisState;
+    /** The definition of one reported value, as the cloud adapter creates it. */
+    private static remoteStateCommon;
     send404(res: Response, fileName: string, message?: string): void;
     initWebServer(): Promise<void>;
     main(): Promise<void>;

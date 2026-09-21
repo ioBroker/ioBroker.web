@@ -11,6 +11,7 @@ import { CustomModal } from '../Components/CustomModal';
 import { CustomSelect } from '../Components/CustomSelect';
 import { CustomInput } from '../Components/CustomInput';
 import { CustomCheckbox } from '../Components/CustomCheckbox';
+import { VisuQrCode } from '../Components/VisuQrCode';
 import type { WebAdapterConfig } from '../types';
 
 const styles: Record<string, any> = {
@@ -69,6 +70,8 @@ interface OptionsProps {
     socket: AdminConnection;
     themeType: ThemeType;
     lang: ioBroker.Languages;
+    /** Unsaved changes in the configuration */
+    changed: boolean;
 }
 
 interface OptionsState {
@@ -519,6 +522,16 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     />
                                 </div>
                             ) : null}
+                            {native.secure ? (
+                                <CustomCheckbox
+                                    title="http2"
+                                    help={I18n.t('http2_hint')}
+                                    attr="http2"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
                             <CustomCheckbox
                                 title="acme_challenge"
                                 help={I18n.t('acme_challenge_hint')}
@@ -573,6 +586,13 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                 style={{ marginTop: 10 }}
                                 native={native}
                                 onChange={onChange}
+                            />
+                            <VisuQrCode
+                                socket={this.props.socket}
+                                native={native}
+                                instance={this.props.instance}
+                                host={this.props.common.host}
+                                changed={this.props.changed}
                             />
                         </Box>
                     </div>

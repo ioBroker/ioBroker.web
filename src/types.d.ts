@@ -104,6 +104,11 @@ export interface WebAdapterConfig {
     disableObjects: boolean;
     doNotCheckPublicIP: boolean;
     forceWebSockets: boolean;
+    /**
+     * Speak HTTP/2, with HTTP/1.1 as fallback for clients that do not offer it. Has an effect only with
+     * {@link secure}: browsers use HTTP/2 over TLS only. Enabled by default; switch it off to stay with HTTP/1.1.
+     */
+    http2: boolean;
     language: ioBroker.Languages;
     loadingBackgroundColor: string;
     loadingBackgroundImage: boolean;

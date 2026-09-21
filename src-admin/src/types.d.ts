@@ -97,6 +97,8 @@ export interface WebAdapterConfig {
     disableObjects: boolean;
     doNotCheckPublicIP: boolean;
     forceWebSockets: boolean;
+    /** Speak HTTP/2 with HTTP/1.1 fallback if `secure` is set. Enabled by default */
+    http2: boolean;
     language: ioBroker.Languages;
     loadingBackgroundColor: string;
     loadingBackgroundImage: boolean;

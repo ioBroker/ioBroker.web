@@ -261,6 +261,31 @@ function getRedirectPage(req) {
     }
     return redirect;
 }
+/**
+ * Give an HTTP/2 response the `_implicitHeader()` an HTTP/1 response has.
+ *
+ * express-session calls it whenever it saves the session before the response ends - with `resave` on
+ * every response. `@iobroker/webserver` makes the HTTP/2 compat objects usable for Express, but leaves
+ * this member out, so with authentication each request over HTTP/2 failed with
+ * `res._implicitHeader is not a function`.
+ */
+function addImplicitHeader(_req, res, next) {
+    const response = res;
+    if (typeof response._implicitHeader !== 'function') {
+        // configurable and writable, like the members @iobroker/webserver pins to the response
+        Object.defineProperty(response, '_implicitHeader', {
+            configurable: true,
+            writable: true,
+            value() {
+                // What HTTP/1 does, but only once: a second writeHead() throws
+                if (!this.headersSent) {
+                    this.writeHead(this.statusCode);
+                }
+            },
+        });
+    }
+    next();
+}
 function extractPreSetting(obj, attr) {
     const parts = attr.split('.');
     if (parts.length === 1) {
@@ -318,6 +343,25 @@ class WebAdapter extends adapter_core_1.Adapter {
     ownUsers = null;
     templateDir = '';
     template404 = '';
+    /** Devices of a visu app whose objects were checked once - see applyRemoteCommand(). */
+    checkedRemoteDevices = new Set();
+    /**
+     * The one id a visu app posts its telemetry to: `cloud.<X>.remote.command`.
+     *
+     * Everything else is written as it is asked for - this is the only id whose content is taken
+     * apart, and the only one that is created without the request saying how. Naming the adapter
+     * keeps it that way: no other `<something>.<X>.remote.command` falls into this branch.
+     */
+    static REMOTE_COMMAND = /^(cloud\.\d+)\.remote\.command$/;
+    /**
+     * The states a visu app reports into, when it stores its values in `vis.<X>` rather than
+     * through the cloud adapter: `vis.<X>.<device>.<field>`.
+     *
+     * These six fields are all an app has to report, so they are all that can be created here -
+     * and they are created from the definitions below, not from anything the request carries. A
+     * client writing a value has no business deciding what an object in the tree looks like.
+     */
+    static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|instanceId)$/;
     constructor(options = {}) {
         super({
             ...options,
@@ -1277,6 +1321,268 @@ class WebAdapter extends adapter_core_1.Adapter {
             .replaceAll(`@@loginLanguage@@`, this.lang || '')
             .replaceAll(`@@loginOauth2@@`, this.config.loginOauth2 ? 'true' : 'false');
     }
+    /**
+     * Turns the command a visu app writes into states of its own - the job the cloud adapter does
+     * in its own `onStateChange`.
+     *
+     * The app posts one line into `cloud.X.remote.command`:
+     * `{"value": "42", "deviceName": "tablet", "name": "batteryLevel"}`, and the cloud adapter
+     * makes `cloud.X.devices.tablet.batteryLevel` out of it. An installation that has the adapter
+     * stopped - or only installed for the remote access it is not using at the moment - reported
+     * nothing at all, although the value had arrived here. It is done here instead when the
+     * adapter is not running, so the app does not depend on it.
+     *
+     * Nothing happens for any other state, and nothing happens while the adapter itself runs:
+     * both writing the same states would only be a race for the same values.
+     *
+     * @param stateName the state that was just written
+     * @param value what was written into it
+     * @param user the user the request is running as
+     */
+    async applyRemoteCommand(stateName, value, user) {
+        const match = WebAdapter.REMOTE_COMMAND.exec(stateName);
+        if (!match || typeof value !== 'string' || !value) {
+            return;
+        }
+        const namespace = match[1];
+        const alive = await this.getForeignStateAsync(`system.adapter.${namespace}.alive`).catch(() => null);
+        if (alive?.val) {
+            this.log.debug(`[${stateName}] ${namespace} is running and does this itself`);
+            return;
+        }
+        let command;
+        try {
+            command = JSON.parse(value);
+        }
+        catch {
+            this.log.warn(`Cannot parse command in "${stateName}": ${value}`);
+            return;
+        }
+        if (!command.deviceName || !command.name) {
+            return;
+        }
+        const deviceId = `${namespace}.devices.${command.deviceName}`;
+        const aliveId = `${deviceId}.alive`;
+        const stateId = `${deviceId}.${command.name}`;
+        try {
+            if (!this.checkedRemoteDevices.has(deviceId)) {
+                if (!(await this.getForeignObjectAsync(deviceId, { user }))) {
+                    await this.setForeignObjectAsync(deviceId, {
+                        type: 'device',
+                        common: {
+                            name: command.deviceName,
+                            statusStates: { onlineId: aliveId },
+                        },
+                        native: {},
+                    }, { user });
+                }
+                if (!(await this.getForeignObjectAsync(aliveId, { user }))) {
+                    await this.setForeignObjectAsync(aliveId, {
+                        type: 'state',
+                        common: {
+                            name: 'If app is running and connected',
+                            type: 'boolean',
+                            role: 'indicator.reachable',
+                            read: true,
+                            write: false,
+                        },
+                        native: {},
+                    }, { user });
+                }
+                this.checkedRemoteDevices.add(deviceId);
+            }
+            if (command.name === 'alive') {
+                // Expires on its own, so a device that is switched off does not stay "online"
+                await this.setForeignStateAsync(aliveId, {
+                    val: command.value === true ||
+                        command.value === 'true' ||
+                        command.value === 1 ||
+                        command.value === '1',
+                    ack: true,
+                    expire: 60,
+                }, { user });
+                return;
+            }
+            let obj = await this.getForeignObjectAsync(stateId, { user });
+            if (!obj) {
+                const common = WebAdapter.remoteStateCommon(command.name, command.value);
+                await this.setForeignObjectAsync(stateId, { type: 'state', common, native: {} }, { user });
+                obj = await this.getForeignObjectAsync(stateId, { user });
+                if (command.name === 'currentLocation') {
+                    // The plain "longitude;latitude" a vis widget can read
+                    const positionId = `${deviceId}.position`;
+                    if (!(await this.getForeignObjectAsync(positionId, { user }))) {
+                        await this.setForeignObjectAsync(positionId, {
+                            type: 'state',
+                            common: {
+                                name: 'Position',
+                                type: 'string',
+                                role: 'value.gps',
+                                read: true,
+                                write: false,
+                            },
+                            native: {},
+                        }, { user });
+                    }
+                }
+            }
+            let val = command.value;
+            if (obj?.common.type === 'number') {
+                val = parseFloat(command.value);
+            }
+            else if (obj?.common.type === 'boolean') {
+                val =
+                    command.value === true || command.value === 'true' || command.value === 1 || command.value === '1';
+            }
+            await this.setForeignStateAsync(stateId, { val, ack: true }, { user });
+            if (command.name === 'currentLocation') {
+                try {
+                    const location = JSON.parse(command.value);
+                    await this.setForeignStateAsync(`${deviceId}.position`, { val: `${location?.coords?.longitude};${location?.coords?.latitude}`, ack: true }, { user });
+                }
+                catch {
+                    this.log.warn(`Cannot parse location of "${command.deviceName}"`);
+                }
+            }
+        }
+        catch (e) {
+            this.log.warn(`Cannot apply command for "${stateId}": ${e}`);
+        }
+    }
+    /**
+     * The definition of one state a visu app reports into, or null when the id is not one of
+     * them. The device name is read out of the id, so the states read like the ones the app
+     * created itself before.
+     *
+     * @param id the full state id, e.g. `vis.0.tablet.battery.level`
+     */
+    static visStateCommon(id) {
+        const match = WebAdapter.VIS_STATE.exec(id);
+        if (!match) {
+            return null;
+        }
+        const device = match[1];
+        switch (match[2]) {
+            case 'battery.level':
+                return {
+                    name: `Battery status for (${device})`,
+                    type: 'number',
+                    role: 'battery',
+                    unit: '%',
+                    min: 0,
+                    max: 100,
+                    read: true,
+                    write: false,
+                };
+            case 'battery.state':
+                return {
+                    name: `Battery state for (${device})`,
+                    type: 'number',
+                    role: 'state',
+                    states: { 0: 'unknown', 1: 'unplugged', 2: 'charging', 3: 'full' },
+                    read: true,
+                    write: false,
+                };
+            // The one field that is also written from the other side: ioBroker sets the brightness
+            // of the display, the app follows it
+            case 'brightness':
+                return {
+                    name: `Brightness of (${device})`,
+                    type: 'number',
+                    role: 'level',
+                    unit: '%',
+                    min: 0,
+                    max: 100,
+                    read: true,
+                    write: true,
+                };
+            case 'currentLocation':
+                return {
+                    name: `Location of (${device})`,
+                    type: 'string',
+                    role: 'json',
+                    read: true,
+                    write: false,
+                };
+            case 'alive':
+                return {
+                    name: 'If app is running and connected',
+                    type: 'boolean',
+                    role: 'indicator.reachable',
+                    read: true,
+                    write: false,
+                };
+            case 'instanceId':
+                return {
+                    name: 'Configured Instance ID',
+                    type: 'string',
+                    role: 'text',
+                    read: true,
+                    write: false,
+                };
+            default:
+                return null;
+        }
+    }
+    /**
+     * Creates the state a visu app reports into, together with the device it belongs to, so the
+     * values show up as one device with an online indicator rather than as loose ids.
+     *
+     * @param stateId the state to create, already known to be one of [VIS_STATE]
+     * @param common its definition
+     * @param user the user the request is running as
+     */
+    async createVisState(stateId, common, user) {
+        const deviceId = stateId.split('.').slice(0, 3).join('.');
+        if (!this.checkedRemoteDevices.has(deviceId)) {
+            if (!(await this.getForeignObjectAsync(deviceId, { user }))) {
+                await this.setForeignObjectAsync(deviceId, {
+                    type: 'device',
+                    common: {
+                        name: deviceId.split('.')[2],
+                        statusStates: { onlineId: `${deviceId}.alive` },
+                    },
+                    native: {},
+                }, { user });
+            }
+            this.checkedRemoteDevices.add(deviceId);
+        }
+        await this.setForeignObjectAsync(stateId, { type: 'state', common, native: {} }, { user });
+        this.log.debug(`Created "${stateId}" for a visu app`);
+    }
+    /** The definition of one reported value, as the cloud adapter creates it. */
+    static remoteStateCommon(name, value) {
+        const common = {
+            name,
+            type: typeof value,
+            role: 'state',
+            read: true,
+            write: false,
+        };
+        if (name === 'batteryState') {
+            common.type = 'number';
+            common.states = { 0: 'unknown', 1: 'unplugged', 2: 'charging', 3: 'full' };
+        }
+        else if (name === 'batteryLevel') {
+            common.type = 'number';
+            common.role = 'battery';
+            common.unit = '%';
+            common.min = 0;
+            common.max = 100;
+        }
+        else if (name === 'brightness') {
+            common.type = 'number';
+            common.role = 'level.brightness';
+            common.unit = '%';
+            common.min = 0;
+            common.max = 100;
+        }
+        else if (name === 'currentLocation') {
+            common.type = 'string';
+            common.role = 'json';
+        }
+        return common;
+    }
     send404(res, fileName, message) {
         this.template404 =
             this.template404 ||
@@ -1303,6 +1609,8 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         if (this.config.port) {
             this.webServer.app = (0, express_1.default)();
+            // In front of everything, so the session middleware and the extensions find it
+            this.webServer.app.use(addImplicitHeader);
             this.webServer.app.use((0, compression_1.default)());
             this.webServer.app.disable('x-powered-by');
             // In front of every route below: an Express middleware only ever sees a request that the
@@ -1842,29 +2150,85 @@ class WebAdapter extends adapter_core_1.Adapter {
                             res.status(422).send(`NO state found`);
                             return;
                         }
-                        const obj = await this.getForeignObjectAsync(stateName, {
-                            user: req.user ? `system.user.${req.user}` : this.config.defaultUser,
-                        });
+                        const user = req.user ? `system.user.${req.user}` : this.config.defaultUser;
+                        // Read post
+                        const body = await readBodyAsync(req);
+                        let data;
+                        try {
+                            const maybeObject = JSON.parse(body.toString());
+                            if (maybeObject.val !== undefined) {
+                                // `create` carried the definition of the state to make while the
+                                // visu app in the field was built; the states it may create are
+                                // known here now. It is no part of a state, and a state carrying
+                                // it is refused by the controller, so it is dropped.
+                                const { create: _ignored, ...state } = maybeObject;
+                                data = state;
+                            }
+                            else {
+                                data = { val: body.toString() };
+                            }
+                        }
+                        catch {
+                            // not an object
+                            data = { val: body.toString() };
+                        }
+                        // One of the six states a visu app reports into, or null for every other
+                        // id. Needed before the object is looked up: an empty body is refused for
+                        // them, and what they carry is written as acknowledged.
+                        const visCommon = WebAdapter.visStateCommon(stateName);
+                        if (visCommon && !body.length) {
+                            // A reported value always carries its value in the body. An empty one
+                            // means the payload was lost on the way, and writing it anyway would
+                            // put `NaN` into a battery level and `false` into `alive` - a state
+                            // that looks like an answer while it is the loss itself.
+                            this.log.warn(`Empty body for "${stateName}": the value of the app did not arrive`);
+                            res.status(400).send(`Empty body for "${stateName}"`);
+                            return;
+                        }
+                        let obj = await this.getForeignObjectAsync(stateName, { user });
+                        if (!obj && WebAdapter.REMOTE_COMMAND.test(stateName)) {
+                            // The command state of an installation that never had the cloud
+                            // adapter: it is the one id a visu app posts to, and without it the
+                            // app is answered with a 404 it cannot do anything about. The values
+                            // are taken apart below all the same.
+                            try {
+                                await this.setForeignObjectAsync(stateName, {
+                                    type: 'state',
+                                    common: {
+                                        name: 'Received remote command from the app',
+                                        type: 'string',
+                                        role: 'state',
+                                        read: true,
+                                        write: true,
+                                    },
+                                    native: {},
+                                }, { user });
+                                this.log.info(`Created command state "${stateName}" for a visu app`);
+                                obj = await this.getForeignObjectAsync(stateName, { user });
+                            }
+                            catch (e) {
+                                this.log.warn(`Cannot create command state "${stateName}": ${e}`);
+                            }
+                        }
+                        if (!obj) {
+                            // Created from the definition above, never from anything the request
+                            // carries.
+                            if (visCommon) {
+                                try {
+                                    await this.createVisState(stateName, visCommon, user);
+                                    obj = await this.getForeignObjectAsync(stateName, { user });
+                                }
+                                catch (e) {
+                                    this.log.warn(`Cannot create state "${stateName}": ${e}`);
+                                    res.status(403).send(`Cannot create state "${stateName}"`);
+                                    return;
+                                }
+                            }
+                        }
                         if (!obj) {
                             this.send404(res, stateName);
                         }
                         else {
-                            // Read post
-                            const body = await readBodyAsync(req);
-                            let data;
-                            try {
-                                const maybeObject = JSON.parse(body.toString());
-                                if (maybeObject.val !== undefined) {
-                                    data = maybeObject;
-                                }
-                                else {
-                                    data = { val: body.toString() };
-                                }
-                            }
-                            catch {
-                                // not an object
-                                data = { val: body.toString() };
-                            }
                             if (obj.common.type === 'number') {
                                 data.val = parseFloat(data.val);
                             }
@@ -1879,7 +2243,16 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         data.val === 'AN' ||
                                         data.val === 'an';
                             }
+                            if (visCommon) {
+                                // What an app reports is a report, not an order
+                                data.ack = true;
+                            }
                             await this.setForeignStateAsync(stateName, data);
+                            // A visu app reporting its battery level writes one command state and
+                            // expects the cloud adapter to turn it into states of its own. Do that
+                            // here when the adapter is not running, so an installation that only
+                            // has it installed - or has it stopped - reports all the same.
+                            await this.applyRemoteCommand(stateName, data.val, user);
                             res.status(200).send({ id: stateName });
                         }
                     }
@@ -2071,6 +2444,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                     // instances created before this option existed have no value, and answering the
                     // challenges is the default, so only an explicit `false` switches it off
                     acmeChallenge: this.config.acmeChallenge !== false,
+                    // HTTP/2 with HTTP/1.1 fallback, only if secure. Instances created before this option
+                    // existed have no value, and it is on by default, so only an explicit `false` switches it off
+                    http2: this.config.http2 !== false,
                 });
                 this.webServer.server = (await webserver.init());
             }

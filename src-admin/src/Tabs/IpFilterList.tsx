@@ -515,77 +515,73 @@ export default class IpFilterList extends Component<WhiteListProps, WhiteListSta
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {Object.keys(whiteListSettings).map(
-                        (el: string, index: number): React.JSX.Element => (
-                            <TableRow key={`${index}_max`}>
-                                <TableCell
-                                    sx={styles.backgroundTheme}
-                                    style={{ borderBottom: '1px solid #afafaf' }}
-                                >
-                                    {this.buttonRemove(el)}
-                                </TableCell>
-                                <TableCell
-                                    sx={styles.backgroundTheme}
-                                    style={{
-                                        borderBottom: '1px solid #afafaf',
-                                        color: el === 'default' ? '#006ccd' : undefined,
-                                    }}
-                                    title={
-                                        el === 'default'
-                                            ? I18n.t('If no IP address matches, show authentication dialog')
-                                            : ''
-                                    }
-                                >
-                                    {this.tableInput(el, {
-                                        marginTop: 0,
-                                        minWidth: 150,
-                                        paddingTop: 0,
-                                    })}
-                                </TableCell>
-                                <TableCell
-                                    sx={styles.backgroundTheme}
-                                    style={{ borderBottom: '1px solid #afafaf' }}
-                                >
-                                    {this.userSelect(el, { marginTop: -1 })}
-                                </TableCell>
-                                {['object', 'state', 'file'].map((elProperty, indexProperty) =>
-                                    Object.keys(
-                                        whiteListSettings[el][elProperty as 'object' | 'state' | 'file'] || {},
-                                    ).map(
-                                        (attr: string): React.JSX.Element => (
-                                            <TableCell
-                                                sx={indexProperty % 2 ? styles.backgroundTheme : undefined}
-                                                style={{
-                                                    borderBottom: indexProperty % 2 ? '1px solid #afafaf' : undefined,
-                                                    alignItems: 'center',
+                    {Object.keys(whiteListSettings).map((el: string, index: number): React.JSX.Element => (
+                        <TableRow key={`${index}_max`}>
+                            <TableCell
+                                sx={styles.backgroundTheme}
+                                style={{ borderBottom: '1px solid #afafaf' }}
+                            >
+                                {this.buttonRemove(el)}
+                            </TableCell>
+                            <TableCell
+                                sx={styles.backgroundTheme}
+                                style={{
+                                    borderBottom: '1px solid #afafaf',
+                                    color: el === 'default' ? '#006ccd' : undefined,
+                                }}
+                                title={
+                                    el === 'default'
+                                        ? I18n.t('If no IP address matches, show authentication dialog')
+                                        : ''
+                                }
+                            >
+                                {this.tableInput(el, {
+                                    marginTop: 0,
+                                    minWidth: 150,
+                                    paddingTop: 0,
+                                })}
+                            </TableCell>
+                            <TableCell
+                                sx={styles.backgroundTheme}
+                                style={{ borderBottom: '1px solid #afafaf' }}
+                            >
+                                {this.userSelect(el, { marginTop: -1 })}
+                            </TableCell>
+                            {['object', 'state', 'file'].map((elProperty, indexProperty) =>
+                                Object.keys(whiteListSettings[el][elProperty as 'object' | 'state' | 'file'] || {}).map(
+                                    (attr: string): React.JSX.Element => (
+                                        <TableCell
+                                            sx={indexProperty % 2 ? styles.backgroundTheme : undefined}
+                                            style={{
+                                                borderBottom: indexProperty % 2 ? '1px solid #afafaf' : undefined,
+                                                alignItems: 'center',
+                                            }}
+                                            key={`${elProperty}_${attr}_max`}
+                                            align="center"
+                                        >
+                                            <CustomCheckbox
+                                                table
+                                                checked={
+                                                    whiteListSettings[el][elProperty as 'object' | 'state' | 'file'][
+                                                        attr as 'read' | 'list' | 'write' | 'delete'
+                                                    ]
+                                                }
+                                                attr={attr}
+                                                native={this.props.native}
+                                                groupStyle={{ alignItems: 'center' }}
+                                                style={styles.checkBoxStyle}
+                                                onChange={e => {
+                                                    const newObj = JSON.parse(JSON.stringify(whiteListSettings));
+                                                    newObj[el][elProperty][attr] = e;
+                                                    this.props.onChange('whiteListSettings', newObj);
                                                 }}
-                                                key={`${elProperty}_${attr}_max`}
-                                                align="center"
-                                            >
-                                                <CustomCheckbox
-                                                    table
-                                                    checked={
-                                                        whiteListSettings[el][
-                                                            elProperty as 'object' | 'state' | 'file'
-                                                        ][attr as 'read' | 'list' | 'write' | 'delete']
-                                                    }
-                                                    attr={attr}
-                                                    native={this.props.native}
-                                                    groupStyle={{ alignItems: 'center' }}
-                                                    style={styles.checkBoxStyle}
-                                                    onChange={e => {
-                                                        const newObj = JSON.parse(JSON.stringify(whiteListSettings));
-                                                        newObj[el][elProperty][attr] = e;
-                                                        this.props.onChange('whiteListSettings', newObj);
-                                                    }}
-                                                />
-                                            </TableCell>
-                                        ),
+                                            />
+                                        </TableCell>
                                     ),
-                                )}
-                            </TableRow>
-                        ),
-                    )}
+                                ),
+                            )}
+                        </TableRow>
+                    ))}
                 </TableBody>
             </Table>
         );
