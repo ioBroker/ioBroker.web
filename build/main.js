@@ -2156,7 +2156,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                         // id. Needed before the object is looked up: an empty body is refused for
                         // them, and what they carry is written as acknowledged.
                         const visCommon = WebAdapter.visStateCommon(stateName);
-                        if (visCommon && !body.length) {
+                        // The command state is the other half of the same report: an app posts
+                        // `{value, deviceName, name}` into it and it is taken apart below. An empty
+                        // body ends up as an empty command, which is dropped without a word - here
+                        // as well as in the cloud adapter - so it is refused like a vis state.
+                        const isAppReport = !!visCommon || WebAdapter.REMOTE_COMMAND.test(stateName);
+                        if (isAppReport && !body.length) {
                             // A reported value always carries its value in the body. An empty one
                             // means the payload was lost on the way, and writing it anyway would
                             // put `NaN` into a battery level and `false` into `alive` - a state
