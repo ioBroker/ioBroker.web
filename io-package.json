@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.7",
+    "version": "9.1.8",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.8": {
+        "en": "An empty body for `cloud.X.remote.command` is refused with a 400 instead of writing an empty command that is dropped without a word",
+        "de": "Ein leerer Text für `Cloud.X.Remote.Command` wird mit 400 abgelehnt, statt ein leeres Kommando ohne ein Wort zu schreiben",
+        "ru": "Пустое тело для `Cloud.x.Remote.command` отклоняется с помощью 400 вместо написания пустой команды, которая отбрасывается без слова",
+        "pt": "Um corpo vazio de `cloud.x.remote.command` é recusado com 400 em vez de escrever um comando vazio sem uma palavra",
+        "nl": "Een lege tekst voor `Cloud.x.Remote.Command` wordt geweigerd met een 400 in plaats van een leeg commando dat zonder een woord wordt verwijderd",
+        "fr": "Un corps vide pour « Cloud.x.Remote.Command » est refusé par un 400 au lieu d'écrire une commande vide supprimée sans mot",
+        "it": "Un corpo vuoto per `cloud.x.remote.command` viene rifiutato con 400 invece di scrivere un comando vuoto senza una parola",
+        "es": "El cuerpo vacío de `Cloud.X.Remote.command` se rechaza con un 400 en lugar de escribir un comando vacío que se coloca sin palabra",
+        "pl": "Puste ciało dla `Cloud.x.Remote.Command` jest odrzucane za pomocą 400 zamiast pisania pustej komendy, która jest upuszczana bez słowa",
+        "uk": "Порожнє тіло для `Cloud.x.remote.command` відмовляється за допомогою 400 замість написання порожньої команди, яка скидається без слова",
+        "zh-cn": "使用 400 来拒绝 `cloud.x.remote.Command`的空正文，而不是写一个没有字就删除的空命令"
+      },
       "9.1.7": {
         "en": "Fixed: after the login the user lands on the page they asked for again, even when its URL carries a query string. The target was validated after it had been decoded, against a character list without \"=\", so every real query parameter sent the user to the root instead. A fragment of the requested URL is kept as well\nFixed: a mistyped password leads back to the login page with the error message instead of a 404, and the requested page is not lost on the way\nFixed: a deep link that was answered with a JavaScript file keeps its whole query string - it was cut off at the first \"&\"\nA target with a control character in it is refused again: browsers drop tab and newline before they read a URL, which turned \"/<TAB>/host\" into a link that leaves this server",
         "de": "Behoben: Nach dem Login landet der Nutzer erneut auf der Seite, auch wenn die URL eine Abfrage enthält. Das Ziel wurde nach der Dekodierung anhand einer Zeichenliste ohne „=“ validiert, sodass jeder echte Abfrageparameter den Benutzer an root sendete. Ein Teil der angefragten URL wird auch gespeichert\nBehoben: Ein Passwortfehler führt zurück zur Anmeldeseite mit der Fehlermeldung statt 404, und die Seite geht nicht verloren\nBehoben: Ein Deeplink mit JavaScript-Datei behält den gesamten Suchstring — er wurde beim ersten „&“ abgeschnitten\nEin Ziel mit einem Steuerzeichen wird erneut abgelehnt: Browser ziehen Tab und Zeilenumbruch, bevor sie eine URL lesen, woraus „/<TAB>/host“ ein Link wird",

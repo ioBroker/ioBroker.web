@@ -190,7 +190,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.8 (2026-09-24)
 * (@GermanBluefox) An empty body for `cloud.X.remote.command` is refused with a 400 instead of writing an empty command that is dropped without a word
 
 ### 9.1.7 (2026-09-21)
@@ -210,9 +210,6 @@ This is off by default. When enabled:
 
 ### 9.1.3 (2026-08-28)
 * (@GermanBluefox) Updated packages
-
-### 9.1.2 (2026-08-27)
-* (@GermanBluefox) Added the setting `acmeChallenge` (enabled by default): the web server answers the ACME HTTP-01 challenges published by the acme adapter, so the acme adapter no longer has to stop this instance to get at port 80
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
