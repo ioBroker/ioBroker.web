@@ -46,10 +46,12 @@ export declare class WebAdapter extends Adapter {
      * The states a visu app reports into, when it stores its values in `vis.<X>` rather than
      * through the cloud adapter: `vis.<X>.<device>.<field>`.
      *
-     * These six fields are all an app has to report, so they are all that can be created here -
+     * These seven fields are all an app has to report, so they are all that can be created here -
      * and they are created from the definitions below, not from anything the request carries. A
      * client writing a value has no business deciding what an object in the tree looks like.
      */
+    /** The name `alive` carried before it meant "the device still reports". */
+    private static readonly OUTDATED_ALIVE_NAME;
     private static readonly VIS_STATE;
     constructor(options?: Partial<AdapterOptions>);
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void;

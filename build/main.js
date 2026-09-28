@@ -339,11 +339,13 @@ class WebAdapter extends adapter_core_1.Adapter {
      * The states a visu app reports into, when it stores its values in `vis.<X>` rather than
      * through the cloud adapter: `vis.<X>.<device>.<field>`.
      *
-     * These six fields are all an app has to report, so they are all that can be created here -
+     * These seven fields are all an app has to report, so they are all that can be created here -
      * and they are created from the definitions below, not from anything the request carries. A
      * client writing a value has no business deciding what an object in the tree looks like.
      */
-    static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|instanceId)$/;
+    /** The name `alive` carried before it meant "the device still reports". */
+    static OUTDATED_ALIVE_NAME = 'If app is running and connected';
+    static VIS_STATE = /^vis\.\d+\.([^.]+)\.(battery\.level|battery\.state|brightness|currentLocation|alive|onScreen|instanceId)$/;
     constructor(options = {}) {
         super({
             ...options,
@@ -1345,6 +1347,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         const deviceId = `${namespace}.devices.${command.deviceName}`;
         const aliveId = `${deviceId}.alive`;
+        const onScreenId = `${deviceId}.onScreen`;
         const stateId = `${deviceId}.${command.name}`;
         try {
             if (!this.checkedRemoteDevices.has(deviceId)) {
@@ -1362,7 +1365,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     await this.setForeignObjectAsync(aliveId, {
                         type: 'state',
                         common: {
-                            name: 'If app is running and connected',
+                            name: 'If the device still reports',
                             type: 'boolean',
                             role: 'indicator.reachable',
                             read: true,
@@ -1371,17 +1374,34 @@ class WebAdapter extends adapter_core_1.Adapter {
                         native: {},
                     }, { user });
                 }
+                if (!(await this.getForeignObjectAsync(onScreenId, { user }))) {
+                    await this.setForeignObjectAsync(onScreenId, {
+                        type: 'state',
+                        common: {
+                            name: 'If the visualization is open on screen',
+                            type: 'boolean',
+                            role: 'indicator',
+                            read: true,
+                            write: false,
+                        },
+                        native: {},
+                    }, { user });
+                }
                 this.checkedRemoteDevices.add(deviceId);
             }
-            if (command.name === 'alive') {
-                // Expires on its own, so a device that is switched off does not stay "online"
-                await this.setForeignStateAsync(aliveId, {
-                    val: command.value === true ||
-                        command.value === 'true' ||
-                        command.value === 1 ||
-                        command.value === '1',
+            if (command.name === 'alive' || command.name === 'onScreen') {
+                const truthy = command.value === true ||
+                    command.value === 'true' ||
+                    command.value === 1 ||
+                    command.value === '1';
+                // Both expire on their own, so a device that is switched off does not stay
+                // "online" - but they wait for different things. `onScreen` is refreshed every
+                // 45 s while the app is in front of the user, `alive` also by the background
+                // rounds, which come every 15 minutes and may arrive late out of a doze window.
+                await this.setForeignStateAsync(command.name === 'alive' ? aliveId : onScreenId, {
+                    val: truthy,
                     ack: true,
-                    expire: 60,
+                    expire: command.name === 'alive' ? 40 * 60 : 120,
                 }, { user });
                 return;
             }
@@ -1488,9 +1508,19 @@ class WebAdapter extends adapter_core_1.Adapter {
                 };
             case 'alive':
                 return {
-                    name: 'If app is running and connected',
+                    // Not "the app is open": the app reports this from its background rounds too,
+                    // so it stays true while the phone reports with its screen off.
+                    name: 'If the device still reports',
                     type: 'boolean',
                     role: 'indicator.reachable',
+                    read: true,
+                    write: false,
+                };
+            case 'onScreen':
+                return {
+                    name: 'If the visualization is open on screen',
+                    type: 'boolean',
+                    role: 'indicator',
                     read: true,
                     write: false,
                 };
@@ -1562,6 +1592,10 @@ class WebAdapter extends adapter_core_1.Adapter {
         else if (name === 'currentLocation') {
             common.type = 'string';
             common.role = 'json';
+        }
+        else if (name === 'onScreen') {
+            common.type = 'boolean';
+            common.role = 'indicator';
         }
         return common;
     }
@@ -2214,6 +2248,16 @@ class WebAdapter extends adapter_core_1.Adapter {
                             this.send404(res, stateName);
                         }
                         else {
+                            // `alive` used to be called "If app is running and connected", which
+                            // promised more than it delivers: it only ever meant the app was on
+                            // screen, and since the apps report from the background too it says
+                            // something else again. A tree that already exists keeps the old text
+                            // forever, so it is corrected here - but only while it is still the
+                            // text this adapter wrote, never one the user picked.
+                            if (visCommon && obj.common?.name === WebAdapter.OUTDATED_ALIVE_NAME) {
+                                obj.common.name = visCommon.name;
+                                await this.setForeignObjectAsync(stateName, obj, { user });
+                            }
                             if (obj.common.type === 'number') {
                                 data.val = parseFloat(data.val);
                             }
