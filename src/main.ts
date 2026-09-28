@@ -1675,10 +1675,7 @@ export class WebAdapter extends Adapter {
 
             if (command.name === 'alive' || command.name === 'onScreen') {
                 const truthy =
-                    command.value === true ||
-                    command.value === 'true' ||
-                    command.value === 1 ||
-                    command.value === '1';
+                    command.value === true || command.value === 'true' || command.value === 1 || command.value === '1';
 
                 // Both expire on their own, so a device that is switched off does not stay
                 // "online" - but they wait for different things. `onScreen` is refreshed every
