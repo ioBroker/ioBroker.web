@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.8",
+    "version": "9.1.9",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.9": {
+        "en": "Added onScreen state for App",
+        "de": "Bildschirmstatus für App",
+        "ru": "Добавлено экранное состояние для приложения",
+        "pt": "Novo estado na tela do app",
+        "nl": "OnScreen-status toegevoegd voor de app",
+        "fr": "État OnScreen ajouté pour App",
+        "it": "App in stato OnScreen",
+        "es": "Se añadió el estado en pantalla a App",
+        "pl": "Dodano stan OnScreen dla aplikacji",
+        "uk": "Додано стан на екрані для програми",
+        "zh-cn": "为应用程序添加了屏幕显示状态"
+      },
       "9.1.8": {
         "en": "An empty body for `cloud.X.remote.command` is refused with a 400 instead of writing an empty command that is dropped without a word",
         "de": "Ein leerer Text für `Cloud.X.Remote.Command` wird mit 400 abgelehnt, statt ein leeres Kommando ohne ein Wort zu schreiben",
@@ -93,19 +106,6 @@
         "pl": "Naprawiono brak nagłówków CORS na każdej trasie, która odpowiada bez przekazywania żądania – w tym na całym serwerze OAuth2. Pobieranie tokenu z przeglądarki z innego źródła kończyło się niepowodzeniem z komunikatem „Brak nagłówka Access-Control-Allow-Origin”. Oprogramowanie pośredniczące CORS jest teraz rejestrowane przed wszystkimi trasami, a nie za nimi.\nOdbite pochodzenie jest teraz wysyłane razem z poleceniem „Vary: Origin”, a nieustawione pochodzenie, metoda lub lista nagłówków nie kończą się już jako ciąg literowy „undefined” w odpowiedzi",
         "uk": "Виправлено відсутність заголовків CORS на кожному маршруті, який відповідає без передачі запиту далі – серед них весь сервер OAuth2. Отримання токена з браузера на іншому походженні завершилося невдачею з повідомленням «Немає заголовка Access-Control-Allow-Origin». Проміжне програмне забезпечення CORS тепер реєструється перед усіма маршрутами, а не за ними.\nВідображене походження тепер надсилається разом із `Vary: Origin`, а невстановлене походження, метод або список заголовків більше не завершуються як літерал `undefined` у відповіді.",
         "zh-cn": "修复了所有响应路由（包括整个 OAuth2 服务器）缺少 CORS 标头的问题，这些路由均未将请求转发给其他服务器。从其他源的浏览器检索令牌失败，并显示“缺少 Access-Control-Allow-Origin 标头”的错误。现在，CORS 中间件已注册到所有路由的前端，而不是后端。\n现在，反射源会与 `Vary: Origin` 一起发送，未设置的源、方法或标头列表不再会在响应中显示为字符串 `undefined`。"
-      },
-      "9.1.0": {
-        "en": "Added the OAuth2 authorization code flow with PKCE, so third-party clients (e.g. MCP clients) can be authorized without seeing the user's password\nUnauthenticated non-HTML requests now get a `401` challenge instead of a login redirect when OAuth is enabled\nUpdated `@iobroker/webserver` to 2.0.1",
-        "de": "Der OAuth2-Autorisierungscode-Flow wurde mit PKCE hinzugefügt, sodass Drittanbieter-Clients (z. B. MCP-Clients) autorisiert werden können, ohne das Benutzerpasswort einzusehen.\nNicht authentifizierte Nicht-HTML-Anfragen erhalten nun eine `401`-Fehlermeldung anstelle einer Weiterleitung zum Anmeldevorgang, wenn OAuth aktiviert ist.\n`@iobroker/webserver` wurde auf Version 2.0.1 aktualisiert.",
-        "ru": "Добавлен поток авторизации OAuth2 с использованием кода PKCE, что позволяет авторизовывать сторонние клиенты (например, клиенты MCP) без просмотра пароля пользователя.\nПри включенной аутентификации неаутентифицированные запросы, не содержащие HTML-код, теперь получают ошибку `401` вместо перенаправления на страницу авторизации.\nОбновлена версия `@iobroker/webserver` до 2.0.1",
-        "pt": "Adicionamos o fluxo de código de autorização OAuth2 com PKCE, permitindo que clientes de terceiros (como clientes MCP) sejam autorizados sem visualizar a senha do usuário.\nRequisições não autenticadas que não sejam HTML agora recebem um desafio `401` em vez de um redirecionamento para login quando o OAuth está habilitado.\nAtualizei o `@iobroker/webserver` para a versão 2.0.1.",
-        "nl": "De OAuth2-autorisatiecodeflow met PKCE is toegevoegd, waardoor clients van derden (bijv. MCP-clients) geautoriseerd kunnen worden zonder het wachtwoord van de gebruiker te zien.\nNiet-geauthenticeerde niet-HTML-verzoeken krijgen nu een `401`-foutmelding in plaats van een omleiding naar de inlogpagina wanneer OAuth is ingeschakeld.\n`@iobroker/webserver` is bijgewerkt naar versie 2.0.1.",
-        "fr": "Ajout du flux d'autorisation OAuth2 avec PKCE, permettant ainsi aux clients tiers (par exemple, les clients MCP) de s'authentifier sans avoir accès au mot de passe de l'utilisateur.\nLes requêtes non authentifiées et non HTML reçoivent désormais une erreur `401` au lieu d'une redirection de connexion lorsque OAuth est activé.\nMise à jour de `@iobroker/webserver` vers la version 2.0.1",
-        "it": "È stato aggiunto il flusso di codice di autorizzazione OAuth2 con PKCE, in modo che i client di terze parti (ad esempio i client MCP) possano essere autorizzati senza visualizzare la password dell'utente.\nLe richieste non HTML non autenticate ora ricevono una risposta di errore `401` anziché un reindirizzamento al login quando OAuth è abilitato.\nAggiornato `@iobroker/webserver` alla versione 2.0.1",
-        "es": "Se agregó el flujo de código de autorización OAuth2 con PKCE, de modo que los clientes de terceros (por ejemplo, clientes MCP) puedan autorizarse sin ver la contraseña del usuario.\nLas solicitudes no autenticadas que no son HTML ahora reciben un desafío `401` en lugar de una redirección de inicio de sesión cuando OAuth está habilitado.\nSe actualizó `@iobroker/webserver` a la versión 2.0.1.",
-        "pl": "Dodano przepływ kodu autoryzacji OAuth2 z PKCE, dzięki czemu klienci zewnętrzni (np. klienci MCP) mogą być autoryzowani bez konieczności widzenia hasła użytkownika\nNiezatwierdzone żądania inne niż HTML otrzymują teraz wyzwanie `401` zamiast przekierowania logowania, gdy włączony jest protokół OAuth\nZaktualizowano `@iobroker/webserver` do wersji 2.0.1",
-        "uk": "Додано потік коду авторизації OAuth2 з PKCE, щоб сторонні клієнти (наприклад, клієнти MCP) могли бути авторизовані без перегляду пароля користувача.\nНеавтентифіковані запити, що не є HTML, тепер отримують виклик `401` замість перенаправлення входу, коли ввімкнено OAuth.\nОновлено `@iobroker/webserver` до версії 2.0.1",
-        "zh-cn": "新增了基于 PKCE 的 OAuth2 授权码流程，因此第三方客户端（例如 MCP 客户端）无需查看用户密码即可获得授权。\n启用 OAuth 后，未经身份验证的非 HTML 请求现在会收到 `401` 错误提示，而不是登录重定向。\n已将 `@iobroker/webserver` 更新至 2.0.1 版本"
       }
     },
     "desc": {

@@ -1390,10 +1390,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 this.checkedRemoteDevices.add(deviceId);
             }
             if (command.name === 'alive' || command.name === 'onScreen') {
-                const truthy = command.value === true ||
-                    command.value === 'true' ||
-                    command.value === 1 ||
-                    command.value === '1';
+                const truthy = command.value === true || command.value === 'true' || command.value === 1 || command.value === '1';
                 // Both expire on their own, so a device that is switched off does not stay
                 // "online" - but they wait for different things. `onScreen` is refreshed every
                 // 45 s while the app is in front of the user, `alive` also by the background
