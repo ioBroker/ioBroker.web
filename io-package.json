@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.10",
+    "version": "9.1.11",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.11": {
+        "en": "Updating an adapter with a web extension restarts only the web instances that run it, not every web instance\nFixed: a user the \"User list\" lets in through a group is let in no matter which of their groups it is. Only the first group the user was a member of got compared against the allowed ones, so a user in several groups was rejected whenever that first group was not the listed one. The order of the groups is their creation order, which made this look arbitrary",
+        "de": "Das Update eines Adapters mit Web Extension startet nur die Webinstanzen neu, nicht jede\nBehoben: Benutzer, die „Benutzerliste“ in Gruppen aufnimmt, egal um welche Gruppe es sich handelt. Nur die erste Gruppe, der er angehörte, wurde mit den erlaubten Gruppen verglichen, also wurde er abgelehnt, wenn sie nicht aufgeführt war. Die Gruppen sind in der Reihenfolge angelegt, sodass es willkürlich aussah",
+        "ru": "Обновление адаптера с помощью веб-расширения перезапускает только запущенные веб-экземпляры, а не все веб-экземпляры\nИсправлено: пользователь, которого «Список пользователей» пропускает через группу, пропускается независимо от того, к какой из его групп это относится. Только первая группа, членом которой был пользователь, сравнивалась с разрешенными, поэтому пользователю из нескольких групп было отказано, если первая группа не попала в список. Порядок групп соответствует порядку их создания, поэтому все выглядело произвольно",
+        "pt": "Atualizar um adaptador com uma extensão web reinicia somente as instâncias web que o executam.\nCorrigido: um usuário da “Lista de usuários” entra em qualquer grupo. Apenas o primeiro grupo do qual o usuário era membro era comparado aos permitidos, então um usuário em vários grupos era rejeitado quando não estava listado. A ordem dos grupos é sua ordem de criação, o que a tornou arbitrária",
+        "nl": "Als u een adapter bijwerkt met een webextensie, worden alleen de webinstanties waarop de adapter wordt uitgevoerd opnieuw gestart, niet elke webinstance\nOpgelost: een gebruiker die via de „gebruikerslijst” via een groep binnenkomt, wordt binnengelaten, ongeacht welke groep dat is. Alleen de eerste groep waar de gebruiker lid van was, werd vergeleken met de toegestane groepen, dus werd een gebruiker in verschillende groepen afgewezen wanneer die eerste groep niet in de lijst stond. De volgorde van de groepen is hun volgorde van creatie, waardoor dit willekeurig leek",
+        "fr": "La mise à jour d'un adaptateur avec une extension Web ne redémarre que les instances Web qui l'exécutent, pas toutes\nCorrigé : un utilisateur que la « liste d'utilisateurs » laisse entrer dans un groupe est admis quel que soit le groupe. Seul le premier groupe auquel appartenait l'utilisateur a été comparé aux groupes autorisés. Ainsi, un utilisateur de plusieurs groupes était rejeté alors que ce groupe ne figurait pas sur la liste. L'ordre des groupes est leur ordre de création, ce qui le rend arbitraire",
+        "it": "Aggiornare un adattatore con un'estensione web riavvia solo le istanze web che lo eseguono, non tutte\nRisolto: un utente che entra in «Elenco utenti» tramite un gruppo lo è indipendentemente. Solo il primo gruppo di cui faceva parte l'utente è stato confrontato con quelli consentiti, quindi un utente in più gruppi è stato rifiutato. L'ordine dei gruppi è il loro ordine di creazione, il che lo rende arbitrario",
+        "es": "Actualizar un adaptador con una extensión web solo reinicia las instancias web que lo ejecutan, no todas\nCorregido: un usuario que la «lista de usuarios» deja entrar por un grupo es sin importar cuál de sus grupos sea. Solo se comparó el primer grupo al que pertenecía el usuario con los permitidos, por lo que se rechazaba a un usuario de varios grupos cuando ese primer grupo no era el de la lista. El orden de los grupos es su orden de creación, lo que hizo que pareciera arbitrario",
+        "pl": "Aktualizacja adaptera z rozszerzeniem sieciowym uruchamia tylko instancje internetowe, które go uruchamiają, a nie wszystkie instancje internetowe\nNaprawiono: użytkownik, którego „Lista użytkowników” wpuszcza przez grupę, jest wpuszczany bez względu na to, która z jego grup jest. Tylko pierwsza grupa, której członkiem był użytkownik, została porównana z dozwolonymi, więc użytkownik w kilku grupach był odrzucony, gdy ta pierwsza grupa nie była wymienioną na liście. Kolejność grup to kolejność ich tworzenia, co sprawiło, że wyglądało to arbitralnie",
+        "uk": "Оновлення адаптера за допомогою веб-розширення перезавантажує лише веб-екземпляри, які його запускають, а не кожен веб-екземпляр\nВиправлено: користувач, який «Список користувачів» впускає через групу, впускається незалежно від того, яка з їхніх груп це. Лише перша група, до якої був користувач, порівнювалася з дозволеними, тому користувач у кількох групах був відхилений, коли ця перша група не була переліченою. Порядок груп - це порядок їх створення, що зробило це виглядати довільним",
+        "zh-cn": "更新带有 Web 扩展的适配器只会重新启动运行它的 Web 实例，而不是每个 Web 实例\n修复：“用户列表” 允许通过群组进入的用户无论是哪个群组都被允许进入。只有用户所属的第一个群组才能与允许的群组进行比较，因此，只要第一个群组不在列出的群组中，多个群组中的一个用户就会被拒绝。群组的顺序是它们的创建顺序，这使得它看起来很任意"
+      },
       "9.1.10": {
         "en": "Fixed: a user the \"User list\" lets in through a group is let in no matter which of their groups it is. Only the first group the user was a member of got compared against the allowed ones, so a user in several groups was rejected whenever that first group was not the listed one. The order of the groups is their creation order, which made this look arbitrary",
         "de": "Behoben: Benutzer, die „Benutzerliste“ in Gruppen aufnimmt, egal um welche Gruppe es sich handelt. Nur die erste Gruppe, der er angehörte, wurde mit den erlaubten Gruppen verglichen, also wurde er abgelehnt, wenn sie nicht aufgeführt war. Die Gruppen sind in der Reihenfolge angelegt, sodass es willkürlich aussah",
@@ -93,19 +106,6 @@
         "pl": "Zaktualizowane pakiety",
         "uk": "Оновлені пакети",
         "zh-cn": "更新包"
-      },
-      "9.1.2": {
-        "en": "Added the setting `acmeChallenge` (enabled by default): the web server answers the ACME HTTP-01 challenges published by the acme adapter, so the acme adapter no longer has to stop this instance to get at port 80",
-        "de": "Die Einstellung `acmeChallenge` wurde hinzugefügt (standardmäßig aktiviert): Der Webserver beantwortet die vom ACME-Adapter veröffentlichten ACME HTTP-01-Herausforderungen, sodass der ACME-Adapter diese Instanz nicht mehr stoppen muss, um Port 80 zu erreichen.",
-        "ru": "Добавлен параметр `acmeChallenge` (включен по умолчанию): веб-сервер отвечает на HTTP-запросы ACME HTTP-01, публикуемые адаптером acme, поэтому адаптеру acme больше не нужно останавливать этот экземпляр для доступа к порту 80.",
-        "pt": "Adicionada a configuração `acmeChallenge` (ativada por padrão): o servidor web responde aos desafios ACME HTTP-01 publicados pelo adaptador acme, portanto o adaptador acme não precisa mais interromper esta instância para acessar a porta 80.",
-        "nl": "De instelling `acmeChallenge` is toegevoegd (standaard ingeschakeld): de webserver beantwoordt de ACME HTTP-01-uitdagingen die door de acme-adapter worden gepubliceerd, waardoor de acme-adapter deze instantie niet langer hoeft te stoppen om toegang te krijgen tot poort 80.",
-        "fr": "Ajout du paramètre `acmeChallenge` (activé par défaut) : le serveur web répond aux défis ACME HTTP-01 publiés par l’adaptateur ACME, ce qui évite à ce dernier d’interrompre l’accès au port 80.",
-        "it": "Aggiunta l'impostazione `acmeChallenge` (abilitata per impostazione predefinita): il server web risponde alle sfide ACME HTTP-01 pubblicate dall'adattatore ACME, quindi l'adattatore ACME non deve più arrestare questa istanza per accedere alla porta 80.",
-        "es": "Se agregó la configuración `acmeChallenge` (habilitada por defecto): el servidor web responde a los desafíos ACME HTTP-01 publicados por el adaptador acme, por lo que el adaptador acme ya no tiene que detener esta instancia para acceder al puerto 80.",
-        "pl": "Dodano ustawienie `acmeChallenge` (domyślnie włączone): serwer WWW odpowiada na wyzwania ACME HTTP-01 publikowane przez adapter Acme, dzięki czemu adapter Acme nie musi już zatrzymywać tej instancji, aby uzyskać dostęp do portu 80",
-        "uk": "Додано параметр `acmeChallenge` (увімкнено за замовчуванням): веб-сервер відповідає на запити ACME HTTP-01, опубліковані адаптером acme, тому адаптеру acme більше не потрібно зупиняти цей екземпляр, щоб отримати доступ до порту 80.",
-        "zh-cn": "新增了 `acmeChallenge` 设置（默认启用）：Web 服务器会响应 ACME 适配器发布的 ACME HTTP-01 质询，因此 ACME 适配器无需再停止此实例即可访问 80 端口。"
       }
     },
     "desc": {

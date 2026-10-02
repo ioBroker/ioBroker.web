@@ -375,7 +375,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 delete this.ownUsers[id];
             }
         }
-        if (id.startsWith('system.adapter')) {
+        if (id.startsWith('system.adapter.')) {
             if (
             // Only an instance runs an extension. On every upload js-controller also rewrites the
             // adapter object (system.adapter.<name>), whose native holds the defaults of
