@@ -138,6 +138,30 @@ If the user is not in the list, he cannot access the web server.
 
 It is simpler as to set for every object and every state the access rights for the specific user.
 
+Next to single users you can allow whole groups. A user may log in when he is in the list of users
+**or** a member of one of the allowed groups - which of his groups it is does not matter. Members of
+an allowed group are shown as already selected in the user list, so you do not have to add them a
+second time. Adding a group is the way to keep the list short: whoever joins the group later may log
+in without a change to this instance.
+
+With *access web interface as* you decide which rights the access happens with:
+
+- **logged in user** - everybody keeps his own permissions, so every user sees only what his groups
+  allow him to.
+- **a specific user** - every allowed login acts with the rights of that one user, no matter who
+  logged in. This is the simple way to let several people share one set of permissions.
+
+A login that matches neither the users nor the groups is refused, and the instance logs
+`User system.user.<name> is not in the user list`.
+
+This list only decides **who may log in** - it hands out no rights. Behind it the usual ioBroker ACLs
+still apply, so the user needs read rights on the objects, states and files he is meant to see. A
+group with every permission switched on is therefore not the same as the administrator group: members
+of `system.group.administrator` pass every file check, everybody else has to pass the ACL of the
+single file. Files uploaded with `0x660` (`defaultNewAcl.file` in `system.config`) grant nothing to
+"others", so an adapter whose files look like that answers with a 404 to a user who is neither their
+owner nor a member of their owner group.
+
 ## Advanced options
 ### Default redirect
 If by opening of web port im browser no APP selection should be shown, but some specific application, 
@@ -190,6 +214,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Fixed: a user the "User list" lets in through a group is let in no matter which of their groups it is. Only the first group the user was a member of got compared against the allowed ones, so a user in several groups was rejected whenever that first group was not the listed one. The order of the groups is their creation order, which made this look arbitrary
+
 ### 9.1.9 (2026-09-28)
 * (@GermanBluefox) Added onScreen state for App
 
