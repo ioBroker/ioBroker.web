@@ -449,7 +449,11 @@ export class WebAdapter extends Adapter {
 
         if (id.startsWith('system.adapter')) {
             if (
-                obj?.common?.webExtension &&
+                // Only an instance runs an extension. On every upload js-controller also rewrites the
+                // adapter object (system.adapter.<name>), whose native holds the defaults of
+                // io-package.json - usually webInstance "*", which would restart every web instance
+                obj?.type === 'instance' &&
+                obj.common?.webExtension &&
                 obj.native &&
                 (this.extensions[id.substring('system.adapter.'.length)] ||
                     obj.native.webInstance === '*' ||

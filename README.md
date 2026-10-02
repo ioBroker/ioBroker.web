@@ -190,6 +190,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@hdering) Updating an adapter with a web extension restarts only the web instances that run it, not every web instance
+
 ### 9.1.9 (2026-09-28)
 * (@GermanBluefox) Added onScreen state for App
 
