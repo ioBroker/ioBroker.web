@@ -1740,13 +1740,15 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 }
                             }
                             else {
-                                const groupId = this.ownGroups
-                                    ? Object.keys(this.ownGroups).find((groupId) => this.ownGroups[groupId]
-                                        ? this.ownGroups[groupId].common.members.includes(longUser)
-                                        : false)
+                                // A user can be a member of several groups, and any one of them
+                                // on the list grants access. Looking only at the first group the
+                                // user happens to be a member of would reject them whenever that
+                                // group is not the listed one.
+                                const allowedGroup = this.ownGroups
+                                    ? Object.keys(this.ownGroups).find((groupId) => !!this.ownGroups[groupId]?.common.members.includes(longUser) &&
+                                        this.config.userListSettings.groups.includes(groupId))
                                     : undefined;
-                                if (groupId &&
-                                    this.config.userListSettings.groups.includes(groupId)) {
+                                if (allowedGroup) {
                                     if (this.config.userListSettings.accessAsUser) {
                                         user.user = this.config.userListSettings.accessAsUser;
                                     }

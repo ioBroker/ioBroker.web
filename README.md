@@ -138,6 +138,30 @@ If the user is not in the list, he cannot access the web server.
 
 It is simpler as to set for every object and every state the access rights for the specific user.
 
+Next to single users you can allow whole groups. A user may log in when he is in the list of users
+**or** a member of one of the allowed groups - which of his groups it is does not matter. Members of
+an allowed group are shown as already selected in the user list, so you do not have to add them a
+second time. Adding a group is the way to keep the list short: whoever joins the group later may log
+in without a change to this instance.
+
+With *access web interface as* you decide which rights the access happens with:
+
+- **logged in user** - everybody keeps his own permissions, so every user sees only what his groups
+  allow him to.
+- **a specific user** - every allowed login acts with the rights of that one user, no matter who
+  logged in. This is the simple way to let several people share one set of permissions.
+
+A login that matches neither the users nor the groups is refused, and the instance logs
+`User system.user.<name> is not in the user list`.
+
+This list only decides **who may log in** - it hands out no rights. Behind it the usual ioBroker ACLs
+still apply, so the user needs read rights on the objects, states and files he is meant to see. A
+group with every permission switched on is therefore not the same as the administrator group: members
+of `system.group.administrator` pass every file check, everybody else has to pass the ACL of the
+single file. Files uploaded with `0x660` (`defaultNewAcl.file` in `system.config`) grant nothing to
+"others", so an adapter whose files look like that answers with a 404 to a user who is neither their
+owner nor a member of their owner group.
+
 ## Advanced options
 ### Default redirect
 If by opening of web port im browser no APP selection should be shown, but some specific application, 
@@ -192,6 +216,8 @@ This is off by default. When enabled:
 -->
 ### **WORK IN PROGRESS**
 * (@hdering) Updating an adapter with a web extension restarts only the web instances that run it, not every web instance
+### 9.1.10 (2026-10-02)
+* (@GermanBluefox) Fixed: a user the "User list" lets in through a group is let in no matter which of their groups it is. Only the first group the user was a member of got compared against the allowed ones, so a user in several groups was rejected whenever that first group was not the listed one. The order of the groups is their creation order, which made this look arbitrary
 
 ### 9.1.9 (2026-09-28)
 * (@GermanBluefox) Added onScreen state for App
@@ -210,9 +236,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) Added: with HTTPS enabled, the web server speaks HTTP/2 - the browser loads the page and all its files over a single connection. Clients without HTTP/2 fall back to HTTP/1.1 automatically; the new option "Use HTTP/2" in the instance settings turns it off
 * (@GermanBluefox) `POST /state/<id>` creates the state it writes into for the six ids a visu app reports to: `vis.<X>.<device>.` plus `battery.level`, `battery.state`, `brightness`, `currentLocation`, `alive` or `instanceId`, together with the device they belong to. They are made from the definitions in the adapter, never from the request, and every other id is answered with a 404 as before.
 * (@GermanBluefox) A command a visu app writes into `cloud.<X>.remote.command` is turned into `cloud.<X>.devices.<device>.*` here when the cloud adapter is not running. The app reported nothing at all while that adapter was stopped, although the value had arrived. Nothing changes while the adapter runs — it does this itself. The command state is created when it is missing, so an installation without the cloud adapter can be reported to as well.
-
-### 9.1.4 (2026-08-31)
-* (@GermanBluefox) Updated packages
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
