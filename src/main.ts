@@ -385,8 +385,8 @@ export class WebAdapter extends Adapter {
     > = {};
     private readonly webByVersion: { [instance: string]: string } = {};
     private loginPage: string | null = null;
-    private ownGroups: Record<`system.group.${string}`, ioBroker.GroupObject> | null = null;
-    private ownUsers: Record<`system.user.${string}`, ioBroker.UserObject> | null = null;
+    private ownGroups: Record<ioBroker.ObjectIDs.Group, ioBroker.GroupObject> | null = null;
+    private ownUsers: Record<ioBroker.ObjectIDs.User, ioBroker.UserObject> | null = null;
 
     private templateDir: string = '';
     private template404: string = '';
@@ -434,20 +434,20 @@ export class WebAdapter extends Adapter {
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
         if (this.ownGroups && id.startsWith('system.group.')) {
             if (obj) {
-                this.ownGroups[id as `system.group.${string}`] = obj as ioBroker.GroupObject;
+                this.ownGroups[id as ioBroker.ObjectIDs.Group] = obj as ioBroker.GroupObject;
             } else {
-                delete this.ownGroups[id as `system.group.${string}`];
+                delete this.ownGroups[id as ioBroker.ObjectIDs.Group];
             }
         }
         if (this.ownUsers && id.startsWith('system.user.')) {
             if (obj) {
-                this.ownUsers[id as `system.user.${string}`] = obj as ioBroker.UserObject;
+                this.ownUsers[id as ioBroker.ObjectIDs.User] = obj as ioBroker.UserObject;
             } else {
-                delete this.ownUsers[id as `system.user.${string}`];
+                delete this.ownUsers[id as ioBroker.ObjectIDs.User];
             }
         }
 
-        if (id.startsWith('system.adapter')) {
+        if (id.startsWith('system.adapter.')) {
             if (
                 // Only an instance runs an extension. On every upload js-controller also rewrites the
                 // adapter object (system.adapter.<name>), whose native holds the defaults of
@@ -2086,8 +2086,8 @@ export class WebAdapter extends Adapter {
                             // replace user
                             if (user?.user && this.config.userListEnabled) {
                                 // get the user group
-                                const longUser: `system.user.${string}` = user.user.startsWith('system.user.')
-                                    ? (user.user as `system.user.${string}`)
+                                const longUser: ioBroker.ObjectIDs.User = user.user.startsWith('system.user.')
+                                    ? (user.user as ioBroker.ObjectIDs.User)
                                     : `system.user.${user.user}`;
                                 user.user = '';
                                 if (this.config.userListSettings.users.includes(longUser)) {
@@ -2101,8 +2101,8 @@ export class WebAdapter extends Adapter {
                                     // on the list grants access. Looking only at the first group the
                                     // user happens to be a member of would reject them whenever that
                                     // group is not the listed one.
-                                    const allowedGroup: `system.group.${string}` | undefined = this.ownGroups
-                                        ? (Object.keys(this.ownGroups) as `system.group.${string}`[]).find(
+                                    const allowedGroup: ioBroker.ObjectIDs.Group | undefined = this.ownGroups
+                                        ? (Object.keys(this.ownGroups) as ioBroker.ObjectIDs.Group[]).find(
                                               (groupId): boolean =>
                                                   !!this.ownGroups![groupId]?.common.members.includes(longUser) &&
                                                   this.config.userListSettings.groups.includes(groupId),
