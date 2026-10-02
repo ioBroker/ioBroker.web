@@ -214,7 +214,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.10 (2026-10-02)
 * (@GermanBluefox) Fixed: a user the "User list" lets in through a group is let in no matter which of their groups it is. Only the first group the user was a member of got compared against the allowed ones, so a user in several groups was rejected whenever that first group was not the listed one. The order of the groups is their creation order, which made this look arbitrary
 
 ### 9.1.9 (2026-09-28)
@@ -234,9 +234,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) Added: with HTTPS enabled, the web server speaks HTTP/2 - the browser loads the page and all its files over a single connection. Clients without HTTP/2 fall back to HTTP/1.1 automatically; the new option "Use HTTP/2" in the instance settings turns it off
 * (@GermanBluefox) `POST /state/<id>` creates the state it writes into for the six ids a visu app reports to: `vis.<X>.<device>.` plus `battery.level`, `battery.state`, `brightness`, `currentLocation`, `alive` or `instanceId`, together with the device they belong to. They are made from the definitions in the adapter, never from the request, and every other id is answered with a 404 as before.
 * (@GermanBluefox) A command a visu app writes into `cloud.<X>.remote.command` is turned into `cloud.<X>.devices.<device>.*` here when the cloud adapter is not running. The app reported nothing at all while that adapter was stopped, although the value had arrived. Nothing changes while the adapter runs — it does this itself. The command state is created when it is missing, so an installation without the cloud adapter can be reported to as well.
-
-### 9.1.4 (2026-08-31)
-* (@GermanBluefox) Updated packages
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
