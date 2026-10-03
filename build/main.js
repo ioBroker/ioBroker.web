@@ -386,7 +386,12 @@ class WebAdapter extends adapter_core_1.Adapter {
                 (this.extensions[id.substring('system.adapter.'.length)] ||
                     obj.native.webInstance === '*' ||
                     obj.native.webInstance === this.namespace)) {
-                return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () => this.terminate ? this.terminate(-100) : process.exit(-100));
+                // A planned restart to load the changed extension, not an error: with a reason and the
+                // exit code for "restart immediately" it is logged as info instead of a warning
+                const reason = `Restart to load the changed web extension "${id.substring('system.adapter.'.length)}"`;
+                return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () => this.terminate
+                    ? this.terminate(reason, adapter_core_1.EXIT_CODES.START_IMMEDIATELY_AFTER_STOP)
+                    : process.exit(adapter_core_1.EXIT_CODES.START_IMMEDIATELY_AFTER_STOP));
             }
             // 'system.adapter.'.length = 15
             const _id = id.substring(15).replace(/\.\d+$/, '');
