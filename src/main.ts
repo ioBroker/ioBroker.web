@@ -459,8 +459,13 @@ export class WebAdapter extends Adapter {
                     obj.native.webInstance === '*' ||
                     obj.native.webInstance === this.namespace)
             ) {
+                // A planned restart to load the changed extension, not an error: with a reason and the
+                // exit code for "restart immediately" it is logged as info instead of a warning
+                const reason = `Restart to load the changed web extension "${id.substring('system.adapter.'.length)}"`;
                 return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
-                    this.terminate ? this.terminate(-100) : process.exit(-100),
+                    this.terminate
+                        ? this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP)
+                        : process.exit(EXIT_CODES.START_IMMEDIATELY_AFTER_STOP),
                 );
             }
 
