@@ -1927,6 +1927,8 @@ export class WebAdapter extends Adapter {
                 .replace('{{Go to Homepage}}', I18n.translate('Go to Homepage') || 'Go to Homepage')
                 .replace('{{Refresh}}', I18n.translate('Refresh') || 'Refresh');
 
+        this.log.debug(`404 for "${fileName}"${message && message !== '{}' ? `: ${message}` : ''}`);
+
         res.setHeader('Content-Type', 'text/html');
         res.status(404).send(
             this.template404.replace(
@@ -2499,18 +2501,30 @@ export class WebAdapter extends Adapter {
                                         },
                                     ): void => {
                                         // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
-                                        if (obj) {
+                                        if (obj?.cookie) {
+                                            const maxAge = req.session.cookie.maxAge || obj.cookie.originalMaxAge || 0;
                                             const expires = new Date();
-                                            expires.setMilliseconds(
-                                                expires.getMilliseconds() + (req.session.cookie.maxAge || 0),
-                                            );
+                                            expires.setMilliseconds(expires.getMilliseconds() + maxAge);
 
                                             obj.cookie.expires = expires.toISOString();
-                                            this.log.debug(
-                                                `Session ${req.session.id} expires on ${obj.cookie.expires}`,
+                                            this.log.debug(`Session ${sessionId} expires on ${obj.cookie.expires}`);
+
+                                            // The store expects the TTL in seconds as a separate argument. Without it the
+                                            // session object itself is taken for the TTL and the adapter dies on the type check.
+                                            const ttl = Math.round(
+                                                (maxAge || (this.config.ttl as number) * 1000) / 1000,
                                             );
 
-                                            this.store?.set(req.session.id, obj);
+                                            // The session is written back under the ID the cookie carries, not under
+                                            // `req.session.id`: the two differ as soon as express-session started a new
+                                            // session for this request, and then the wrong one would be prolonged.
+                                            try {
+                                                this.store?.set(sessionId, ttl, obj);
+                                            } catch (e) {
+                                                this.log.warn(`Cannot prolong session: ${e}`);
+                                                res.status(501).send('cannot prolong');
+                                                return;
+                                            }
                                             //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
                                             res.send({ expires: obj.cookie.expires, user: obj.passport.user });
                                         } else {
@@ -3214,7 +3228,7 @@ export class WebAdapter extends Adapter {
                         url = url.substring(i - 1);
                     }
                     if ((url[0] === '.' && url[1] === '.') || (url[0] === '/' && url[1] === '.' && url[2] === '.')) {
-                        this.send404(res, url);
+                        this.send404(res, req.originalUrl);
                         return;
                     }
                     url = url.split('?')[0];
@@ -3301,6 +3315,17 @@ export class WebAdapter extends Adapter {
                         }
                     }
 
+                    // A lone path segment addresses a directory, so "/vis-2" means "/vis-2/". Only the
+                    // form with the slash gets "index.html" appended above, the other one left no file
+                    // name at all and ended in a 404. Serving the page under the slash-less URL is no
+                    // option: the browser would resolve every relative link in it against the root.
+                    if (!url && id && (req.method === 'GET' || req.method === 'HEAD')) {
+                        const query = req.url.indexOf('?');
+                        res.set('location', `/${id}/${query === -1 ? '' : req.url.substring(query)}`);
+                        res.status(301).send();
+                        return;
+                    }
+
                     if (this.cache?.[`${id}/${url}`] && !noFileCache) {
                         res.contentType(this.cache[`${id}/${url}`].mimeType);
                         if (req.headers.range) {
@@ -3327,7 +3352,7 @@ export class WebAdapter extends Adapter {
                             if (buffer === null || buffer === undefined) {
                                 res.contentType('text/html');
                                 res.set('Cache-Control', 'no-cache');
-                                this.send404(res, url);
+                                this.send404(res, req.originalUrl);
                             } else {
                                 // Store file in cache
                                 if (this.config.cache) {
@@ -3425,14 +3450,18 @@ export class WebAdapter extends Adapter {
                                     );
                                 } catch (e) {
                                     this.log.warn(`Cannot get folder index "${id}/${path}: ${e}`);
-                                    this.send404(res, url);
+                                    this.send404(res, req.originalUrl);
                                 }
                                 return;
                             }
 
                             if (!result || result.file === null || result.file === undefined || error) {
                                 res.contentType('text/html');
-                                this.send404(res, url, typeof error !== 'string' ? JSON.stringify(error) : error);
+                                this.send404(
+                                    res,
+                                    req.originalUrl,
+                                    typeof error !== 'string' ? JSON.stringify(error) : error,
+                                );
                             } else {
                                 result.mimeType ||= lookup(url) || 'application/javascript';
 
