@@ -374,7 +374,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     {I18n.t('oauth_https_warning')}
                                 </InfoBox>
                             ) : null}
-                            {native.auth && native.oauth ? (
+                            {native.auth && (native.oauth || native.cookieSameSiteNone) ? (
                                 <CustomInput
                                     title="public_url"
                                     attr="publicUrl"
@@ -391,6 +391,40 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     native={native}
                                     onChange={onChange}
                                 />
+                            ) : null}
+                            {native.auth ? (
+                                <CustomCheckbox
+                                    title="cookie_same_site_none"
+                                    attr="cookieSameSiteNone"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
+                            {native.auth && native.cookieSameSiteNone ? (
+                                <InfoBox
+                                    style={{ marginTop: 20 }}
+                                    type="info"
+                                    closeable
+                                    storeId="web.cookie_same_site_none"
+                                >
+                                    {I18n.t('cookie_same_site_none_info')
+                                        .split('\n')
+                                        .map((item, i) => (
+                                            <div key={i}>{item}</div>
+                                        ))}
+                                </InfoBox>
+                            ) : null}
+                            {native.auth &&
+                            native.cookieSameSiteNone &&
+                            !native.secure &&
+                            !native.publicUrl?.startsWith('https://') ? (
+                                <InfoBox
+                                    style={{ marginTop: 20 }}
+                                    type="warning"
+                                >
+                                    {I18n.t('cookie_same_site_none_https_warning')}
+                                </InfoBox>
                             ) : null}
                             <CustomCheckbox
                                 title="cache"

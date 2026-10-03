@@ -193,6 +193,7 @@
     "certPrivate": "",
     "certPublic": "",
     "compatibilityV2": true,
+    "cookieSameSiteNone": false,
     "defaultRedirect": "",
     "defaultUser": "admin",
     "disableExtensions": false,

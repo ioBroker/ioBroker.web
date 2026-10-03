@@ -130,6 +130,14 @@ export interface WebAdapterConfig {
     publicUrl: string;
     /** Let clients register themselves via RFC 7591 (default: true). */
     oauthDynamicRegistration: boolean;
+    /**
+     * Send the session cookie with `SameSite=None; Secure`, so a page of this server keeps its session
+     * when another site embeds it in an iframe. Browsers take `SameSite=None` only on a secure
+     * connection, so this needs {@link secure} or a {@link publicUrl} of an https reverse proxy -
+     * without one the setting is ignored. It also gives up the protection `SameSite` provides against
+     * requests of foreign pages, which is why it is off by default.
+     */
+    cookieSameSiteNone: boolean;
     port: number | string;
     rootPath: string;
     secure: boolean;

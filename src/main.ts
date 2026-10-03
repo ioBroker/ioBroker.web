@@ -1309,12 +1309,42 @@ export class WebAdapter extends Adapter {
             }
         }
 
+        // A cookie without a `SameSite` attribute counts as `Lax`, and the browser keeps it to itself
+        // as soon as this server is embedded in a page of another origin - the session is then missing
+        // inside the iframe. `SameSite=None` lifts that, but browsers take it only together with
+        // `Secure`, so it needs TLS: either here, or at a reverse proxy in front of us, which is what
+        // the public URL tells us about.
+        const httpsAvailable = this.config.secure || !!this.config.publicUrl?.startsWith('https://');
+        const crossSiteCookie = !!this.config.cookieSameSiteNone && httpsAvailable;
+
+        if (this.config.cookieSameSiteNone && !httpsAvailable) {
+            this.log.warn(
+                'Embedding in other sites is configured but ignored: browsers accept "SameSite=None" only together with ' +
+                    '"Secure", and a cookie marked secure never reaches a server reached over plain http. ' +
+                    'Enable SSL or put this server behind an https reverse proxy and set the public URL.',
+            );
+        } else if (crossSiteCookie) {
+            this.log.info(
+                'Embedding in other sites is enabled: the session cookie is sent on cross-site requests, ' +
+                    'which takes away the protection "SameSite" gives against requests of foreign pages',
+            );
+        }
+
         this.webServer.app.use(
             session({
                 secret: this.secret,
                 saveUninitialized: true,
                 resave: true,
-                cookie: { maxAge: (parseInt(this.config.ttl as string, 10) || 3600) * 1000, httpOnly: false }, // default TTL
+                cookie: {
+                    maxAge: (parseInt(this.config.ttl as string, 10) || 3600) * 1000, // default TTL
+                    httpOnly: false,
+                    ...(crossSiteCookie ? { sameSite: 'none' as const, secure: true } : {}),
+                },
+                // With TLS ending at a reverse proxy, the connection to us is plain http and
+                // express-session would drop a cookie marked `Secure` instead of sending it. This lets
+                // it read the protocol from `X-Forwarded-Proto`, and only here: the `trust proxy`
+                // setting of the app stays untouched, so `req.ip` keeps its meaning for the IP whitelist.
+                proxy: crossSiteCookie && !this.config.secure ? true : undefined,
                 // @ts-expect-error missing typing
                 store: this.store!,
             }),

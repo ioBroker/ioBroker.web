@@ -112,6 +112,8 @@ export interface WebAdapterConfig {
     publicUrl: string;
     /** Let clients register themselves via RFC 7591 */
     oauthDynamicRegistration: boolean;
+    /** Send the session cookie with `SameSite=None; Secure`, so other sites may embed this server in an iframe */
+    cookieSameSiteNone: boolean;
     port: number | string;
     secure: boolean;
     showFolderIndex: boolean;

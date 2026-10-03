@@ -167,6 +167,34 @@ owner nor a member of their owner group.
 If by opening of web port im browser no APP selection should be shown, but some specific application, 
 the path could be provided here (e.g. `/vis/`) so this path will be opened automatically.
 
+### Embedding this server in another site
+
+A browser treats a cookie without a `SameSite` attribute as `SameSite=Lax` and keeps it to itself as
+soon as the page belongs to another origin. A dashboard that embeds a page of this server in an
+`<iframe>` therefore gets a request without the session, and the user is asked to log in again inside
+the frame - while the same page opened directly works.
+
+**"Allow embedding in other sites"** sends the session cookie with `SameSite=None; Secure` and makes
+that case work. Two things come with it:
+
+- It needs TLS. Browsers accept `SameSite=None` only together with `Secure`, and a cookie marked
+  secure never travels over plain `http://`. So either enable encryption here, or terminate TLS at a
+  reverse proxy in front of this server and **set the public URL** to its `https://` address - the
+  option is ignored, with a warning in the log, while neither is the case. With the proxy variant the
+  proxy has to send `X-Forwarded-Proto: https`, which is how this server learns that the browser
+  spoke TLS to it. Without that header no session cookie is handed out at all and nobody can log in.
+- It gives up what `SameSite` protects against: the session cookie is then sent with requests coming
+  from *any* other site, not only from the one you embed this server in. Leave it off unless you
+  actually embed this server somewhere.
+
+It also depends on the browser still accepting third-party cookies, which the Chromium family is
+phasing out. The way that keeps working is to carry an OAuth2 token in the URL instead of relying on
+a cookie, which needs no cross-site cookie at all:
+
+```html
+<iframe src="https://iobroker.example.com:8082/some-page?token=<access_token>"></iframe>
+```
+
 ## OAuth2 authentication
 The web adapter supports OAuth2 authentication.
 
@@ -215,6 +243,7 @@ This is off by default. When enabled:
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (@GermanBluefox) Added the option "Allow embedding in other sites": the session cookie is sent with `SameSite=None; Secure`, so a page of this server keeps its session when another site embeds it in an iframe. It requires SSL here or an https reverse proxy with the public URL set, and it is off by default because it gives up the protection `SameSite` provides against requests of foreign pages
 * (@GermanBluefox) Fixed: a call of `/prolongSession` no longer kills the instance. The session was handed to the store without its time to live, the store took the session object itself for it, and the type check of the controller ended the adapter with "Parameter ttl needs to be of type number". The session is also written back under the ID its cookie carries - `req.session.id` is a different one as soon as express-session started a new session for the request, and then the wrong session was prolonged
 * (@GermanBluefox) Fixed: an address without the closing slash - `/vis-2` instead of `/vis-2/` - leads to the application instead of a 404. It is answered with a redirect to the address with the slash, as every other web server does
 * (@GermanBluefox) A 404 names the address that was requested, not the file name left over after the adapter name was cut off, and logs it on the debug level
