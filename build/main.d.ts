@@ -62,6 +62,17 @@ export declare class WebAdapter extends Adapter {
     onReady(): Promise<void>;
     updatePreSettings(obj: ioBroker.InstanceObject): void;
     getExtensionsAndSettings(): Promise<ioBroker.InstanceObject[]>;
+    /**
+     * Whether this instance is served by this web instance as a web extension
+     *
+     * Such an instance does not listen on a port of its own: it is mounted into this server under a
+     * path the extension picks itself. A link built from its own `native.port` - which is what
+     * `common.localLinks` of most adapters describes - therefore points at nothing. The entry the
+     * extension returns from `welcomePage()` is used instead.
+     *
+     * @param instance - the instance object to check
+     */
+    private isOwnWebExtension;
     getListOfAllAdapters(remoteIp: string): Promise<{
         systemLang: ioBroker.Languages;
         showAdminInstances: boolean;
@@ -158,6 +169,21 @@ export declare class WebAdapter extends Adapter {
     private createVisState;
     /** The definition of one reported value, as the cloud adapter creates it. */
     private static remoteStateCommon;
+    /**
+     * Protect a callback the session store calls
+     *
+     * The store answers from a task of its own, so by the time it calls back, the call stack of the
+     * request is gone: an exception thrown in such a callback passes no `try/catch` and never reaches
+     * the error handling of express, and the controller answers an uncaught exception by terminating
+     * the instance. A single unexpected session would take the whole web server down with it, along
+     * with every web extension and everybody else's connection, which is why the callbacks are
+     * guarded here instead of trusting what a session contains.
+     *
+     * @param what - what the callback was doing, for the log line
+     * @param res - response to end with a 500 if the callback did not answer yet, if there is one
+     * @param cb - the callback to protect
+     */
+    private guardStoreCallback;
     send404(res: Response, fileName: string, message?: string): void;
     initWebServer(): Promise<void>;
     main(): Promise<void>;

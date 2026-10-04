@@ -3,121 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <title>Directory Listing</title>
     <style>
+        /* Follows the look of the ioBroker admin: ioBroker blue, a raised surface on a muted
+           background, dense rows with dividers. The theme follows the one of the system, which the
+           browser knows before the first paint - so there is no flash of the wrong colours. */
+        :root {
+            /* Both schemes are served by this page itself. Without saying so, a browser in dark mode
+               applies its own automatic darkening on top of the light palette and the result is
+               neither of the two. */
+            color-scheme: light dark;
+            --primary: #3399cc;
+            --on-primary: #ffffff;
+            --bg: #eeeeee;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --text-dim: #6b6b6b;
+            --divider: rgba(0, 0, 0, .1);
+            --hover: rgba(51, 153, 204, .09);
+            --shadow: 0 1px 3px rgba(0, 0, 0, .16), 0 3px 10px rgba(0, 0, 0, .08);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #4dabf5;
+                --on-primary: #0b1a24;
+                --bg: #121212;
+                --surface: #1e1e1e;
+                --text: #e8eaed;
+                --text-dim: #9aa0a6;
+                --divider: rgba(255, 255, 255, .12);
+                --hover: rgba(77, 171, 245, .14);
+                --shadow: 0 1px 3px rgba(0, 0, 0, .5), 0 3px 12px rgba(0, 0, 0, .4);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
+            padding: 24px 16px;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
+
         .container {
-            width: 80%;
-            max-width: 1200px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--surface);
             border-radius: 8px;
-            padding: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
         }
+
+        /* the app bar */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 16px;
+            min-height: 56px;
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        header .folder-open {
+            flex: none;
+            width: 24px;
+            height: 24px;
+            background: currentColor;
+            -webkit-mask: var(--ico-folder-open) center / contain no-repeat;
+            mask: var(--ico-folder-open) center / contain no-repeat;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 500;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        h1 .label {
+            opacity: .8;
+            font-weight: 400;
+            margin-right: 6px;
+        }
+
+        .count {
+            flex: none;
+            font-size: .8125rem;
+            opacity: .85;
+            font-variant-numeric: tabular-nums;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        h1 {
-            text-align: center;
-            color: #007bb5;
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: var(--surface);
+            color: var(--text-dim);
+            font-size: .75rem;
+            font-weight: 500;
+            letter-spacing: .03em;
+            text-transform: uppercase;
             text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--divider);
+            white-space: nowrap;
         }
-        td:nth-child(2) {
+
+        td {
+            padding: 0;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            cursor: pointer;
+        }
+
+        tbody tr:hover {
+            background: var(--hover);
+        }
+
+        /* The link fills its cell, so the whole row is reachable with the keyboard as well and not
+           only by the click handler. */
+        td:first-child a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: var(--text);
+            text-decoration: none;
+            outline-offset: -2px;
+        }
+
+        td:first-child a::before {
+            content: "";
+            flex: none;
+            width: 20px;
+            height: 20px;
+            background: var(--text-dim);
+            -webkit-mask: var(--ico-file) center / contain no-repeat;
+            mask: var(--ico-file) center / contain no-repeat;
+        }
+
+        tr.dir td:first-child a {
+            font-weight: 500;
+        }
+
+        tr.dir td:first-child a::before {
+            background: var(--primary);
+            -webkit-mask-image: var(--ico-folder);
+            mask-image: var(--ico-folder);
+        }
+
+        tr.up td:first-child a::before {
+            -webkit-mask-image: var(--ico-up);
+            mask-image: var(--ico-up);
+        }
+
+        .size {
+            width: 1%;
+            padding: 10px 16px;
             text-align: right;
+            white-space: nowrap;
+            color: var(--text-dim);
+            font-variant-numeric: tabular-nums;
         }
-        .light th {
-            background-color: #007bb5;
-            color: #fff;
+
+        .empty {
+            padding: 40px 16px;
+            text-align: center;
+            color: var(--text-dim);
         }
-        .light tr:nth-child(even) {
-            background-color: #f9f9f9;
+
+        @media (max-width: 600px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+                box-shadow: none;
+            }
         }
-        .light tr:hover {
-            background-color: #f1f1f1;
-        }
-        .dark th {
-            background-color: #38c3ff;
-            color: #111;
-        }
-        .dark tr:nth-child(even) {
-            background-color: #060606;
-        }
-        .dark tr:hover {
-            background-color: #0F0F0F;
-        }
-        .dark a {
-            color: #38c3ff;
-            text-decoration: none;
-        }
-        .light a {
-            color: #007bb5;
-            text-decoration: none;
+
+        /* Material icons, inline so that nothing has to be loaded from outside */
+        :root {
+            --ico-folder: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>');
+            --ico-folder-open: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>');
+            --ico-file: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>');
+            --ico-up: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-8 4 4 4h-3v4h-2v-4H8l4-4z"/></svg>');
         }
     </style>
     <script>
         function humanReadableSize(size) {
-            const i = Math.floor(Math.log(size) / Math.log(1024));
-            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
+            if (!size) {
+                return '0 B';
+            }
+            const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.min(Math.floor(Math.log(size) / Math.log(1024)), units.length - 1);
+            return `${Math.round((size / Math.pow(1024, i)) * 100) / 100} ${units[i]}`;
         }
 
-        // What the document is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            // detect theme, dark or light
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.style.backgroundColor = '#263238';
-                document.body.style.color = '#eceff1';
-                document.getElementById('files').className = 'dark';
-            } else {
-                document.getElementById('files').className = 'light';
-                document.body.style.backgroundColor = '#FFF';
-                document.body.style.color = '#000';
-            }
-            // Make the size human readable
-            const rows = document.querySelectorAll('table tbody tr');
-            rows.forEach(row => {
-                const sizeCell = row.querySelector('td:nth-child(2)');
-                sizeCell.title = sizeCell.textContent;
-                const size = parseInt(sizeCell.textContent, 10);
-                if (!isNaN(size)) {
-                    sizeCell.textContent = humanReadableSize(size);
-                }
-            });
+            const rows = Array.from(document.querySelectorAll('tbody tr'));
 
             rows.forEach(row => {
+                const sizeCell = row.querySelector('td:nth-child(2)');
+                if (sizeCell) {
+                    sizeCell.classList.add('size');
+                    const size = parseInt(sizeCell.textContent, 10);
+                    if (!isNaN(size)) {
+                        sizeCell.title = `${size} B`;
+                        sizeCell.textContent = humanReadableSize(size);
+                    }
+                }
+
+                // The link already covers its cell; this only extends the target to the size column.
                 const link = row.querySelector('td:first-child a');
                 if (link) {
-                    row.style.cursor = 'pointer';
-                    row.addEventListener('click', () => {
-                        window.location.href = link.href;
+                    row.addEventListener('click', e => {
+                        if (e.target.tagName !== 'A') {
+                            link.click();
+                        }
                     });
                 }
             });
-        });
 
+            const count = document.getElementById('count');
+            const entries = rows.filter(row => !row.classList.contains('up')).length;
+            count.textContent = entries === 1 ? '1' : `${entries}`;
+
+            if (!entries) {
+                const body = document.querySelector('tbody');
+                const cell = document.createElement('td');
+                cell.className = 'empty';
+                cell.colSpan = 2;
+                cell.textContent = '—';
+                const row = document.createElement('tr');
+                row.appendChild(cell);
+                body.appendChild(row);
+            }
+        });
     </script>
 </head>
 <body>
 <div class="container">
-    <h1>{{Directory}} {{URL}}</h1>
-    <table id="files">
+    <header>
+        <span class="folder-open"></span>
+        <h1><span class="label">{{Directory}}</span>{{URL}}</h1>
+        <span class="count" id="count"></span>
+    </header>
+    <table>
         <thead>
         <tr>
             <th>{{File Name}}</th>
-            <th style="width: 100px">{{File Size}}</th>
+            <th style="text-align: right">{{File Size}}</th>
         </tr>
         </thead>
         <tbody>

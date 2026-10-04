@@ -125,7 +125,7 @@
       "license": "MIT",
       "type": "free"
     },
-    "mode": "daemon",
+    "declareUsedResources": true,
     "platform": "Javascript/Node.js",
     "loglevel": "info",
     "icon": "web.svg",

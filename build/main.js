@@ -406,9 +406,11 @@ class WebAdapter extends adapter_core_1.Adapter {
             this.updatePreSettings(obj);
         }
         if (!this.ownSocket && id === this.config.socketio) {
-            void this.getSocketUrl(obj).then(() => {
-                this.log.info(`SocketURL now "${this.socketUrl}"`);
-            });
+            // A rejection here has no caller left to report to - it would reach the controller as an
+            // unhandled rejection, which ends the instance just like an uncaught exception does.
+            void this.getSocketUrl(obj)
+                .then(() => this.log.info(`SocketURL now "${this.socketUrl}"`))
+                .catch(e => this.log.warn(`Cannot read the socket URL: ${e}`));
         }
         // If system language desired => update language
         if (id === 'system.config' && !this.config.language) {
@@ -439,9 +441,10 @@ class WebAdapter extends adapter_core_1.Adapter {
         if (!this.ownSocket && id === `${this.config.socketio}.alive`) {
             if (this.socketioAlive !== !!state?.val) {
                 this.socketioAlive = !!state?.val;
-                void this.getSocketUrl(undefined, state).then(() => {
-                    this.log.info(`SocketURL now "${this.socketUrl}"`);
-                });
+                // see onObjectChange: an unhandled rejection would end the instance
+                void this.getSocketUrl(undefined, state)
+                    .then(() => this.log.info(`SocketURL now "${this.socketUrl}"`))
+                    .catch(e => this.log.warn(`Cannot read the socket URL: ${e}`));
             }
         }
         // inform extensions
@@ -490,9 +493,9 @@ class WebAdapter extends adapter_core_1.Adapter {
             }
             // get session by cookie
             if (this.store && cookie && msg.callback) {
-                this.store.get(cookie, (error, session) => {
+                this.store.get(cookie, this.guardStoreCallback('answer "getUserByCookie"', null, (error, session) => {
                     this.sendTo(msg.from, msg.command, { error, user: session?.passport?.user }, msg.callback);
-                });
+                }));
             }
             else if (msg.callback) {
                 this.sendTo(msg.from, msg.command, { error: 'cookie not found' }, msg.callback);
@@ -685,6 +688,20 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         return res;
     }
+    /**
+     * Whether this instance is served by this web instance as a web extension
+     *
+     * Such an instance does not listen on a port of its own: it is mounted into this server under a
+     * path the extension picks itself. A link built from its own `native.port` - which is what
+     * `common.localLinks` of most adapters describes - therefore points at nothing. The entry the
+     * extension returns from `welcomePage()` is used instead.
+     *
+     * @param instance - the instance object to check
+     */
+    isOwnWebExtension(instance) {
+        return (!!instance?.common?.webExtension &&
+            (instance.native?.webInstance === this.namespace || instance.native?.webInstance === '*'));
+    }
     async getListOfAllAdapters(remoteIp) {
         const config = {};
         // read all instances
@@ -719,6 +736,9 @@ class WebAdapter extends adapter_core_1.Adapter {
                     }
                 }
             }
+            // Instances this server runs as a web extension are left to their own `welcomePage()`;
+            // everything `common.localLinks` says about their port is wrong while they run here.
+            found = found?.filter(id => !this.isOwnWebExtension(mapInstances[id]));
             if (found?.length) {
                 // Add from localLinks
                 if (obj.common.localLinks && typeof obj.common.localLinks === 'object') {
@@ -747,6 +767,28 @@ class WebAdapter extends adapter_core_1.Adapter {
                 }
             }
         }
+        // The entries of the web extensions. They are collected here, before the list is cleaned up
+        // and the links are resolved: appended afterwards, such an entry keeps the relative `link`
+        // the extension answered with and never gets a `localLink` - and the welcome page reads
+        // nothing but `localLink`, so the entry was dropped without a word.
+        Object.keys(this.extensions).forEach(instance => {
+            try {
+                if (typeof this.extensions[instance]?.obj?.welcomePage === 'function') {
+                    const entry = this.extensions[instance].obj.welcomePage();
+                    if (entry?.link) {
+                        // An extension answers with the path it mounted itself on, relative to this
+                        // server - which is exactly the local link of this instance.
+                        entry.localLink ||= entry.link;
+                        entry.id ||= `system.adapter.${instance}`;
+                        entry.instance ??= parseInt(instance.split('.').pop() || '0', 10);
+                        list.push(entry);
+                    }
+                }
+            }
+            catch (err) {
+                this.log.error(`Cannot call welcomePage for "${instance}": ${err.message}`);
+            }
+        });
         const sameHost = `${webConfig.native.secure ? 'https' : 'http'}://$host$`;
         const sameServer = `${webConfig.native.secure ? 'https' : 'http'}://$host$:${webConfig.native.port}/`;
         list.forEach(item => {
@@ -800,18 +842,6 @@ class WebAdapter extends adapter_core_1.Adapter {
                 listItem.name = listItem.title;
             }
         }
-        // try to find swagger web-extension
-        // inform extensions
-        Object.keys(this.extensions).forEach(instance => {
-            try {
-                if (typeof this.extensions[instance]?.obj?.welcomePage === 'function') {
-                    uniqueList.push(this.extensions[instance].obj.welcomePage());
-                }
-            }
-            catch (err) {
-                this.log.error(`Cannot call welcomePage for "${instance}": ${err.message}`);
-            }
-        });
         uniqueList.sort((a, b) => {
             const aName = (a.name && typeof a.name === 'object' ? a.name[this.lang] || a.name.en : a.name || '').toLowerCase();
             const bName = (b.name && typeof b.name === 'object' ? b.name[this.lang] || b.name.en : b.name || '').toLowerCase();
@@ -1631,6 +1661,33 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         return common;
     }
+    /**
+     * Protect a callback the session store calls
+     *
+     * The store answers from a task of its own, so by the time it calls back, the call stack of the
+     * request is gone: an exception thrown in such a callback passes no `try/catch` and never reaches
+     * the error handling of express, and the controller answers an uncaught exception by terminating
+     * the instance. A single unexpected session would take the whole web server down with it, along
+     * with every web extension and everybody else's connection, which is why the callbacks are
+     * guarded here instead of trusting what a session contains.
+     *
+     * @param what - what the callback was doing, for the log line
+     * @param res - response to end with a 500 if the callback did not answer yet, if there is one
+     * @param cb - the callback to protect
+     */
+    guardStoreCallback(what, res, cb) {
+        return (...args) => {
+            try {
+                cb(...args);
+            }
+            catch (e) {
+                this.log.error(`Cannot ${what}: ${e instanceof Error ? e.stack || e.message : e}`);
+                if (res && !res.headersSent) {
+                    res.status(500).send('500. Error');
+                }
+            }
+        };
+    }
     send404(res, fileName, message) {
         this.template404 =
             this.template404 ||
@@ -2029,7 +2086,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         // If access token is available, use it
                         if (accessToken) {
                             // read expiration from session
-                            this.store?.get(`a:${accessToken}`, (_err, accessSession) => {
+                            this.store?.get(`a:${accessToken}`, this.guardStoreCallback('read the token of "getUser"', res, (_err, accessSession) => {
                                 const tokens = accessSession;
                                 if (tokens) {
                                     // If refresh token is available, use it
@@ -2042,21 +2099,24 @@ class WebAdapter extends adapter_core_1.Adapter {
                                 else {
                                     res.status(501).send('User not logged in.');
                                 }
-                            });
+                            }));
                             return;
                         }
                         if (cookie['connect.sid']) {
                             const sessionId = cookie_signature_1.default.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), this.secret);
                             if (sessionId) {
-                                this.store?.get(sessionId, (err, session) => {
+                                this.store?.get(sessionId, this.guardStoreCallback('read the session of "getUser"', res, (err, session) => {
                                     // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
-                                    if (session) {
-                                        res.send({ expires: session.cookie.expires, user: session.passport.user });
+                                    if (session?.passport) {
+                                        res.send({
+                                            expires: session.cookie?.expires,
+                                            user: session.passport.user,
+                                        });
                                     }
                                     else {
                                         res.status(501).send('User not logged in.');
                                     }
-                                });
+                                }));
                             }
                             else {
                                 res.status(501).send('User not logged in.');
@@ -2089,7 +2149,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         if (cookie['connect.sid']) {
                             const sessionId = cookie_signature_1.default.unsign(decodeURIComponent(cookie['connect.sid']).slice(2), this.secret);
                             if (sessionId) {
-                                this.store?.get(sessionId, (_err, obj) => {
+                                this.store?.get(sessionId, this.guardStoreCallback('prolong the session', res, (_err, obj) => {
                                     // obj = {"cookie":{"originalMaxAge":2592000000,"expires":"2020-09-24T18:09:50.377Z","httpOnly":true,"path":"/"},"passport":{"user":"admin"}}
                                     if (obj?.cookie) {
                                         const maxAge = req.session.cookie.maxAge || obj.cookie.originalMaxAge || 0;
@@ -2097,27 +2157,23 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         expires.setMilliseconds(expires.getMilliseconds() + maxAge);
                                         obj.cookie.expires = expires.toISOString();
                                         this.log.debug(`Session ${sessionId} expires on ${obj.cookie.expires}`);
-                                        // The store expects the TTL in seconds as a separate argument. Without it the
-                                        // session object itself is taken for the TTL and the adapter dies on the type check.
+                                        // The store expects the TTL in seconds as a separate argument. Without
+                                        // it the session object itself is taken for the TTL and the type check
+                                        // of the controller throws - which the guard around this callback now
+                                        // turns into a 500 instead of the end of the instance.
                                         const ttl = Math.round((maxAge || this.config.ttl * 1000) / 1000);
-                                        // The session is written back under the ID the cookie carries, not under
-                                        // `req.session.id`: the two differ as soon as express-session started a new
-                                        // session for this request, and then the wrong one would be prolonged.
-                                        try {
-                                            this.store?.set(sessionId, ttl, obj);
-                                        }
-                                        catch (e) {
-                                            this.log.warn(`Cannot prolong session: ${e}`);
-                                            res.status(501).send('cannot prolong');
-                                            return;
-                                        }
+                                        // The session is written back under the ID the cookie carries, not
+                                        // under `req.session.id`: the two differ as soon as express-session
+                                        // started a new session for this request, and then the wrong one
+                                        // would be prolonged.
+                                        this.store?.set(sessionId, ttl, obj);
                                         //res.cookie('connect.sid', cookie['connect.sid'], { maxAge: req.session.cookie.maxAge, httpOnly: true });
-                                        res.send({ expires: obj.cookie.expires, user: obj.passport.user });
+                                        res.send({ expires: obj.cookie.expires, user: obj.passport?.user });
                                     }
                                     else {
                                         res.status(501).send('cannot prolong');
                                     }
-                                });
+                                }));
                             }
                             else {
                                 res.status(501).send('cannot prolong');
@@ -2889,10 +2945,11 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         .replace('{{File Size}}', adapter_core_1.I18n.translate('File Size') || 'File Size')
                                         .replace('{{File Name}}', adapter_core_1.I18n.translate('File Name') || 'File Name');
                                     const text = [];
-                                    if (url !== '/') {
-                                        const parts = url.split('/');
-                                        parts.pop();
-                                        text.push(`<tr><td><a href="../">..</a></td><td></td></tr>`);
+                                    // `url` is the path below the adapter name, so the root of an
+                                    // adapter is the empty string - never "/", which is what this
+                                    // asked for before and therefore always offered a way up.
+                                    if (url !== '') {
+                                        text.push(`<tr class="up"><td><a href="../">..</a></td><td></td></tr>`);
                                     }
                                     files?.sort((a, b) => {
                                         if (a.isDir && b.isDir) {
@@ -2906,7 +2963,10 @@ class WebAdapter extends adapter_core_1.Adapter {
                                         }
                                         return a.file.localeCompare(b.file);
                                     });
-                                    files?.forEach(file => text.push(`<tr><td><a href="./${encodeURIComponent(file.file)}${file.isDir ? '/' : ''}" style="${file.isDir ? 'font-weight: bold' : ''}">${escapeHtml(file.file)}</a></td><td>${(file.stats && file.stats.size) || ''}</td></tr>`));
+                                    // The kind of entry goes into a class, so the template decides how a
+                                    // folder looks instead of an inline style deciding it here. An empty
+                                    // size cell stays empty for a folder, while a file of 0 bytes says so.
+                                    files?.forEach(file => text.push(`<tr class="${file.isDir ? 'dir' : 'file'}"><td><a href="./${encodeURIComponent(file.file)}${file.isDir ? '/' : ''}">${escapeHtml(file.file)}</a></td><td>${file.isDir ? '' : (file.stats?.size ?? '')}</td></tr>`));
                                     res.status(200).send(this.templateDir
                                         .replace('{{URL}}', escapeHtml(req.url))
                                         .replace('{{TABLE}}', text.join('\n')));
