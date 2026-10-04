@@ -18,6 +18,8 @@ export declare class WebAdapter extends Adapter {
     private secret;
     private socketUrl;
     private readonly cache;
+    /** Namespaces whose files are in {@link cache} and are therefore watched for changes */
+    private readonly cachedNamespaces;
     private ownSocket;
     /** If the socket instance is alive */
     private socketioAlive;
@@ -56,6 +58,22 @@ export declare class WebAdapter extends Adapter {
     constructor(options?: Partial<AdapterOptions>);
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void;
     onStateChange(id: string, state: ioBroker.State | null | undefined): void;
+    /**
+     * Put a file into the cache and watch the adapter it belongs to
+     *
+     * The cache has no lifetime of its own, so without watching, a file that is written again under
+     * the same name is served from the first read until the instance restarts. `sayit` is the case
+     * that shows it: it writes every announcement to the same name, and with the cache enabled the
+     * browser kept getting the first one. Only the namespaces that really end up in the cache are
+     * watched, so enabling the cache does not subscribe to the files of the whole system.
+     *
+     * @param id - namespace the file belongs to, e.g. `sayit.0`
+     * @param url - path of the file inside that namespace
+     * @param entry - the file and its type
+     * @param entry.mimeType - content type to answer with
+     * @param entry.buffer - contents of the file
+     */
+    private cacheFile;
     onFileChange(id: string, fileName: string, size: number | null): void;
     onMessage(msg: ioBroker.Message): void;
     onUnload(callback: () => void): void;
