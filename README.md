@@ -126,6 +126,60 @@ Examples:
 
 Note: the option "Disable objects delivery" must be deactivated in the web adapter settings to use this feature.
 
+## The former built-in "Simple API"
+
+Up to version 6.x this adapter had a **Built-in 'Simple-API'** switch, which answered addresses such as
+`http://ip:8082/get/<id>` and `http://ip:8082/set/<id>?value=…` directly. The switch is gone since 7.0.
+The `simple-api` adapter took the feature over and can be run **inside** this web server as a web
+extension, which brings the old addresses back unchanged - no script that uses them has to be touched.
+
+### Setting it up
+
+1. Install the adapter **`simple-api`** and create an instance of it.
+2. Open the settings of that instance and set **"Web instance"** to the web instance that should serve
+   it, e.g. `web.0`. (Left empty, `simple-api` runs a server of its own on port 8087 instead - that
+   works too, but then the addresses carry its port, not the one of this server.)
+3. Save. The web instance restarts and reports the mounted paths in its log.
+
+### The addresses
+
+Running as an extension, `simple-api` answers under two prefixes:
+
+```
+http://ip:8082/get/<id>                     the address as it was up to web 6.x
+http://ip:8082/simple-api.0/get/<id>        the same, below the name of the instance
+```
+
+So nothing changes for existing scripts:
+
+```
+http://ip:8082/set/0_userdata.0.Alarm.disable?value=true
+http://ip:8082/getPlainValue/0_userdata.0.Temperature
+```
+
+The commands are the familiar ones: `get`, `getPlainValue`, `getBulk`, `set`, `setBulk`,
+`setValueFromBody`, `toggle`, `getObjects`, `objects`, `getStates`, `states`, `search` and `query`.
+
+### Authentication
+
+Which user a request runs as is decided by the **authentication** setting of this web instance:
+
+- **Off** - every request runs as the user configured under "access web interface as".
+- **On** - the request has to identify itself, in one of three ways: with the session of a browser that
+  is logged in to this server, with an `Authorization: Basic` header, or with `?user=…&pass=…` in the
+  query string. Credentials in a query string travel in plain text and end up in logs and in the
+  browser history, so use that last one over HTTPS only, if at all.
+
+### If you would rather use the newer API
+
+`rest-api` is the successor with a versioned interface, and it runs as a web extension in the same way.
+Its addresses differ - `get/<id>` becomes `v1/state/<id>`, and the full state object needs
+`?withInfo=true`:
+
+```
+http://ip:8082/v1/state/<id>?withInfo=true
+```
+
 ## "Basic Authentication" option
 Allows Login via Basic Authentication by sending `401` Unauthorized with a `WWW-Authenticate` header.
 This can be used for applications like *FullyBrowser*. When entering the wrong credentials once, you will be redirected 
@@ -243,6 +297,7 @@ This is off by default. When enabled:
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (@GermanBluefox) Fixed: with the cache enabled, a file that an adapter writes again under the same name is delivered anew instead of forever in the version that was read first. This is what made `sayit` repeat the same announcement. The cache had no way of learning about a change at all - the adapter never subscribed to the files it had cached. It does now, for those namespaces only, and drops the entry when the file changes
 * (@GermanBluefox) Fixed: an adapter that runs as a web extension is linked to this server on the overview page instead of to a port of its own that nothing listens on. The entry such an adapter supplies through `welcomePage()` was collected after the list had already been cleaned up and its links resolved, so it never got the `localLink` the page reads and was dropped without a word, leaving only the dead link from `common.localLinks` behind
 * (@GermanBluefox) The folder index got the look of the admin: an app bar with the path and the number of entries, icons telling a folder from a file, sizes in a readable unit, and a light and a dark theme the page selects itself from the setting of the system. A folder of 0 bytes says "0 B" instead of nothing, and the way up is no longer offered in the root of an adapter, where it led out of it
 * (@GermanBluefox) An unexpected error while reading a session no longer ends the instance. The session store answers from a task of its own, so an exception in one of its callbacks reached neither express nor a `try/catch` and the controller terminated the whole web server over a single request. The four callbacks are guarded now and answer with a 500 instead. The same went for two promises in `onObjectChange`/`onStateChange` without a `catch`, where a rejected read of the socket URL arrived as an unhandled rejection
