@@ -1,3 +1,6 @@
+import type { IncomingMessage } from 'node:http';
+import { Buffer } from 'node:buffer';
+import type { RequestHandler } from 'express';
 /** Url where controller changelog is reachable */
 export declare const CONTROLLER_CHANGELOG_URL = "https://github.com/ioBroker/ioBroker.js-controller/blob/master/CHANGELOG.md";
 /** All possible auto upgrade settings */
@@ -70,3 +73,25 @@ export declare function getRedirectPage(req: LoginRequest): string;
  * @param req request of the failed login
  */
 export declare function getLoginPageWithError(loginPage: string, req: LoginRequest): string;
+/** A request that went through {@link bodyParsers}: the bytes the parser read, before parsing */
+type BodyRequest = IncomingMessage & {
+    body?: unknown;
+    rawBody?: Buffer;
+};
+/** The parsers for form, JSON and text posts that the login and the other authentication routes need */
+export declare function bodyParsers(): RequestHandler[];
+/**
+ * Reads the raw body of a request.
+ *
+ * With authentication enabled, the {@link bodyParsers} run in front of every route and have already
+ * read the stream of a JSON, text or form post: the stream is empty then and the bytes are taken
+ * from what the parser kept.
+ *
+ * @param req the request to read
+ * @param options options for reading
+ * @param options.limit the maximum number of bytes, 1 MB by default
+ */
+export declare function readBodyAsync(req: BodyRequest, options?: {
+    limit?: number;
+}): Promise<Buffer>;
+export {};

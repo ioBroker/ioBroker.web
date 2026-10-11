@@ -1,3 +1,8 @@
+import type { IncomingMessage } from 'node:http';
+import { Buffer } from 'node:buffer';
+import bodyParser from 'body-parser';
+import type { RequestHandler } from 'express';
+
 /** Url where controller changelog is reachable */
 export const CONTROLLER_CHANGELOG_URL = 'https://github.com/ioBroker/ioBroker.js-controller/blob/master/CHANGELOG.md';
 
@@ -518,4 +523,64 @@ export function getRedirectPage(req: LoginRequest): string {
  */
 export function getLoginPageWithError(loginPage: string, req: LoginRequest): string {
     return `${loginPage}?href=${encodeURIComponent(getRequestedPage(req) || '/')}&error`;
+}
+
+/** A request that went through {@link bodyParsers}: the bytes the parser read, before parsing */
+type BodyRequest = IncomingMessage & { body?: unknown; rawBody?: Buffer };
+
+/** Keeps the bytes a parser read, which readBodyAsync() needs: parsed, an empty JSON body is `{}` */
+function keepRawBody(req: IncomingMessage, _res: unknown, buf: Buffer): void {
+    (req as BodyRequest).rawBody = buf;
+}
+
+/** The parsers for form, JSON and text posts that the login and the other authentication routes need */
+export function bodyParsers(): RequestHandler[] {
+    return [
+        bodyParser.urlencoded({ extended: true, verify: keepRawBody }),
+        bodyParser.json({ verify: keepRawBody }),
+        bodyParser.text({ verify: keepRawBody }),
+    ];
+}
+
+/**
+ * Reads the raw body of a request.
+ *
+ * With authentication enabled, the {@link bodyParsers} run in front of every route and have already
+ * read the stream of a JSON, text or form post: the stream is empty then and the bytes are taken
+ * from what the parser kept.
+ *
+ * @param req the request to read
+ * @param options options for reading
+ * @param options.limit the maximum number of bytes, 1 MB by default
+ */
+export async function readBodyAsync(req: BodyRequest, options?: { limit?: number }): Promise<Buffer> {
+    if (req.rawBody) {
+        return req.rawBody;
+    }
+    if (req.readableEnded) {
+        // Read by some other parser, an extension's for instance, that kept nothing but the result
+        const body = req.body;
+        if (body === undefined || body === null) {
+            return Buffer.alloc(0);
+        }
+        if (Buffer.isBuffer(body)) {
+            return body;
+        }
+        return Buffer.from(typeof body === 'string' ? body : JSON.stringify(body));
+    }
+
+    const limit = options?.limit ?? 1_000_000;
+    const chunks: Buffer[] = [];
+    let length = 0;
+    for await (const chunk of req) {
+        const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+        length += buf.length;
+        if (length > limit) {
+            const err = new Error('Payload Too Large') as Error & { code?: string };
+            err.code = 'PAYLOAD_TOO_LARGE';
+            throw err;
+        }
+        chunks.push(buf);
+    }
+    return Buffer.concat(chunks);
 }

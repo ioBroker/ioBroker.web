@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebAdapter = void 0;
-exports.readBodyAsync = readBodyAsync;
 const node_fs_1 = require("node:fs");
 const node_path_1 = require("node:path");
 const node_buffer_1 = require("node:buffer");
@@ -15,7 +14,6 @@ const mime_types_1 = require("mime-types");
 const compression_1 = __importDefault(require("compression"));
 const cookie_signature_1 = __importDefault(require("cookie-signature"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const body_parser_1 = __importDefault(require("body-parser"));
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = require("passport-local");
 const connect_flash_1 = __importDefault(require("connect-flash"));
@@ -281,22 +279,6 @@ function extractPreSetting(obj, attr) {
         return extractPreSetting(obj[attr], parts.join('.'));
     }
     return null;
-}
-async function readBodyAsync(req, options) {
-    const limit = options?.limit ?? 1_000_000;
-    const chunks = [];
-    let length = 0;
-    for await (const chunk of req) {
-        const buf = node_buffer_1.Buffer.isBuffer(chunk) ? chunk : node_buffer_1.Buffer.from(chunk);
-        length += buf.length;
-        if (length > limit) {
-            const err = new Error('Payload Too Large');
-            err.code = 'PAYLOAD_TOO_LARGE';
-            throw err;
-        }
-        chunks.push(buf);
-    }
-    return node_buffer_1.Buffer.concat(chunks);
 }
 class WebAdapter extends adapter_core_1.Adapter {
     indexHtml = '';
@@ -1109,9 +1091,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         done(null, user.toString()));
         passport_1.default.deserializeUser((serializedUser, done) => done(null, serializedUser));
         this.webServer.app.use((0, cookie_parser_1.default)());
-        this.webServer.app.use(body_parser_1.default.urlencoded({ extended: true }));
-        this.webServer.app.use(body_parser_1.default.json());
-        this.webServer.app.use(body_parser_1.default.text());
+        this.webServer.app.use((0, utils_1.bodyParsers)());
         // Install oauth2 server. With `oauth` enabled it additionally serves the browser-based
         // authorization code flow, which third-party clients (and web extensions such as `mcp`)
         // need in order to be authorized without handling the user's password themselves.
@@ -2303,7 +2283,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                         }
                         const user = req.user ? `system.user.${req.user}` : this.config.defaultUser;
                         // Read post
-                        const body = await readBodyAsync(req);
+                        const body = await (0, utils_1.readBodyAsync)(req);
                         let data;
                         try {
                             const maybeObject = JSON.parse(body.toString());

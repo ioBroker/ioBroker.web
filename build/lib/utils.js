@@ -1,10 +1,17 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AUTO_UPGRADE_OPTIONS_MAPPING = exports.AUTO_UPGRADE_SETTINGS = exports.CONTROLLER_CHANGELOG_URL = void 0;
 exports.replaceLink = replaceLink;
 exports.getRequestedPage = getRequestedPage;
 exports.getRedirectPage = getRedirectPage;
 exports.getLoginPageWithError = getLoginPageWithError;
+exports.bodyParsers = bodyParsers;
+exports.readBodyAsync = readBodyAsync;
+const node_buffer_1 = require("node:buffer");
+const body_parser_1 = __importDefault(require("body-parser"));
 /** Url where controller changelog is reachable */
 exports.CONTROLLER_CHANGELOG_URL = 'https://github.com/ioBroker/ioBroker.js-controller/blob/master/CHANGELOG.md';
 /** All possible auto upgrade settings */
@@ -409,5 +416,58 @@ function getRedirectPage(req) {
  */
 function getLoginPageWithError(loginPage, req) {
     return `${loginPage}?href=${encodeURIComponent(getRequestedPage(req) || '/')}&error`;
+}
+/** Keeps the bytes a parser read, which readBodyAsync() needs: parsed, an empty JSON body is `{}` */
+function keepRawBody(req, _res, buf) {
+    req.rawBody = buf;
+}
+/** The parsers for form, JSON and text posts that the login and the other authentication routes need */
+function bodyParsers() {
+    return [
+        body_parser_1.default.urlencoded({ extended: true, verify: keepRawBody }),
+        body_parser_1.default.json({ verify: keepRawBody }),
+        body_parser_1.default.text({ verify: keepRawBody }),
+    ];
+}
+/**
+ * Reads the raw body of a request.
+ *
+ * With authentication enabled, the {@link bodyParsers} run in front of every route and have already
+ * read the stream of a JSON, text or form post: the stream is empty then and the bytes are taken
+ * from what the parser kept.
+ *
+ * @param req the request to read
+ * @param options options for reading
+ * @param options.limit the maximum number of bytes, 1 MB by default
+ */
+async function readBodyAsync(req, options) {
+    if (req.rawBody) {
+        return req.rawBody;
+    }
+    if (req.readableEnded) {
+        // Read by some other parser, an extension's for instance, that kept nothing but the result
+        const body = req.body;
+        if (body === undefined || body === null) {
+            return node_buffer_1.Buffer.alloc(0);
+        }
+        if (node_buffer_1.Buffer.isBuffer(body)) {
+            return body;
+        }
+        return node_buffer_1.Buffer.from(typeof body === 'string' ? body : JSON.stringify(body));
+    }
+    const limit = options?.limit ?? 1_000_000;
+    const chunks = [];
+    let length = 0;
+    for await (const chunk of req) {
+        const buf = node_buffer_1.Buffer.isBuffer(chunk) ? chunk : node_buffer_1.Buffer.from(chunk);
+        length += buf.length;
+        if (length > limit) {
+            const err = new Error('Payload Too Large');
+            err.code = 'PAYLOAD_TOO_LARGE';
+            throw err;
+        }
+        chunks.push(buf);
+    }
+    return node_buffer_1.Buffer.concat(chunks);
 }
 //# sourceMappingURL=utils.js.map

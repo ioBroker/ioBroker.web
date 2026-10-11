@@ -1,4 +1,4 @@
-import type { IncomingMessage, Server as HttpServer } from 'node:http';
+import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, dirname, normalize } from 'node:path';
@@ -11,7 +11,6 @@ import { lookup } from 'mime-types';
 import compression from 'compression';
 import signature from 'cookie-signature';
 import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import flash from 'connect-flash';
@@ -23,7 +22,7 @@ import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/sock
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { getLoginPageWithError, getRedirectPage, replaceLink } from './lib/utils';
+import { bodyParsers, getLoginPageWithError, getRedirectPage, readBodyAsync, replaceLink } from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -331,23 +330,6 @@ function extractPreSetting(obj: Record<string, any>, attr: string): string | num
     }
 
     return null;
-}
-
-export async function readBodyAsync(req: IncomingMessage, options?: { limit?: number }): Promise<Buffer> {
-    const limit = options?.limit ?? 1_000_000;
-    const chunks: Buffer[] = [];
-    let length = 0;
-    for await (const chunk of req) {
-        const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-        length += buf.length;
-        if (length > limit) {
-            const err = new Error('Payload Too Large') as Error & { code?: string };
-            err.code = 'PAYLOAD_TOO_LARGE';
-            throw err;
-        }
-        chunks.push(buf);
-    }
-    return Buffer.concat(chunks);
 }
 
 interface WebStructure {
@@ -1353,9 +1335,7 @@ export class WebAdapter extends Adapter {
         );
 
         this.webServer.app.use(cookieParser());
-        this.webServer.app.use(bodyParser.urlencoded({ extended: true }));
-        this.webServer.app.use(bodyParser.json());
-        this.webServer.app.use(bodyParser.text());
+        this.webServer.app.use(bodyParsers());
 
         // Install oauth2 server. With `oauth` enabled it additionally serves the browser-based
         // authorization code flow, which third-party clients (and web extensions such as `mcp`)
