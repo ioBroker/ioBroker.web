@@ -1,4 +1,10 @@
 # Older changes
+## 9.1.7 (2026-09-21)
+* (@joltcoke) Fixed: after the login the user lands on the page they asked for again, even when its URL carries a query string. The target was validated after it had been decoded, against a character list without "=", so every real query parameter sent the user to the root instead. A fragment of the requested URL is kept as well
+* (@GermanBluefox) Fixed: a mistyped password leads back to the login page with the error message instead of a 404, and the requested page is not lost on the way
+* (@GermanBluefox) Fixed: a deep link that was answered with a JavaScript file keeps its whole query string - it was cut off at the first "&"
+* (@GermanBluefox) A target with a control character in it is refused again: browsers drop tab and newline before they read a URL, which turned "/<TAB>/host" into a link that leaves this server
+
 ## 9.1.5 (2026-09-20)
 * (@GermanBluefox) Added: the instance settings show a QR code for the ioBroker.visu app. It carries the addresses and the port of this instance, and the ioBroker.pro credentials of a cloud or iot instance if there is one - without such an instance the app reaches this server in the local network only
 * (@GermanBluefox) Added: with HTTPS enabled, the web server speaks HTTP/2 - the browser loads the page and all its files over a single connection. Clients without HTTP/2 fall back to HTTP/1.1 automatically; the new option "Use HTTP/2" in the instance settings turns it off

@@ -296,7 +296,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.13 (2026-10-11)
 * (@GermanBluefox) Fixed the crash `server.shouldUpgradeCallback is not a function` on WebSocket connections over HTTP/1.1 with HTTP/2 enabled
 
 ### 9.1.12 (2026-10-04)
@@ -319,12 +319,6 @@ This is off by default. When enabled:
 
 ### 9.1.8 (2026-09-24)
 * (@GermanBluefox) An empty body for `cloud.X.remote.command` is refused with a 400 instead of writing an empty command that is dropped without a word
-
-### 9.1.7 (2026-09-21)
-* (@joltcoke) Fixed: after the login the user lands on the page they asked for again, even when its URL carries a query string. The target was validated after it had been decoded, against a character list without "=", so every real query parameter sent the user to the root instead. A fragment of the requested URL is kept as well
-* (@GermanBluefox) Fixed: a mistyped password leads back to the login page with the error message instead of a 404, and the requested page is not lost on the way
-* (@GermanBluefox) Fixed: a deep link that was answered with a JavaScript file keeps its whole query string - it was cut off at the first "&"
-* (@GermanBluefox) A target with a control character in it is refused again: browsers drop tab and newline before they read a URL, which turned "/<TAB>/host" into a link that leaves this server
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
