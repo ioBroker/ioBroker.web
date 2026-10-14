@@ -296,6 +296,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Pages of adapters load from the browser cache and still show a new version at once: the chunks with a content hash in their name (`assets/*-<hash>.js`) are kept for a year, everything else - `index.html`, `config.js`, `remoteEntry.js`, ... - is asked for on every load and answered with 304 while unchanged. Before, every file was kept for 60 seconds, so the chunks were asked for again and again, and a new `index.html` could come late
+
 ### 9.1.14 (2026-10-11)
 * (@GermanBluefox) Fixed the lost body of `POST /state/...` with authentication enabled: the app's values arrived empty ("Empty body for ...")
 * (@GermanBluefox) Fixed the crash `server.shouldUpgradeCallback is not a function` on WebSocket connections over HTTP/1.1 with HTTP/2 enabled

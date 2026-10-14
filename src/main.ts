@@ -22,7 +22,14 @@ import type { SocketSettings, Store, InternalStorageToken } from '@iobroker/sock
 import { WebServer, checkPublicIP, createOAuth2Server } from '@iobroker/webserver';
 
 import type { ExtAPI, LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
-import { bodyParsers, getLoginPageWithError, getRedirectPage, readBodyAsync, replaceLink } from './lib/utils';
+import {
+    bodyParsers,
+    getCacheControl,
+    getLoginPageWithError,
+    getRedirectPage,
+    readBodyAsync,
+    replaceLink,
+} from './lib/utils';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -3457,7 +3464,7 @@ export class WebAdapter extends Adapter {
                         if (req.headers.range) {
                             this.sendRange(req, res, this.cache[`${id}/${url}`].buffer);
                         } else {
-                            res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
+                            res.set('Cache-Control', getCacheControl(id, url));
                             res.status(200).send(this.cache[`${id}/${url}`].buffer);
                         }
                     } else {
@@ -3616,7 +3623,7 @@ export class WebAdapter extends Adapter {
                                 if (req.headers.range) {
                                     this.sendRange(req, res, Buffer.from(result.file as any));
                                 } else {
-                                    res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
+                                    res.set('Cache-Control', getCacheControl(id, url));
                                     res.status(200).send(result.file);
                                 }
                             }
