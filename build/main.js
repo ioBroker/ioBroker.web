@@ -22,6 +22,7 @@ const ws_server_library_1 = require("@iobroker/ws-server-library");
 const socketio_server_1 = require("@iobroker/socketio-server");
 const webserver_1 = require("@iobroker/webserver");
 const utils_1 = require("./lib/utils");
+const compressedFiles_1 = require("./lib/compressedFiles");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
 const wwwDir = '../www';
@@ -2887,8 +2888,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                             this.sendRange(req, res, this.cache[`${id}/${url}`].buffer);
                         }
                         else {
-                            res.set('Cache-Control', (0, utils_1.getCacheControl)(id, url));
-                            res.status(200).send(this.cache[`${id}/${url}`].buffer);
+                            await (0, compressedFiles_1.sendFile)(req, res, this.cache[`${id}/${url}`].buffer, this.cache[`${id}/${url}`].mimeType, (0, utils_1.getCacheControl)(id, url));
                         }
                     }
                     else {
@@ -3014,8 +3014,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     this.sendRange(req, res, node_buffer_1.Buffer.from(result.file));
                                 }
                                 else {
-                                    res.set('Cache-Control', (0, utils_1.getCacheControl)(id, url));
-                                    res.status(200).send(result.file);
+                                    await (0, compressedFiles_1.sendFile)(req, res, result.file, result.mimeType, (0, utils_1.getCacheControl)(id, url));
                                 }
                             }
                         }

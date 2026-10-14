@@ -30,6 +30,7 @@ import {
     readBodyAsync,
     replaceLink,
 } from './lib/utils';
+import { sendFile } from './lib/compressedFiles';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -3464,8 +3465,13 @@ export class WebAdapter extends Adapter {
                         if (req.headers.range) {
                             this.sendRange(req, res, this.cache[`${id}/${url}`].buffer);
                         } else {
-                            res.set('Cache-Control', getCacheControl(id, url));
-                            res.status(200).send(this.cache[`${id}/${url}`].buffer);
+                            await sendFile(
+                                req,
+                                res,
+                                this.cache[`${id}/${url}`].buffer,
+                                this.cache[`${id}/${url}`].mimeType,
+                                getCacheControl(id, url),
+                            );
                         }
                     } else {
                         if (id === 'login' && url === 'index.html') {
@@ -3623,8 +3629,7 @@ export class WebAdapter extends Adapter {
                                 if (req.headers.range) {
                                     this.sendRange(req, res, Buffer.from(result.file as any));
                                 } else {
-                                    res.set('Cache-Control', getCacheControl(id, url));
-                                    res.status(200).send(result.file);
+                                    await sendFile(req, res, result.file, result.mimeType, getCacheControl(id, url));
                                 }
                             }
                         }
