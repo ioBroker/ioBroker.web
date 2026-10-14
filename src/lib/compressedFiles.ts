@@ -24,7 +24,8 @@ const MAX_ENTRY_SIZE = 8 * 1024 * 1024;
 /** Upper limit of all kept compressed files together */
 const MAX_TOTAL_SIZE = 64 * 1024 * 1024;
 
-const COMPRESSIBLE = /^(text\/|application\/(javascript|ecmascript|json|xml|manifest\+json|.*\+json|.*\+xml)|image\/svg\+xml)/;
+const COMPRESSIBLE =
+    /^(text\/|application\/(javascript|ecmascript|json|xml|manifest\+json|.*\+json|.*\+xml)|image\/svg\+xml)/;
 
 type Encoding = 'br' | 'gzip';
 
