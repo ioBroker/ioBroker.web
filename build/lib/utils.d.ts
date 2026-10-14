@@ -94,4 +94,16 @@ export declare function bodyParsers(): RequestHandler[];
 export declare function readBodyAsync(req: BodyRequest, options?: {
     limit?: number;
 }): Promise<Buffer>;
+/**
+ * Cache-Control for a file of the web root.
+ *
+ * A chunk with a content hash in its name never changes, so the browser keeps it for a year without asking again.
+ * Everything else - the HTML pages, but also `config.js`, `remoteEntry.js` or `mf-manifest.json`, which name the chunks
+ * of the current version - is asked for on every load and answered with 304 while it is unchanged. So a page loads
+ * from the cache, and a new version of an adapter is visible at once.
+ *
+ * @param id namespace of the file, e.g. `vis-2` or `vis-2.0`
+ * @param url path of the file inside the namespace
+ */
+export declare function getCacheControl(id: string, url: string): string;
 export {};

@@ -10,6 +10,7 @@ exports.getRedirectPage = getRedirectPage;
 exports.getLoginPageWithError = getLoginPageWithError;
 exports.bodyParsers = bodyParsers;
 exports.readBodyAsync = readBodyAsync;
+exports.getCacheControl = getCacheControl;
 const node_buffer_1 = require("node:buffer");
 const body_parser_1 = __importDefault(require("body-parser"));
 /** Url where controller changelog is reachable */
@@ -469,5 +470,29 @@ async function readBodyAsync(req, options) {
         chunks.push(buf);
     }
     return node_buffer_1.Buffer.concat(chunks);
+}
+/**
+ * Vite names every chunk `<name>-<hash>.<ext>` below `assets/`, and the hash changes with the content. A name like
+ * `material-icons-outlined.woff2` has the same shape, so the hash must also hold a digit or an upper-case letter: a
+ * real hash without one only loses the long caching, a wrong match would pin a file that changes with the next update.
+ */
+const HASHED_ASSET = /(^|\/)assets\/[^/]+-(?=[\w-]*[0-9A-Z])[\w-]{8}\.[a-z0-9]+$/;
+/**
+ * Cache-Control for a file of the web root.
+ *
+ * A chunk with a content hash in its name never changes, so the browser keeps it for a year without asking again.
+ * Everything else - the HTML pages, but also `config.js`, `remoteEntry.js` or `mf-manifest.json`, which name the chunks
+ * of the current version - is asked for on every load and answered with 304 while it is unchanged. So a page loads
+ * from the cache, and a new version of an adapter is visible at once.
+ *
+ * @param id namespace of the file, e.g. `vis-2` or `vis-2.0`
+ * @param url path of the file inside the namespace
+ */
+function getCacheControl(id, url) {
+    // Only the files an adapter uploads from its build; the ones of an instance (`vis-2.0`) are user data
+    if (!/\.\d+$/.test(id) && HASHED_ASSET.test(url)) {
+        return 'public, max-age=31536000, immutable';
+    }
+    return 'no-cache';
 }
 //# sourceMappingURL=utils.js.map

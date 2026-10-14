@@ -2887,7 +2887,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                             this.sendRange(req, res, this.cache[`${id}/${url}`].buffer);
                         }
                         else {
-                            res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
+                            res.set('Cache-Control', (0, utils_1.getCacheControl)(id, url));
                             res.status(200).send(this.cache[`${id}/${url}`].buffer);
                         }
                     }
@@ -3014,7 +3014,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     this.sendRange(req, res, node_buffer_1.Buffer.from(result.file));
                                 }
                                 else {
-                                    res.set('Cache-Control', `public, max-age=${this.config.staticAssetCacheMaxAge}`);
+                                    res.set('Cache-Control', (0, utils_1.getCacheControl)(id, url));
                                     res.status(200).send(result.file);
                                 }
                             }
