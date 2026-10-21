@@ -115,7 +115,7 @@ function getLinkVar(placeHolder, obj, attr, link) {
     }
     return link;
 }
-function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list) {
+function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, instances, hosts, hostname, webNamespace, list, cloud) {
     let ws;
     if (typeof welcomeScreen === 'string') {
         ws = {
@@ -201,6 +201,7 @@ function processOneWelcome(welcomeScreen, isPro, adapterObj, foundInstanceIDs, i
             color: ws.color,
             order: ws.order,
             pro: isPro,
+            cloud,
             id: `system.adapter.${adapterObj.common.name}.${item.instance ? parseInt(item.instance, 10) || 0 : 0}`,
             instance: item.instance ? parseInt(item.instance, 10) || 0 : 0,
         });
@@ -763,13 +764,16 @@ class WebAdapter extends adapter_core_1.Adapter {
                             if (typeof name === 'object') {
                                 name = name[this.lang] || name.en;
                             }
+                            // `pro` only says that the entry is reachable from the pro cloud; without
+                            // `cloud` the free cloud hides it - e.g. the runtime of vis-2
+                            const cloud = obj.common.localLinks[link].cloud;
                             processOneWelcome({
                                 name,
                                 link: obj.common.localLinks[link].link,
                                 img: obj.common.localLinks[link].icon || obj.common.icon || '',
                                 color: obj.common.localLinks[link].color || obj.common.color || '',
                                 order: obj.common.localLinks[link].order,
-                            }, !!obj.common.localLinks[link].pro, obj, found, mapInstances, mapHosts, this.host, this.namespace, list);
+                            }, !!obj.common.localLinks[link].pro, obj, found, mapInstances, mapHosts, this.host, this.namespace, list, typeof cloud === 'string' ? cloud : undefined);
                         }
                     }
                 }

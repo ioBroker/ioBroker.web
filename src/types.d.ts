@@ -10,6 +10,8 @@ export interface LocalLinkEntry {
     link: string;
     name?: ioBroker.StringOrTranslated;
     pro: boolean;
+    /** Path under which the entry works in the free (.net) cloud too - `common.localLinks[x].cloud` */
+    cloud?: string;
     color?: string;
     img?: string;
     order?: number;

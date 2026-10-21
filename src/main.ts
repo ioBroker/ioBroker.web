@@ -142,6 +142,7 @@ function processOneWelcome(
     hostname: string,
     webNamespace: string,
     list: LocalMultipleLinkEntry[],
+    cloud?: string,
 ): void {
     let ws: {
         link: string;
@@ -236,6 +237,7 @@ function processOneWelcome(
             color: ws.color,
             order: ws.order,
             pro: isPro,
+            cloud,
             id: `system.adapter.${adapterObj.common.name}.${item.instance ? parseInt(item.instance, 10) || 0 : 0}`,
             instance: item.instance ? parseInt(item.instance, 10) || 0 : 0,
         });
@@ -921,6 +923,9 @@ export class WebAdapter extends Adapter {
                             if (typeof name === 'object') {
                                 name = name[this.lang] || name.en;
                             }
+                            // `pro` only says that the entry is reachable from the pro cloud; without
+                            // `cloud` the free cloud hides it - e.g. the runtime of vis-2
+                            const cloud = (obj.common.localLinks[link] as { cloud?: unknown }).cloud;
                             processOneWelcome(
                                 {
                                     name,
@@ -937,6 +942,7 @@ export class WebAdapter extends Adapter {
                                 this.host!,
                                 this.namespace,
                                 list,
+                                typeof cloud === 'string' ? cloud : undefined,
                             );
                         }
                     }

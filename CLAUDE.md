@@ -14,7 +14,7 @@ npm run build              # Full build: TypeScript backend + all React frontend
 npm run build-backend      # Backend only: TypeScript compile + copy i18n files
 ```
 
-Individual frontend build steps (via tasks.js):
+Individual frontend build steps (via tasks.ts):
 ```bash
 npm run 0-clean            # Clean admin build artifacts
 npm run 1-npm              # Install src-admin dependencies
@@ -87,12 +87,12 @@ Three independent Vite + React apps, each with their own `package.json` and `nod
 
 Other adapters register as web extensions via `webExtension` in their `io-package.json`. The `WebAdapter` loads them in `getExtensionsAndSettings()`, passing the Express app instance so they can add custom routes and middleware.
 
-### Build Pipeline (`tasks.js`)
+### Build Pipeline (`tasks.ts`)
 
-Uses `@iobroker/build-tools` for React builds with Vite, HTML patching, and file copying. The `prepublishOnly` script runs `node tasks` (full build) before npm publish.
+Uses `@iobroker/build-tools` for React builds with Vite, HTML patching, and file copying. The `prepublishOnly` script runs `node tasks.ts` (full build; executed by Node's native TypeScript type stripping) before npm publish.
 
 ## Configuration
 
 - **Default port:** 8082
 - **Adapter metadata:** `io-package.json` (adapter type, dependencies, default settings)
-- **Node.js requirement:** >= 20
+- **Node.js requirement:** >= 22.19.0
