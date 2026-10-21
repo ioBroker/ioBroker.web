@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.15",
+    "version": "9.1.16",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.16": {
+        "en": "The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it",
+        "de": "Die Anwendungsliste enthält `Cloud` von `common.LocalLinks` der Adapter. Vorher wurde nur `Pro` als `true`/`false` übernommen, sodass die Free Cloud nicht sah, ob ein Eintrag wie die Vis-2 Runtime dort auch läuft und versteckte ihn",
+        "ru": "Список приложений содержит «облако» из `Common.localLinks` адаптеров. Раньше вместо `true`/`false` использовалось только значение `pro`, поэтому бесплатное облако не могло определить, работает ли там запись, подобная среде выполнения vis-2, и спрятало ее",
+        "pt": "A lista de aplicativos traz `cloud` de `common.localLinks` dos adaptadores. Antes, apenas `pro` era usado como `true`/`false`, então a nuvem livre não sabia se uma entrada como o vis-2 também funcionava lá e a ocultava.",
+        "nl": "De lijst met toepassingen bevat `cloud` van `Common.localLinks` van de adapters. Voorheen werd alleen `pro` overgenomen als `true`/`false`, dus de vrije cloud kon niet zien dat een item zoals de vis-2 runtime daar ook werkt en verborg het",
+        "fr": "La liste des applications contient « cloud » de « common.localLinks » des adaptateurs. Avant, seul « pro » était remplacé par « true`/false ». Le cloud gratuit ne pouvait donc pas détecter qu'une entrée comme le runtime vis-2 y fonctionne et l'a masquée",
+        "it": "L'elenco delle app include «cloud» da «Common.LocalLinks» degli adattatori. Prima, solo `pro` era considerato `true`/`false`, quindi il cloud gratuito non capiva e lo nascondeva",
+        "es": "La lista de aplicaciones incluye «nube» de «Common.LocalLinks» de los adaptadores. Antes, solo se pasaba a «pro» como «verdadero» o «falso», por lo que la nube gratuita no sabía que una entrada como el vis-2 también funciona allí y la ocultaba",
+        "pl": "Lista aplikacji zawiera `cloud `z `common.locallInks` adapterów. Wcześniej tylko `pro `zostało przejęte jako `true`/`false „, więc wolna chmura nie mogła stwierdzić, że wpis taki jak środowisko wykonawcze vis-2 również tam działa i ukryła go",
+        "uk": "Список додатків переносить `хмара` з `Common.LocalLinks` адаптерів. Раніше лише `pro` було прийнято як `true`/`false`, тому вільна хмара не могла сказати, що такий запис, як виконання vis-2, також працює там, і приховала його",
+        "zh-cn": "应用程序列表带有适配器的 “common.localLinks” 中的 “云”。以前，只有 “pro” 被视为 “true”/“false”，因此免费云无法分辨出像 vis-2 运行时这样的条目也可以在那里运行并将其隐藏起来"
+      },
       "9.1.15": {
         "en": "Pages of adapters load from the browser cache and still show a new version at once: the chunks with a content hash in their name (`assets/*-<hash>.js`) are kept for a year, everything else - `index.html`, `config.js`, `remoteEntry.js`, ... - is asked for on every load and answered with 304 while unchanged. Before, every file was kept for 60 seconds, so the chunks were asked for again and again, and a new `index.html` could come late\nFiles of adapters and instances are compressed once and then kept compressed (up to 64 MB, keyed by their content), instead of being compressed anew on every request. Measured on a desktop: a chunk of 1.8 MB was read in 7 ms and compressed in 100 ms, on every load of every client - on a Raspberry Pi that is seconds of CPU for one cold page load, during which every other request waited. Brotli runs with quality 5 instead of 4 now, which is smaller, since it is paid once",
         "de": "Adapterseiten werden aus dem Browser-Cache geladen und zeigen immer noch eine neue Version: Die Chunks mit einem Inhalts-Hash im Namen (`assets/*- <hash>.js`) werden ein Jahr lang aufbewahrt, alles andere — `index.html`, `config.js`, `remoteEntry.js`,... — wird bei jedem Ladevorgang abgefragt und unverändert mit 304 beantwortet. Vorher wurde jede Datei 60 Sekunden lang aufbewahrt, immer wieder gefragt, und ein neues index.html kam zu spät\nAdapter- und Instanzdateien werden einmal komprimiert und dann komprimiert (bis zu 64 MB, je nach Inhalt), statt bei jeder Anfrage neu. Auf einem Desktop gemessen: 1,8 MB wurden in 7 ms gelesen und in 100 ms komprimiert, bei jedem Client — auf einem Raspberry Pi sind das Sekunden CPU für einen Cold Page Load, während dem jede zweite Anfrage wartete. Brotli hat jetzt Qualität 5 statt 4, was kleiner ist, da es einmalig bezahlt wird",
@@ -93,19 +106,6 @@
         "pl": "Dodano stan OnScreen dla aplikacji",
         "uk": "Додано стан на екрані для програми",
         "zh-cn": "为应用程序添加了屏幕显示状态"
-      },
-      "9.1.8": {
-        "en": "An empty body for `cloud.X.remote.command` is refused with a 400 instead of writing an empty command that is dropped without a word",
-        "de": "Ein leerer Text für `Cloud.X.Remote.Command` wird mit 400 abgelehnt, statt ein leeres Kommando ohne ein Wort zu schreiben",
-        "ru": "Пустое тело для `Cloud.x.Remote.command` отклоняется с помощью 400 вместо написания пустой команды, которая отбрасывается без слова",
-        "pt": "Um corpo vazio de `cloud.x.remote.command` é recusado com 400 em vez de escrever um comando vazio sem uma palavra",
-        "nl": "Een lege tekst voor `Cloud.x.Remote.Command` wordt geweigerd met een 400 in plaats van een leeg commando dat zonder een woord wordt verwijderd",
-        "fr": "Un corps vide pour « Cloud.x.Remote.Command » est refusé par un 400 au lieu d'écrire une commande vide supprimée sans mot",
-        "it": "Un corpo vuoto per `cloud.x.remote.command` viene rifiutato con 400 invece di scrivere un comando vuoto senza una parola",
-        "es": "El cuerpo vacío de `Cloud.X.Remote.command` se rechaza con un 400 en lugar de escribir un comando vacío que se coloca sin palabra",
-        "pl": "Puste ciało dla `Cloud.x.Remote.Command` jest odrzucane za pomocą 400 zamiast pisania pustej komendy, która jest upuszczana bez słowa",
-        "uk": "Порожнє тіло для `Cloud.x.remote.command` відмовляється за допомогою 400 замість написання порожньої команди, яка скидається без слова",
-        "zh-cn": "使用 400 来拒绝 `cloud.x.remote.Command`的空正文，而不是写一个没有字就删除的空命令"
       }
     },
     "desc": {

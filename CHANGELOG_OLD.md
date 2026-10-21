@@ -1,4 +1,7 @@
 # Older changes
+## 9.1.9 (2026-09-28)
+* (@GermanBluefox) Added onScreen state for App
+
 ## 9.1.8 (2026-09-24)
 * (@GermanBluefox) An empty body for `cloud.X.remote.command` is refused with a 400 instead of writing an empty command that is dropped without a word
 
