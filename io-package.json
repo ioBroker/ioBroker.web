@@ -160,7 +160,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=6.0.0"
+        "admin": ">=7.6.17"
       }
     ],
     "authors": [

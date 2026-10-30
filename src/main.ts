@@ -457,9 +457,7 @@ export class WebAdapter extends Adapter {
                 // exit code for "restart immediately" it is logged as info instead of a warning
                 const reason = `Restart to load the changed web extension "${id.substring('system.adapter.'.length)}"`;
                 return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
-                    this.terminate
-                        ? this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP)
-                        : process.exit(EXIT_CODES.START_IMMEDIATELY_AFTER_STOP),
+                    this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP)
                 );
             }
 
@@ -3124,25 +3122,19 @@ export class WebAdapter extends Adapter {
                 this.webServer.server = (await webserver.init()) as Server & { __server: WebStructure };
             } catch (err) {
                 this.log.error(`Cannot create web-server: ${err}`);
-                this.terminate
-                    ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                    : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 return;
             }
             if (!this.webServer.server) {
                 this.log.error(`Cannot create web-server`);
-                this.terminate
-                    ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                    : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 return;
             }
 
             this.webServer.server.__server = this.webServer;
         } else {
             this.log.error('port missing');
-            this.terminate
-                ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
         }
 
         if (this.webServer.server) {
@@ -3159,9 +3151,7 @@ export class WebAdapter extends Adapter {
                     this.log.error(`Cannot start server on ${this.config.bind || '0.0.0.0'}:${serverPort}: ${e}`);
                 }
                 if (!serverListening) {
-                    this.terminate
-                        ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                        : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                    this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 }
             });
 
@@ -3175,9 +3165,7 @@ export class WebAdapter extends Adapter {
                     port = parseInt(port as unknown as string, 10);
                     if (port !== this.config.port) {
                         this.log.error(`port ${this.config.port} already in use`);
-                        this.terminate
-                            ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                            : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                        this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                     }
                     serverPort = port;
                     this.webServer.server!.listen(
@@ -3702,9 +3690,7 @@ export class WebAdapter extends Adapter {
             await this.initWebServer();
         } catch (err) {
             this.log.error(`Failed to initWebServer: ${err}`);
-            this.terminate
-                ? this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                : process.exit(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            this.terminate(EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
         }
 
         // monitor extensions and pro keys

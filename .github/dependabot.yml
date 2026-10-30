@@ -29,7 +29,10 @@ updates:
       default-days: 7
 
   - package-ecosystem: 'npm'
-    directory: '/src'
+    directories:
+      - '/src-admin'
+      - '/src-login'
+      - '/src-www'
     schedule:
       interval: 'cron'
       timezone: 'Europe/Berlin'

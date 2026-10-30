@@ -375,9 +375,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 // A planned restart to load the changed extension, not an error: with a reason and the
                 // exit code for "restart immediately" it is logged as info instead of a warning
                 const reason = `Restart to load the changed web extension "${id.substring('system.adapter.'.length)}"`;
-                return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () => this.terminate
-                    ? this.terminate(reason, adapter_core_1.EXIT_CODES.START_IMMEDIATELY_AFTER_STOP)
-                    : process.exit(adapter_core_1.EXIT_CODES.START_IMMEDIATELY_AFTER_STOP));
+                return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () => this.terminate(reason, adapter_core_1.EXIT_CODES.START_IMMEDIATELY_AFTER_STOP));
             }
             // 'system.adapter.'.length = 15
             const _id = id.substring(15).replace(/\.\d+$/, '');
@@ -2603,25 +2601,19 @@ class WebAdapter extends adapter_core_1.Adapter {
             }
             catch (err) {
                 this.log.error(`Cannot create web-server: ${err}`);
-                this.terminate
-                    ? this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                    : process.exit(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 return;
             }
             if (!this.webServer.server) {
                 this.log.error(`Cannot create web-server`);
-                this.terminate
-                    ? this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                    : process.exit(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 return;
             }
             this.webServer.server.__server = this.webServer;
         }
         else {
             this.log.error('port missing');
-            this.terminate
-                ? this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                : process.exit(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
         }
         if (this.webServer.server) {
             let serverListening = false;
@@ -2636,9 +2628,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                     this.log.error(`Cannot start server on ${this.config.bind || '0.0.0.0'}:${serverPort}: ${e}`);
                 }
                 if (!serverListening) {
-                    this.terminate
-                        ? this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                        : process.exit(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                    this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 }
             });
             this.config.port = parseInt(this.config.port, 10) || 8082;
@@ -2647,9 +2637,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                 port = parseInt(port, 10);
                 if (port !== this.config.port) {
                     this.log.error(`port ${this.config.port} already in use`);
-                    this.terminate
-                        ? this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                        : process.exit(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+                    this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
                 }
                 serverPort = port;
                 this.webServer.server.listen(port, !this.config.bind || this.config.bind === '0.0.0.0' ? undefined : this.config.bind || undefined, () => {
@@ -3082,9 +3070,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         catch (err) {
             this.log.error(`Failed to initWebServer: ${err}`);
-            this.terminate
-                ? this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION)
-                : process.exit(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+            this.terminate(adapter_core_1.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
         }
         // monitor extensions and pro keys
         await this.subscribeForeignObjectsAsync('system.adapter.*');
