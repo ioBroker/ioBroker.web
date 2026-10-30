@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.1.16",
+    "version": "9.1.17",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.1.17": {
+        "en": "Fixed mode of adapter\nThe package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller\nAdmin 7.6.17 or newer is required\nAdded missing translations of the cookie and OAuth settings",
+        "de": "Fester Adaptermodus\nDie Paketdateien werden jetzt mit dem Standard `@iobroker /testing` geprüft, inklusive `io-package.json`-Schema von js-controller\nAdmin 7.6.17 oder neuer ist nötig\nFehlende Übersetzung der Cookie- und OAuth-Einstellungen",
+        "ru": "Фиксированный режим адаптера\nТеперь файлы пакетов проверяются с помощью стандартной команды «@iobroker /testing», включая схему js-controller `io-package.json`\nТребуется версия Admin 7.6.17 или новее\nДобавлены недостающие переводы настроек cookie и OAuth",
+        "pt": "Adaptador fixo\nOs pacotes agora são verificados com o padrão `@iobroker /testing`, incluindo o esquema `io-package.json` do js-controller\nRequer Admin 7.6.17 ou superior\nForam adicionadas traduções faltantes do cookie e OAuth",
+        "nl": "Adaptermodus met vaste modus\nDe pakketbestanden worden nu gecontroleerd met de standaard `@iobroker /testing`, inclusief het `io-package.json` schema van js-controller\nAdmin 7.6.17 of nieuwer is vereist\nOntbrekende vertalingen van de cookie- en OAuth-instellingen toegevoegd",
+        "fr": "Adaptateur en mode fixe\nLes packages sont désormais vérifiés avec le schéma standard @iobroker /testing, y compris le schéma « io-package.json » de js-controller\nAdmin 7.6.17 ou plus est requis\nAjout de la traduction manquante du cookie et des paramètres OAuth",
+        "it": "adattatore fisso\nI file del pacchetto sono ora controllati con lo standard @iobroker /testing, incluso lo schema io-package.json di js-controller\nRichiede admin 7.6.17 o più\nAggiunte traduzioni mancanti dei cookie e OAuth",
+        "es": "Adaptador modo fijo\nLos archivos del paquete se comprueban ahora con el estándar `@iobroker /testing`, incluido el esquema `io-package.json` de js-controller\nSe necesita Admin 7.6.17 o más\nAñadió las traducciones que faltaban de la configuración de cookies y OAuth",
+        "pl": "Stały tryb adaptera\nPliki pakietów są teraz sprawdzane za pomocą standardowego „@iobroker /testing”, w tym schematu „io-package.json” js-controller\nWymagany jest administrator 7.6.17 lub nowszy\nDodano brakujące tłumaczenia plików cookie i ustawień OAuth",
+        "uk": "Фіксований режим адаптера\nФайли пакетів тепер перевіряються за допомогою стандартного `@iobroker /testing`, включаючи схему `io-package.json` js-контролера\nПотрібна версія адміністратора 7.6.17 або новішої версії\nДодано відсутні переклади налаштувань файлів cookie та OAuth",
+        "zh-cn": "适配器的固定模式\n现在使用标准 @iobroker /testing 来检查包文件，包括 js-controller 的 `io-package.json` 架构\n需要管理员 7.6.17 或更高版本\n添加了 cookie 和 OAuth 设置缺失的翻译"
+      },
       "9.1.16": {
         "en": "The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it",
         "de": "Die Anwendungsliste enthält `Cloud` von `common.LocalLinks` der Adapter. Vorher wurde nur `Pro` als `true`/`false` übernommen, sodass die Free Cloud nicht sah, ob ein Eintrag wie die Vis-2 Runtime dort auch läuft und versteckte ihn",
@@ -93,19 +106,6 @@
         "pl": "Naprawiono: użytkownik, którego „Lista użytkowników” wpuszcza przez grupę, jest wpuszczany bez względu na to, która z jego grup jest. Tylko pierwsza grupa, której członkiem był użytkownik, została porównana z dozwolonymi, więc użytkownik w kilku grupach był odrzucony, gdy ta pierwsza grupa nie była wymienioną na liście. Kolejność grup to kolejność ich tworzenia, co sprawiło, że wyglądało to arbitralnie",
         "uk": "Виправлено: користувач, який «Список користувачів» впускає через групу, впускається незалежно від того, яка з їхніх груп це. Лише перша група, до якої був користувач, порівнювалася з дозволеними, тому користувач у кількох групах був відхилений, коли ця перша група не була переліченою. Порядок груп - це порядок їх створення, що зробило це виглядати довільним",
         "zh-cn": "修复：“用户列表” 允许通过群组进入的用户无论是哪个群组都被允许进入。只有用户所属的第一个群组才能与允许的群组进行比较，因此，只要第一个群组不在列出的群组中，多个群组中的一个用户就会被拒绝。群组的顺序是它们的创建顺序，这使得它看起来很任意"
-      },
-      "9.1.9": {
-        "en": "Added onScreen state for App",
-        "de": "Bildschirmstatus für App",
-        "ru": "Добавлено экранное состояние для приложения",
-        "pt": "Novo estado na tela do app",
-        "nl": "OnScreen-status toegevoegd voor de app",
-        "fr": "État OnScreen ajouté pour App",
-        "it": "App in stato OnScreen",
-        "es": "Se añadió el estado en pantalla a App",
-        "pl": "Dodano stan OnScreen dla aplikacji",
-        "uk": "Додано стан на екрані для програми",
-        "zh-cn": "为应用程序添加了屏幕显示状态"
       }
     },
     "desc": {

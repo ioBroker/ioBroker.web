@@ -297,7 +297,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.1.17 (2026-10-30)
 * (@GermanBluefox) Fixed mode of adapter
 * (@GermanBluefox) The package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller
 * (@GermanBluefox) Admin 7.6.17 or newer is required
@@ -324,10 +324,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) Fixed: an address without the closing slash - `/vis-2` instead of `/vis-2/` - leads to the application instead of a 404. It is answered with a redirect to the address with the slash, as every other web server does
 * (@GermanBluefox) A 404 names the address that was requested, not the file name left over after the adapter name was cut off, and logs it on the debug level
 * (@hdering) A web instance that restarts to load a changed web extension logs this as info with the reason instead of the warning "Terminated (-100): Without reason"
-
-### 9.1.11 (2026-10-02)
-* (@hdering) Updating an adapter with a web extension restarts only the web instances that run it, not every web instance
-* (@GermanBluefox) Fixed: a user the "User list" lets in through a group is let in no matter which of their groups it is. Only the first group the user was a member of got compared against the allowed ones, so a user in several groups was rejected whenever that first group was not the listed one. The order of the groups is their creation order, which made this look arbitrary
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
