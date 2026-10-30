@@ -457,7 +457,7 @@ export class WebAdapter extends Adapter {
                 // exit code for "restart immediately" it is logged as info instead of a warning
                 const reason = `Restart to load the changed web extension "${id.substring('system.adapter.'.length)}"`;
                 return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
-                    this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP)
+                    this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP),
                 );
             }
 
@@ -3226,7 +3226,7 @@ export class WebAdapter extends Adapter {
             try {
                 if (this.config.usePureWebSockets) {
                     this.webServer.io = new IOSocketClassWs(
-                        this.webServer.server as Server,
+                        this.webServer.server,
                         socketSettings,
                         this,
                         this.store!,
@@ -3234,7 +3234,7 @@ export class WebAdapter extends Adapter {
                     );
                 } else {
                     this.webServer.io = new IOSocketClassSocketIo(
-                        this.webServer.server as Server,
+                        this.webServer.server,
                         socketSettings,
                         this,
                         this.store!,
