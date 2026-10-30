@@ -3102,11 +3102,6 @@ export class WebAdapter extends Adapter {
                 res.status(200).send(JSON.stringify(config, null, 2));
             });
 
-            const appOptions: { maxAge?: number } = {};
-            if (this.config.cache) {
-                appOptions.maxAge = 30758400000; // one year
-            }
-
             try {
                 const webserver = new WebServer({
                     app: this.webServer.app,
@@ -3383,19 +3378,19 @@ export class WebAdapter extends Adapter {
                         return;
                     } else if (url === '/logo.svg') {
                         res.set('Content-Type', 'image/svg+xml')
-                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .set('Cache-Control', 'no-cache')
                             .status(200)
                             .send(readFileSync(`${__dirname}/${wwwDir}${url}`));
                         return;
                     } else if (url === '/favicon.ico') {
                         res.set('Content-Type', 'image/x-icon')
-                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .set('Cache-Control', 'no-cache')
                             .status(200)
                             .send(readFileSync(`${__dirname}/${wwwDir}${url}`));
                         return;
                     } else if (url === '/manifest.json') {
                         res.set('Content-Type', 'application/json')
-                            .set('Cache-Control', 'public, max-age=2147483647')
+                            .set('Cache-Control', 'no-cache')
                             .status(200)
                             .send(readFileSync(`${__dirname}/${wwwDir}${url}`));
                         return;

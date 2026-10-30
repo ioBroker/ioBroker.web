@@ -297,6 +297,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
+
 ### 9.1.17 (2026-10-30)
 * (@GermanBluefox) Fixed mode of adapter
 * (@GermanBluefox) The package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller
