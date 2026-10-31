@@ -275,6 +275,44 @@ The answer is like:
 ```         
 More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov-file#oauth2-support
 
+## Single sign-on (OIDC)
+Users can sign in to the login page with an OpenID Connect identity provider (e.g. Keycloak) instead of a password.
+The login page then shows an additional **Single sign-on** button, username and password stay available.
+
+Web uses the same account link as the admin adapter: the identity (`sub`) of the provider is stored in
+`common.externalAuthentication.oidc.sub` of an existing ioBroker user. **Web neither creates users nor links
+identities.** Link the user in the admin adapter first. An identity that is not linked is refused and the
+login page shows an error.
+
+Settings (they require **Authentication** to be enabled and are off by default):
+
+- **Single sign-on (OIDC)** - switches the feature on. Without issuer and client ID nothing is offered.
+- **OIDC issuer URL** - the address of the provider, e.g. `https://keycloak.example.com/realms/home`.
+- **OIDC client ID** - the client registered for this Web instance.
+- **OIDC client secret** - optional. Leave it empty for a public client, which then uses PKCE. The secret is stored encrypted.
+- **OIDC scopes** - default `openid profile email`. Only `openid` is needed, because only the `sub` is used.
+- **Public URL** - the external address of this server. The settings show the redirect URI to register at the
+  provider: `<public URL>/sso-callback`. Without a public URL, it is derived from the request, which is wrong behind a reverse proxy.
+
+What happens at login:
+
+- The result is handed to the login page as a one-time code and exchanged for the Web token. Tokens never
+  appear in the URL.
+- The [user list](#user-list) applies as for a password login: a linked user who is not allowed is refused,
+  and *access web interface as* a specific user is honored.
+- "Stay logged in" on the login page is respected.
+- Signing out of Web ends only the Web session. The session at the identity provider stays, so the next click on
+  *Single sign-on* may sign in again without a password.
+
+### Setting up Keycloak
+The `sub` of a user is the same for all clients of a realm, so the link made in the admin adapter also works for Web.
+We recommend one client per adapter (e.g. one for admin and one for web) in the same realm:
+
+- Valid redirect URI: exactly `https://<host>:<port>/sso-callback` of the Web instance, no wildcard.
+- Enable only the *Standard flow*.
+- A token issued for the admin client is refused by Web, because its audience does not match.
+- Keycloak requires HTTPS for redirect URIs other than `localhost`. Enable encryption or set an HTTPS public URL.
+
 ## Authorizing third-party clients (OAuth)
 
 The token endpoint above requires the client to handle the user's ioBroker password. Clients that run
@@ -301,6 +339,8 @@ This is off by default. When enabled:
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. The user list applies to it
+* (@matthiasnissen) Web uses cookies named after the adapter instance (`web.0.sid`, `web.0.access_token`), so a login on another adapter or port no longer overwrites or replaces the Web login. Users must sign in to Web once again after the update
 * (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
 
 ### 9.1.17 (2026-10-30)
