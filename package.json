@@ -31,6 +31,7 @@
     "express": "^5.3.0",
     "express-session": "^1.19.0",
     "mime-types": "^3.0.2",
+    "on-headers": "^1.1.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0"
   },
@@ -58,7 +59,9 @@
     "@types/passport-local": "^1.0.38",
     "axios": "^1.21.0",
     "mocha": "^12.0.3",
-    "typescript": "~6.0.3"
+    "socket.io-client": "2.5.0",
+    "typescript": "~6.0.3",
+    "ws": "^8.22.0"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.web/issues"
@@ -74,7 +77,7 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha test/testRedirect.js test/testReadBody.js --exit",
-    "test:integration": "mocha test/testNoAuthSSL.js test/testNoAuthNoSSL.js --exit",
+    "test:integration": "mocha test/testNoAuthSSL.js test/testNoAuthNoSSL.js test/testOidc.js --exit",
     "test:package": "mocha test/testPackageFiles.js --exit",
     "prepublishOnly": "node tasks.ts",
     "build-backend": "tsc -p tsconfig.build.json && node tasks.ts --5-post-backend",

@@ -4,6 +4,8 @@
     "enterPassword": "Contraseña",
     "login": "Acceso",
     "loginTitle": "Inicio de sesión web",
+    "loginWithOidc": "Inicio de sesión único",
+    "oidcLoginFailed": "Error en el inicio de sesión único. Comprueba la vinculación de la cuenta e inténtalo de nuevo.",
     "ra_Change color theme": "Cambiar el tema de color",
     "staySignedIn": "Mantenerse conectado",
     "wrongPassword": "Contraseña o nombre de usuario incorrecto"

@@ -59,6 +59,9 @@ After the 15th wrong attempt, the user must wait 1 hour.
 If this options is selected, the user stays logged in for one month.
 If not, the user will stay logged in for the configured "login timeout".
 
+## Authentication cookies after an update
+Web names its session and access-token cookies after the adapter instance (for example, `web.0.sid` and `web.0.access_token`). This keeps a login on another adapter or port from being reused as the Web identity. After upgrading from a version that used the shared `connect.sid` and `access_token` names, sign in to Web once again. Web ignores but does not clear those generic cookies, so other adapters remain signed in. Socket.IO, pure WebSockets, and web extensions continue to use the Web identity; extensions can read it through the conventional `req.cookies['connect.sid']` and `req.cookies['access_token']` aliases.
+
 ## Access state's values
 You can access the normal state values via the HTTP get request.
 
