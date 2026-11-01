@@ -55,6 +55,7 @@
     "@types/express-session": "^1.19.0",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^22.20.5",
+    "@types/on-headers": "^1.0.4",
     "@types/passport": "^1.0.17",
     "@types/passport-local": "^1.0.38",
     "axios": "^1.21.0",

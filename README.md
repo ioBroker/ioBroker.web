@@ -300,7 +300,12 @@ What happens at login:
   appear in the URL.
 - The [user list](#user-list) applies as for a password login: a linked user who is not allowed is refused,
   and *access web interface as* a specific user is honored.
-- "Stay logged in" on the login page is respected.
+- Session lifetime: the access token is valid for 1 hour and the refresh token for 30 days, the same values as
+  for a password login through `/oauth/token`. The *login timeout* setting does not change them.
+- The access-token cookie ends with the browser session. Unlike a password login, "Stay logged in" does not give it
+  a lifetime, it only decides where the login page keeps the tokens in the browser.
+- When the token has expired, the login page appears again. Another click on *Single sign-on* signs in without a
+  password as long as the session at the identity provider is still valid.
 - Signing out of Web ends only the Web session. The session at the identity provider stays, so the next click on
   *Single sign-on* may sign in again without a password.
 
