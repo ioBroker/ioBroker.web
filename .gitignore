@@ -7,6 +7,8 @@ admin/i18n/flat.txt
 admin/i18n/*/translations.json
 iob_npm.done
 /www/lib/js/ws.js
+# copied from @iobroker/web-components by tasks.ts
+/www/lib/esm/
 *.tgz
 .DS_Store
 
