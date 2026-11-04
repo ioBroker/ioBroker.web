@@ -299,6 +299,7 @@ This is off by default. When enabled:
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
+* (@GermanBluefox) Web components written with React (see [`@iobroker/web-components`](https://github.com/ioBroker/web-components)) find React 19 and 18 as one ES module each at `/lib/esm/react-19.js` and `/lib/esm/react-18.js`, as in admin. Before, such a component failed to load under web, e.g. the flow diagram in vis-2
 
 ### 9.1.17 (2026-10-30)
 * (@GermanBluefox) Fixed mode of adapter
