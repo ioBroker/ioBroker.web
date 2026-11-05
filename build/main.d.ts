@@ -22,6 +22,18 @@ export declare class WebAdapter extends Adapter {
     private socketioAlive;
     private lang;
     private readonly extensions;
+    /** The routers of the running extensions. Dropping one takes all routes of its extension back */
+    private readonly extensionRouters;
+    /** The classes of the extensions this process loaded, by adapter name, with the code they came from */
+    private readonly extensionClasses;
+    /** Instances whose object changed, waiting for the changes to settle */
+    private readonly pendingExtensionChanges;
+    /** Extensions are started and stopped one after the other */
+    private extensionQueue;
+    /** Set when web restarts to load an extension, so that it restarts once */
+    private restartingForExtension;
+    /** Set when web stops: from then on no extension is started or stopped on its own */
+    private stoppingWeb;
     /** Paths the extensions answer themselves, without the authentication of web (`ExtAPI.publicRoutes`) */
     private readonly publicRoutes;
     private readonly bruteForce;
@@ -79,6 +91,64 @@ export declare class WebAdapter extends Adapter {
     onReady(): Promise<void>;
     updatePreSettings(obj: ioBroker.InstanceObject): void;
     getExtensionsAndSettings(): Promise<ioBroker.InstanceObject[]>;
+    /**
+     * Whether an instance runs as a web extension of this web instance: it has one, names this web instance
+     * or all of them, and is enabled - or runs although it is disabled, started by hand for instance.
+     *
+     * @param obj the instance object
+     */
+    private isExtensionOfThisInstance;
+    /**
+     * The instance object as the extension gets it: a copy with the native attributes listed in
+     * `encryptedNative` decrypted
+     *
+     * @param obj the instance object as it was read
+     */
+    private prepareExtensionConfig;
+    /**
+     * The class of an extension. Loaded once per adapter and kept: a new object of an extension whose
+     * settings changed is made from the same class.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private loadExtensionClass;
+    /**
+     * Start one extension: it gets a router of its own, and everything it adds to the server and to this
+     * adapter while it is constructed is noted, to be removed when it stops.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`; its entry in {@link extensions} must exist
+     * @returns a promise that resolves when the extension is ready, if it says when (`waitForReady`)
+     */
+    private startExtension;
+    /**
+     * Stop one extension while web keeps running: its routes and public paths go first, so no new request
+     * reaches it, then it unloads itself. Listeners it added while it was constructed and did not remove
+     * are removed afterwards.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private stopExtension;
+    /**
+     * Wait for the object of an extension instance to settle - an upload or a save writes it several times
+     * in a row - and then start, stop or restart the extension
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private scheduleExtensionChange;
+    /**
+     * Bring an extension in line with its instance object. It is started when it now belongs to this web
+     * instance and stopped when it no longer does. With other settings, it is stopped and started again -
+     * if it supports that (`supportsHotReload`). Otherwise, and for a new version of its code, web restarts.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private applyExtensionChange;
+    /**
+     * Restart web to load an extension that cannot be loaded into the running process
+     *
+     * @param reason what is logged
+     */
+    private restartForExtension;
     /**
      * Whether this instance is served by this web instance as a web extension
      *

@@ -85,7 +85,7 @@ Three independent Vite + React apps, each with their own `package.json` and `nod
 
 ### Extensions System
 
-Other adapters register as web extensions via `webExtension` in their `io-package.json`. The `WebAdapter` loads them in `getExtensionsAndSettings()`, passing the Express app instance so they can add custom routes and middleware.
+Other adapters register as web extensions via `webExtension` in their `io-package.json`. The `WebAdapter` loads them in `getExtensionsAndSettings()` and starts each one with `startExtension()`. An extension does not get the Express app itself but a proxy of it whose routes land in a router of its own (`src/lib/extensions.ts`); `ExtensionRouters` dispatches to these routers behind web's own routes, so an extension can be stopped (`stopExtension()`) by dropping its router. Changes of an extension's instance object go through `applyExtensionChange()`: ignored when nothing relevant changed, started/stopped/reloaded in place for extensions that set `supportsHotReload`, otherwise web restarts.
 
 ### Build Pipeline (`tasks.ts`)
 

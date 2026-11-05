@@ -53,6 +53,12 @@ export declare class PublicRoutes {
      */
     add(instance: string, routes: unknown): void;
     /**
+     * Drop the paths of one extension, when it is stopped
+     *
+     * @param instance the extension instance, e.g. `aura.0`
+     */
+    remove(instance: string): void;
+    /**
      * The route a request path belongs to
      *
      * @param pathname the path of the request, without the query

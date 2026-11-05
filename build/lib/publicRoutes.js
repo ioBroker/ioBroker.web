@@ -69,6 +69,18 @@ class PublicRoutes {
         this.#routes.sort((a, b) => b.path.length - a.path.length);
     }
     /**
+     * Drop the paths of one extension, when it is stopped
+     *
+     * @param instance the extension instance, e.g. `aura.0`
+     */
+    remove(instance) {
+        for (let i = this.#routes.length - 1; i >= 0; i--) {
+            if (this.#routes[i].instance === instance) {
+                this.#routes.splice(i, 1);
+            }
+        }
+    }
+    /**
      * The route a request path belongs to
      *
      * @param pathname the path of the request, without the query

@@ -53,6 +53,13 @@ declare class ExtAPI {
      * after the constructor. See `lib/publicRoutes.ts` and WEB-EXTENSIONS-HOWTO.md.
      */
     publicRoutes?(): PublicRoute[];
+    /**
+     * When the settings of the instance change, web stops this object and starts a new one instead of
+     * restarting itself. Set it only if `unload()` gives back everything the extension took from web besides
+     * its routes: subscriptions, timers, listeners, processes. Can also be a static property of the class.
+     * See WEB-EXTENSIONS-HOWTO.md.
+     */
+    supportsHotReload?: boolean;
     unload?(): Promise<void>;
 }
 

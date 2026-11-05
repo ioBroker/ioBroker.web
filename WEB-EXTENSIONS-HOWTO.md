@@ -75,21 +75,15 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
     // instanceSettings and this.config contain instance config (not web adapter, but this one with web-extension)
     this.config.demoParam = this.config.demoParam || 'demo';
 
+    // Optional. When the settings of this instance change, web stops this object and starts a new one
+    // instead of restarting itself. Set it only if unload() gives back everything, see below
+    this.supportsHotReload = true;
+
     this.unload = function () {
-        return new Promise(resolve => {
-            adapter.log.debug('Demo extension unloaded!');
-            
-            // unload app path
-            const middlewareIndex = app._router.stack.findIndex(layer => 
-                layer && layer.route === '/' + that.config.demoParam);
-                
-            if (middlewareIndex !== -1) {
-                // Remove the matched middleware
-                app._router.stack.splice(middlewareIndex, 1);
-            }
-            
-            resolve();
-        });
+        // The routes need no cleanup: web drops them together with the router of this extension.
+        // Stop here what web cannot know about: timers, subscriptions, listeners, child processes
+        adapter.log.debug('Demo extension unloaded!');
+        return Promise.resolve();
     };
 
     // Optional: deliver to web the link to Web interface
@@ -105,11 +99,8 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
     }
 
     // Optional. Say to web instance to wait till this instance is initialized
-    // Used if initalisation lasts some time
-    this.readyCallback = null; 
-    this.waitForReady = cb => {
-        this.readyCallback = cb;
-    }
+    // Used if initialisation lasts some time: call onReady when it is done
+    this.waitForReady = onReady => onReady();
 
     // self invoke constructor
     (function __constructor () {
@@ -119,9 +110,6 @@ function ExtensionExample(server, webSettings, adapter, instanceSettings, app) {
             res.setHeader('Content-type', 'text/html');
             res.status(200).send('You called a demo web extension with path "' + req.url + '"');
         });
-        
-        // inform web about that all routes are installed
-        this.readyCallback && this.readyCallback(that);
     })();
 }
 
@@ -178,6 +166,53 @@ this.publicRoutes = () => [
   path you do not answer never opens anything of web.
 - The more specific path wins, and of two instances naming the same path the first one keeps it.
 - Protecting the path is now your job alone. Without authentication in web the handler is reached the same way.
+
+### Changed settings without a restart of web
+
+The `app` an extension gets is the app of web with a router of its own: everything registered with
+`app.use()`, `app.get()`, `app.post()`, `app.all()`, `app.route()` or `app.param()` lands in that router,
+while settings, `app.locals` and `app.get('<setting>')` are those of web. The router sits where the
+routes of the extensions always were: behind the routes of web, in front of the files from the object
+DB. When the extension stops, web drops the router, and with it every route and middleware it
+registered. `app._router` and `app.router` are that router as well.
+
+What web does when the instance object of an extension changes:
+
+- A write that changes neither `common` nor `native` (only `ts`, `from`, `user`) is ignored.
+- An extension that now belongs to this web instance - enabled, or `native.webInstance` changed to it - is
+  started, with no restart of web.
+- A new version of the adapter (`common.version`, `common.installedVersion`, `common.installedFrom`) or
+  another `common.webExtension` always restarts web: code that is already loaded cannot be replaced.
+- Other changes, and an extension that is disabled or moved to another web instance, restart web - unless
+  the extension sets `supportsHotReload`. Then web calls `unload()` and starts a new object with the new
+  settings, or just unloads it. web keeps running: the sessions and the socket connections of everybody
+  else stay.
+
+```js
+class MyExtension {
+    // or as a field of the object: this.supportsHotReload = true
+    static supportsHotReload = true;
+    ...
+}
+```
+
+Set it only if `unload()` gives back everything the extension took from web besides its routes:
+
+- subscriptions made with `adapter` (`unsubscribeForeignStates()`, `unsubscribeForeignObjects()`, ...),
+- timers and intervals,
+- child processes, open sockets and streams,
+- listeners on `adapter` or on `server`, like `adapter.on('message')` or `server.on('upgrade')`.
+
+What web does itself:
+
+- Before `unload()` is called, the routes and the public paths of the extension are gone, and it gets no
+  `stateChange()`, `objectChange()` or `fileChange()` any more.
+- `unload()` has 5 seconds.
+- Listeners the constructor added to `adapter` or to `server` that are still there after `unload()` are
+  removed, with a warning in the log. Listeners added later are left alone.
+
+An error passed on by a middleware of the extension (`next(err)`) goes to the error handling of web; error
+handlers of other extensions do not see it.
 
 `common.mode` could be:
 - `daemon` - the instance will be started, but if main.js returns `utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION` as exit code, the instance will not be restarted.
