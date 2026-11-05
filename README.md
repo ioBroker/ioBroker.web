@@ -297,7 +297,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.2.0 (2026-11-05)
 * (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
 * (@GermanBluefox) Web components written with React (see [`@iobroker/web-components`](https://github.com/ioBroker/web-components)) find React 19 and 18 as one ES module each at `/lib/esm/react-19.js` and `/lib/esm/react-18.js`, as in admin. Before, such a component failed to load under web, e.g. the flow diagram in vis-2
 
@@ -317,17 +317,6 @@ This is off by default. When enabled:
 ### 9.1.14 (2026-10-11)
 * (@GermanBluefox) Fixed the lost body of `POST /state/...` with authentication enabled: the app's values arrived empty ("Empty body for ...")
 * (@GermanBluefox) Fixed the crash `server.shouldUpgradeCallback is not a function` on WebSocket connections over HTTP/1.1 with HTTP/2 enabled
-
-### 9.1.12 (2026-10-04)
-* (@GermanBluefox) Fixed: with the cache enabled, a file that an adapter writes again under the same name is delivered anew instead of forever in the version that was read first. This is what made `sayit` repeat the same announcement. The cache had no way of learning about a change at all - the adapter never subscribed to the files it had cached. It does now, for those namespaces only, and drops the entry when the file changes
-* (@GermanBluefox) Fixed: an adapter that runs as a web extension is linked to this server on the overview page instead of to a port of its own that nothing listens on. The entry such an adapter supplies through `welcomePage()` was collected after the list had already been cleaned up and its links resolved, so it never got the `localLink` the page reads and was dropped without a word, leaving only the dead link from `common.localLinks` behind
-* (@GermanBluefox) The folder index got the look of the admin: an app bar with the path and the number of entries, icons telling a folder from a file, sizes in a readable unit, and a light and a dark theme the page selects itself from the setting of the system. A folder of 0 bytes says "0 B" instead of nothing, and the way up is no longer offered in the root of an adapter, where it led out of it
-* (@GermanBluefox) An unexpected error while reading a session no longer ends the instance. The session store answers from a task of its own, so an exception in one of its callbacks reached neither express nor a `try/catch` and the controller terminated the whole web server over a single request. The four callbacks are guarded now and answer with a 500 instead. The same went for two promises in `onObjectChange`/`onStateChange` without a `catch`, where a rejected read of the socket URL arrived as an unhandled rejection
-* (@GermanBluefox) Added the option "Allow embedding in other sites": the session cookie is sent with `SameSite=None; Secure`, so a page of this server keeps its session when another site embeds it in an iframe. It requires SSL here or an https reverse proxy with the public URL set, and it is off by default because it gives up the protection `SameSite` provides against requests of foreign pages
-* (@GermanBluefox) Fixed: a call of `/prolongSession` no longer kills the instance. The session was handed to the store without its time to live, the store took the session object itself for it, and the type check of the controller ended the adapter with "Parameter ttl needs to be of type number". The session is also written back under the ID its cookie carries - `req.session.id` is a different one as soon as express-session started a new session for the request, and then the wrong session was prolonged
-* (@GermanBluefox) Fixed: an address without the closing slash - `/vis-2` instead of `/vis-2/` - leads to the application instead of a 404. It is answered with a redirect to the address with the slash, as every other web server does
-* (@GermanBluefox) A 404 names the address that was requested, not the file name left over after the adapter name was cut off, and logs it on the debug level
-* (@hdering) A web instance that restarts to load a changed web extension logs this as info with the reason instead of the warning "Terminated (-100): Without reason"
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
