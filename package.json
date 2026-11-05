@@ -1,6 +1,6 @@
 {
   "name": "iobroker.web",
-  "version": "9.1.17",
+  "version": "9.2.0",
   "description": "ioBroker simple web Adapter",
   "author": {
     "name": "bluefox",
@@ -45,6 +45,7 @@
     "@iobroker/socket-classes": "^2.10.0",
     "@iobroker/testing": "^6.3.1",
     "@iobroker/types": "^7.2.5",
+    "@iobroker/web-components": "^0.4.0",
     "@tsconfig/node22": "^22.0.6",
     "@types/body-parser": "^1.19.6",
     "@types/compression": "^1.8.1",
@@ -92,6 +93,7 @@
     "npm": "npm i && cd src-admin && npm i -f && cd ../src-login && npm i -f && cd ../src-www && npm i -f",
     "0-clean": "node tasks.ts --0-clean",
     "www": "node tasks.ts --www",
+    "react-esm": "node tasks.ts --react-esm",
     "1-npm": "node tasks.ts --1-npm",
     "2-build": "node tasks.ts --2-build",
     "3-copy": "node tasks.ts --3-copy",
