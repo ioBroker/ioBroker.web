@@ -23,6 +23,7 @@ const socketio_server_1 = require("@iobroker/socketio-server");
 const webserver_1 = require("@iobroker/webserver");
 const utils_1 = require("./lib/utils");
 const compressedFiles_1 = require("./lib/compressedFiles");
+const publicRoutes_1 = require("./lib/publicRoutes");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
 const wwwDir = '../www';
@@ -302,6 +303,11 @@ class WebAdapter extends adapter_core_1.Adapter {
     socketioAlive = false;
     lang = 'en';
     extensions = {};
+    /** Paths the extensions answer themselves, without the authentication of web (`ExtAPI.publicRoutes`) */
+    publicRoutes = new publicRoutes_1.PublicRoutes({
+        info: (message) => this.log.info(message),
+        warn: (message) => this.log.warn(message),
+    });
     bruteForce = {};
     socketIoFile = false;
     webPreSettings = {};
@@ -1814,6 +1820,12 @@ class WebAdapter extends adapter_core_1.Adapter {
             // special end point for vis
             this.webServer.app.get('/visProjects', async (req, res) => await this.processReadFolders(req, res));
             this.webServer.app.get('/folders', async (req, res) => await this.processReadFolders(req, res));
+            // Paths that web extensions protect themselves, like an MCP endpoint with a token of its own
+            // (`ExtAPI.publicRoutes`). In front of every authentication step: the OAuth2 layer answers every
+            // bearer token it did not issue with 401, so the request would never reach the extension. Also in
+            // front of the body parsers and the session - the extension gets the request as it came in.
+            // Extensions are activated later; the middleware reads their paths on every request.
+            this.webServer.app.use(this.publicRoutes.middleware());
             if (this.config.auth) {
                 this.initAuth();
                 /**
@@ -2727,6 +2739,10 @@ class WebAdapter extends adapter_core_1.Adapter {
                         defaultUser: this.config.defaultUser,
                         auth: this.config.auth,
                     }, this, this.extensions[instance].config, this.webServer.app, this.webServer.io);
+                    const ext = this.extensions[instance].obj;
+                    if (typeof ext?.publicRoutes === 'function') {
+                        this.publicRoutes.add(instance, ext.publicRoutes());
+                    }
                     if (this.extensions[instance].obj?.waitForReady &&
                         typeof this.extensions[instance].obj.waitForReady === 'function') {
                         extensionPromises.push(new Promise(resolve => {

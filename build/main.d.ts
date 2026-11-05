@@ -22,6 +22,8 @@ export declare class WebAdapter extends Adapter {
     private socketioAlive;
     private lang;
     private readonly extensions;
+    /** Paths the extensions answer themselves, without the authentication of web (`ExtAPI.publicRoutes`) */
+    private readonly publicRoutes;
     private readonly bruteForce;
     private socketIoFile;
     private readonly webPreSettings;

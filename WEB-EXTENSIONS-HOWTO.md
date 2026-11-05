@@ -144,6 +144,41 @@ const dataDir = getAbsoluteInstanceDataDir(this.namespace);
 The same holds for everything else you would normally read off your own adapter object: `adapter` belongs
 to web, while `instanceSettings` is yours.
 
+### Paths with credentials of their own
+
+With authentication enabled, web lets no request through without its login, and the OAuth2 layer answers
+every bearer token it did not issue itself with `401`. A client that brings credentials web does not know - an
+MCP client with the static token of your adapter, a webhook with a signature - therefore never reaches your
+routes.
+
+Name such paths in `publicRoutes()`. web hands them to your handler in front of every authentication step:
+
+```js
+// Optional. Paths this extension protects itself. Called once, right after the constructor
+this.publicRoutes = () => [
+    {
+        path: '/example/api', // "/example/api" and everything below it
+        handler: (req, res, next) => {
+            if (req.headers.authorization !== `Bearer ${that.config.token}`) {
+                res.status(401).json({ error: 'unauthorized' });
+                return;
+            }
+            // ... answer the request
+        },
+    },
+];
+```
+
+- The path must lie below the adapter name of the extension (`/example` for `example.0`). Plain segments
+  only: no `.` or `..`, no query, nothing encoded. web refuses other paths and says so in its log; every
+  accepted path is logged as well.
+- Your handler gets the request as it came in: **no `req.body`** (read the stream yourself), no session and no
+  `req.user`. web knows nothing about the caller.
+- `next()` hands the request back to web: it then needs the usual login, as if the path were not public. So a
+  path you do not answer never opens anything of web.
+- The more specific path wins, and of two instances naming the same path the first one keeps it.
+- Protecting the path is now your job alone. Without authentication in web the handler is reached the same way.
+
 `common.mode` could be:
 - `daemon` - the instance will be started, but if main.js returns `utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION` as exit code, the instance will not be restarted.
 - `extension` - the instance will never be started, as it runs only as part of web instance

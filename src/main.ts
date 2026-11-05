@@ -31,6 +31,7 @@ import {
     replaceLink,
 } from './lib/utils';
 import { sendFile } from './lib/compressedFiles';
+import { PublicRoutes } from './lib/publicRoutes';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -371,6 +372,11 @@ export class WebAdapter extends Adapter {
     private socketioAlive = false;
     private lang: ioBroker.Languages = 'en';
     private readonly extensions: Record<string, { path: string; config: ioBroker.InstanceObject; obj?: ExtAPI }> = {};
+    /** Paths the extensions answer themselves, without the authentication of web (`ExtAPI.publicRoutes`) */
+    private readonly publicRoutes = new PublicRoutes({
+        info: (message: string): void => this.log.info(message),
+        warn: (message: string): void => this.log.warn(message),
+    });
     private readonly bruteForce: { [userName: string]: { errors: number; time: number } } = {};
     private socketIoFile: Buffer | false = false;
     private readonly webPreSettings: Record<
@@ -2189,6 +2195,13 @@ export class WebAdapter extends Adapter {
                 async (req: Request, res: Response): Promise<void> => await this.processReadFolders(req, res),
             );
 
+            // Paths that web extensions protect themselves, like an MCP endpoint with a token of its own
+            // (`ExtAPI.publicRoutes`). In front of every authentication step: the OAuth2 layer answers every
+            // bearer token it did not issue with 401, so the request would never reach the extension. Also in
+            // front of the body parsers and the session - the extension gets the request as it came in.
+            // Extensions are activated later; the middleware reads their paths on every request.
+            this.webServer.app.use(this.publicRoutes.middleware());
+
             if (this.config.auth) {
                 this.initAuth();
 
@@ -3289,6 +3302,11 @@ export class WebAdapter extends Adapter {
                         this.webServer.app,
                         this.webServer.io,
                     );
+
+                    const ext = this.extensions[instance].obj;
+                    if (typeof ext?.publicRoutes === 'function') {
+                        this.publicRoutes.add(instance, ext.publicRoutes());
+                    }
 
                     if (
                         this.extensions[instance].obj?.waitForReady &&

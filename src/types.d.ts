@@ -1,5 +1,6 @@
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
+import type { PublicRoute } from './lib/publicRoutes';
 
 export type Server = HttpServer | HttpsServer;
 
@@ -46,6 +47,12 @@ declare class ExtAPI {
     objectChange?(id: string, state: ioBroker.Object | null | undefined): void;
     /** Give to the extension up to 5 seconds to be loaded */
     waitForReady?(onReady: () => void): void;
+    /**
+     * Paths below `/<adapter name>` that the extension answers itself, without the authentication of web -
+     * for clients with credentials of their own, like an MCP client with a static token. Called once, right
+     * after the constructor. See `lib/publicRoutes.ts` and WEB-EXTENSIONS-HOWTO.md.
+     */
+    publicRoutes?(): PublicRoute[];
     unload?(): Promise<void>;
 }
 
