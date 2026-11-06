@@ -343,6 +343,17 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### 9.5.0 (2026-11-06)
+* (@GermanBluefox) web, its socket clients and the web extensions no longer take subscriptions away from each other. js-controller keeps one subscription per pattern, so when an extension like rest-api gave up a state, the socket clients of web and the other extensions got no more changes of it either. web now notes who subscribed what and unsubscribes in the database only when nobody needs the pattern any more. What a stopped extension still holds is given up for it (#196)
+
+### 9.4.0 (2026-11-05)
+* (@GermanBluefox) A changed web extension no longer restarts web every time: a write of its instance object that changes nothing is ignored, and a newly enabled extension is started while web keeps running. An extension that sets `supportsHotReload` is stopped and started again with its new settings, or just stopped when it is disabled - the sessions and socket connections of everybody else stay. A new version of an extension still restarts web. See [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)
+* (@GermanBluefox) Every web extension gets a router of its own, so web can take all of its routes back when it stops
+* (@GermanBluefox) Updated packages
+
+### 9.3.0 (2026-11-05)
+* (@GermanBluefox) Web extensions can name paths below their adapter name that they protect themselves (`publicRoutes()`, see [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)). web hands such requests to the extension in front of its login, so a client with credentials of its own, e.g. an MCP client with the token of the adapter, is no longer refused with 401
+
 ### 9.2.0 (2026-11-05)
 * (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. The user list applies to it
 * (@matthiasnissen) Web uses cookies named after the adapter instance (`web.0.sid`, `web.0.access_token`), so a login on another adapter or port no longer overwrites or replaces the Web login. Users must sign in to Web once again after the update
@@ -354,17 +365,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) The package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller
 * (@GermanBluefox) Admin 7.6.17 or newer is required
 * (@GermanBluefox) Added missing translations of the cookie and OAuth settings
-
-### 9.1.16 (2026-10-21)
-* (@GermanBluefox) The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it
-
-### 9.1.15 (2026-10-14)
-* (@GermanBluefox) Pages of adapters load from the browser cache and still show a new version at once: the chunks with a content hash in their name (`assets/*-<hash>.js`) are kept for a year, everything else - `index.html`, `config.js`, `remoteEntry.js`, ... - is asked for on every load and answered with 304 while unchanged. Before, every file was kept for 60 seconds, so the chunks were asked for again and again, and a new `index.html` could come late
-* (@GermanBluefox) Files of adapters and instances are compressed once and then kept compressed (up to 64 MB, keyed by their content), instead of being compressed anew on every request. Measured on a desktop: a chunk of 1.8 MB was read in 7 ms and compressed in 100 ms, on every load of every client - on a Raspberry Pi that is seconds of CPU for one cold page load, during which every other request waited. Brotli runs with quality 5 instead of 4 now, which is smaller, since it is paid once
-
-### 9.1.14 (2026-10-11)
-* (@GermanBluefox) Fixed the lost body of `POST /state/...` with authentication enabled: the app's values arrived empty ("Empty body for ...")
-* (@GermanBluefox) Fixed the crash `server.shouldUpgradeCallback is not a function` on WebSocket connections over HTTP/1.1 with HTTP/2 enabled
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

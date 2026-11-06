@@ -5,16 +5,16 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@emotion/styled": "^11.14.1",
-        "@iobroker/gui-components": "^10.4.0",
+        "@iobroker/gui-components": "^10.4.3",
         "@mui/icons-material": "^9.5.0",
         "@mui/material": "^9.5.0",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
-        "@sentry/browser": "^11.10.0",
+        "@sentry/browser": "^11.11.0",
         "@vitejs/plugin-react": "^6.2.1",
         "react": "^19.3.1",
         "react-dom": "^19.3.1",
-        "vite": "^8.3.5",
+        "vite": "^8.3.6",
         "vite-plugin-singlefile": "^2.3.4"
     },
     "scripts": {

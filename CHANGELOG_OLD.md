@@ -1,4 +1,15 @@
 # Older changes
+## 9.1.16 (2026-10-21)
+* (@GermanBluefox) The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it
+
+## 9.1.15 (2026-10-14)
+* (@GermanBluefox) Pages of adapters load from the browser cache and still show a new version at once: the chunks with a content hash in their name (`assets/*-<hash>.js`) are kept for a year, everything else - `index.html`, `config.js`, `remoteEntry.js`, ... - is asked for on every load and answered with 304 while unchanged. Before, every file was kept for 60 seconds, so the chunks were asked for again and again, and a new `index.html` could come late
+* (@GermanBluefox) Files of adapters and instances are compressed once and then kept compressed (up to 64 MB, keyed by their content), instead of being compressed anew on every request. Measured on a desktop: a chunk of 1.8 MB was read in 7 ms and compressed in 100 ms, on every load of every client - on a Raspberry Pi that is seconds of CPU for one cold page load, during which every other request waited. Brotli runs with quality 5 instead of 4 now, which is smaller, since it is paid once
+
+## 9.1.14 (2026-10-11)
+* (@GermanBluefox) Fixed the lost body of `POST /state/...` with authentication enabled: the app's values arrived empty ("Empty body for ...")
+* (@GermanBluefox) Fixed the crash `server.shouldUpgradeCallback is not a function` on WebSocket connections over HTTP/1.1 with HTTP/2 enabled
+
 ## 9.1.12 (2026-10-04)
 * (@GermanBluefox) Fixed: with the cache enabled, a file that an adapter writes again under the same name is delivered anew instead of forever in the version that was read first. This is what made `sayit` repeat the same announcement. The cache had no way of learning about a change at all - the adapter never subscribed to the files it had cached. It does now, for those namespaces only, and drops the entry when the file changes
 * (@GermanBluefox) Fixed: an adapter that runs as a web extension is linked to this server on the overview page instead of to a port of its own that nothing listens on. The entry such an adapter supplies through `welcomePage()` was collected after the list had already been cleaned up and its links resolved, so it never got the `localLink` the page reads and was dropped without a word, leaving only the dead link from `common.localLinks` behind

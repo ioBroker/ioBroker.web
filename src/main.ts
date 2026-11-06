@@ -33,6 +33,20 @@ import {
 } from './lib/utils';
 import { sendFile } from './lib/compressedFiles';
 import { namespaceAccessTokenCookie, normalizeAdapterCookieHeader } from './lib/authCookies';
+import { PublicRoutes } from './lib/publicRoutes';
+import { shareSubscriptions, type AdapterSubscriptions, type CallerAdapter } from './lib/subscriptions';
+import {
+    addedListeners,
+    createExtensionApp,
+    createExtensionRouter,
+    decideExtensionChange,
+    extensionCode,
+    ExtensionRouters,
+    type Listeners,
+    removeListeners,
+    snapshotListeners,
+    supportsHotReload,
+} from './lib/extensions';
 
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 export type Server = HttpServer | HttpsServer;
@@ -432,7 +446,44 @@ export class WebAdapter extends Adapter {
     /** If the socket instance is alive */
     private socketioAlive = false;
     private lang: ioBroker.Languages = 'en';
-    private readonly extensions: Record<string, { path: string; config: ioBroker.InstanceObject; obj?: ExtAPI }> = {};
+    private readonly extensions: Record<
+        string,
+        {
+            /** `<adapter name>/<common.webExtension>` */
+            path: string;
+            /** The instance object as it was read, to see later whether it changed */
+            raw: ioBroker.InstanceObject;
+            /** What the extension gets: the instance object with its encrypted native attributes decrypted */
+            config: ioBroker.InstanceObject;
+            obj?: ExtAPI;
+            /** Listeners the constructor added to the server and to this adapter, removed when the extension stops */
+            listeners?: { emitter: NodeJS.EventEmitter; added: Listeners }[];
+            /** The adapter the extension got: its subscriptions are its own and are given up when it stops */
+            subscriber?: CallerAdapter<WebAdapter>;
+        }
+    > = {};
+    /**
+     * The subscriptions of web, its socket server and the extensions: one of them giving up a pattern does
+     * not take it away from the others (`lib/subscriptions.ts`)
+     */
+    private readonly subscriptions: AdapterSubscriptions<WebAdapter>;
+    /** The routers of the running extensions. Dropping one takes all routes of its extension back */
+    private readonly extensionRouters = new ExtensionRouters();
+    /** The classes of the extensions this process loaded, by adapter name, with the code they came from */
+    private readonly extensionClasses = new Map<string, { code: string; ExtClass: new (...args: any[]) => ExtAPI }>();
+    /** Instances whose object changed, waiting for the changes to settle */
+    private readonly pendingExtensionChanges = new Map<string, ioBroker.Timeout | undefined>();
+    /** Extensions are started and stopped one after the other */
+    private extensionQueue: Promise<void> = Promise.resolve();
+    /** Set when web restarts to load an extension, so that it restarts once */
+    private restartingForExtension = false;
+    /** Set when web stops: from then on no extension is started or stopped on its own */
+    private stoppingWeb = false;
+    /** Paths the extensions answer themselves, without the authentication of web (`ExtAPI.publicRoutes`) */
+    private readonly publicRoutes = new PublicRoutes({
+        info: (message: string): void => this.log.info(message),
+        warn: (message: string): void => this.log.warn(message),
+    });
     private readonly bruteForce: { [userName: string]: { errors: number; time: number } } = {};
     private socketIoFile: Buffer | false = false;
     private readonly webPreSettings: Record<
@@ -485,6 +536,8 @@ export class WebAdapter extends Adapter {
             fileChange: (id: string, fileName: string, size: number | null): void =>
                 this.onFileChange(id, fileName, size),
         });
+        // Before anything subscribes: from here on, web subscribes as one of several
+        this.subscriptions = shareSubscriptions<WebAdapter>(this, message => this.log.warn(message));
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
@@ -504,23 +557,18 @@ export class WebAdapter extends Adapter {
         }
 
         if (id.startsWith('system.adapter.')) {
+            const instance = id.substring('system.adapter.'.length);
+            // Only an instance runs an extension. On every upload js-controller also rewrites the adapter
+            // object (system.adapter.<name>), whose native holds the defaults of io-package.json - usually
+            // webInstance "*", which would touch every web instance
+            const isExtension = obj?.type === 'instance' && !!obj.common?.webExtension;
             if (
-                // Only an instance runs an extension. On every upload js-controller also rewrites the
-                // adapter object (system.adapter.<name>), whose native holds the defaults of
-                // io-package.json - usually webInstance "*", which would restart every web instance
-                obj?.type === 'instance' &&
-                obj.common?.webExtension &&
-                obj.native &&
-                (this.extensions[id.substring('system.adapter.'.length)] ||
-                    obj.native.webInstance === '*' ||
-                    obj.native.webInstance === this.namespace)
+                /^[^.]+\.\d+$/.test(instance) &&
+                (isExtension || this.extensions[instance]) &&
+                !this.config.disableExtensions
             ) {
-                // A planned restart to load the changed extension, not an error: with a reason and the
-                // exit code for "restart immediately" it is logged as info instead of a warning
-                const reason = `Restart to load the changed web extension "${id.substring('system.adapter.'.length)}"`;
-                return this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
-                    this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP),
-                );
+                // Started, stopped or restarted as needed, see applyExtensionChange()
+                this.scheduleExtensionChange(instance);
             }
 
             // 'system.adapter.'.length = 15
@@ -708,6 +756,12 @@ export class WebAdapter extends Adapter {
             this.clearTimeout(this.checkTimeout);
             this.checkTimeout = null;
         }
+        // No extension is started or stopped any more: they are all unloaded below
+        this.stoppingWeb = true;
+        for (const timer of this.pendingExtensionChanges.values()) {
+            this.clearTimeout(timer);
+        }
+        this.pendingExtensionChanges.clear();
 
         try {
             const promises: Promise<void | string>[] = [];
@@ -863,28 +917,7 @@ export class WebAdapter extends Adapter {
         for (let i = 0; i < doc.rows.length; i++) {
             const instance = doc.rows[i].value;
             if (instance?.common) {
-                if (!this.config.startDisabledExtensions && !instance.common.enabled) {
-                    const alive = await this.getForeignStateAsync(`${instance._id}.alive`);
-                    if (alive?.val) {
-                        // simulate as it is enabled
-                        instance.common.enabled = true;
-                    }
-                }
-
-                if (
-                    (this.config.startDisabledExtensions || instance.common.enabled) &&
-                    instance.common.webExtension &&
-                    (instance.native.webInstance === this.namespace || instance.native.webInstance === '*')
-                ) {
-                    // decrypt all native attributes listed in instance.encryptedNative
-                    if (Array.isArray(instance.encryptedNative) && instance.native) {
-                        instance.encryptedNative.forEach(key => {
-                            if (instance.native[key]) {
-                                instance.native[key] = this.decrypt(this.secret, instance.native[key]);
-                            }
-                        });
-                    }
-
+                if (await this.isExtensionOfThisInstance(instance)) {
                     res.push(instance);
                 }
                 if (instance.common.webPreSettings) {
@@ -899,6 +932,327 @@ export class WebAdapter extends Adapter {
         }
 
         return res;
+    }
+
+    /**
+     * Whether an instance runs as a web extension of this web instance: it has one, names this web instance
+     * or all of them, and is enabled - or runs although it is disabled, started by hand for instance.
+     *
+     * @param obj the instance object
+     */
+    private async isExtensionOfThisInstance(obj: ioBroker.InstanceObject | null | undefined): Promise<boolean> {
+        if (
+            obj?.type !== 'instance' ||
+            !obj.common?.webExtension ||
+            (obj.native?.webInstance !== this.namespace && obj.native?.webInstance !== '*')
+        ) {
+            return false;
+        }
+        if (this.config.startDisabledExtensions || obj.common.enabled) {
+            return true;
+        }
+        const alive = await this.getForeignStateAsync(`${obj._id}.alive`);
+        return !!alive?.val;
+    }
+
+    /**
+     * The instance object as the extension gets it: a copy with the native attributes listed in
+     * `encryptedNative` decrypted
+     *
+     * @param obj the instance object as it was read
+     */
+    private prepareExtensionConfig(obj: ioBroker.InstanceObject): ioBroker.InstanceObject {
+        const config: ioBroker.InstanceObject = structuredClone(obj);
+        if (Array.isArray(config.encryptedNative) && config.native) {
+            config.encryptedNative.forEach(key => {
+                if (config.native[key]) {
+                    config.native[key] = this.decrypt(this.secret, config.native[key]);
+                }
+            });
+        }
+        return config;
+    }
+
+    /**
+     * The class of an extension. Loaded once per adapter and kept: a new object of an extension whose
+     * settings changed is made from the same class.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private loadExtensionClass(instance: string): new (...args: any[]) => ExtAPI {
+        const entry = this.extensions[instance];
+        const adapterName = instance.split('.')[0];
+        const code = extensionCode(entry.raw);
+        const loaded = this.extensionClasses.get(adapterName);
+        if (loaded?.code === code) {
+            return loaded.ExtClass;
+        }
+
+        // for debug purposes, try to load a file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
+        const parts = entry.path.split('/');
+        parts.shift();
+        let extAPI;
+        if (existsSync(`./${parts.join('/')}`)) {
+            extAPI = require(`./${parts.join('/')}`);
+        } else {
+            extAPI = require(`iobroker.${entry.path}`);
+        }
+        // if loaded from TS
+        if (extAPI.default) {
+            extAPI = extAPI.default;
+        }
+        const className = (entry.path.split('/').pop() || '').split('.')[0];
+        if (extAPI[className]) {
+            extAPI = extAPI[className];
+        }
+        this.extensionClasses.set(adapterName, { code, ExtClass: extAPI });
+        return extAPI;
+    }
+
+    /**
+     * Start one extension: it gets a router of its own, and everything it adds to the server and to this
+     * adapter while it is constructed is noted, to be removed when it stops.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`; its entry in {@link extensions} must exist
+     * @returns a promise that resolves when the extension is ready, if it says when (`waitForReady`)
+     */
+    private startExtension(instance: string): Promise<void> | null {
+        const entry = this.extensions[instance];
+        const app = this.webServer.app;
+        if (!entry || !app) {
+            return null;
+        }
+
+        const router = createExtensionRouter(app);
+        const emitters: NodeJS.EventEmitter[] = [this];
+        if (this.webServer.server) {
+            emitters.push(this.webServer.server);
+        }
+        const before = emitters.map(emitter => ({ emitter, listeners: snapshotListeners(emitter) }));
+        const added = (): { emitter: NodeJS.EventEmitter; added: Listeners }[] =>
+            before.map(b => ({ emitter: b.emitter, added: addedListeners(b.emitter, b.listeners) }));
+
+        // The extension subscribes on its own: what it gives up, it gives up only for itself
+        const subscriber = this.subscriptions.adapterFor(instance);
+        let ext: ExtAPI;
+        try {
+            const ExtClass = this.loadExtensionClass(instance);
+
+            this.log.info(`Connecting extension "${entry.path}"`);
+
+            // Start web-extension
+            ext = new ExtClass(
+                this.webServer.server,
+                {
+                    secure: this.config.secure,
+                    port: this.config.port,
+                    language: this.config.language,
+                    defaultUser: this.config.defaultUser,
+                    auth: this.config.auth,
+                },
+                subscriber.adapter,
+                entry.config,
+                createExtensionApp(app, router),
+                this.webServer.io,
+            );
+        } catch (err) {
+            this.log.error(`Cannot start extension "${instance}": ${err}`);
+            // What the failed constructor added would stay without anybody to remove it
+            added().forEach(a => removeListeners(a.emitter, a.added));
+            void subscriber.release();
+            return null;
+        }
+
+        entry.obj = ext;
+        entry.listeners = added();
+        entry.subscriber = subscriber;
+        this.extensionRouters.set(instance, router);
+
+        try {
+            if (typeof ext.publicRoutes === 'function') {
+                this.publicRoutes.add(instance, ext.publicRoutes());
+            }
+        } catch (err) {
+            this.log.error(`Cannot read the public paths of extension "${instance}": ${err}`);
+        }
+
+        if (typeof ext.waitForReady !== 'function') {
+            return null;
+        }
+        return new Promise<void>(resolve => {
+            let timeout: ioBroker.Timeout | undefined = this.setTimeout(() => {
+                if (timeout) {
+                    timeout = undefined;
+                    this.log.error(`Extension "${instance}" (${entry.path}) is not responding (waitForReady)`);
+                    resolve();
+                }
+            }, ext.waitForReadyTime || 5000);
+
+            const ready = (): void => {
+                if (timeout) {
+                    this.log.debug(`Connected extension "${entry.path}"`);
+                    this.clearTimeout(timeout);
+                    timeout = null;
+                    resolve();
+                }
+            };
+
+            try {
+                ext.waitForReady!(ready);
+            } catch (err) {
+                this.log.error(`Extension "${instance}" failed in waitForReady: ${err}`);
+                ready();
+            }
+        });
+    }
+
+    /**
+     * Stop one extension while web keeps running: its routes and public paths go first, so no new request
+     * reaches it, then it unloads itself. Listeners it added while it was constructed and did not remove
+     * are removed afterwards.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private async stopExtension(instance: string): Promise<void> {
+        const entry = this.extensions[instance];
+        if (!entry) {
+            return;
+        }
+        // No more state, object or file changes either
+        delete this.extensions[instance];
+        this.extensionRouters.remove(instance);
+        this.publicRoutes.remove(instance);
+
+        if (typeof entry.obj?.unload === 'function') {
+            let timer: NodeJS.Timeout | undefined;
+            try {
+                await Promise.race([
+                    Promise.resolve(entry.obj.unload()),
+                    new Promise<void>(resolve => {
+                        timer = setTimeout(() => {
+                            this.log.warn(`Extension "${instance}" did not finish unload() in 5 seconds`);
+                            resolve();
+                        }, 5000);
+                    }),
+                ]);
+            } catch (err) {
+                this.log.error(`Cannot unload web extension "${instance}": ${err}`);
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        for (const { emitter, added } of entry.listeners || []) {
+            const removed = removeListeners(emitter, added);
+            if (removed.length) {
+                this.log.warn(
+                    `Extension "${instance}" left ${removed.length} listener(s) for "${removed.map(String).join('", "')}" behind after unload() - removed`,
+                );
+            }
+        }
+        // What it did not unsubscribe itself. Only the database subscriptions nobody else holds end.
+        const released = await entry.subscriber?.release();
+        if (released) {
+            this.log.debug(`Gave up ${released} subscription(s) extension "${instance}" still held`);
+        }
+        this.log.info(`Extension "${instance}" stopped`);
+    }
+
+    /**
+     * Wait for the object of an extension instance to settle - an upload or a save writes it several times
+     * in a row - and then start, stop or restart the extension
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private scheduleExtensionChange(instance: string): void {
+        if (this.stoppingWeb || this.restartingForExtension) {
+            return;
+        }
+        const timer = this.pendingExtensionChanges.get(instance);
+        if (timer) {
+            this.clearTimeout(timer);
+        }
+        this.pendingExtensionChanges.set(
+            instance,
+            this.setTimeout(() => {
+                this.pendingExtensionChanges.delete(instance);
+                this.extensionQueue = this.extensionQueue
+                    .then(() => this.applyExtensionChange(instance))
+                    .catch(err => this.log.error(`Cannot apply the changes of web extension "${instance}": ${err}`));
+            }, 1000),
+        );
+    }
+
+    /**
+     * Bring an extension in line with its instance object. It is started when it now belongs to this web
+     * instance and stopped when it no longer does. With other settings, it is stopped and started again -
+     * if it supports that (`supportsHotReload`). Otherwise, and for a new version of its code, web restarts.
+     *
+     * @param instance the extension instance, e.g. `cameras.0`
+     */
+    private async applyExtensionChange(instance: string): Promise<void> {
+        if (this.stoppingWeb || this.restartingForExtension || !this.webServer.app) {
+            return;
+        }
+        const next = ((await this.getForeignObjectAsync(`system.adapter.${instance}`)) ||
+            null) as ioBroker.InstanceObject | null;
+        const running = this.extensions[instance];
+        const change = decideExtensionChange({
+            instance,
+            running: running
+                ? {
+                      obj: running.raw,
+                      // An extension that failed to start has nothing to stop
+                      hotReload: !running.obj || supportsHotReload(running.obj),
+                  }
+                : undefined,
+            next,
+            shouldRun: await this.isExtensionOfThisInstance(next),
+            loadedCode: this.extensionClasses.get(instance.split('.')[0])?.code,
+        });
+
+        if (change.action === 'ignore') {
+            return;
+        }
+        if (change.action === 'restart') {
+            this.restartForExtension(change.reason);
+            return;
+        }
+
+        if (change.action === 'unload' || change.action === 'reload') {
+            this.log.info(`Stopping web extension "${instance}": ${change.reason}`);
+            await this.stopExtension(instance);
+            if (change.action === 'unload') {
+                return;
+            }
+        }
+
+        if (!next || this.stoppingWeb) {
+            return;
+        }
+        this.extensions[instance] = {
+            path: `${instance.split('.')[0]}/${next.common.webExtension}`,
+            raw: next,
+            config: this.prepareExtensionConfig(next),
+        };
+        await this.startExtension(instance);
+    }
+
+    /**
+     * Restart web to load an extension that cannot be loaded into the running process
+     *
+     * @param reason what is logged
+     */
+    private restartForExtension(reason: string): void {
+        if (this.restartingForExtension) {
+            return;
+        }
+        this.restartingForExtension = true;
+        // A planned restart to load the changed extension, not an error: with a reason and the exit code
+        // for "restart immediately" it is logged as info instead of a warning
+        this.setForeignState(`system.adapter.${this.namespace}.alive`, false, true, () =>
+            this.terminate(reason, EXIT_CODES.START_IMMEDIATELY_AFTER_STOP),
+        );
     }
 
     /**
@@ -2323,6 +2677,13 @@ export class WebAdapter extends Adapter {
                 async (req: Request, res: Response): Promise<void> => await this.processReadFolders(req, res),
             );
 
+            // Paths that web extensions protect themselves, like an MCP endpoint with a token of its own
+            // (`ExtAPI.publicRoutes`). In front of every authentication step: the OAuth2 layer answers every
+            // bearer token it did not issue with 401, so the request would never reach the extension. Also in
+            // front of the body parsers and the session - the extension gets the request as it came in.
+            // Extensions are activated later; the middleware reads their paths on every request.
+            this.webServer.app.use(this.publicRoutes.middleware());
+
             if (this.config.auth) {
                 this.initAuth();
 
@@ -3329,12 +3690,15 @@ export class WebAdapter extends Adapter {
             // Used only for socket.io
             socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
 
+            // The socket server counts the subscriptions of its clients and gives a pattern up when the last
+            // of them is gone - not knowing whether web or an extension still needs it
+            const socketAdapter = this.subscriptions.adapterFor('socket').adapter;
             try {
                 if (this.config.usePureWebSockets) {
                     this.webServer.io = new IOSocketClassWs(
                         this.webServer.server,
                         socketSettings,
-                        this,
+                        socketAdapter,
                         this.store!,
                         this.checkUser,
                     );
@@ -3342,7 +3706,7 @@ export class WebAdapter extends Adapter {
                     this.webServer.io = new IOSocketClassSocketIo(
                         this.webServer.server,
                         socketSettings,
-                        this,
+                        socketAdapter,
                         this.store!,
                         this.checkUser,
                     );
@@ -3362,80 +3726,19 @@ export class WebAdapter extends Adapter {
 
         const extensionPromises: Promise<void>[] = [];
 
+        // The routes of the extensions: here, behind the routes of web and in front of the files from the
+        // object DB, each extension has a router of its own. An extension that is started later lands here too,
+        // and one that is stopped takes its routes with it.
+        this.webServer.app?.use(this.extensionRouters.middleware());
+
         if (!this.config.disableExtensions) {
             this.log.debug('Activating extensions');
-            // activate extensions
-            Object.keys(this.extensions).forEach(instance => {
-                try {
-                    // for debug purposes, try to load a file in current directory "/lib/file.js" (elsewise node.js cannot debug it)
-                    const parts = this.extensions[instance].path.split('/');
-                    parts.shift();
-                    let extAPI;
-                    if (existsSync(`./${parts.join('/')}`)) {
-                        extAPI = require(`./${parts.join('/')}`);
-                    } else {
-                        extAPI = require(`iobroker.${this.extensions[instance].path}`);
-                    }
-                    // if loaded from TS
-                    if (extAPI.default) {
-                        extAPI = extAPI.default;
-                    }
-                    const className = (this.extensions[instance].path.split('/').pop() || '').split('.')[0];
-                    if (extAPI[className]) {
-                        extAPI = extAPI[className];
-                    }
-
-                    this.log.info(`Connecting extension "${this.extensions[instance].path}"`);
-
-                    // Start web-extension
-                    this.extensions[instance].obj = new extAPI(
-                        this.webServer.server,
-                        {
-                            secure: this.config.secure,
-                            port: this.config.port,
-                            language: this.config.language,
-                            defaultUser: this.config.defaultUser,
-                            auth: this.config.auth,
-                        },
-                        this,
-                        this.extensions[instance].config,
-                        this.webServer.app,
-                        this.webServer.io,
-                    );
-
-                    if (
-                        this.extensions[instance].obj?.waitForReady &&
-                        typeof this.extensions[instance].obj.waitForReady === 'function'
-                    ) {
-                        extensionPromises.push(
-                            new Promise<void>(resolve => {
-                                let timeout: ioBroker.Timeout | undefined = this.setTimeout(() => {
-                                    if (timeout) {
-                                        timeout = undefined;
-                                        this.log.error(
-                                            `Extension "${instance}" (${this.extensions[instance].path}) is not responding (waitForReady)`,
-                                        );
-                                        resolve();
-                                    }
-                                }, this.extensions[instance].obj!.waitForReadyTime || 5000);
-
-                                const ready = (): void => {
-                                    if (timeout) {
-                                        this.log.debug(`Connected extension "${this.extensions[instance].path}"`);
-                                        this.clearTimeout(timeout);
-                                        timeout = null;
-                                        resolve();
-                                    }
-                                };
-
-                                this.extensions[instance].obj!.waitForReady!(ready);
-                            }),
-                        );
-                    }
-                } catch (err) {
-                    this.log.error(`Cannot start extension "${instance}": ${err}`);
+            for (const instance of Object.keys(this.extensions)) {
+                const ready = this.startExtension(instance);
+                if (ready) {
+                    extensionPromises.push(ready);
                 }
-            });
+            }
         }
 
         void Promise.all(extensionPromises).then(() => {
@@ -3759,7 +4062,8 @@ export class WebAdapter extends Adapter {
 
                     this.extensions[instance] = {
                         path: `${name}/${ext[e].common.webExtension}`,
-                        config: ext[e],
+                        raw: ext[e],
+                        config: this.prepareExtensionConfig(ext[e]),
                     };
                 }
             }
