@@ -342,6 +342,48 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                             ) : null}
                             {native.auth ? (
                                 <CustomCheckbox
+                                    title="oidc_sso"
+                                    attr="ssoActive"
+                                    style={{ marginTop: 10 }}
+                                    native={native}
+                                    onChange={onChange}
+                                />
+                            ) : null}
+                            {native.auth && native.ssoActive ? (
+                                <>
+                                    <CustomInput
+                                        title="oidc_issuer"
+                                        attr="oidcIssuer"
+                                        style={{ marginTop: 10 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                    <CustomInput
+                                        title="oidc_client_id"
+                                        attr="oidcClientId"
+                                        style={{ marginTop: 10 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                    <CustomInput
+                                        title="oidc_client_secret"
+                                        attr="oidcClientSecret"
+                                        type="password"
+                                        style={{ marginTop: 10 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                    <CustomInput
+                                        title="oidc_scope"
+                                        attr="oidcScope"
+                                        style={{ marginTop: 10 }}
+                                        native={native}
+                                        onChange={onChange}
+                                    />
+                                </>
+                            ) : null}
+                            {native.auth ? (
+                                <CustomCheckbox
                                     title="oauth_authorization_code"
                                     attr="oauth"
                                     style={{ marginTop: 10 }}
@@ -374,7 +416,7 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     {I18n.t('oauth_https_warning')}
                                 </InfoBox>
                             ) : null}
-                            {native.auth && (native.oauth || native.cookieSameSiteNone) ? (
+                            {native.auth && (native.oauth || native.cookieSameSiteNone || native.ssoActive) ? (
                                 <CustomInput
                                     title="public_url"
                                     attr="publicUrl"
@@ -382,6 +424,29 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     native={native}
                                     onChange={onChange}
                                 />
+                            ) : null}
+                            {native.auth && native.ssoActive ? (
+                                <>
+                                    <InfoBox
+                                        style={{ marginTop: 20 }}
+                                        type="info"
+                                    >
+                                        <div>{I18n.t('oidc_callback_info')}</div>
+                                        <code>
+                                            {native.publicUrl?.trim()
+                                                ? `${native.publicUrl.trim().replace(/\/+$/, '')}/sso-callback`
+                                                : I18n.t('oidc_callback_dynamic')}
+                                        </code>
+                                    </InfoBox>
+                                    {!native.secure && !native.publicUrl?.trim().startsWith('https://') ? (
+                                        <InfoBox
+                                            style={{ marginTop: 20 }}
+                                            type="warning"
+                                        >
+                                            {I18n.t('oidc_https_warning')}
+                                        </InfoBox>
+                                    ) : null}
+                                </>
                             ) : null}
                             {native.auth && native.oauth ? (
                                 <CustomCheckbox

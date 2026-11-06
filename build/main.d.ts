@@ -13,6 +13,11 @@ export declare class WebAdapter extends Adapter {
     private webServer;
     private store;
     private secret;
+    private readonly normalizedCookieRequests;
+    private get sessionCookieName();
+    private normalizeCookieRequest;
+    private normalizeSocketCookieRequest;
+    private installSocketCookieNormalizer;
     private socketUrl;
     private readonly cache;
     /** Namespaces whose files are in {@link cache} and are therefore watched for changes */
@@ -188,6 +193,8 @@ export declare class WebAdapter extends Adapter {
         logged_in: boolean;
         user?: string;
     }) => void) => void;
+    private getUserListUser;
+    private getOidcConfig;
     initAuth(): void;
     /**
      * Externally reachable base URL, without a trailing slash. Behind a reverse proxy the

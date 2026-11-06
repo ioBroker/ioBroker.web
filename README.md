@@ -59,6 +59,9 @@ After the 15th wrong attempt, the user must wait 1 hour.
 If this options is selected, the user stays logged in for one month.
 If not, the user will stay logged in for the configured "login timeout".
 
+## Authentication cookies after an update
+Web names its session and access-token cookies after the adapter instance (for example, `web.0.sid` and `web.0.access_token`). This keeps a login on another adapter or port from being reused as the Web identity. After upgrading from a version that used the shared `connect.sid` and `access_token` names, sign in to Web once again. Web ignores but does not clear those generic cookies, so other adapters remain signed in. Socket.IO, pure WebSockets, and web extensions continue to use the Web identity; extensions can read it through the conventional `req.cookies['connect.sid']` and `req.cookies['access_token']` aliases.
+
 ## Access state's values
 You can access the normal state values via the HTTP get request.
 
@@ -272,6 +275,49 @@ The answer is like:
 ```         
 More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov-file#oauth2-support
 
+## Single sign-on (OIDC)
+Users can sign in to the login page with an OpenID Connect identity provider (e.g. Keycloak) instead of a password.
+The login page then shows an additional **Single sign-on** button, username and password stay available.
+
+Web uses the same account link as the admin adapter: the identity (`sub`) of the provider is stored in
+`common.externalAuthentication.oidc.sub` of an existing ioBroker user. **Web neither creates users nor links
+identities.** Link the user in the admin adapter first. An identity that is not linked is refused and the
+login page shows an error.
+
+Settings (they require **Authentication** to be enabled and are off by default):
+
+- **Single sign-on (OIDC)** - switches the feature on. Without issuer and client ID nothing is offered.
+- **OIDC issuer URL** - the address of the provider, e.g. `https://keycloak.example.com/realms/home`.
+- **OIDC client ID** - the client registered for this Web instance.
+- **OIDC client secret** - optional. Leave it empty for a public client, which then uses PKCE. The secret is stored encrypted.
+- **OIDC scopes** - default `openid profile email`. Only `openid` is needed, because only the `sub` is used.
+- **Public URL** - the external address of this server. The settings show the redirect URI to register at the
+  provider: `<public URL>/sso-callback`. Without a public URL, it is derived from the request, which is wrong behind a reverse proxy.
+
+What happens at login:
+
+- The result is handed to the login page as a one-time code and exchanged for the Web token. Tokens never
+  appear in the URL.
+- The [user list](#user-list) applies as for a password login: a linked user who is not allowed is refused,
+  and *access web interface as* a specific user is honored.
+- Session lifetime: the access token is valid for 1 hour and the refresh token for 30 days, the same values as
+  for a password login through `/oauth/token`. The *login timeout* setting does not change them.
+- The access-token cookie ends with the browser session. Unlike a password login, "Stay logged in" does not give it
+  a lifetime, it only decides where the login page keeps the tokens in the browser.
+- When the token has expired, the login page appears again. Another click on *Single sign-on* signs in without a
+  password as long as the session at the identity provider is still valid.
+- Signing out of Web ends only the Web session. The session at the identity provider stays, so the next click on
+  *Single sign-on* may sign in again without a password.
+
+### Setting up Keycloak
+The `sub` of a user is the same for all clients of a realm, so the link made in the admin adapter also works for Web.
+We recommend one client per adapter (e.g. one for admin and one for web) in the same realm:
+
+- Valid redirect URI: exactly `https://<host>:<port>/sso-callback` of the Web instance, no wildcard.
+- Enable only the *Standard flow*.
+- A token issued for the admin client is refused by Web, because its audience does not match.
+- Keycloak requires HTTPS for redirect URIs other than `localhost`. Enable encryption or set an HTTPS public URL.
+
 ## Authorizing third-party clients (OAuth)
 
 The token endpoint above requires the client to handle the user's ioBroker password. Clients that run
@@ -309,6 +355,8 @@ This is off by default. When enabled:
 * (@GermanBluefox) Web extensions can name paths below their adapter name that they protect themselves (`publicRoutes()`, see [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)). web hands such requests to the extension in front of its login, so a client with credentials of its own, e.g. an MCP client with the token of the adapter, is no longer refused with 401
 
 ### 9.2.0 (2026-11-05)
+* (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. The user list applies to it
+* (@matthiasnissen) Web uses cookies named after the adapter instance (`web.0.sid`, `web.0.access_token`), so a login on another adapter or port no longer overwrites or replaces the Web login. Users must sign in to Web once again after the update
 * (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
 * (@GermanBluefox) Web components written with React (see [`@iobroker/web-components`](https://github.com/ioBroker/web-components)) find React 19 and 18 as one ES module each at `/lib/esm/react-19.js` and `/lib/esm/react-18.js`, as in admin. Before, such a component failed to load under web, e.g. the flow diagram in vis-2
 
