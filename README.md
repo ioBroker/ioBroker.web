@@ -297,7 +297,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.5.0 (2026-11-06)
 * (@GermanBluefox) web, its socket clients and the web extensions no longer take subscriptions away from each other. js-controller keeps one subscription per pattern, so when an extension like rest-api gave up a state, the socket clients of web and the other extensions got no more changes of it either. web now notes who subscribed what and unsubscribes in the database only when nobody needs the pattern any more. What a stopped extension still holds is given up for it (#196)
 
 ### 9.4.0 (2026-11-05)
@@ -317,9 +317,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) The package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller
 * (@GermanBluefox) Admin 7.6.17 or newer is required
 * (@GermanBluefox) Added missing translations of the cookie and OAuth settings
-
-### 9.1.16 (2026-10-21)
-* (@GermanBluefox) The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 
