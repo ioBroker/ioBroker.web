@@ -32,6 +32,7 @@ import {
 } from './lib/utils';
 import { sendFile } from './lib/compressedFiles';
 import { PublicRoutes } from './lib/publicRoutes';
+import { shareSubscriptions, type AdapterSubscriptions, type CallerAdapter } from './lib/subscriptions';
 import {
     addedListeners,
     createExtensionApp,
@@ -395,8 +396,15 @@ export class WebAdapter extends Adapter {
             obj?: ExtAPI;
             /** Listeners the constructor added to the server and to this adapter, removed when the extension stops */
             listeners?: { emitter: NodeJS.EventEmitter; added: Listeners }[];
+            /** The adapter the extension got: its subscriptions are its own and are given up when it stops */
+            subscriber?: CallerAdapter<WebAdapter>;
         }
     > = {};
+    /**
+     * The subscriptions of web, its socket server and the extensions: one of them giving up a pattern does
+     * not take it away from the others (`lib/subscriptions.ts`)
+     */
+    private readonly subscriptions: AdapterSubscriptions<WebAdapter>;
     /** The routers of the running extensions. Dropping one takes all routes of its extension back */
     private readonly extensionRouters = new ExtensionRouters();
     /** The classes of the extensions this process loaded, by adapter name, with the code they came from */
@@ -466,6 +474,8 @@ export class WebAdapter extends Adapter {
             fileChange: (id: string, fileName: string, size: number | null): void =>
                 this.onFileChange(id, fileName, size),
         });
+        // Before anything subscribes: from here on, web subscribes as one of several
+        this.subscriptions = shareSubscriptions<WebAdapter>(this, message => this.log.warn(message));
     }
 
     onObjectChange(id: string, obj: ioBroker.Object | null | undefined): void {
@@ -960,6 +970,8 @@ export class WebAdapter extends Adapter {
         const added = (): { emitter: NodeJS.EventEmitter; added: Listeners }[] =>
             before.map(b => ({ emitter: b.emitter, added: addedListeners(b.emitter, b.listeners) }));
 
+        // The extension subscribes on its own: what it gives up, it gives up only for itself
+        const subscriber = this.subscriptions.adapterFor(instance);
         let ext: ExtAPI;
         try {
             const ExtClass = this.loadExtensionClass(instance);
@@ -976,7 +988,7 @@ export class WebAdapter extends Adapter {
                     defaultUser: this.config.defaultUser,
                     auth: this.config.auth,
                 },
-                this,
+                subscriber.adapter,
                 entry.config,
                 createExtensionApp(app, router),
                 this.webServer.io,
@@ -985,11 +997,13 @@ export class WebAdapter extends Adapter {
             this.log.error(`Cannot start extension "${instance}": ${err}`);
             // What the failed constructor added would stay without anybody to remove it
             added().forEach(a => removeListeners(a.emitter, a.added));
+            void subscriber.release();
             return null;
         }
 
         entry.obj = ext;
         entry.listeners = added();
+        entry.subscriber = subscriber;
         this.extensionRouters.set(instance, router);
 
         try {
@@ -1073,6 +1087,11 @@ export class WebAdapter extends Adapter {
                     `Extension "${instance}" left ${removed.length} listener(s) for "${removed.map(String).join('", "')}" behind after unload() - removed`,
                 );
             }
+        }
+        // What it did not unsubscribe itself. Only the database subscriptions nobody else holds end.
+        const released = await entry.subscriber?.release();
+        if (released) {
+            this.log.debug(`Gave up ${released} subscription(s) extension "${instance}" still held`);
         }
         this.log.info(`Extension "${instance}" stopped`);
     }
@@ -3560,12 +3579,15 @@ export class WebAdapter extends Adapter {
             // Used only for socket.io
             socketSettings.compatibilityV2 = this.config.compatibilityV2 !== false;
 
+            // The socket server counts the subscriptions of its clients and gives a pattern up when the last
+            // of them is gone - not knowing whether web or an extension still needs it
+            const socketAdapter = this.subscriptions.adapterFor('socket').adapter;
             try {
                 if (this.config.usePureWebSockets) {
                     this.webServer.io = new IOSocketClassWs(
                         this.webServer.server,
                         socketSettings,
-                        this,
+                        socketAdapter,
                         this.store!,
                         this.checkUser,
                     );
@@ -3573,7 +3595,7 @@ export class WebAdapter extends Adapter {
                     this.webServer.io = new IOSocketClassSocketIo(
                         this.webServer.server,
                         socketSettings,
-                        this,
+                        socketAdapter,
                         this.store!,
                         this.checkUser,
                     );

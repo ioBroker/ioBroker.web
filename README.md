@@ -297,6 +297,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) web, its socket clients and the web extensions no longer take subscriptions away from each other. js-controller keeps one subscription per pattern, so when an extension like rest-api gave up a state, the socket clients of web and the other extensions got no more changes of it either. web now notes who subscribed what and unsubscribes in the database only when nobody needs the pattern any more. What a stopped extension still holds is given up for it (#196)
+
 ### 9.4.0 (2026-11-05)
 * (@GermanBluefox) A changed web extension no longer restarts web every time: a write of its instance object that changes nothing is ignored, and a newly enabled extension is started while web keeps running. An extension that sets `supportsHotReload` is stopped and started again with its new settings, or just stopped when it is disabled - the sessions and socket connections of everybody else stay. A new version of an extension still restarts web. See [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)
 * (@GermanBluefox) Every web extension gets a router of its own, so web can take all of its routes back when it stops

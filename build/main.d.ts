@@ -22,6 +22,11 @@ export declare class WebAdapter extends Adapter {
     private socketioAlive;
     private lang;
     private readonly extensions;
+    /**
+     * The subscriptions of web, its socket server and the extensions: one of them giving up a pattern does
+     * not take it away from the others (`lib/subscriptions.ts`)
+     */
+    private readonly subscriptions;
     /** The routers of the running extensions. Dropping one takes all routes of its extension back */
     private readonly extensionRouters;
     /** The classes of the extensions this process loaded, by adapter name, with the code they came from */

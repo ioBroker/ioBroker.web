@@ -132,6 +132,28 @@ const dataDir = getAbsoluteInstanceDataDir(this.namespace);
 The same holds for everything else you would normally read off your own adapter object: `adapter` belongs
 to web, while `instanceSettings` is yours.
 
+### Subscriptions
+
+web, its socket clients and all extensions share one connection to the databases, and js-controller keeps
+one subscription per pattern there - no matter who asked for it. Up to web 9.4, the first
+`unsubscribeForeignStates()` of a pattern therefore ended it for everybody: an extension that gave up a state
+took it away from the socket clients of web and from the other extensions.
+
+Since 9.5.0 the subscriptions you make with `adapter` are your own:
+
+- web notes who holds which pattern. The database is subscribed for the first one and unsubscribed when the
+  last one gives it up. Your `unsubscribe…()` ends only your subscription.
+- As before, a pattern you subscribe twice is held once: one `unsubscribe…()` ends it.
+- Subscriptions of objects and files are checked against the user in `options` on every call, as before.
+- When your extension stops, web gives up whatever you still hold, and ignores what you ask for afterwards.
+- This covers `subscribeForeignStates()`, `subscribeStates()`, `subscribeForeignObjects()`,
+  `subscribeObjects()` with their `unsubscribe…()` and `…Async` variants, and
+  `subscribeForeignFiles()`/`unsubscribeForeignFiles()`. Patterns count as they are written: `hm-rpc.0.*`
+  and `hm-rpc.0.STATE` are two subscriptions.
+
+`stateChange()`, `objectChange()` and `fileChange()` still get every change web receives, including those of
+patterns that only others subscribed. Look at the id before you act on it.
+
 ### Paths with credentials of their own
 
 With authentication enabled, web lets no request through without its login, and the OAuth2 layer answers
@@ -196,9 +218,9 @@ class MyExtension {
 }
 ```
 
-Set it only if `unload()` gives back everything the extension took from web besides its routes:
+Set it only if `unload()` gives back everything the extension took from web besides its routes and its
+subscriptions:
 
-- subscriptions made with `adapter` (`unsubscribeForeignStates()`, `unsubscribeForeignObjects()`, ...),
 - timers and intervals,
 - child processes, open sockets and streams,
 - listeners on `adapter` or on `server`, like `adapter.on('message')` or `server.on('upgrade')`.
@@ -206,10 +228,12 @@ Set it only if `unload()` gives back everything the extension took from web besi
 What web does itself:
 
 - Before `unload()` is called, the routes and the public paths of the extension are gone, and it gets no
-  `stateChange()`, `objectChange()` or `fileChange()` any more.
+  `stateChange()`, `objectChange()` or `fileChange()` anymore.
 - `unload()` has 5 seconds.
 - Listeners the constructor added to `adapter` or to `server` that are still there after `unload()` are
   removed, with a warning in the log. Listeners added later are left alone.
+- Subscriptions the extension still holds after `unload()` are given up (see [Subscriptions](#subscriptions)).
+  Patterns that others hold too, stay subscribed for them.
 
 An error passed on by a middleware of the extension (`next(err)`) goes to the error handling of web; error
 handlers of other extensions do not see it.

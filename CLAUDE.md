@@ -87,6 +87,8 @@ Three independent Vite + React apps, each with their own `package.json` and `nod
 
 Other adapters register as web extensions via `webExtension` in their `io-package.json`. The `WebAdapter` loads them in `getExtensionsAndSettings()` and starts each one with `startExtension()`. An extension does not get the Express app itself but a proxy of it whose routes land in a router of its own (`src/lib/extensions.ts`); `ExtensionRouters` dispatches to these routers behind web's own routes, so an extension can be stopped (`stopExtension()`) by dropping its router. Changes of an extension's instance object go through `applyExtensionChange()`: ignored when nothing relevant changed, started/stopped/reloaded in place for extensions that set `supportsHotReload`, otherwise web restarts.
 
+Subscriptions are shared through `src/lib/subscriptions.ts`: js-controller keeps one database subscription per pattern for the whole process, so web counts the holders per pattern. The constructor replaces web's own `(un)subscribe…` methods (caller `web`); the socket server and every extension get a proxy of the adapter (`adapterFor(name)`) with their own caller, and `stopExtension()` releases what an extension still holds. The proxy binds all other methods to the real adapter, because js-controller's `Adapter` uses `#private` fields.
+
 ### Build Pipeline (`tasks.ts`)
 
 Uses `@iobroker/build-tools` for React builds with Vite, HTML patching, and file copying. The `prepublishOnly` script runs `node tasks.ts` (full build; executed by Node's native TypeScript type stripping) before npm publish.
