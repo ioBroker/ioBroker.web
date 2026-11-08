@@ -4,6 +4,8 @@
     "enterPassword": "Passwort",
     "login": "Einloggen",
     "loginTitle": "Web-Anmeldung",
+    "loginWithOidc": "Single Sign-on",
+    "oidcLoginFailed": "Single-Sign-On fehlgeschlagen. Prüfe die Kontoverknüpfung und versuche es erneut.",
     "ra_Change color theme": "Farbdesign ändern",
     "staySignedIn": "Angemeldet bleiben",
     "wrongPassword": "Falsches Passwort oder falscher Benutzername"

@@ -1679,6 +1679,46 @@ export class WebAdapter extends Adapter {
         });
     };
 
+    private getUserListUser(userName: string): ioBroker.ObjectIDs.User | undefined {
+        const longUser = (
+            userName.startsWith('system.user.') ? userName : `system.user.${userName}`
+        ) as ioBroker.ObjectIDs.User;
+        const settings = this.config.userListSettings;
+
+        if (!this.config.userListEnabled) {
+            return longUser;
+        }
+        if (!settings) {
+            return undefined;
+        }
+
+        const isAllowedUser = settings.users.includes(longUser);
+        const isAllowedGroup =
+            !isAllowedUser &&
+            !!this.ownGroups &&
+            (Object.keys(this.ownGroups) as ioBroker.ObjectIDs.Group[]).some(
+                groupId =>
+                    !!this.ownGroups![groupId]?.common.members.includes(longUser) && settings.groups.includes(groupId),
+            );
+
+        return isAllowedUser || isAllowedGroup ? settings.accessAsUser || longUser : undefined;
+    }
+
+    private getOidcConfig(): { issuer: string; clientId: string; clientSecret?: string; scope?: string } | undefined {
+        const issuer = (this.config.oidcIssuer || '').trim();
+        const clientId = (this.config.oidcClientId || '').trim();
+        if (!this.config.auth || !this.config.ssoActive || !issuer || !clientId) {
+            return undefined;
+        }
+
+        return {
+            issuer,
+            clientId,
+            clientSecret: this.config.oidcClientSecret || undefined,
+            scope: (this.config.oidcScope || '').trim() || undefined,
+        };
+    }
+
     initAuth(): void {
         if (!this.webServer.app) {
             return;
@@ -1718,6 +1758,12 @@ export class WebAdapter extends Adapter {
             baseUrl: this.config.publicUrl || undefined,
             dynamicClientRegistration: this.config.oauthDynamicRegistration !== false,
             productName: 'ioBroker',
+            oidc: this.getOidcConfig(),
+            ssoHandoff: 'code',
+            resolveSsoUser: userName => {
+                const mappedUser = this.getUserListUser(userName);
+                return mappedUser?.replace(/^system\.user\./, '');
+            },
         });
 
         if (this.config.oauth && !this.config.auth) {
@@ -2028,7 +2074,8 @@ export class WebAdapter extends Adapter {
             .replaceAll(`'@@loadingHideLogo@@'`, this.config.loadingHideLogo ? 'true' : 'false')
             .replaceAll(`"@@loadingHideLogo@@"`, this.config.loadingHideLogo ? 'true' : 'false')
             .replaceAll(`@@loginLanguage@@`, this.lang || '')
-            .replaceAll(`@@loginOauth2@@`, this.config.loginOauth2 ? 'true' : 'false');
+            .replaceAll(`@@loginOauth2@@`, this.config.loginOauth2 ? 'true' : 'false')
+            .replaceAll(`@@loginSso@@`, this.getOidcConfig() ? 'true' : 'false');
     }
 
     /**
@@ -2583,42 +2630,16 @@ export class WebAdapter extends Adapter {
                         ): void => {
                             // replace user
                             if (user?.user && this.config.userListEnabled) {
-                                // get the user group
                                 const longUser: ioBroker.ObjectIDs.User = user.user.startsWith('system.user.')
                                     ? (user.user as ioBroker.ObjectIDs.User)
                                     : `system.user.${user.user}`;
-                                user.user = '';
-                                if (this.config.userListSettings.users.includes(longUser)) {
-                                    if (this.config.userListSettings.accessAsUser) {
-                                        user.user = this.config.userListSettings.accessAsUser;
-                                    } else {
-                                        user.user = longUser;
-                                    }
-                                } else {
-                                    // A user can be a member of several groups, and any one of them
-                                    // on the list grants access. Looking only at the first group the
-                                    // user happens to be a member of would reject them whenever that
-                                    // group is not the listed one.
-                                    const allowedGroup: ioBroker.ObjectIDs.Group | undefined = this.ownGroups
-                                        ? (Object.keys(this.ownGroups) as ioBroker.ObjectIDs.Group[]).find(
-                                              (groupId): boolean =>
-                                                  !!this.ownGroups![groupId]?.common.members.includes(longUser) &&
-                                                  this.config.userListSettings.groups.includes(groupId),
-                                          )
-                                        : undefined;
-                                    if (allowedGroup) {
-                                        if (this.config.userListSettings.accessAsUser) {
-                                            user.user = this.config.userListSettings.accessAsUser;
-                                        } else {
-                                            user.user = longUser;
-                                        }
-                                    }
-                                }
-                                if (!user?.user) {
+                                const mappedUser = this.getUserListUser(longUser);
+                                if (!mappedUser) {
+                                    user.user = '';
                                     this.log.warn(`User ${longUser} is not in the user list`);
                                 } else {
-                                    this.log.debug(`User ${longUser} threaded as ${user.user}`);
-                                    user.user = user.user.substring('system.user.'.length);
+                                    this.log.debug(`User ${longUser} threaded as ${mappedUser}`);
+                                    user.user = mappedUser.substring('system.user.'.length);
                                 }
                             }
 
@@ -3779,7 +3800,8 @@ export class WebAdapter extends Adapter {
                             const isAuthenticated =
                                 !this.config.auth || req.isAuthenticated?.() || (!req.isAuthenticated && req.user);
 
-                            if (isAuthenticated || this.isInWhiteList(req)) {
+                            const hasSsoCode = typeof req.query.ssoCode === 'string' && !!req.query.ssoCode;
+                            if ((isAuthenticated || this.isInWhiteList(req)) && !hasSsoCode) {
                                 res.redirect(getRedirectPage(req));
                                 return;
                             }

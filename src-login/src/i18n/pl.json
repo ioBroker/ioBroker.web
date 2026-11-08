@@ -4,6 +4,8 @@
     "enterPassword": "Hasło",
     "login": "Zaloguj się",
     "loginTitle": "Logowanie przez sieć",
+    "loginWithOidc": "Logowanie jednokrotne",
+    "oidcLoginFailed": "Logowanie jednokrotne nie powiodło się. Sprawdź powiązanie konta i spróbuj ponownie.",
     "ra_Change color theme": "Zmień motyw kolorów",
     "staySignedIn": "Pozostań zalogowany",
     "wrongPassword": "Nieprawidłowe hasło lub nazwa użytkownika"

@@ -75,7 +75,7 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha test/testRedirect.js test/testReadBody.js test/testPublicRoutes.js test/testExtensions.js test/testSubscriptions.js --exit",
-    "test:integration": "mocha test/testNoAuthSSL.js test/testNoAuthNoSSL.js --exit",
+    "test:integration": "mocha test/testNoAuthSSL.js test/testNoAuthNoSSL.js test/testOidc.js --exit",
     "test:package": "mocha test/testPackageFiles.js --exit",
     "prepublishOnly": "node tasks.ts",
     "build-backend": "tsc -p tsconfig.build.json && node tasks.ts --5-post-backend",

@@ -210,6 +210,11 @@
     "loginBackgroundColor": "",
     "loginBackgroundImage": false,
     "loginOauth2": false,
+    "ssoActive": false,
+    "oidcIssuer": "",
+    "oidcClientId": "",
+    "oidcClientSecret": "",
+    "oidcScope": "openid profile email",
     "oauth": false,
     "oauthDynamicRegistration": true,
     "publicUrl": "",
@@ -226,6 +231,12 @@
     "usePureWebSockets": true,
     "whiteListEnabled": false
   },
+  "protectedNative": [
+    "oidcClientSecret"
+  ],
+  "encryptedNative": [
+    "oidcClientSecret"
+  ],
   "instanceObjects": [
     {
       "_id": "",
