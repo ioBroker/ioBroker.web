@@ -82,6 +82,11 @@ Three independent Vite + React apps, each with their own `package.json` and `nod
 - `GET /adapter/:name/*` - Serve other adapter's admin files
 - `GET /` - Welcome page (index.html with injected settings)
 - `GET /config.json` - Web adapter settings for frontend consumption
+- `GET /sso`, `GET /sso-callback`, `POST /sso-token` - OpenID Connect single sign-on; only exist when `auth` and `ssoActive` are on and issuer and client ID are set (routes come from `@iobroker/webserver`)
+
+### Single sign-on (OIDC)
+
+The OIDC client is the one of `@iobroker/webserver` (`oidc` and `ssoHandoff: 'code'` options of `createOAuth2Server`, see `initAuth()` and `getOidcConfig()` in `src/main.ts`). The identity (`sub`) is matched with `common.externalAuthentication.oidc.sub` of an existing user; web never creates users or links. The user list is applied through `getUserListUser()` (shared with the password login callback), which is passed to the library as `resolveSsoUser` and runs **before** the tokens are created. `resolveSsoUser` needs `@iobroker/webserver` >= 3.5.0; an older version ignores it and the user list would not apply to SSO. The login page (`src-login`) shows the SSO button when `@@loginSso@@` is true and exchanges `?ssoCode=` via `POST /sso-token`. `test/testOidc.js` runs against a fake identity provider.
 
 ### Extensions System
 
