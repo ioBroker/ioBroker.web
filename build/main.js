@@ -1400,6 +1400,10 @@ class WebAdapter extends adapter_core_1.Adapter {
         (0, webserver_1.createOAuth2Server)(this, {
             app: this.webServer.app,
             secure: this.config.secure,
+            // "Login timeout" of the settings: without it the access token always expired after 1 hour.
+            // The refresh token lives at least one month like the "stay logged in" session, but never shorter than the access token.
+            accessLifetime: this.config.ttl,
+            refreshLifetime: Math.max(this.config.ttl, ONE_MONTH_SEC),
             loginPage: LOGIN_PAGE,
             authorizationCode: !!this.config.auth && !!this.config.oauth,
             baseUrl: this.config.publicUrl || undefined,
