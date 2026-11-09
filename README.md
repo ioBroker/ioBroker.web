@@ -297,7 +297,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.5.1 (2026-11-09)
 * (@GermanBluefox) The setting "Login timeout" (`ttl`) applies to the OAuth2 access token now. Before, the access token always expired after 1 hour, whatever was set. The refresh token lives at least 30 days, or as long as the access token if that is longer
 * (@GermanBluefox) Updated `@iobroker/socket-classes` to 2.10.4: a logged-in user without the permission `other.sendto` may now send `checkLicense` to vis and `dm:loadItems` to devices, so that widgets with a license and the device tiles work for users who may only look. Also: no more "REAUTHENTICATE!" log flood, and the host commands `readDiskDir` and `deleteDiskFile` need the permission for `cmdExec`
 
@@ -315,12 +315,6 @@ This is off by default. When enabled:
 ### 9.2.0 (2026-11-05)
 * (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
 * (@GermanBluefox) Web components written with React (see [`@iobroker/web-components`](https://github.com/ioBroker/web-components)) find React 19 and 18 as one ES module each at `/lib/esm/react-19.js` and `/lib/esm/react-18.js`, as in admin. Before, such a component failed to load under web, e.g. the flow diagram in vis-2
-
-### 9.1.17 (2026-10-30)
-* (@GermanBluefox) Fixed mode of adapter
-* (@GermanBluefox) The package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller
-* (@GermanBluefox) Admin 7.6.17 or newer is required
-* (@GermanBluefox) Added missing translations of the cookie and OAuth settings
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

@@ -1,4 +1,10 @@
 # Older changes
+## 9.1.17 (2026-10-30)
+* (@GermanBluefox) Fixed mode of adapter
+* (@GermanBluefox) The package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller
+* (@GermanBluefox) Admin 7.6.17 or newer is required
+* (@GermanBluefox) Added missing translations of the cookie and OAuth settings
+
 ## 9.1.16 (2026-10-21)
 * (@GermanBluefox) The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it
 
