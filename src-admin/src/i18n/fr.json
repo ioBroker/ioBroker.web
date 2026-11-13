@@ -85,6 +85,7 @@
     "oidc_issuer": "URL de l'émetteur OIDC",
     "oidc_scope": "Portées OIDC",
     "oidc_sso": "Authentification unique (OIDC)",
+    "oidc_user_list_conflict": "L'authentification unique ne peut pas être utilisée avec la liste d'accès des utilisateurs : « accéder à l'interface web en tant que » placerait un autre utilisateur dans la connexion, qui est aussi valable dans admin. L'authentification unique reste désactivée tant que la liste d'accès des utilisateurs est activée.",
     "only for this instance": "uniquement pour ce cas",
     "open_ip": "Écoutez sur toutes les adresses IP",
     "place_the_files_here": "Placez les fichiers ici",

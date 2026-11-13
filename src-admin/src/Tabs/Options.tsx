@@ -346,8 +346,18 @@ export default class Options extends Component<OptionsProps, OptionsState> {
                                     attr="ssoActive"
                                     style={{ marginTop: 10 }}
                                     native={native}
+                                    // Only switching off stays possible, if both are on from an older configuration
+                                    disabled={native.userListEnabled && !native.ssoActive}
                                     onChange={onChange}
                                 />
+                            ) : null}
+                            {native.auth && native.userListEnabled ? (
+                                <InfoBox
+                                    style={{ marginTop: 10 }}
+                                    type={native.ssoActive ? 'warning' : 'info'}
+                                >
+                                    {I18n.t('oidc_user_list_conflict')}
+                                </InfoBox>
                             ) : null}
                             {native.auth && native.ssoActive ? (
                                 <>

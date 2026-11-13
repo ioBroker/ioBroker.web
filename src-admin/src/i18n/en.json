@@ -85,6 +85,7 @@
     "oidc_issuer": "OIDC issuer URL",
     "oidc_scope": "OIDC scopes",
     "oidc_sso": "Single sign-on (OIDC)",
+    "oidc_user_list_conflict": "Single sign-on cannot be used together with the user access list: \"access web interface as\" would put another user into the login, which is valid in admin too. Single sign-on stays off while the user access list is enabled.",
     "only for this instance": "only for this instance",
     "open_ip": "Listen on all IPs",
     "place_the_files_here": "place the files here",

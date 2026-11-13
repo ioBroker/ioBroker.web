@@ -85,6 +85,7 @@
     "oidc_issuer": "Adres URL wystawcy OIDC",
     "oidc_scope": "Zakresy OIDC",
     "oidc_sso": "Logowanie jednokrotne (OIDC)",
+    "oidc_user_list_conflict": "Jednokrotnego logowania nie można używać razem z listą dostępu użytkowników: \"dostęp do interfejsu WWW jako\" umieściłby w logowaniu innego użytkownika, które jest ważne także w admin. Jednokrotne logowanie pozostaje wyłączone, dopóki lista dostępu użytkowników jest włączona.",
     "only for this instance": "tylko w tym przypadku",
     "open_ip": "Posłuchaj na wszystkich IP",
     "place_the_files_here": "umieść pliki tutaj",

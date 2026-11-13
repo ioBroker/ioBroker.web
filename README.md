@@ -284,6 +284,7 @@ login page shows an error.
 Settings (they require **Authentication** to be enabled and are off by default):
 
 - **Single sign-on (OIDC)** - switches the feature on. Without issuer and client ID nothing is offered.
+  It cannot be used together with the [user list](#user-list), see below.
 - **OIDC issuer URL** - the address of the provider, e.g. `https://keycloak.example.com/realms/home`.
 - **OIDC client ID** - the client registered for this Web instance.
 - **OIDC client secret** - optional. Leave it empty for a public client, which then uses PKCE. The secret is stored encrypted.
@@ -295,8 +296,7 @@ What happens at login:
 
 - The result is handed to the login page as a one-time code and exchanged for the Web token. Tokens never
   appear in the URL.
-- The [user list](#user-list) applies as for a password login: a linked user who is not allowed is refused,
-  and *access web interface as* a specific user is honored.
+- The user signs in as the linked ioBroker user and as nobody else.
 - Session lifetime: the access token is valid for 1 hour and the refresh token for 30 days, the same values as
   for a password login through `/oauth/token`. The *login timeout* setting does not change them.
 - The access-token cookie ends with the browser session. Unlike a password login, "Stay logged in" does not give it
@@ -305,6 +305,13 @@ What happens at login:
   password as long as the session at the identity provider is still valid.
 - Signing out of Web ends only the Web session. The session at the identity provider stays, so the next click on
   *Single sign-on* may sign in again without a password.
+
+### Single sign-on and the user list
+Single sign-on and the [user list](#user-list) exclude each other. With *access web interface as*, the user list
+would put another user into the token of the login, and this token is valid for the admin adapter and all other
+adapters too: a user could get the rights of the selected user there as well. The settings therefore offer only one
+of the two. If both are switched on (e.g. by an older configuration), Web keeps single sign-on off and writes a
+warning to the log, so the user list still applies.
 
 ### Setting up Keycloak
 The `sub` of a user is the same for all clients of a realm, so the link made in the admin adapter also works for Web.
@@ -341,7 +348,7 @@ This is off by default. When enabled:
 	### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
-* (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. The user list applies to it
+* (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list
 
 ### 9.5.1 (2026-11-09)
 * (@GermanBluefox) The setting "Login timeout" (`ttl`) applies to the OAuth2 access token now. Before, the access token always expired after 1 hour, whatever was set. The refresh token lives at least 30 days, or as long as the access token if that is longer

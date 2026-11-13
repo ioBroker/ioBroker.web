@@ -1704,10 +1704,17 @@ export class WebAdapter extends Adapter {
         return isAllowedUser || isAllowedGroup ? settings.accessAsUser || longUser : undefined;
     }
 
+    /**
+     * Configuration of the identity provider for the single sign-on, or undefined if it is not offered.
+     *
+     * Not together with the user list: its "access web interface as" would put another user into the
+     * token, and the token is valid for admin and every other adapter too. The single sign-on stays off
+     * then, and not the user list, so that a configuration with both never lets in more users than before.
+     */
     private getOidcConfig(): { issuer: string; clientId: string; clientSecret?: string; scope?: string } | undefined {
         const issuer = (this.config.oidcIssuer || '').trim();
         const clientId = (this.config.oidcClientId || '').trim();
-        if (!this.config.auth || !this.config.ssoActive || !issuer || !clientId) {
+        if (!this.config.auth || !this.config.ssoActive || this.config.userListEnabled || !issuer || !clientId) {
             return undefined;
         }
 
@@ -1760,11 +1767,11 @@ export class WebAdapter extends Adapter {
             productName: 'ioBroker',
             oidc: this.getOidcConfig(),
             ssoHandoff: 'code',
-            resolveSsoUser: userName => {
-                const mappedUser = this.getUserListUser(userName);
-                return mappedUser?.replace(/^system\.user\./, '');
-            },
         });
+
+        if (this.config.auth && this.config.ssoActive && this.config.userListEnabled) {
+            this.log.warn('Single sign-on cannot be used together with the user list. Single sign-on stays off.');
+        }
 
         if (this.config.oauth && !this.config.auth) {
             this.log.warn('OAuth is configured but ignored: it requires authentication to be enabled');

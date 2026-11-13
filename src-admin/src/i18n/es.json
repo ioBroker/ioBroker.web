@@ -85,6 +85,7 @@
     "oidc_issuer": "URL del emisor de OIDC",
     "oidc_scope": "Ámbitos de OIDC",
     "oidc_sso": "Inicio de sesión único (OIDC)",
+    "oidc_user_list_conflict": "El inicio de sesión único no se puede usar junto con la lista de acceso de usuarios: \"acceder a la interfaz web como\" pondría a otro usuario en el inicio de sesión, que también es válido en admin. El inicio de sesión único permanece desactivado mientras la lista de acceso de usuarios esté activada.",
     "only for this instance": "solo para esta instancia",
     "open_ip": "Escuchar en todas las direcciones IP",
     "place_the_files_here": "coloca los archivos aquí",

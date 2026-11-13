@@ -3,20 +3,18 @@ const setup = require('@iobroker/legacy-testing');
 const axios = require('axios');
 const assert = require('node:assert');
 const { createServer } = require('node:http');
-const { createHash, generateKeyPairSync, randomBytes, sign } = require('node:crypto');
+const { generateKeyPairSync, sign } = require('node:crypto');
 const webPort = 18804;
-const defaultUserListWebPort = 18805;
+const userListWebPort = 18805;
 const clientId = 'web-test-client';
 const unlinkedUser = 'oidc-unlinked-test-user';
 const linkedUser = 'oidc-linked-test-user';
 const linkedSubject = 'oidc-linked-test-subject';
-const mappedUser = 'oidc-mapped-test-user';
 let objects;
 let states;
 let issuerServer;
 let issuer;
 let nonce;
-let mappedAccessCookie;
 let tokenSubject = unlinkedUser;
 let signingKey;
 let signingJwk;
@@ -115,88 +113,104 @@ async function waitForAdapter(port) {
     throw new Error(`Web adapter HTTP listener did not become ready on port ${port}`);
 }
 
+/**
+ * Start web with a local identity provider
+ *
+ * @param port the port of web
+ * @param native settings on top of a configured single sign-on
+ */
+async function startWeb(port, native) {
+    await startIssuer();
+    setup.adapterStarted = false;
+
+    await new Promise((resolve, reject) => {
+        setup.setupController(async () => {
+            try {
+                const config = await setup.getAdapterConfig();
+                config.common.enabled = true;
+                config.common.loglevel = 'debug';
+                config.native = {
+                    ...config.native,
+                    auth: true,
+                    port,
+                    secure: false,
+                    cache: false,
+                    usePureWebSockets: false,
+                    ssoActive: true,
+                    oidcIssuer: issuer,
+                    oidcClientId: clientId,
+                    oidcClientSecret: '',
+                    oidcScope: 'openid profile email',
+                    publicUrl: `http://localhost:${port}`,
+                    ...native,
+                };
+
+                await setup.setAdapterConfig(config.common, config.native);
+                setup.startController(true, null, null, (_objects, _states) => {
+                    objects = _objects;
+                    states = _states;
+                    resolve();
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    });
+
+    await waitForAdapter(port);
+}
+
+function stopWeb(done) {
+    setup.stopController(normalTerminated => {
+        issuerServer.close(() => {
+            assert.ok(normalTerminated);
+            done();
+        });
+    });
+}
+
+/**
+ * Start a single sign-on and let the identity provider come back with a code
+ *
+ * @param baseUrl the address of web
+ * @param code the code the identity provider hands back
+ */
+async function runSso(baseUrl, code) {
+    const start = await axios.get(`${baseUrl}/sso`, {
+        params: { method: 'login', redirectUrl: `${baseUrl}/login/index.html` },
+        maxRedirects: 0,
+        validateStatus: () => true,
+    });
+    assert.strictEqual(start.status, 302);
+    const authorizationUrl = new URL(start.headers.location, baseUrl);
+    assert.strictEqual(authorizationUrl.origin, issuer);
+    nonce = authorizationUrl.searchParams.get('nonce');
+    assert.ok(nonce, `OIDC start redirected to ${authorizationUrl}`);
+
+    return axios.get(`${baseUrl}/sso-callback`, {
+        params: { code, state: authorizationUrl.searchParams.get('state') },
+        maxRedirects: 0,
+        validateStatus: () => true,
+    });
+}
+
 describe('OIDC authentication', function () {
+    const baseUrl = `http://localhost:${webPort}`;
+
     before('Start Web with a local OIDC issuer', async function () {
         this.timeout(600000);
-        await startIssuer();
-        setup.adapterStarted = false;
-
-        await new Promise((resolve, reject) => {
-            setup.setupController(async () => {
-                try {
-                    const config = await setup.getAdapterConfig();
-                    config.common.enabled = true;
-                    config.common.loglevel = 'debug';
-                    config.native = {
-                        ...config.native,
-                        auth: true,
-                        oauth: true,
-                        port: webPort,
-                        secure: false,
-                        cache: false,
-                        usePureWebSockets: false,
-                        ssoActive: true,
-                        oidcIssuer: issuer,
-                        oidcClientId: clientId,
-                        oidcClientSecret: '',
-                        oidcScope: 'openid profile email',
-                        publicUrl: `http://localhost:${webPort}`,
-                        userListEnabled: true,
-                        userListSettings: {
-                            users: ['system.user.admin', `system.user.${linkedUser}`],
-                            accessAsUser: `system.user.${mappedUser}`,
-                            groups: [],
-                        },
-                    };
-
-                    await setup.setAdapterConfig(config.common, config.native);
-                    setup.startController(true, null, null, (_objects, _states) => {
-                        objects = _objects;
-                        states = _states;
-                        resolve();
-                    });
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        });
-
-        await waitForAdapter(webPort);
-        await objects.setObject(`system.user.${mappedUser}`, {
-            _id: `system.user.${mappedUser}`,
-            type: 'user',
-            common: { name: mappedUser, groups: [] },
-            native: {},
-        });
+        await startWeb(webPort, { oauth: true, userListEnabled: false });
     });
 
     it('rejects an unlinked OIDC subject without creating a user or session', async function () {
         this.timeout(10000);
-        const baseUrl = `http://localhost:${webPort}`;
-        const redirectUrl = `${baseUrl}/login/index.html`;
         const loginPage = await axios.get(`${baseUrl}/login/index.html`);
         assert.ok(loginPage.data.includes("window.loginSso = 'true'"));
-        const start = await axios.get(`${baseUrl}/sso`, {
-            params: { method: 'login', redirectUrl },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
 
-        assert.strictEqual(start.status, 302);
-        assert.ok(start.headers.location, JSON.stringify(start.headers));
-        const authorizationUrl = new URL(start.headers.location, baseUrl);
-        assert.strictEqual(authorizationUrl.origin, issuer);
-        nonce = authorizationUrl.searchParams.get('nonce');
-        assert.ok(nonce, `OIDC start redirected to ${authorizationUrl}`);
-
-        const callback = await axios.get(`${baseUrl}/sso-callback`, {
-            params: { code: 'unlinked-subject-code', state: authorizationUrl.searchParams.get('state') },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
+        tokenSubject = unlinkedUser;
+        const callback = await runSso(baseUrl, 'unlinked-subject-code');
 
         assert.strictEqual(callback.status, 302);
-        assert.ok(callback.headers.location, JSON.stringify(callback.headers));
         const callbackUrl = new URL(callback.headers.location);
         assert.strictEqual(callbackUrl.pathname, '/login/index.html');
         assert.strictEqual(callbackUrl.searchParams.has('ssoCode'), false);
@@ -204,44 +218,26 @@ describe('OIDC authentication', function () {
         assert.strictEqual(await objects.getObjectAsync(`system.user.${unlinkedUser}`), null);
     });
 
-    it('applies the user-list account to a linked OIDC user', async function () {
+    it('signs a linked OIDC user in as this user, with a one-time code instead of tokens in the URL', async function () {
         this.timeout(10000);
         await objects.setObject(`system.user.${linkedUser}`, {
             _id: `system.user.${linkedUser}`,
             type: 'user',
             common: {
                 name: linkedUser,
+                enabled: true,
                 externalAuthentication: { oidc: { sub: linkedSubject } },
             },
             native: {},
         });
 
         tokenSubject = linkedSubject;
-        const baseUrl = `http://localhost:${webPort}`;
-        const start = await axios.get(`${baseUrl}/sso`, {
-            params: {
-                method: 'login',
-                redirectUrl: `${baseUrl}/login/index.html`,
-            },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
-        const authorizationUrl = new URL(start.headers.location, baseUrl);
-        nonce = authorizationUrl.searchParams.get('nonce');
-
-        const callback = await axios.get(`${baseUrl}/sso-callback`, {
-            params: { code: 'linked-subject-code', state: authorizationUrl.searchParams.get('state') },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
+        const callback = await runSso(baseUrl, 'linked-subject-code');
         assert.strictEqual(callback.status, 302);
-        mappedAccessCookie = callback.headers['set-cookie']
+        const accessCookie = callback.headers['set-cookie']
             ?.find(cookie => cookie.startsWith('access_token='))
             ?.split(';')[0];
-        assert.ok(
-            mappedAccessCookie,
-            `SSO should set the mapped user access-token cookie: ${JSON.stringify(callback.headers['set-cookie'])}`,
-        );
+        assert.ok(accessCookie, `SSO should set the access-token cookie: ${JSON.stringify(callback.headers)}`);
 
         const callbackUrl = new URL(callback.headers.location);
         const ssoCode = callbackUrl.searchParams.get('ssoCode');
@@ -253,107 +249,16 @@ describe('OIDC authentication', function () {
         assert.strictEqual(exchange.status, 200);
         assert.ok(exchange.data.access_token);
         assert.ok(exchange.data.refresh_token);
-        assert.strictEqual(mappedAccessCookie.split('=')[1], exchange.data.access_token);
+        assert.strictEqual(accessCookie.split('=')[1], exchange.data.access_token);
 
+        // The token carries the user who signed in, never another one: it is valid for admin too
         const userResponse = await axios.get(`${baseUrl}/getUser`, {
-            headers: { Cookie: mappedAccessCookie },
+            headers: { Authorization: `Bearer ${exchange.data.access_token}` },
         });
-        assert.strictEqual(userResponse.data.user, mappedUser);
-    });
-
-    it('does not reapply the user-list mapping to an authorization-code session user', async function () {
-        this.timeout(10000);
-        const baseUrl = `http://localhost:${webPort}`;
-        const redirectUri = 'http://localhost/oauth-callback';
-        const registration = await axios.post(`${baseUrl}/oauth/register`, {
-            client_name: 'User List regression test',
-            redirect_uris: [redirectUri],
-        });
-        assert.strictEqual(registration.status, 201);
-
-        assert.ok(mappedAccessCookie, 'run after the mapped OIDC login test');
-
-        const verifier = randomBytes(32).toString('base64url');
-        const challenge = createHash('sha256').update(verifier).digest('base64url');
-        const authorize = await axios.get(`${baseUrl}/oauth/authorize`, {
-            params: {
-                response_type: 'code',
-                client_id: registration.data.client_id,
-                redirect_uri: redirectUri,
-                code_challenge: challenge,
-                code_challenge_method: 'S256',
-            },
-            headers: { Cookie: mappedAccessCookie },
-        });
-        const requestId = authorize.data.match(/name="request_id" value="([^"]+)"/)?.[1];
-        assert.ok(requestId, 'authorization page should contain a request id');
-        assert.ok(authorize.data.includes(mappedUser), 'consent should use the mapped session user');
-
-        const consent = await axios.post(
-            `${baseUrl}/oauth/authorize`,
-            new URLSearchParams({ action: 'allow', request_id: requestId }),
-            { headers: { Cookie: mappedAccessCookie }, maxRedirects: 0, validateStatus: () => true },
-        );
-        assert.strictEqual(consent.status, 302);
-        const authorizationCode = new URL(consent.headers.location).searchParams.get('code');
-        assert.ok(authorizationCode, 'consent should return an authorization code');
-
-        const token = await axios.post(
-            `${baseUrl}/oauth/token`,
-            new URLSearchParams({
-                grant_type: 'authorization_code',
-                code: authorizationCode,
-                code_verifier: verifier,
-                client_id: registration.data.client_id,
-                redirect_uri: redirectUri,
-            }),
-        );
-        assert.strictEqual(token.status, 200);
-        const userResponse = await axios.get(`${baseUrl}/getUser`, {
-            headers: { Authorization: `Bearer ${token.data.access_token}` },
-        });
-        assert.strictEqual(userResponse.data.user, mappedUser);
-    });
-
-    it('rejects a linked OIDC user outside the user list', async function () {
-        const deniedUser = 'oidc-denied-test-user';
-        const deniedSubject = 'oidc-denied-test-subject';
-        await objects.setObject(`system.user.${deniedUser}`, {
-            _id: `system.user.${deniedUser}`,
-            type: 'user',
-            common: {
-                name: deniedUser,
-                externalAuthentication: { oidc: { sub: deniedSubject } },
-            },
-            native: {},
-        });
-
-        tokenSubject = deniedSubject;
-        const baseUrl = `http://localhost:${webPort}`;
-        const start = await axios.get(`${baseUrl}/sso`, {
-            params: {
-                method: 'login',
-                redirectUrl: `${baseUrl}/login/index.html`,
-            },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
-        const authorizationUrl = new URL(start.headers.location, baseUrl);
-        nonce = authorizationUrl.searchParams.get('nonce');
-
-        const callback = await axios.get(`${baseUrl}/sso-callback`, {
-            params: { code: 'denied-subject-code', state: authorizationUrl.searchParams.get('state') },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
-
-        assert.strictEqual(callback.status, 302);
-        assert.strictEqual(new URL(callback.headers.location).searchParams.has('ssoCode'), false);
-        assert.strictEqual(callback.headers['set-cookie'], undefined);
+        assert.strictEqual(userResponse.data.user, linkedUser);
     });
 
     it('serves the SSO handoff page even when the browser already has a session', async function () {
-        const baseUrl = `http://localhost:${webPort}`;
         const login = await axios.post(
             `${baseUrl}/login`,
             new URLSearchParams({ username: 'admin', password: 'iobroker' }),
@@ -375,7 +280,7 @@ describe('OIDC authentication', function () {
     it('continues to accept the local username and password grant', async function () {
         this.timeout(10000);
         const response = await axios.post(
-            `http://localhost:${webPort}/oauth/token`,
+            `${baseUrl}/oauth/token`,
             new URLSearchParams({
                 grant_type: 'password',
                 username: 'admin',
@@ -392,103 +297,48 @@ describe('OIDC authentication', function () {
 
     after('Stop Web and the local OIDC issuer', function (done) {
         this.timeout(15000);
-        setup.stopController(normalTerminated => {
-            issuerServer.close(() => {
-                assert.ok(normalTerminated);
-                done();
-            });
-        });
+        stopWeb(done);
     });
 });
 
-describe('OIDC authentication with the default User List setting', function () {
-    before('Start Web with OIDC and the User List disabled', async function () {
+describe('OIDC authentication together with the user list', function () {
+    const baseUrl = `http://localhost:${userListWebPort}`;
+
+    before('Start Web with OIDC and the user list enabled', async function () {
         this.timeout(600000);
-        await startIssuer();
-        setup.adapterStarted = false;
-
-        await new Promise((resolve, reject) => {
-            setup.setupController(async () => {
-                try {
-                    const config = await setup.getAdapterConfig();
-                    config.common.enabled = true;
-                    config.common.loglevel = 'debug';
-                    config.native = {
-                        ...config.native,
-                        auth: true,
-                        port: defaultUserListWebPort,
-                        secure: false,
-                        cache: false,
-                        ssoActive: true,
-                        oidcIssuer: issuer,
-                        oidcClientId: clientId,
-                        oidcClientSecret: '',
-                        oidcScope: 'openid profile email',
-                        publicUrl: `http://localhost:${defaultUserListWebPort}`,
-                        userListEnabled: false,
-                    };
-
-                    await setup.setAdapterConfig(config.common, config.native);
-                    setup.startController(true, null, null, (_objects, _states) => {
-                        objects = _objects;
-                        states = _states;
-                        resolve();
-                    });
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        });
-
-        await waitForAdapter(defaultUserListWebPort);
-        await objects.setObject(`system.user.${linkedUser}`, {
-            _id: `system.user.${linkedUser}`,
-            type: 'user',
-            common: {
-                name: linkedUser,
-                externalAuthentication: { oidc: { sub: linkedSubject } },
+        await startWeb(userListWebPort, {
+            userListEnabled: true,
+            userListSettings: {
+                users: ['system.user.admin'],
+                accessAsUser: 'system.user.admin',
+                groups: [],
             },
-            native: {},
         });
     });
 
-    it('normalizes the OIDC user ID without applying a User List mapping', async function () {
+    it('does not offer the single sign-on, because the user list would put another user into the token', async function () {
         this.timeout(10000);
-        tokenSubject = linkedSubject;
-        const baseUrl = `http://localhost:${defaultUserListWebPort}`;
+        const loginPage = await axios.get(`${baseUrl}/login/index.html`);
+        assert.ok(loginPage.data.includes("window.loginSso = 'false'"));
+
         const start = await axios.get(`${baseUrl}/sso`, {
             params: { method: 'login', redirectUrl: `${baseUrl}/login/index.html` },
             maxRedirects: 0,
             validateStatus: () => true,
         });
-        assert.strictEqual(start.status, 302);
-        const authorizationUrl = new URL(start.headers.location, baseUrl);
-        nonce = authorizationUrl.searchParams.get('nonce');
+        const location = start.headers.location ? new URL(start.headers.location, baseUrl) : null;
+        assert.notStrictEqual(location?.origin, issuer, 'the browser is not sent to the identity provider');
 
-        const callback = await axios.get(`${baseUrl}/sso-callback`, {
-            params: { code: 'default-user-list-code', state: authorizationUrl.searchParams.get('state') },
-            maxRedirects: 0,
-            validateStatus: () => true,
-        });
-        assert.strictEqual(callback.status, 302);
-        const ssoCode = new URL(callback.headers.location).searchParams.get('ssoCode');
-        assert.ok(ssoCode);
-
-        const exchange = await axios.post(`${baseUrl}/sso-token`, { code: ssoCode });
-        const userResponse = await axios.get(`${baseUrl}/getUser`, {
-            headers: { Authorization: `Bearer ${exchange.data.access_token}` },
-        });
-        assert.strictEqual(userResponse.data.user, linkedUser);
-
+        const exchange = await axios.post(
+            `${baseUrl}/sso-token`,
+            { code: 'any-code' },
+            { maxRedirects: 0, validateStatus: () => true },
+        );
+        assert.notStrictEqual(exchange.status, 200);
     });
 
     after('Stop Web and the local OIDC issuer', function (done) {
         this.timeout(15000);
-        setup.stopController(normalTerminated => {
-            issuerServer.close(() => {
-                assert.ok(normalTerminated);
-                done();
-            });
-        });
+        stopWeb(done);
     });
 });

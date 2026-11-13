@@ -85,6 +85,7 @@
     "oidc_issuer": "OIDC 颁发者 URL",
     "oidc_scope": "OIDC 范围",
     "oidc_sso": "单点登录 (OIDC)",
+    "oidc_user_list_conflict": "单点登录不能与用户访问列表同时使用：\"以…身份访问 Web 界面\"会把另一个用户写入登录信息，而该登录在 admin 中同样有效。只要启用了用户访问列表，单点登录就保持关闭。",
     "only for this instance": "仅适用于本例",
     "open_ip": "监听所有IP",
     "place_the_files_here": "将文件拖拽到这里",

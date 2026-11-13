@@ -85,6 +85,7 @@
     "oidc_issuer": "OIDC-Issuer-URL",
     "oidc_scope": "OIDC-Scopes",
     "oidc_sso": "Single Sign-on (OIDC)",
+    "oidc_user_list_conflict": "Single Sign-on kann nicht zusammen mit der Benutzerzugriffsliste verwendet werden: \"Zugriff auf die Weboberfläche als\" würde einen anderen Benutzer in die Anmeldung schreiben, die auch in admin gilt. Solange die Benutzerzugriffsliste aktiv ist, bleibt Single Sign-on aus.",
     "only for this instance": "nur für diese Instanz",
     "open_ip": "Zugriff von allen IPs zulassen",
     "place_the_files_here": "Dateien hier platzieren",

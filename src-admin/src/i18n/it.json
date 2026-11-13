@@ -85,6 +85,7 @@
     "oidc_issuer": "URL dell'emittente OIDC",
     "oidc_scope": "Ambiti OIDC",
     "oidc_sso": "Accesso singolo (OIDC)",
+    "oidc_user_list_conflict": "Il single sign-on non può essere usato insieme alla lista di accesso utenti: \"accedi all'interfaccia web come\" inserirebbe un altro utente nell'accesso, valido anche in admin. Il single sign-on resta disattivato finché la lista di accesso utenti è attiva.",
     "only for this instance": "solo per questo caso",
     "open_ip": "Ascolta su tutti gli IP",
     "place_the_files_here": "posiziona i file qui",

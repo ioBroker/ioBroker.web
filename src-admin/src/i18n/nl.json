@@ -85,6 +85,7 @@
     "oidc_issuer": "OIDC-uitgever-URL",
     "oidc_scope": "OIDC-scopes",
     "oidc_sso": "Eenmalige aanmelding (OIDC)",
+    "oidc_user_list_conflict": "Eenmalige aanmelding kan niet samen met de gebruikerstoegangslijst worden gebruikt: \"toegang tot de webinterface als\" zou een andere gebruiker in de aanmelding zetten, die ook in admin geldig is. Eenmalige aanmelding blijft uit zolang de gebruikerstoegangslijst is ingeschakeld.",
     "only for this instance": "alleen voor dit geval",
     "open_ip": "Luister op alle IP's",
     "place_the_files_here": "plaats de bestanden hier",
