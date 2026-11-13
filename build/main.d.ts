@@ -188,6 +188,15 @@ export declare class WebAdapter extends Adapter {
         logged_in: boolean;
         user?: string;
     }) => void) => void;
+    private getUserListUser;
+    /**
+     * Configuration of the identity provider for the single sign-on, or undefined if it is not offered.
+     *
+     * Not together with the user list: its "access web interface as" would put another user into the
+     * token, and the token is valid for admin and every other adapter too. The single sign-on stays off
+     * then, and not the user list, so that a configuration with both never lets in more users than before.
+     */
+    private getOidcConfig;
     initAuth(): void;
     /**
      * Externally reachable base URL, without a trailing slash. Behind a reverse proxy the

@@ -348,7 +348,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.6.0 (2026-11-13)
 * (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list
 * (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.1: a disabled user cannot sign in with single sign-on, like with a password (apart from `admin`)
 
@@ -366,10 +366,6 @@ This is off by default. When enabled:
 
 ### 9.3.0 (2026-11-05)
 * (@GermanBluefox) Web extensions can name paths below their adapter name that they protect themselves (`publicRoutes()`, see [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)). web hands such requests to the extension in front of its login, so a client with credentials of its own, e.g. an MCP client with the token of the adapter, is no longer refused with 401
-
-### 9.2.0 (2026-11-05)
-* (@GermanBluefox) `logo.svg`, `favicon.ico` and `manifest.json` of the start page are revalidated on every load (304 while unchanged) instead of being cached forever, so a new version reaches the browser
-* (@GermanBluefox) Web components written with React (see [`@iobroker/web-components`](https://github.com/ioBroker/web-components)) find React 19 and 18 as one ES module each at `/lib/esm/react-19.js` and `/lib/esm/react-18.js`, as in admin. Before, such a component failed to load under web, e.g. the flow diagram in vis-2
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

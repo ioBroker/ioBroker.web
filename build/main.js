@@ -1381,6 +1381,41 @@ class WebAdapter extends adapter_core_1.Adapter {
             return cb(null, { logged_in: false });
         });
     };
+    getUserListUser(userName) {
+        const longUser = (userName.startsWith('system.user.') ? userName : `system.user.${userName}`);
+        const settings = this.config.userListSettings;
+        if (!this.config.userListEnabled) {
+            return longUser;
+        }
+        if (!settings) {
+            return undefined;
+        }
+        const isAllowedUser = settings.users.includes(longUser);
+        const isAllowedGroup = !isAllowedUser &&
+            !!this.ownGroups &&
+            Object.keys(this.ownGroups).some(groupId => !!this.ownGroups[groupId]?.common.members.includes(longUser) && settings.groups.includes(groupId));
+        return isAllowedUser || isAllowedGroup ? settings.accessAsUser || longUser : undefined;
+    }
+    /**
+     * Configuration of the identity provider for the single sign-on, or undefined if it is not offered.
+     *
+     * Not together with the user list: its "access web interface as" would put another user into the
+     * token, and the token is valid for admin and every other adapter too. The single sign-on stays off
+     * then, and not the user list, so that a configuration with both never lets in more users than before.
+     */
+    getOidcConfig() {
+        const issuer = (this.config.oidcIssuer || '').trim();
+        const clientId = (this.config.oidcClientId || '').trim();
+        if (!this.config.auth || !this.config.ssoActive || this.config.userListEnabled || !issuer || !clientId) {
+            return undefined;
+        }
+        return {
+            issuer,
+            clientId,
+            clientSecret: this.config.oidcClientSecret || undefined,
+            scope: (this.config.oidcScope || '').trim() || undefined,
+        };
+    }
     initAuth() {
         if (!this.webServer.app) {
             return;
@@ -1409,7 +1444,12 @@ class WebAdapter extends adapter_core_1.Adapter {
             baseUrl: this.config.publicUrl || undefined,
             dynamicClientRegistration: this.config.oauthDynamicRegistration !== false,
             productName: 'ioBroker',
+            oidc: this.getOidcConfig(),
+            ssoHandoff: 'code',
         });
+        if (this.config.auth && this.config.ssoActive && this.config.userListEnabled) {
+            this.log.warn('Single sign-on cannot be used together with the user list. Single sign-on stays off.');
+        }
         if (this.config.oauth && !this.config.auth) {
             this.log.warn('OAuth is configured but ignored: it requires authentication to be enabled');
         }
@@ -1686,7 +1726,8 @@ class WebAdapter extends adapter_core_1.Adapter {
             .replaceAll(`'@@loadingHideLogo@@'`, this.config.loadingHideLogo ? 'true' : 'false')
             .replaceAll(`"@@loadingHideLogo@@"`, this.config.loadingHideLogo ? 'true' : 'false')
             .replaceAll(`@@loginLanguage@@`, this.lang || '')
-            .replaceAll(`@@loginOauth2@@`, this.config.loginOauth2 ? 'true' : 'false');
+            .replaceAll(`@@loginOauth2@@`, this.config.loginOauth2 ? 'true' : 'false')
+            .replaceAll(`@@loginSso@@`, this.getOidcConfig() ? 'true' : 'false');
     }
     /**
      * Turns the command a visu app writes into states of its own - the job the cloud adapter does
@@ -2138,43 +2179,17 @@ class WebAdapter extends adapter_core_1.Adapter {
                     passport_1.default.authenticate('local', (err, user) => {
                         // replace user
                         if (user?.user && this.config.userListEnabled) {
-                            // get the user group
                             const longUser = user.user.startsWith('system.user.')
                                 ? user.user
                                 : `system.user.${user.user}`;
-                            user.user = '';
-                            if (this.config.userListSettings.users.includes(longUser)) {
-                                if (this.config.userListSettings.accessAsUser) {
-                                    user.user = this.config.userListSettings.accessAsUser;
-                                }
-                                else {
-                                    user.user = longUser;
-                                }
-                            }
-                            else {
-                                // A user can be a member of several groups, and any one of them
-                                // on the list grants access. Looking only at the first group the
-                                // user happens to be a member of would reject them whenever that
-                                // group is not the listed one.
-                                const allowedGroup = this.ownGroups
-                                    ? Object.keys(this.ownGroups).find((groupId) => !!this.ownGroups[groupId]?.common.members.includes(longUser) &&
-                                        this.config.userListSettings.groups.includes(groupId))
-                                    : undefined;
-                                if (allowedGroup) {
-                                    if (this.config.userListSettings.accessAsUser) {
-                                        user.user = this.config.userListSettings.accessAsUser;
-                                    }
-                                    else {
-                                        user.user = longUser;
-                                    }
-                                }
-                            }
-                            if (!user?.user) {
+                            const mappedUser = this.getUserListUser(longUser);
+                            if (!mappedUser) {
+                                user.user = '';
                                 this.log.warn(`User ${longUser} is not in the user list`);
                             }
                             else {
-                                this.log.debug(`User ${longUser} threaded as ${user.user}`);
-                                user.user = user.user.substring('system.user.'.length);
+                                this.log.debug(`User ${longUser} threaded as ${mappedUser}`);
+                                user.user = mappedUser.substring('system.user.'.length);
                             }
                         }
                         if (req.url.includes('/loginApp')) {
@@ -3150,7 +3165,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                             this.loginPage ||= await this.modifyIndexHtml((0, node_fs_1.readFileSync)(`${__dirname}/${wwwDir}${LOGIN_PAGE}`).toString('utf8'));
                             const buffer = this.loginPage;
                             const isAuthenticated = !this.config.auth || req.isAuthenticated?.() || (!req.isAuthenticated && req.user);
-                            if (isAuthenticated || this.isInWhiteList(req)) {
+                            const hasSsoCode = typeof req.query.ssoCode === 'string' && !!req.query.ssoCode;
+                            if ((isAuthenticated || this.isInWhiteList(req)) && !hasSsoCode) {
                                 res.redirect((0, utils_1.getRedirectPage)(req));
                                 return;
                             }

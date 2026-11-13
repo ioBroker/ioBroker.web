@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.5.1",
+    "version": "9.6.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.6.0": {
+        "en": "Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list\nUpdated `@iobroker/webserver` to 3.4.1: a disabled user cannot sign in with single sign-on, like with a password (apart from `admin`)",
+        "de": "Optionales SSO mit OpenID Connect für im Admin-Adapter verknüpfte Nutzer hinzugefügt. Passt nicht zur Benutzerliste\n`@iobroker /webserver` auf 3.4.1 aktualisiert: Ein deaktivierter Nutzer kann sich nicht mit Passwort anmelden (außer `admin`)",
+        "ru": "Добавлена опциональная система единого входа с OpenID Connect для пользователей, подключенных к адаптеру администратора. Его нельзя использовать вместе со списком пользователей\nОбновлено «@iobroker /webserver» до версии 3.4.1: пользователь с ограниченными возможностями не может войти в систему с помощью единого входа, например, с паролем (кроме `admin`)",
+        "pt": "Foi adicionado o logon único opcional com o OpenID Connect para usuários vinculados ao admin. Não pode ser usado com a lista de usuários\nAtualizado `@iobroker /webserver` para 3.4.1: um usuário desativado não pode entrar com logon único, como com senha (além de `admin`)",
+        "nl": "Optionele eenmalige aanmelding met OpenID Connect toegevoegd voor gebruikers die via de admin-adapter zijn gekoppeld. Het kan niet samen met de gebruikerslijst worden gebruikt\n`@iobroker /webserver` bijgewerkt naar 3.4.1: een gebruiker met een handicap kan zich niet aanmelden met eenmalige aanmelding, zoals met een wachtwoord (behalve `admin`)",
+        "fr": "Ajout d'une connexion unique optionnelle avec OpenID Connect pour les utilisateurs liés à l'Admin Adapter. Non cumulable avec la liste des utilisateurs\nMise à jour de @iobroker /webserver en 3.4.1 : un utilisateur handicapé ne peut pas se connecter avec un mot de passe (sauf « admin »)",
+        "it": "Aggiunto il Single Sign-on opzionale con OpenID Connect per gli utenti collegati in admin. Non può essere usato con la lista utenti\nAggiornato @iobroker /webserver alla 3.4.1: un utente disabile non può accedere con una password (tranne `admin`)",
+        "es": "Se ha añadido el inicio de sesión único opcional con OpenID Connect para los usuarios enlazados en el adaptador No se puede usar con la lista de usuarios\nSe actualizó `@iobroker /webserver` a 3.4.1: un usuario discapacitado no puede iniciar sesión con un solo inicio de sesión, como con una contraseña (aparte de `admin`)",
+        "pl": "Dodano opcjonalne logowanie pojedyncze z OpenID Connect dla użytkowników połączonych w karcie administratora. Nie można go używać razem z listą użytkowników\nZaktualizowano `@iobroker /webserver` do wersji 3.4.1: wyłączony użytkownik nie może zalogować się za pomocą pojedynczego logowania, jak przy użyciu hasła (poza `admin`)",
+        "uk": "Додано додатковий єдиний вхід за допомогою OpenID Connect для користувачів, які пов'язані в адаптері адміністратора. Його не можна використовувати разом зі списком користувачів\nОновлено `@iobroker /webserver `до 3.4.1: відключений користувач не може увійти в систему за допомогою єдиного входу, наприклад, за допомогою пароля (крім `admin`)",
+        "zh-cn": "为管理员适配器中链接的用户添加了使用 OpenID Connect 的可选单点登录。它不能与用户列表一起使用\n将 @iobroker /webserver 更新到 3.4.1：禁用用户无法使用单点登录登录，例如使用密码（“admin” 除外）"
+      },
       "9.5.1": {
         "en": "The setting \"Login timeout\" (`ttl`) applies to the OAuth2 access token now. Before, the access token always expired after 1 hour, whatever was set. The refresh token lives at least 30 days, or as long as the access token if that is longer\nUpdated `@iobroker/socket-classes` to 2.10.4: a logged-in user without the permission `other.sendto` may now send `checkLicense` to vis and `dm:loadItems` to devices, so that widgets with a license and the device tiles work for users who may only look. Also: no more \"REAUTHENTICATE!\" log flood, and the host commands `readDiskDir` and `deleteDiskFile` need the permission for `cmdExec`",
         "de": "Die Einstellung „Login Timeout“ (`ttl`) gilt jetzt für das OAuth2-Token. Vorher lief das Zugriffstoken immer nach 1 Stunde ab, egal. Das Refresh-Token ist mindestens 30 Tage gültig, oder länger als das Access Token\n`@iobroker /socket-classes` auf 2.10.4 aktualisiert: Ein eingeloggter Benutzer ohne `other.sendto` kann nun `checkLicense` an vis und `dm:loadItems` an Geräte senden, sodass Widgets mit Lizenz und Gerätekacheln nur für Nutzer funktionieren, die schauen. Und: kein „ERNEUT ANMELDEN“! Log Flood und die Host-Befehle `ReadDiskDir` und `DeleteDiskFile` benötigen `cmdeXec`",
@@ -93,19 +106,6 @@
         "pl": "Stały tryb adaptera\nPliki pakietów są teraz sprawdzane za pomocą standardowego „@iobroker /testing”, w tym schematu „io-package.json” js-controller\nWymagany jest administrator 7.6.17 lub nowszy\nDodano brakujące tłumaczenia plików cookie i ustawień OAuth",
         "uk": "Фіксований режим адаптера\nФайли пакетів тепер перевіряються за допомогою стандартного `@iobroker /testing`, включаючи схему `io-package.json` js-контролера\nПотрібна версія адміністратора 7.6.17 або новішої версії\nДодано відсутні переклади налаштувань файлів cookie та OAuth",
         "zh-cn": "适配器的固定模式\n现在使用标准 @iobroker /testing 来检查包文件，包括 js-controller 的 `io-package.json` 架构\n需要管理员 7.6.17 或更高版本\n添加了 cookie 和 OAuth 设置缺失的翻译"
-      },
-      "9.1.16": {
-        "en": "The list of applications carries `cloud` from `common.localLinks` of the adapters. Before, only `pro` was taken over as `true`/`false`, so the free cloud could not tell that an entry like the vis-2 runtime works there too and hid it",
-        "de": "Die Anwendungsliste enthält `Cloud` von `common.LocalLinks` der Adapter. Vorher wurde nur `Pro` als `true`/`false` übernommen, sodass die Free Cloud nicht sah, ob ein Eintrag wie die Vis-2 Runtime dort auch läuft und versteckte ihn",
-        "ru": "Список приложений содержит «облако» из `Common.localLinks` адаптеров. Раньше вместо `true`/`false` использовалось только значение `pro`, поэтому бесплатное облако не могло определить, работает ли там запись, подобная среде выполнения vis-2, и спрятало ее",
-        "pt": "A lista de aplicativos traz `cloud` de `common.localLinks` dos adaptadores. Antes, apenas `pro` era usado como `true`/`false`, então a nuvem livre não sabia se uma entrada como o vis-2 também funcionava lá e a ocultava.",
-        "nl": "De lijst met toepassingen bevat `cloud` van `Common.localLinks` van de adapters. Voorheen werd alleen `pro` overgenomen als `true`/`false`, dus de vrije cloud kon niet zien dat een item zoals de vis-2 runtime daar ook werkt en verborg het",
-        "fr": "La liste des applications contient « cloud » de « common.localLinks » des adaptateurs. Avant, seul « pro » était remplacé par « true`/false ». Le cloud gratuit ne pouvait donc pas détecter qu'une entrée comme le runtime vis-2 y fonctionne et l'a masquée",
-        "it": "L'elenco delle app include «cloud» da «Common.LocalLinks» degli adattatori. Prima, solo `pro` era considerato `true`/`false`, quindi il cloud gratuito non capiva e lo nascondeva",
-        "es": "La lista de aplicaciones incluye «nube» de «Common.LocalLinks» de los adaptadores. Antes, solo se pasaba a «pro» como «verdadero» o «falso», por lo que la nube gratuita no sabía que una entrada como el vis-2 también funciona allí y la ocultaba",
-        "pl": "Lista aplikacji zawiera `cloud `z `common.locallInks` adapterów. Wcześniej tylko `pro `zostało przejęte jako `true`/`false „, więc wolna chmura nie mogła stwierdzić, że wpis taki jak środowisko wykonawcze vis-2 również tam działa i ukryła go",
-        "uk": "Список додатків переносить `хмара` з `Common.LocalLinks` адаптерів. Раніше лише `pro` було прийнято як `true`/`false`, тому вільна хмара не могла сказати, що такий запис, як виконання vis-2, також працює там, і приховала його",
-        "zh-cn": "应用程序列表带有适配器的 “common.localLinks” 中的 “云”。以前，只有 “pro” 被视为 “true”/“false”，因此免费云无法分辨出像 vis-2 运行时这样的条目也可以在那里运行并将其隐藏起来"
       }
     },
     "desc": {
