@@ -297,8 +297,8 @@ What happens at login:
 - The result is handed to the login page as a one-time code and exchanged for the Web token. Tokens never
   appear in the URL.
 - The user signs in as the linked ioBroker user and as nobody else.
-- Session lifetime: the access token is valid for 1 hour and the refresh token for 30 days, the same values as
-  for a password login through `/oauth/token`. The *login timeout* setting does not change them.
+- Session lifetime: the same as for a password login through `/oauth/token`. The access token is valid for the
+  *login timeout*, the refresh token for at least 30 days.
 - The access-token cookie ends with the browser session. Unlike a password login, "Stay logged in" does not give it
   a lifetime, it only decides where the login page keeps the tokens in the browser.
 - When the token has expired, the login page appears again. Another click on *Single sign-on* signs in without a
