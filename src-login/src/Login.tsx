@@ -42,6 +42,9 @@ import plLang from './i18n/pl.json';
 import ukLang from './i18n/uk.json';
 import zhCnLang from './i18n/zh-cn.json';
 
+const SSO_STAY_LOGGED_IN_KEY = 'iob_sso_stay_logged_in';
+const SSO_LOGIN_PENDING_KEY = 'iob_sso_login_pending';
+
 export interface OAuth2Response {
     access_token: string;
     expires_in: number;
@@ -127,6 +130,7 @@ declare global {
         loginHideLogo: string;
         loginTitle: string;
         loginOauth2: string;
+        loginSso: string;
         loginLanguage: ioBroker.Languages;
     }
 }
@@ -151,7 +155,8 @@ export default class Login extends Component<object, LoginState> {
     constructor(props: object) {
         super(props);
 
-        const loggingIn = window.loginOauth2 !== 'false' ? this.authenticateWithRefreshToken() : false;
+        const hasSsoCode = new URLSearchParams(window.location.search).has('ssoCode');
+        const loggingIn = hasSsoCode || (window.loginOauth2 !== 'false' ? this.authenticateWithRefreshToken() : false);
 
         const theme = Login.createTheme();
 
@@ -191,6 +196,34 @@ export default class Login extends Component<object, LoginState> {
         body.style.backgroundImage = window.loginBackgroundImage;
         body.style.backgroundSize = 'cover';
         this.passwordRef = React.createRef();
+    }
+
+    componentDidMount(): void {
+        const url = new URL(window.location.href);
+        const ssoCode = url.searchParams.get('ssoCode');
+        if (!ssoCode) {
+            if (sessionStorage.getItem(SSO_LOGIN_PENDING_KEY) === 'true') {
+                sessionStorage.removeItem(SSO_LOGIN_PENDING_KEY);
+                sessionStorage.removeItem(SSO_STAY_LOGGED_IN_KEY);
+                this.setState({ error: I18n.t('oidcLoginFailed') });
+            }
+            return;
+        }
+
+        sessionStorage.removeItem(SSO_LOGIN_PENDING_KEY);
+        url.searchParams.delete('ssoCode');
+        window.history.replaceState(window.history.state, '', url);
+        void this.exchangeSsoCode(ssoCode);
+    }
+
+    private static getSsoUrl(): string {
+        const redirectUrl = new URL(window.location.href);
+        redirectUrl.searchParams.delete('ssoCode');
+
+        const ssoUrl = new URL('/sso', window.location.href);
+        ssoUrl.searchParams.set('method', 'login');
+        ssoUrl.searchParams.set('redirectUrl', redirectUrl.toString());
+        return ssoUrl.toString();
     }
 
     /**
@@ -246,6 +279,7 @@ export default class Login extends Component<object, LoginState> {
                 const adapterName = await Login.getAdapterName();
 
                 // The next loaded page with socket will take the ownership of the tokens
+                Connection.deleteTokensStatic();
                 Connection.saveTokensStatic(data, stayLoggedIn);
                 // Get href from origin
                 // Extract from the URL like "http://localhost:8084/login?href=http://localhost:63342/ioBroker.socketio/example/index.html?_ijt=nqn3c1on9q44elikut4rgr23j8&_ij_reload=RELOAD_ON_SAVE" the href
@@ -271,6 +305,27 @@ export default class Login extends Component<object, LoginState> {
         Connection.deleteTokensStatic();
 
         return false;
+    }
+
+    private async exchangeSsoCode(code: string): Promise<void> {
+        const stayLoggedIn = sessionStorage.getItem(SSO_STAY_LOGGED_IN_KEY) === 'true';
+        sessionStorage.removeItem(SSO_STAY_LOGGED_IN_KEY);
+
+        try {
+            const response = await fetch(new URL('/sso-token', window.location.href), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code }),
+            });
+            if (await Login.processTokenAnswer(stayLoggedIn, response)) {
+                return;
+            }
+        } catch (error) {
+            console.error(`Cannot exchange SSO code: ${error}`);
+            Connection.deleteTokensStatic();
+        }
+
+        this.setState({ loggingIn: false, error: I18n.t('cannotGetAccessToken') });
     }
 
     private authenticateWithRefreshToken(): boolean {
@@ -495,6 +550,20 @@ export default class Login extends Component<object, LoginState> {
                                 </Button>
                             }
                         </form>
+                        {window.loginSso === 'true' ? (
+                            <Button
+                                onClick={() => {
+                                    sessionStorage.setItem(SSO_STAY_LOGGED_IN_KEY, String(this.state.stayLoggedIn));
+                                    sessionStorage.setItem(SSO_LOGIN_PENDING_KEY, 'true');
+                                    window.location.href = Login.getSsoUrl();
+                                }}
+                                fullWidth
+                                variant="outlined"
+                                style={styles.submit}
+                            >
+                                {I18n.t('loginWithOidc')}
+                            </Button>
+                        ) : null}
                     </Stack>
                     <Box style={styles.marginTop}>
                         <Typography

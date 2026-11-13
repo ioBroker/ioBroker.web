@@ -110,7 +110,7 @@ interface AppState extends GenericAppState {
 class App extends GenericApp<GenericAppProps, AppState> {
     constructor(props: object) {
         const extendedProps: GenericAppSettings = { ...props };
-        extendedProps.encryptedFields = ['pass'];
+        extendedProps.encryptedFields = ['pass', 'oidcClientSecret'];
         // @ts-expect-error fix later
         extendedProps.Connection = AdminConnection;
         extendedProps.translations = {

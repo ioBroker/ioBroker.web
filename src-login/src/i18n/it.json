@@ -4,6 +4,8 @@
     "enterPassword": "Password",
     "login": "Login",
     "loginTitle": "Accesso Web",
+    "loginWithOidc": "Accesso singolo",
+    "oidcLoginFailed": "Accesso singolo non riuscito. Verifica il collegamento dell'account e riprova.",
     "ra_Change color theme": "Cambia tema colore",
     "staySignedIn": "Rimani connesso",
     "wrongPassword": "Password o nome utente errati"

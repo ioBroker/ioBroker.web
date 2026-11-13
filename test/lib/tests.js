@@ -106,6 +106,48 @@ const tests = (protocol, port) => ({
             })
             .catch(done);
     },
+    'OIDC endpoints are unavailable when SSO is disabled': function (done) {
+        this.timeout(2000);
+        // Without OIDC, the library does not register these routes. The static-file fallback may
+        // canonicalize the path with a trailing slash before returning its not-found response.
+        Promise.all([
+            axios.get(`${protocol}://localhost:${port}/sso`, {
+                params: { method: 'login', redirectUrl: `${protocol}://localhost:${port}/` },
+                maxRedirects: 0,
+                validateStatus: () => true,
+            }),
+            axios.get(`${protocol}://localhost:${port}/sso-callback`, {
+                params: { code: 'test-code', state: 'test-state' },
+                maxRedirects: 0,
+                validateStatus: () => true,
+            }),
+            axios.post(`${protocol}://localhost:${port}/sso-token`, null, {
+                maxRedirects: 0,
+                validateStatus: () => true,
+            }),
+        ])
+            .then(responses => {
+                for (const [index, response] of responses.entries()) {
+                    if (index === 2) {
+                        assert.strictEqual(response.status, 404);
+                        continue;
+                    }
+
+                    assert.ok([301, 404].includes(response.status));
+                    if (response.status === 301) {
+                        const destination = new URL(response.headers.location, response.config.url);
+                        assert.strictEqual(destination.origin, new URL(response.config.url).origin);
+                        assert.strictEqual(
+                            destination.pathname,
+                            `${new URL(response.config.url).pathname}/`,
+                            'only the static fallback trailing-slash redirect is expected',
+                        );
+                    }
+                }
+                done();
+            })
+            .catch(done);
+    },
     'read /..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd': function (done) {
         this.timeout(2000);
         axios(`${protocol}://localhost:${port}/..%5c..%5c..%5c..%5c..%5c..%5cetc/passwd`, {

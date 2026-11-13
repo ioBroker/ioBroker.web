@@ -63,10 +63,15 @@ export default class UserList extends Component<UserListProps, UserListState> {
                     onClose={() => this.setState({ toast: '' })}
                 />
                 <div style={{ ...styles.column, ...styles.columnSettings, position: 'relative' }}>
+                    {native.ssoActive ? (
+                        <div style={{ marginBottom: 10 }}>{I18n.t('oidc_user_list_conflict')}</div>
+                    ) : null}
                     <CustomCheckbox
                         title="included"
                         attr="userListEnabled"
                         native={native}
+                        // Only switching off stays possible, if both are on from an older configuration
+                        disabled={native.ssoActive && !native.userListEnabled}
                         onChange={(attr, value) =>
                             onChange(attr as string, value, () => {
                                 if (value && !native.userListSettings) {

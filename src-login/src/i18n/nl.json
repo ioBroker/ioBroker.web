@@ -4,6 +4,8 @@
     "enterPassword": "Wachtwoord",
     "login": "Inloggen",
     "loginTitle": "Web-inlog",
+    "loginWithOidc": "Eenmalige aanmelding",
+    "oidcLoginFailed": "Aanmelden met eenmalige aanmelding is mislukt. Controleer de accountkoppeling en probeer het opnieuw.",
     "ra_Change color theme": "Kleurenthema wijzigen",
     "staySignedIn": "Blijf ingelogd",
     "wrongPassword": "Verkeerd wachtwoord of gebruikersnaam"

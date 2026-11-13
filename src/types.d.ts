@@ -132,6 +132,11 @@ export interface WebAdapterConfig {
     loginBackgroundColor: string;
     loginBackgroundImage: boolean;
     loginOauth2: boolean;
+    ssoActive: boolean;
+    oidcIssuer: string;
+    oidcClientId: string;
+    oidcClientSecret: string;
+    oidcScope: string;
     /**
      * Offer the browser-based OAuth2 authorization code flow with PKCE, so third-party clients
      * (e.g. MCP clients, or web extensions serving them) can be authorized without ever seeing the

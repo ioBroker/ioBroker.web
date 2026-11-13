@@ -272,6 +272,57 @@ The answer is like:
 ```         
 More info can be found here: https://github.com/ioBroker/webserver?tab=readme-ov-file#oauth2-support
 
+## Single sign-on (OIDC)
+Users can sign in to the login page with an OpenID Connect identity provider (e.g. Keycloak) instead of a password.
+The login page then shows an additional **Single sign-on** button, username and password stay available.
+
+Web uses the same account link as the admin adapter: the identity (`sub`) of the provider is stored in
+`common.externalAuthentication.oidc.sub` of an existing ioBroker user. **Web neither creates users nor links
+identities.** Link the user in the admin adapter first. An identity that is not linked is refused and the
+login page shows an error.
+
+Settings (they require **Authentication** to be enabled and are off by default):
+
+- **Single sign-on (OIDC)** - switches the feature on. Without issuer and client ID nothing is offered.
+  It cannot be used together with the [user list](#user-list), see below.
+- **OIDC issuer URL** - the address of the provider, e.g. `https://keycloak.example.com/realms/home`.
+- **OIDC client ID** - the client registered for this Web instance.
+- **OIDC client secret** - optional. Leave it empty for a public client, which then uses PKCE. The secret is stored encrypted.
+- **OIDC scopes** - default `openid profile email`. Only `openid` is needed, because only the `sub` is used.
+- **Public URL** - the external address of this server. The settings show the redirect URI to register at the
+  provider: `<public URL>/sso-callback`. Without a public URL, it is derived from the request, which is wrong behind a reverse proxy.
+
+What happens at login:
+
+- The result is handed to the login page as a one-time code and exchanged for the Web token. Tokens never
+  appear in the URL.
+- The user signs in as the linked ioBroker user and as nobody else. A disabled user is refused, like with a
+  password (apart from `admin`).
+- Session lifetime: the same as for a password login through `/oauth/token`. The access token is valid for the
+  *login timeout*, the refresh token for at least 30 days.
+- The access-token cookie ends with the browser session. Unlike a password login, "Stay logged in" does not give it
+  a lifetime, it only decides where the login page keeps the tokens in the browser.
+- When the token has expired, the login page appears again. Another click on *Single sign-on* signs in without a
+  password as long as the session at the identity provider is still valid.
+- Signing out of Web ends only the Web session. The session at the identity provider stays, so the next click on
+  *Single sign-on* may sign in again without a password.
+
+### Single sign-on and the user list
+Single sign-on and the [user list](#user-list) exclude each other. With *access web interface as*, the user list
+would put another user into the token of the login, and this token is valid for the admin adapter and all other
+adapters too: a user could get the rights of the selected user there as well. The settings therefore offer only one
+of the two. If both are switched on (e.g. by an older configuration), Web keeps single sign-on off and writes a
+warning to the log, so the user list still applies.
+
+### Setting up Keycloak
+The `sub` of a user is the same for all clients of a realm, so the link made in the admin adapter also works for Web.
+We recommend one client per adapter (e.g. one for admin and one for web) in the same realm:
+
+- Valid redirect URI: exactly `https://<host>:<port>/sso-callback` of the Web instance, no wildcard.
+- Enable only the *Standard flow*.
+- A token issued for the admin client is refused by Web, because its audience does not match.
+- Keycloak requires HTTPS for redirect URIs other than `localhost`. Enable encryption or set an HTTPS public URL.
+
 ## Authorizing third-party clients (OAuth)
 
 The token endpoint above requires the client to handle the user's ioBroker password. Clients that run
@@ -297,6 +348,10 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list
+* (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.1: a disabled user cannot sign in with single sign-on, like with a password (apart from `admin`)
+
 ### 9.5.1 (2026-11-09)
 * (@GermanBluefox) The setting "Login timeout" (`ttl`) applies to the OAuth2 access token now. Before, the access token always expired after 1 hour, whatever was set. The refresh token lives at least 30 days, or as long as the access token if that is longer
 * (@GermanBluefox) Updated `@iobroker/socket-classes` to 2.10.4: a logged-in user without the permission `other.sendto` may now send `checkLicense` to vis and `dm:loadItems` to devices, so that widgets with a license and the device tiles work for users who may only look. Also: no more "REAUTHENTICATE!" log flood, and the host commands `readDiskDir` and `deleteDiskFile` need the permission for `cmdExec`

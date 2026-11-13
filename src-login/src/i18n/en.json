@@ -4,6 +4,8 @@
   "enterPassword": "Password",
   "login": "Log in",
   "loginTitle": "Web Login",
+  "loginWithOidc": "Single sign-on",
+  "oidcLoginFailed": "Single sign-on failed. Check your account link and try again.",
   "ra_Change color theme": "Change color theme",
   "staySignedIn": "Stay signed in",
   "wrongPassword": "Wrong password or username"
