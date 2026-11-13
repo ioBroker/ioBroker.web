@@ -296,7 +296,8 @@ What happens at login:
 
 - The result is handed to the login page as a one-time code and exchanged for the Web token. Tokens never
   appear in the URL.
-- The user signs in as the linked ioBroker user and as nobody else.
+- The user signs in as the linked ioBroker user and as nobody else. A disabled user is refused, like with a
+  password (apart from `admin`).
 - Session lifetime: the same as for a password login through `/oauth/token`. The access token is valid for the
   *login timeout*, the refresh token for at least 30 days.
 - The access-token cookie ends with the browser session. Unlike a password login, "Stay logged in" does not give it
@@ -349,6 +350,7 @@ This is off by default. When enabled:
 -->
 ### **WORK IN PROGRESS**
 * (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list
+* (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.1: a disabled user cannot sign in with single sign-on, like with a password (apart from `admin`)
 
 ### 9.5.1 (2026-11-09)
 * (@GermanBluefox) The setting "Login timeout" (`ttl`) applies to the OAuth2 access token now. Before, the access token always expired after 1 hour, whatever was set. The refresh token lives at least 30 days, or as long as the access token if that is longer
