@@ -31,7 +31,7 @@
     "acme_challenge_hint": "Liefert die vom acme-Adapter veröffentlichten Tokens unter /.well-known/acme-challenge/ aus, damit der acme-Adapter diese Instanz nicht stoppen muss, um Port 80 zu bekommen.",
     "additionally": "Extra",
     "after authentication": "nach der Authentifizierung",
-    "authentication": "Authentifikation",
+    "authentication": "Authentifizierung",
     "background": "Hintergrund",
     "background_image": "Hintergrundbild",
     "basic_authentication": "Basic-Authentifizierung",
