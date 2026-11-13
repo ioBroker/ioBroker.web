@@ -31,7 +31,7 @@
     "acme_challenge_hint": "Udostępniaj tokeny publikowane przez adapter acme pod /.well-known/acme-challenge/, aby adapter acme nie musiał zatrzymywać tej instancji, by uzyskać port 80.",
     "additionally": "Zaawansowane",
     "after authentication": "po uwierzytelnieniu",
-    "authentication": "Poświadczenie",
+    "authentication": "Uwierzytelnianie",
     "background": "Tło",
     "background_image": "Zdjęcie w tle",
     "basic_authentication": "Uwierzytelnianie podstawowe",

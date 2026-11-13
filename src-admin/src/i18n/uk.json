@@ -31,7 +31,7 @@
     "acme_challenge_hint": "Віддавати токени, опубліковані адаптером acme, за шляхом /.well-known/acme-challenge/, щоб адаптеру acme не потрібно було зупиняти цей екземпляр заради порту 80.",
     "additionally": "Просунутий",
     "after authentication": "після аутентифікації",
-    "authentication": "Аутентифікація",
+    "authentication": "Автентифікація",
     "background": "Фон",
     "background_image": "Фонове зображення",
     "basic_authentication": "Базова автентифікація",
