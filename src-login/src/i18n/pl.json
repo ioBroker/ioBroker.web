@@ -1,5 +1,7 @@
 {
     "cannotGetAccessToken": "Nie można uzyskać tokena dostępu",
+    "code": "Kod",
+    "enterCode": "Uwierzytelnianie dwuskładnikowe: wpisz kod z aplikacji uwierzytelniającej lub jeden z kodów zapasowych.",
     "enterLogin": "Nazwa logowania",
     "enterPassword": "Hasło",
     "login": "Zaloguj się",
@@ -8,5 +10,6 @@
     "oidcLoginFailed": "Logowanie jednokrotne nie powiodło się. Sprawdź powiązanie konta i spróbuj ponownie.",
     "ra_Change color theme": "Zmień motyw kolorów",
     "staySignedIn": "Pozostań zalogowany",
+    "wrongCode": "Nieprawidłowy kod",
     "wrongPassword": "Nieprawidłowe hasło lub nazwa użytkownika"
 }

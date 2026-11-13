@@ -1,5 +1,7 @@
 {
     "cannotGetAccessToken": "Zugriffstoken kann nicht abgerufen werden",
+    "code": "Code",
+    "enterCode": "Zwei-Faktor-Anmeldung: Gib den Code aus der Authenticator-App oder einen der Backup-Codes ein.",
     "enterLogin": "Anmeldename",
     "enterPassword": "Passwort",
     "login": "Einloggen",
@@ -8,5 +10,6 @@
     "oidcLoginFailed": "Single-Sign-On fehlgeschlagen. Prüfe die Kontoverknüpfung und versuche es erneut.",
     "ra_Change color theme": "Farbdesign ändern",
     "staySignedIn": "Angemeldet bleiben",
+    "wrongCode": "Falscher Code",
     "wrongPassword": "Falsches Passwort oder falscher Benutzername"
 }

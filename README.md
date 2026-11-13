@@ -323,6 +323,25 @@ We recommend one client per adapter (e.g. one for admin and one for web) in the 
 - A token issued for the admin client is refused by Web, because its audience does not match.
 - Keycloak requires HTTPS for redirect URIs other than `localhost`. Enable encryption or set an HTTPS public URL.
 
+## Two-factor authentication
+A user can switch on two-factor authentication with an authenticator app (Google Authenticator, Microsoft
+Authenticator, Aegis, 2FAS, ...) in the admin adapter: menu of the logged-in user, *Two-factor authentication*.
+It is stored with the user, so it applies to Web and admin alike.
+
+- The login page asks for the code after the password. With the login form, the password is checked first and
+  the page then asks only for the code (the second step is valid for 5 minutes). Instead of a code, one of the
+  10 backup codes can be used once.
+- `POST /loginApp` and `POST /oauth/token` answer `401` with `{"error": "otp_required"}` or `"otp_invalid"`;
+  the client sends the code as `otp` with the next request.
+- A user with two-factor authentication cannot log in with the password alone: basic authentication, a password
+  in the URL and the login of a socket with user name and password are refused. Scripts and devices that log in
+  that way need a user of their own without it, or a token.
+- Single sign-on does not ask for the code: there the identity provider is responsible for it.
+- Wrong codes count for the [brute-force protection](#brute-force-protection) like wrong passwords.
+- After a lost phone, an administrator switches it off in the user dialog of admin. If the administrator is
+  locked out themselves:
+  `iobroker object set system.user.admin common.externalAuthentication.totp=null`
+
 ## Authorizing third-party clients (OAuth)
 
 The token endpoint above requires the client to handle the user's ioBroker password. Clients that run
@@ -348,6 +367,9 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (@GermanBluefox) Two-factor authentication with an authenticator app: the login page asks for the code after the password, users with it cannot log in with the password alone (basic authentication, socket)
+
 ### 9.6.0 (2026-11-13)
 * (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list
 * (@GermanBluefox) Updated `@iobroker/webserver` to 3.4.1: a disabled user cannot sign in with single sign-on, like with a password (apart from `admin`)
