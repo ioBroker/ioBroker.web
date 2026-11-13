@@ -1,5 +1,7 @@
 {
     "cannotGetAccessToken": "无法获取访问令牌",
+    "code": "验证码",
+    "enterCode": "双重身份验证：输入身份验证器应用中的验证码或其中一个备用码。",
     "enterLogin": "登录名",
     "enterPassword": "密码",
     "login": "登录",
@@ -8,5 +10,6 @@
     "oidcLoginFailed": "单点登录失败。请检查账户关联后重试。",
     "ra_Change color theme": "更改颜色主题",
     "staySignedIn": "保持登录状态",
+    "wrongCode": "验证码错误",
     "wrongPassword": "密码或用户名错误"
 }

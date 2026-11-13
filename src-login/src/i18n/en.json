@@ -1,5 +1,7 @@
 {
   "cannotGetAccessToken": "Cannot get access token",
+  "code": "Code",
+  "enterCode": "Two-factor authentication: enter the code from the authenticator app or one of the backup codes.",
   "enterLogin": "Login name",
   "enterPassword": "Password",
   "login": "Log in",
@@ -8,5 +10,6 @@
   "oidcLoginFailed": "Single sign-on failed. Check your account link and try again.",
   "ra_Change color theme": "Change color theme",
   "staySignedIn": "Stay signed in",
+  "wrongCode": "Wrong code",
   "wrongPassword": "Wrong password or username"
 }

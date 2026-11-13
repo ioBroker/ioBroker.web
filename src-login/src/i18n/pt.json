@@ -1,5 +1,7 @@
 {
     "cannotGetAccessToken": "Não é possível obter o token de acesso",
+    "code": "Código",
+    "enterCode": "Autenticação de dois fatores: introduza o código da aplicação de autenticação ou um dos códigos de reserva.",
     "enterLogin": "Nome de login",
     "enterPassword": "Senha",
     "login": "Conecte-se",
@@ -8,5 +10,6 @@
     "oidcLoginFailed": "Falha no início de sessão único. Verifique a associação da conta e tente novamente.",
     "ra_Change color theme": "Alterar tema de cor",
     "staySignedIn": "Permanecer conectado",
+    "wrongCode": "Código errado",
     "wrongPassword": "Senha ou nome de usuário incorreto"
 }

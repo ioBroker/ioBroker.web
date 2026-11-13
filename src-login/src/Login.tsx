@@ -146,11 +146,19 @@ interface LoginState {
     theme: IobTheme;
     themeName: ThemeName;
     themeType: ThemeType;
+    /** The user has two-factor authentication: the code of the authenticator app is asked (OAuth2 login) */
+    otpRequired: boolean;
+    otp: string;
 }
 
 export default class Login extends Component<object, LoginState> {
     private readonly formRef: React.RefObject<HTMLFormElement | null>;
     private readonly passwordRef: React.RefObject<HTMLInputElement | null>;
+    /**
+     * Second step of the login form: the password was right and the server asks for the code of the second
+     * factor. The ticket stands for the first step, so the page asks only for the code.
+     */
+    private readonly otpTicket = new URLSearchParams(window.location.search).get('otp') || '';
 
     constructor(props: object) {
         super(props);
@@ -167,6 +175,8 @@ export default class Login extends Component<object, LoginState> {
             username: '',
             password: '',
             error: '',
+            otpRequired: false,
+            otp: '',
             loggingIn,
             theme,
             themeName: Login.getThemeName(theme),
@@ -360,6 +370,55 @@ export default class Login extends Component<object, LoginState> {
         return false;
     }
 
+    /**
+     * The error of the second factor in the answer of `/oauth/token`, if the password was right
+     *
+     * @param response answer of the token endpoint
+     */
+    static async getOtpError(response: Response): Promise<'otp_required' | 'otp_invalid' | null> {
+        if (response.status !== 401) {
+            return null;
+        }
+        try {
+            const error = ((await response.clone().json()) as { error?: string }).error;
+            return error === 'otp_required' || error === 'otp_invalid' ? error : null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Field for the code of the authenticator app
+     *
+     * @param secondStep the form posts only the code (with the ticket), ENTER submits it
+     */
+    renderCodeField(secondStep: boolean): JSX.Element {
+        return (
+            <TextField
+                variant="outlined"
+                margin="normal"
+                disabled={this.state.inProcess}
+                required
+                fullWidth
+                autoFocus
+                value={this.state.otp}
+                onChange={e => this.setState({ otp: e.target.value })}
+                onKeyUp={e => {
+                    if (secondStep && e.key === 'Enter' && this.state.otp.trim()) {
+                        this.formRef.current?.submit();
+                    }
+                }}
+                size="small"
+                name="otp"
+                id="otp"
+                label={I18n.t('code')}
+                helperText={I18n.t('enterCode')}
+                autoComplete="one-time-code"
+                slotProps={{ htmlInput: { inputMode: 'numeric' } }}
+            />
+        );
+    }
+
     render(): JSX.Element {
         const action = `${window.location.port === '3000' ? `${window.location.protocol}//${window.location.hostname}:8082/` : '/login'}?${window.location.port === '3000' ? 'dev&' : ''}href=${window.location.hash}`;
 
@@ -429,7 +488,9 @@ export default class Login extends Component<object, LoginState> {
                                 : I18n.t('loginTitle')}
                         </Typography>
                         {window.location.search.includes('error') || this.state.error ? (
-                            <div style={styles.alert}>{this.state.error || I18n.t('wrongPassword')}</div>
+                            <div style={styles.alert}>
+                                {this.state.error || I18n.t(this.otpTicket ? 'wrongCode' : 'wrongPassword')}
+                            </div>
                         ) : null}
                         <form
                             ref={this.formRef}
@@ -437,70 +498,88 @@ export default class Login extends Component<object, LoginState> {
                             action={action}
                             method="post"
                         >
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                disabled={this.state.inProcess}
-                                required
-                                value={this.state.username}
-                                onChange={e => this.setState({ username: e.target.value })}
-                                fullWidth
-                                size="small"
-                                id="username"
-                                label={I18n.t('enterLogin')}
-                                name="username"
-                                autoComplete="username"
-                                autoFocus
-                            />
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                disabled={this.state.inProcess}
-                                required
-                                fullWidth
-                                ref={this.passwordRef}
-                                value={this.state.password}
-                                onChange={e => this.setState({ password: e.target.value })}
-                                slotProps={{
-                                    input: {
-                                        endAdornment: this.state.password ? (
-                                            <IconButton
-                                                tabIndex={-1}
-                                                aria-label="toggle password visibility"
-                                            >
-                                                <Visibility
-                                                    onMouseDown={() => this.setState({ showPassword: true })}
-                                                    onMouseUp={() => {
-                                                        this.setState({ showPassword: false }, () => {
-                                                            setTimeout(() => this.passwordRef.current?.focus(), 50);
-                                                        });
-                                                    }}
-                                                />
-                                            </IconButton>
-                                        ) : null,
-                                    },
-                                }}
-                                size="small"
-                                name="password"
-                                label={I18n.t('enterPassword')}
-                                type={this.state.showPassword ? 'text' : 'password'}
-                                id="password"
-                                autoComplete="current-password"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        id="stayloggedin"
-                                        name="stayloggedin"
-                                        value="on"
-                                        checked={this.state.stayLoggedIn}
-                                        onChange={e => this.setState({ stayLoggedIn: e.target.checked })}
-                                        color="primary"
+                            {this.otpTicket ? this.renderCodeField(true) : null}
+                            {this.otpTicket ? (
+                                <input
+                                    type="hidden"
+                                    name="otpTicket"
+                                    value={this.otpTicket}
+                                />
+                            ) : null}
+                            {this.otpTicket ? null : (
+                                <>
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
                                         disabled={this.state.inProcess}
+                                        required
+                                        value={this.state.username}
+                                        onChange={e => this.setState({ username: e.target.value })}
+                                        fullWidth
+                                        size="small"
+                                        id="username"
+                                        label={I18n.t('enterLogin')}
+                                        name="username"
+                                        autoComplete="username"
+                                        autoFocus
                                     />
-                                }
-                                label={I18n.t('staySignedIn')}
-                            />
+                                    <TextField
+                                        variant="outlined"
+                                        margin="normal"
+                                        disabled={this.state.inProcess}
+                                        required
+                                        fullWidth
+                                        ref={this.passwordRef}
+                                        value={this.state.password}
+                                        onChange={e => this.setState({ password: e.target.value })}
+                                        slotProps={{
+                                            input: {
+                                                endAdornment: this.state.password ? (
+                                                    <IconButton
+                                                        tabIndex={-1}
+                                                        aria-label="toggle password visibility"
+                                                    >
+                                                        <Visibility
+                                                            onMouseDown={() => this.setState({ showPassword: true })}
+                                                            onMouseUp={() => {
+                                                                this.setState({ showPassword: false }, () => {
+                                                                    setTimeout(
+                                                                        () => this.passwordRef.current?.focus(),
+                                                                        50,
+                                                                    );
+                                                                });
+                                                            }}
+                                                        />
+                                                    </IconButton>
+                                                ) : null,
+                                            },
+                                        }}
+                                        size="small"
+                                        name="password"
+                                        label={I18n.t('enterPassword')}
+                                        type={this.state.showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        autoComplete="current-password"
+                                    />
+                                </>
+                            )}
+                            {!this.otpTicket && this.state.otpRequired ? this.renderCodeField(false) : null}
+                            {this.otpTicket ? null : (
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            id="stayloggedin"
+                                            name="stayloggedin"
+                                            value="on"
+                                            checked={this.state.stayLoggedIn}
+                                            onChange={e => this.setState({ stayLoggedIn: e.target.checked })}
+                                            color="primary"
+                                            disabled={this.state.inProcess}
+                                        />
+                                    }
+                                    label={I18n.t('staySignedIn')}
+                                />
+                            )}
                             <input
                                 id="origin"
                                 type="hidden"
@@ -515,9 +594,16 @@ export default class Login extends Component<object, LoginState> {
                             {
                                 <Button
                                     type="submit"
-                                    disabled={this.state.inProcess || !this.state.username || !this.state.password}
+                                    disabled={
+                                        this.state.inProcess ||
+                                        (this.otpTicket
+                                            ? !this.state.otp.trim()
+                                            : !this.state.username ||
+                                              !this.state.password ||
+                                              (this.state.otpRequired && !this.state.otp.trim()))
+                                    }
                                     onClick={() => {
-                                        if (window.loginOauth2 === 'false') {
+                                        if (window.loginOauth2 === 'false' || this.otpTicket) {
                                             this.formRef.current?.submit();
                                             // give time to firefox to send the data
                                             setTimeout(() => this.setState({ inProcess: true }), 50);
@@ -528,8 +614,19 @@ export default class Login extends Component<object, LoginState> {
                                                     headers: {
                                                         'Content-Type': 'application/x-www-form-urlencoded',
                                                     },
-                                                    body: `grant_type=password&username=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}&stayloggedin=${this.state.stayLoggedIn}&client_id=ioBroker`,
+                                                    // `otp` is sent empty until the server asks for it
+                                                    body: `grant_type=password&username=${encodeURIComponent(this.state.username)}&password=${encodeURIComponent(this.state.password)}&otp=${encodeURIComponent(this.state.otp.trim())}&stayloggedin=${this.state.stayLoggedIn}&client_id=ioBroker`,
                                                 });
+                                                const otpError = await Login.getOtpError(response);
+                                                if (otpError) {
+                                                    this.setState({
+                                                        inProcess: false,
+                                                        otpRequired: true,
+                                                        otp: '',
+                                                        error: otpError === 'otp_invalid' ? I18n.t('wrongCode') : '',
+                                                    });
+                                                    return;
+                                                }
                                                 if (await Login.processTokenAnswer(this.state.stayLoggedIn, response)) {
                                                     this.setState({ inProcess: false });
                                                 } else {

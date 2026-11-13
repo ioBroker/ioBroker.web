@@ -1,5 +1,7 @@
 {
     "cannotGetAccessToken": "Kan geen toegangstoken verkrijgen",
+    "code": "Code",
+    "enterCode": "Tweestapsverificatie: voer de code uit de authenticator-app of een van de back-upcodes in.",
     "enterLogin": "Inlognaam",
     "enterPassword": "Wachtwoord",
     "login": "Inloggen",
@@ -8,5 +10,6 @@
     "oidcLoginFailed": "Aanmelden met eenmalige aanmelding is mislukt. Controleer de accountkoppeling en probeer het opnieuw.",
     "ra_Change color theme": "Kleurenthema wijzigen",
     "staySignedIn": "Blijf ingelogd",
+    "wrongCode": "Verkeerde code",
     "wrongPassword": "Verkeerd wachtwoord of gebruikersnaam"
 }

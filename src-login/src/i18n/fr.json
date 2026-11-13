@@ -1,5 +1,7 @@
 {
     "cannotGetAccessToken": "Impossible d'obtenir le jeton d'accès",
+    "code": "Code",
+    "enterCode": "Authentification à deux facteurs : saisissez le code de l'application d'authentification ou l'un des codes de secours.",
     "enterLogin": "Nom d'utilisateur",
     "enterPassword": "Mot de passe",
     "login": "Se connecter",
@@ -8,5 +10,6 @@
     "oidcLoginFailed": "Échec de l'authentification unique. Vérifiez le lien du compte et réessayez.",
     "ra_Change color theme": "Changer le thème de couleur",
     "staySignedIn": "Rester connecté",
+    "wrongCode": "Code incorrect",
     "wrongPassword": "Mot de passe ou nom d'utilisateur incorrect"
 }
