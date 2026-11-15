@@ -63,6 +63,16 @@ function tokenLogin(otp) {
     });
 }
 
+/**
+ * Who is logged in with the session cookie of a response
+ *
+ * @param response response that set the session cookie
+ */
+function getUser(response) {
+    const cookie = (response.headers['set-cookie'] || []).map(item => item.split(';')[0]).join('; ');
+    return axios.get(`${baseUrl}/getUser`, { headers: { Cookie: cookie }, validateStatus: () => true });
+}
+
 function formLogin(form) {
     return axios.post(`${baseUrl}/login?href=/`, new URLSearchParams(form).toString(), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -153,7 +163,9 @@ describe('Two-factor authentication (TOTP)', function () {
         assert.strictEqual(codePage.pathname, '/login/index.html');
         const ticket = codePage.searchParams.get('otp');
         assert.ok(ticket, `expected the code step, got ${first.headers.location}`);
-        assert.ok(!(first.headers['set-cookie'] || []).some(cookie => cookie.startsWith('connect.sid')));
+        // express-session gives every request a cookie, but the password alone must not log in
+        const notYet = await getUser(first);
+        assert.strictEqual(notYet.status, 501, `the password alone logged in: ${JSON.stringify(notYet.data)}`);
 
         const wrong = await formLogin({ otpTicket: ticket, otp: '000000' });
         assert.strictEqual(wrong.status, 302);
@@ -163,6 +175,9 @@ describe('Two-factor authentication (TOTP)', function () {
         const ok = await formLogin({ otpTicket: ticket, otp: codeFor(secret, 1) });
         assert.strictEqual(ok.status, 302);
         assert.ok(!ok.headers.location.includes('login/index.html'), ok.headers.location);
+        const loggedIn = await getUser(ok);
+        assert.strictEqual(loggedIn.status, 200);
+        assert.strictEqual(loggedIn.data.user, testUser);
 
         // a ticket is used only once
         const again = await formLogin({ otpTicket: ticket, otp: codeFor(secret, 1) });
