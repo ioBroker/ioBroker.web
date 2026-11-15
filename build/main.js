@@ -28,6 +28,18 @@ const subscriptions_1 = require("./lib/subscriptions");
 const extensions_1 = require("./lib/extensions");
 const ONE_MONTH_SEC = 30 * 24 * 3600;
 const LOGIN_PAGE = '/login/index.html';
+/** How long the login form waits for the code of the second factor after the password */
+const OTP_TICKET_TTL_MS = 5 * 60_000;
+/**
+ * URL of the login page in the step that asks for the code of the second factor
+ *
+ * @param req request of the login
+ * @param ticket ticket of the first step
+ * @param error whether the last code was wrong
+ */
+function getLoginPageForCode(req, ticket, error) {
+    return `${LOGIN_PAGE}?href=${encodeURIComponent((0, utils_1.getRequestedPage)(req) || '/')}&otp=${ticket}${error ? '&error' : ''}`;
+}
 const wwwDir = '../www';
 const FORBIDDEN_CHARS = /[\][*,;'"`<>\\\s?]/g; // with space
 // copied from here: https://github.com/component/escape-html/blob/master/index.js
@@ -328,6 +340,13 @@ class WebAdapter extends adapter_core_1.Adapter {
         warn: (message) => this.log.warn(message),
     });
     bruteForce = {};
+    /** OAuth2 model of `@iobroker/webserver`: it knows the second factor (authenticator app) of the users */
+    oauth2Model = null;
+    /**
+     * Logins of the login form whose password was right and whose code of the second factor is still missing.
+     * The form posts the whole page, so the password is gone in the second step: the ticket stands in for it.
+     */
+    otpTickets = new Map();
     socketIoFile = false;
     webPreSettings = {};
     webByVersion = {};
@@ -1323,7 +1342,17 @@ class WebAdapter extends adapter_core_1.Adapter {
         });
         return result.join(' ');
     }
-    checkUser = (userName, password, cb) => {
+    /**
+     * Check user name and password, and the code of the second factor if the user has one.
+     *
+     * @param userName user name
+     * @param password password
+     * @param cb callback with the result
+     * @param otp code of the authenticator app or a backup code. `undefined` means that the caller cannot send
+     *   a code at all (basic authentication, socket): a user with a second factor cannot log in that way. An empty
+     *   code means: answer `otpRequired`, the caller asks for it.
+     */
+    checkUser = (userName, password, cb, otp) => {
         userName = (userName || '')
             .toString()
             .replace(FORBIDDEN_CHARS, '_')
@@ -1376,11 +1405,113 @@ class WebAdapter extends adapter_core_1.Adapter {
                 delete this.bruteForce[userName];
             }
             if (success) {
-                return cb(null, { logged_in: true, user: userName });
+                void this.checkSecondFactor(userName, otp).then(result => cb(null, result));
+                return;
             }
             return cb(null, { logged_in: false });
         });
     };
+    /**
+     * After a right password: check the second factor, if the user has switched it on
+     *
+     * @param user the user whose password was right
+     * @param otp see `checkUser`
+     */
+    async checkSecondFactor(user, otp) {
+        let enabled;
+        try {
+            enabled = this.oauth2Model
+                ? await this.oauth2Model.secondFactor.isEnabled(user)
+                : !!(await this.getForeignObjectAsync(`system.user.${user}`))?.common?.externalAuthentication?.totp;
+        }
+        catch (e) {
+            // better no login than a login without the second factor
+            this.log.warn(`Cannot check the two-factor authentication of "${user}": ${e}`);
+            return { logged_in: false };
+        }
+        if (!enabled) {
+            return { logged_in: true, user };
+        }
+        if (otp === undefined || !this.oauth2Model) {
+            this.log.warn(`The user "${user}" uses two-factor authentication and cannot log in with the password alone (basic authentication or socket)`);
+            return { logged_in: false };
+        }
+        if (!otp) {
+            return { logged_in: false, user, otpRequired: true };
+        }
+        if (!(await this.oauth2Model.verifySecondFactor(user, otp))) {
+            return { logged_in: false, user, otpInvalid: true };
+        }
+        return { logged_in: true, user };
+    }
+    /**
+     * A ticket for the second step of the login form: the page asks only for the code then
+     *
+     * @param user the user whose password was right
+     * @param stayLoggedIn "stay logged in" of the first step
+     * @param redirect where to go after the login
+     */
+    createOtpTicket(user, stayLoggedIn, redirect) {
+        const now = Date.now();
+        for (const [id, ticket] of this.otpTickets) {
+            if (ticket.expires < now) {
+                this.otpTickets.delete(id);
+            }
+        }
+        const id = (0, node_crypto_1.randomBytes)(32).toString('hex');
+        this.otpTickets.set(id, { user, stayLoggedIn, redirect, expires: now + OTP_TICKET_TTL_MS });
+        return id;
+    }
+    /**
+     * Second step of the login form: the code of the second factor for a ticket of the first step
+     *
+     * @param req request with `otpTicket` and `otp` in the body
+     * @param res response
+     */
+    async loginWithOtpTicket(req, res) {
+        const id = String(req.body.otpTicket);
+        const ticket = this.otpTickets.get(id);
+        if (!ticket || ticket.expires < Date.now()) {
+            // expired: start again with the password
+            this.otpTickets.delete(id);
+            res.redirect((0, utils_1.getLoginPageWithError)(LOGIN_PAGE, req));
+            return;
+        }
+        if (!this.oauth2Model ||
+            !(await this.oauth2Model.verifySecondFactor(ticket.user, String(req.body.otp || '')))) {
+            res.redirect(getLoginPageForCode(req, id, true));
+            return;
+        }
+        this.otpTickets.delete(id);
+        let loginUser = ticket.user;
+        if (this.config.userListEnabled) {
+            const mappedUser = this.getUserListUser(`system.user.${ticket.user}`);
+            if (!mappedUser) {
+                this.log.warn(`User system.user.${ticket.user} is not in the user list`);
+                res.redirect((0, utils_1.getLoginPageWithError)(LOGIN_PAGE, req));
+                return;
+            }
+            loginUser = mappedUser.substring('system.user.'.length);
+        }
+        req.logIn(loginUser, (err) => {
+            if (err) {
+                this.log.warn(`Cannot login user: ${err}`);
+                res.redirect((0, utils_1.getLoginPageWithError)(LOGIN_PAGE, req));
+                return;
+            }
+            req.session.cookie.maxAge = this.getSessionMaxAge(ticket.stayLoggedIn);
+            res.redirect(ticket.redirect);
+        });
+    }
+    /**
+     * Lifetime of the session cookie after a login with the form
+     *
+     * @param stayLoggedIn "stay logged in" was checked
+     */
+    getSessionMaxAge(stayLoggedIn) {
+        const ttl = this.config.ttl || 3600;
+        return stayLoggedIn ? (ttl > ONE_MONTH_SEC ? ttl * 1000 : ONE_MONTH_SEC * 1000) : ttl * 1000;
+    }
     getUserListUser(userName) {
         const longUser = (userName.startsWith('system.user.') ? userName : `system.user.${userName}`);
         const settings = this.config.userListSettings;
@@ -1422,7 +1553,9 @@ class WebAdapter extends adapter_core_1.Adapter {
         }
         const AdapterStore = adapter_core_1.commonTools.session(express_session_1.default, this.config.ttl);
         this.store = new AdapterStore({ adapter: this });
-        passport_1.default.use(new passport_local_1.Strategy(this.checkUser));
+        // The code of the second factor comes with the body: `/login` and `/loginApp` set `otp` (empty if the
+        // user did not type one yet), the basic authentication does not, so it cannot get past a second factor
+        passport_1.default.use(new passport_local_1.Strategy({ passReqToCallback: true }, (req, username, password, done) => this.checkUser(username, password, done, typeof req.body?.otp === 'string' ? req.body.otp : undefined)));
         passport_1.default.serializeUser((user, done) => 
         // eslint-disable-next-line @typescript-eslint/no-base-to-string
         done(null, user.toString()));
@@ -1432,7 +1565,7 @@ class WebAdapter extends adapter_core_1.Adapter {
         // Install oauth2 server. With `oauth` enabled it additionally serves the browser-based
         // authorization code flow, which third-party clients (and web extensions such as `mcp`)
         // need in order to be authorized without handling the user's password themselves.
-        (0, webserver_1.createOAuth2Server)(this, {
+        this.oauth2Model = (0, webserver_1.createOAuth2Server)(this, {
             app: this.webServer.app,
             secure: this.config.secure,
             // "Login timeout" of the settings: without it the access token always expired after 1 hour.
@@ -2177,6 +2310,18 @@ class WebAdapter extends adapter_core_1.Adapter {
                  */
                 const authenticate = (req, res, next, redirect, errorPage) => {
                     passport_1.default.authenticate('local', (err, user) => {
+                        // The password was right, the code of the second factor is missing or wrong
+                        if (!err && user?.user && (user.otpRequired || user.otpInvalid)) {
+                            if (req.url.includes('/loginApp')) {
+                                res.status(401).json({ error: user.otpRequired ? 'otp_required' : 'otp_invalid' });
+                            }
+                            else {
+                                // the login page asks for the code in a second step
+                                const ticket = this.createOtpTicket(user.user, !!req.body.stayLoggedIn, redirect);
+                                res.redirect(getLoginPageForCode(req, ticket, !!user.otpInvalid));
+                            }
+                            return;
+                        }
                         // replace user
                         if (user?.user && this.config.userListEnabled) {
                             const longUser = user.user.startsWith('system.user.')
@@ -2230,15 +2375,7 @@ class WebAdapter extends adapter_core_1.Adapter {
                                     return;
                                 }
                             }
-                            if (req.body.stayLoggedIn) {
-                                req.session.cookie.maxAge =
-                                    (this.config.ttl || 3600) > ONE_MONTH_SEC
-                                        ? (this.config.ttl || 3600) * 1000
-                                        : ONE_MONTH_SEC * 1000;
-                            }
-                            else {
-                                req.session.cookie.maxAge = (this.config.ttl || 3600) * 1000;
-                            }
+                            req.session.cookie.maxAge = this.getSessionMaxAge(!!req.body.stayLoggedIn);
                             if (req.url.includes('/loginApp')) {
                                 res.json({ result: 'ok', user: user?.user });
                             }
@@ -2298,6 +2435,13 @@ class WebAdapter extends adapter_core_1.Adapter {
                     }
                 };
                 this.webServer.app.post('/login', (req, res, next) => {
+                    if (typeof req.body?.otpTicket === 'string' && req.body.otpTicket) {
+                        // second step: the code of the second factor
+                        void this.loginWithOtpTicket(req, res);
+                        return;
+                    }
+                    // the login page can ask for the code of a second factor
+                    req.body.otp = typeof req.body.otp === 'string' ? req.body.otp : '';
                     let redirect = (0, utils_1.getRedirectPage)(req);
                     req.body.password = (req.body.password || '').toString();
                     req.body.username = (req.body.username || '').toString();
@@ -2316,6 +2460,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                 });
                 // Login for applications to preserve cookie
                 this.webServer.app.post('/loginApp', (req, res, next) => {
+                    // the application gets `otp_required` and can send the code with the next request
+                    req.body.otp = typeof req.body.otp === 'string' ? req.body.otp : '';
                     req.body.password = (req.body.password || '').toString();
                     req.body.username = (req.body.username || '').toString();
                     req.body.stayLoggedIn =
@@ -2386,6 +2532,8 @@ class WebAdapter extends adapter_core_1.Adapter {
                         req.body = req.body || {};
                         req.body.username = login;
                         req.body.password = password;
+                        // no code of a second factor can come with the basic authentication
+                        delete req.body.otp;
                         req.body.stayLoggedIn =
                             req.body.stayloggedin === 'true' ||
                                 req.body.stayloggedin === true ||
