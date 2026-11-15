@@ -369,6 +369,7 @@ This is off by default. When enabled:
 -->
 ### **WORK IN PROGRESS**
 * (@GermanBluefox) Two-factor authentication with an authenticator app: the login page asks for the code after the password, users with it cannot log in with the password alone (basic authentication, socket)
+* (@GermanBluefox) Updated `@iobroker/webserver` to 3.5.0 and `@iobroker/socket-classes` to 2.11.0 (two-factor authentication)
 
 ### 9.6.0 (2026-11-13)
 * (@matthiasnissen) Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list

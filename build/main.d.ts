@@ -5,6 +5,15 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { Adapter, type AdapterOptions } from '@iobroker/adapter-core';
 import type { LocalMultipleLinkEntry, WebAdapterConfig } from './types.d.ts';
 export type Server = HttpServer | HttpsServer;
+/** Result of `checkUser` */
+interface LoginResult {
+    logged_in: boolean;
+    user?: string;
+    /** The password was right, the user has a second factor and no code was sent yet */
+    otpRequired?: boolean;
+    /** The password was right, the code of the second factor was wrong */
+    otpInvalid?: boolean;
+}
 export declare class WebAdapter extends Adapter {
     config: WebAdapterConfig;
     private indexHtml;
@@ -42,6 +51,13 @@ export declare class WebAdapter extends Adapter {
     /** Paths the extensions answer themselves, without the authentication of web (`ExtAPI.publicRoutes`) */
     private readonly publicRoutes;
     private readonly bruteForce;
+    /** OAuth2 model of `@iobroker/webserver`: it knows the second factor (authenticator app) of the users */
+    private oauth2Model;
+    /**
+     * Logins of the login form whose password was right and whose code of the second factor is still missing.
+     * The form posts the whole page, so the password is gone in the second step: the ticket stands in for it.
+     */
+    private readonly otpTickets;
     private socketIoFile;
     private readonly webPreSettings;
     private readonly webByVersion;
@@ -184,10 +200,45 @@ export declare class WebAdapter extends Adapter {
     };
     getSocketPath(): string;
     getInfoJs(): string;
-    checkUser: (userName: string | undefined, password: string | undefined, cb: (err: Error | null, result?: {
-        logged_in: boolean;
-        user?: string;
-    }) => void) => void;
+    /**
+     * Check user name and password, and the code of the second factor if the user has one.
+     *
+     * @param userName user name
+     * @param password password
+     * @param cb callback with the result
+     * @param otp code of the authenticator app or a backup code. `undefined` means that the caller cannot send
+     *   a code at all (basic authentication, socket): a user with a second factor cannot log in that way. An empty
+     *   code means: answer `otpRequired`, the caller asks for it.
+     */
+    checkUser: (userName: string | undefined, password: string | undefined, cb: (err: Error | null, result?: LoginResult) => void, otp?: string | null) => void;
+    /**
+     * After a right password: check the second factor, if the user has switched it on
+     *
+     * @param user the user whose password was right
+     * @param otp see `checkUser`
+     */
+    private checkSecondFactor;
+    /**
+     * A ticket for the second step of the login form: the page asks only for the code then
+     *
+     * @param user the user whose password was right
+     * @param stayLoggedIn "stay logged in" of the first step
+     * @param redirect where to go after the login
+     */
+    private createOtpTicket;
+    /**
+     * Second step of the login form: the code of the second factor for a ticket of the first step
+     *
+     * @param req request with `otpTicket` and `otp` in the body
+     * @param res response
+     */
+    private loginWithOtpTicket;
+    /**
+     * Lifetime of the session cookie after a login with the form
+     *
+     * @param stayLoggedIn "stay logged in" was checked
+     */
+    private getSessionMaxAge;
     private getUserListUser;
     /**
      * Configuration of the identity provider for the single sign-on, or undefined if it is not offered.
@@ -289,3 +340,4 @@ export declare class WebAdapter extends Adapter {
     initWebServer(): Promise<void>;
     main(): Promise<void>;
 }
+export {};
