@@ -367,7 +367,7 @@ This is off by default. When enabled:
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 9.7.0 (2026-11-15)
 * (@GermanBluefox) Two-factor authentication with an authenticator app: the login page asks for the code after the password, users with it cannot log in with the password alone (basic authentication, socket)
 * (@GermanBluefox) Updated `@iobroker/webserver` to 3.5.0 and `@iobroker/socket-classes` to 2.11.0 (two-factor authentication)
 
@@ -386,9 +386,6 @@ This is off by default. When enabled:
 * (@GermanBluefox) A changed web extension no longer restarts web every time: a write of its instance object that changes nothing is ignored, and a newly enabled extension is started while web keeps running. An extension that sets `supportsHotReload` is stopped and started again with its new settings, or just stopped when it is disabled - the sessions and socket connections of everybody else stay. A new version of an extension still restarts web. See [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)
 * (@GermanBluefox) Every web extension gets a router of its own, so web can take all of its routes back when it stops
 * (@GermanBluefox) Updated packages
-
-### 9.3.0 (2026-11-05)
-* (@GermanBluefox) Web extensions can name paths below their adapter name that they protect themselves (`publicRoutes()`, see [WEB-EXTENSIONS-HOWTO.md](WEB-EXTENSIONS-HOWTO.md)). web hands such requests to the extension in front of its login, so a client with credentials of its own, e.g. an MCP client with the token of the adapter, is no longer refused with 401
 
 [Older changelogs can be found there](CHANGELOG_OLD.md)
 

@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "web",
-    "version": "9.6.0",
+    "version": "9.7.0",
     "titleLang": {
       "en": "WEB server",
       "de": "WEB-Server",
@@ -16,6 +16,19 @@
       "zh-cn": "Web服务器"
     },
     "news": {
+      "9.7.0": {
+        "en": "Two-factor authentication with an authenticator app: the login page asks for the code after the password, users with it cannot log in with the password alone (basic authentication, socket)\nUpdated `@iobroker/webserver` to 3.5.0 and `@iobroker/socket-classes` to 2.11.0 (two-factor authentication)",
+        "de": "2-Faktor-Authentifizierung mit einer Authenticator-App: Die Anmeldeseite fragt nach dem Passwort nach dem Code, Benutzer können sich nicht allein anmelden (Basic Authentication, Socket)\n`@iobroker /webserver` auf 3.5.0 und `@iobroker /socket-classes` auf 2.11.0 aktualisiert (2FA)",
+        "ru": "Двухфакторная аутентификация с помощью приложения для аутентификации: страница входа запрашивает код после пароля, пользователи с ним не могут войти в систему только с паролем (базовая аутентификация, сокет)\nОбновлены «@iobroker /webserver» до версии 3.5.0 и «@iobroker /socket-classes» до версии 2.11.0 (двухфакторная аутентификация)",
+        "pt": "Autenticação de dois fatores com um app autenticador: a página de login solicita o código após a senha, e os usuários não podem entrar apenas com a senha (autenticação básica, soquete)\nAtualizou `@iobroker /webserver` para 3.5.0 e `@iobroker /socket-classes` para 2.11.0 (2 fatores)",
+        "nl": "Tweefactorauthenticatie met een authenticator-app: op de inlogpagina wordt om de code achter het wachtwoord gevraagd, gebruikers met dit wachtwoord kunnen niet inloggen met alleen het wachtwoord (basisauthenticatie, socket)\n`@iobroker /webserver` bijgewerkt naar 3.5.0 en `@iobroker /socket-classes` naar 2.11.0 (tweefactorauthenticatie)",
+        "fr": "Authentification à deux facteurs avec une appli d'authentification : la page de connexion demande le code après le mot de passe, mais les utilisateurs ne peuvent pas se connecter seul (authentification de base, socket)\nMise à jour de @iobroker /webserver en 3.5.0 et @iobroker /socket-classes en 2.11.0 (authentification à deux facteurs)",
+        "it": "Autenticazione a due fattori con un'app di autenticazione: la pagina di accesso richiede il codice dopo la password, gli utenti non possono accedere solo con la password\nAggiornato @iobroker /webserver a 3.5.0 e @iobroker /socket-classes a 2.11.0 (autenticazione a due fattori)",
+        "es": "Autenticación de dos factores con una aplicación de autenticación: la página de inicio pide el código tras la contraseña, los usuarios que la tienen no pueden iniciar sesión solo con la contraseña (autenticación básica, socket)\nSe actualizó `@iobroker /webserver` a 3.5.0 y `@iobroker /socket-classes` a 2.11.0 (autenticación de dos factores)",
+        "pl": "Uwierzytelnianie dwuskładnikowe za pomocą aplikacji uwierzytelniającej: strona logowania prosi o kod po hasle, użytkownicy z nim nie mogą zalogować się za pomocą samego hasła (uwierzytelnianie podstawowe, gniazdo)\nZaktualizowano `@iobroker /webserver` do wersji 3.5.0 i `@iobroker /socket-classes` do 2.11.0 (uwierzytelnianie dwuskładnikowe)",
+        "uk": "Двофакторна аутентифікація за допомогою програми аутентифікатора: сторінка входу запитує код після пароля, користувачі з ним не можуть увійти лише за допомогою пароля (базова аутентифікація, сокет)\nОновлено `@iobroker /веб-сервер` до 3.5.0 і `@iobroker /socket-classes` до 2.11.0 (двофакторна автентифікація)",
+        "zh-cn": "使用身份验证器应用程序进行双重身份验证：登录页面要求输入密码后面的代码，使用该密码的用户无法仅使用密码（基本身份验证、套接字）登录\n将 @iobroker /webserver 更新到 3.5.0，将 @iobroker /socket-classes 更新到 2.11.0（双因素身份验证）"
+      },
       "9.6.0": {
         "en": "Added optional single sign-on with OpenID Connect for users that are linked in the admin adapter. It cannot be used together with the user list\nUpdated `@iobroker/webserver` to 3.4.1: a disabled user cannot sign in with single sign-on, like with a password (apart from `admin`)",
         "de": "Optionales SSO mit OpenID Connect für im Admin-Adapter verknüpfte Nutzer hinzugefügt. Passt nicht zur Benutzerliste\n`@iobroker /webserver` auf 3.4.1 aktualisiert: Ein deaktivierter Nutzer kann sich nicht mit Passwort anmelden (außer `admin`)",
@@ -93,19 +106,6 @@
         "pl": "`logo.svg`, `favicon.ico` i `manifest.json` strony startowej są ponownie sprawdzane przy każdym obciążeniu (304 bez zmian) zamiast być buforowane na zawsze, więc nowa wersja dociera do przeglądarki\nKomponenty WWW napisane za pomocą React (patrz [`@iobroker /web-components`] (https://github.com/ioBroker/web-components)) znajdują React 19 i 18 jako jeden moduł ES każdy w `/lib/esm/react-19.js` i `/lib/esm/react-18.js`, jak w admin. Wcześniej taki komponent nie mógł załadować się pod siecią, np. schemat przepływu w vis-2",
         "uk": "`logo.svg`, `favicon.ico` і `manifest.json` початкової сторінки повторюються при кожному завантаженні (304 при незмінному) замість того, щоб назавжди кешуватись, тому нова версія потрапляє до браузера\nВеб-компоненти, написані за допомогою React (див. [`@iobroker /web-components`] (https://github.com/ioBroker/web-components)) знаходять React 19 та 18 як один модуль ES кожен у `/lib/esm/react-19.js` та `/lib/esm/react-18.js`, як у admin. Раніше такий компонент не завантажувався під павутину, наприклад, блок-схема у vis-2",
         "zh-cn": "起始页的 `logo.svg`、`favicon.ico` 和 `manifest.json` 在每次加载时都会重新验证（304 不变），而不是永久缓存，因此浏览器会发布新版本\n使用 React 编写的 Web 组件（参见 [`@iobroker /web-components`] (https://github.com/ioBroker/web-components)）在 `/lib/esm/react-19.js` 和 `/lib/esm/react-19.js` 和 `/lib/esm/react-18.js` 中将 React 19 和 18 视为一个 ES 模块，就像在管理员中一样。以前，这样的组件无法在 Web 下加载，例如 vis-2 中的流程图"
-      },
-      "9.1.17": {
-        "en": "Fixed mode of adapter\nThe package files are now checked with the standard `@iobroker/testing`, including the `io-package.json` schema of js-controller\nAdmin 7.6.17 or newer is required\nAdded missing translations of the cookie and OAuth settings",
-        "de": "Fester Adaptermodus\nDie Paketdateien werden jetzt mit dem Standard `@iobroker /testing` geprüft, inklusive `io-package.json`-Schema von js-controller\nAdmin 7.6.17 oder neuer ist nötig\nFehlende Übersetzung der Cookie- und OAuth-Einstellungen",
-        "ru": "Фиксированный режим адаптера\nТеперь файлы пакетов проверяются с помощью стандартной команды «@iobroker /testing», включая схему js-controller `io-package.json`\nТребуется версия Admin 7.6.17 или новее\nДобавлены недостающие переводы настроек cookie и OAuth",
-        "pt": "Adaptador fixo\nOs pacotes agora são verificados com o padrão `@iobroker /testing`, incluindo o esquema `io-package.json` do js-controller\nRequer Admin 7.6.17 ou superior\nForam adicionadas traduções faltantes do cookie e OAuth",
-        "nl": "Adaptermodus met vaste modus\nDe pakketbestanden worden nu gecontroleerd met de standaard `@iobroker /testing`, inclusief het `io-package.json` schema van js-controller\nAdmin 7.6.17 of nieuwer is vereist\nOntbrekende vertalingen van de cookie- en OAuth-instellingen toegevoegd",
-        "fr": "Adaptateur en mode fixe\nLes packages sont désormais vérifiés avec le schéma standard @iobroker /testing, y compris le schéma « io-package.json » de js-controller\nAdmin 7.6.17 ou plus est requis\nAjout de la traduction manquante du cookie et des paramètres OAuth",
-        "it": "adattatore fisso\nI file del pacchetto sono ora controllati con lo standard @iobroker /testing, incluso lo schema io-package.json di js-controller\nRichiede admin 7.6.17 o più\nAggiunte traduzioni mancanti dei cookie e OAuth",
-        "es": "Adaptador modo fijo\nLos archivos del paquete se comprueban ahora con el estándar `@iobroker /testing`, incluido el esquema `io-package.json` de js-controller\nSe necesita Admin 7.6.17 o más\nAñadió las traducciones que faltaban de la configuración de cookies y OAuth",
-        "pl": "Stały tryb adaptera\nPliki pakietów są teraz sprawdzane za pomocą standardowego „@iobroker /testing”, w tym schematu „io-package.json” js-controller\nWymagany jest administrator 7.6.17 lub nowszy\nDodano brakujące tłumaczenia plików cookie i ustawień OAuth",
-        "uk": "Фіксований режим адаптера\nФайли пакетів тепер перевіряються за допомогою стандартного `@iobroker /testing`, включаючи схему `io-package.json` js-контролера\nПотрібна версія адміністратора 7.6.17 або новішої версії\nДодано відсутні переклади налаштувань файлів cookie та OAuth",
-        "zh-cn": "适配器的固定模式\n现在使用标准 @iobroker /testing 来检查包文件，包括 js-controller 的 `io-package.json` 架构\n需要管理员 7.6.17 或更高版本\n添加了 cookie 和 OAuth 设置缺失的翻译"
       }
     },
     "desc": {
